@@ -5,6 +5,8 @@ use App\Http\Controllers\CompanyAccountRequestController;
 use App\Http\Controllers\Admin\CompanyAccountRequestAdminController;
 use App\Http\Controllers\Company\ProjectController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Freelancer\ProjectBrowseController;
+
 
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -25,8 +27,20 @@ Route::get('/', function () {
     return view('welcome');
 })->name('landing');
 
+Route::get('/freelancer/dashboard', function () {
+    return view('freelancer.dashboard');
+})->name('freelancer.dashboard');
+
+Route::get('/freelancer/projects', [ProjectBrowseController::class, 'index'])
+    ->name('freelancer.projects.index');
+
+Route::get('/freelancer/projects/{project}', [ProjectBrowseController::class, 'show'])
+    ->name('freelancer.projects.show');
+
+
 Route::get('/company-account-requests/create', [CompanyAccountRequestController::class, 'create'])
     ->name('company-account-requests.create');
+
 
 
 Route::post('/company-account-requests', [CompanyAccountRequestController::class, 'store'])
@@ -35,6 +49,9 @@ Route::post('/company-account-requests', [CompanyAccountRequestController::class
 Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])->prefix('company')->name('company.')
     ->group(function () {
 
+        Route::get('/dashboard', function () {
+            return view('company.dashboard');
+        })->name('dashboard');
 
         Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
         Route::get('/projects/create', [ProjectController::class, 'create'])->name('projects.create');
@@ -45,6 +62,7 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])->prefix('company')->nam
         Route::put('/projects/{project}', [ProjectController::class, 'update'])->name('projects.update');
         Route::delete('/projects/{project}', [ProjectController::class, 'destroy'])->name('projects.destroy');
     });
+
 
 Route::prefix('admin')
     ->name('admin.')

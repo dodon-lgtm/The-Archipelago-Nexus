@@ -23,7 +23,8 @@ class ProjectController extends Controller
 
     public function create(): View
     {
-        return view('company.projects.create');
+        $categories = \App\Models\Category::query()->orderBy('name')->get();
+        return view('company.projects.create', compact('categories'));
     }
 
     public function store(ProjectStoreRequest $request): RedirectResponse
@@ -51,7 +52,8 @@ class ProjectController extends Controller
     {
         $this->authorizeCompanyProject($project);
 
-        return view('company.projects.edit', compact('project'));
+        $categories = \App\Models\Category::query()->orderBy('name')->get();
+        return view('company.projects.edit', compact('project', 'categories'));
     }
 
     public function update(ProjectUpdateRequest $request, Project $project): RedirectResponse

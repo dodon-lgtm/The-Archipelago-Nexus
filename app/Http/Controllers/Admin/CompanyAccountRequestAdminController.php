@@ -47,9 +47,8 @@ class CompanyAccountRequestAdminController extends Controller
     {
         $admin = $request->user();
 
-        // Scope Tugas 3.5: admin hanya mengubah status permintaan menjadi disetujui.
+        // Admin approve: ubah request_status menjadi disetujui dan ubah role user menjadi company.
 
-        // Pembuatan akun company dikerjakan pada Tugas 3.6.
 
         if ($companyRequest->request_status !== 'menunggu') {
 
@@ -62,9 +61,17 @@ class CompanyAccountRequestAdminController extends Controller
         $companyRequest->note = $request->input('note');
         $companyRequest->save();
 
+        // Ubah role user yang email-nya sama dari freelancer -> company
+        $user = User::query()->where('email', $companyRequest->company_email)->first();
+        if ($user) {
+            $user->role = 'company';
+            $user->save();
+        }
+
         return redirect()
             ->route('admin.company-account-requests.index')
             ->with('success', 'Permintaan akun perusahaan disetujui.');
+
     }
 
     public function reject(CompanyAccountRequestRejectRequest $request, CompanyAccountRequest $companyRequest): RedirectResponse
@@ -80,9 +87,16 @@ class CompanyAccountRequestAdminController extends Controller
         $companyRequest->note = $request->input('note');
         $companyRequest->save();
 
+        // Jika user masih dalam proses register perusahaan (role awal freelancer), hapus user-nya.
+        $user = User::query()->where('email', $companyRequest->company_email)->first();
+        if ($user && $user->role === 'freelancer') {
+            $user->delete();
+        }
+
         return redirect()
             ->route('admin.company-account-requests.index')
             ->with('success', 'Permintaan akun perusahaan telah ditolak.');
+
     }
 }
 

@@ -16,7 +16,9 @@ class ProjectUpdateRequest extends FormRequest
         return [
             'project_name' => ['required', 'string', 'max:255'],
             'project_description' => ['nullable', 'string'],
+            'category_id' => ['nullable', 'integer', 'exists:categories,id'],
         ];
+
     }
 }
 

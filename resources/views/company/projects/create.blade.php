@@ -48,6 +48,26 @@
                     @enderror
                 </div>
 
+                <div class="mb-3">
+                    <label class="form-label" for="category_id">Kategori</label>
+                    <select
+                        class="form-select @error('category_id') is-invalid @enderror"
+                        id="category_id"
+                        name="category_id"
+                    >
+                        <option value="" {{ old('category_id') ? '' : 'selected' }}>(Tanpa kategori)</option>
+                        @foreach($categories as $category)
+                            <option value="{{ $category->id }}" {{ (string) old('category_id') === (string) $category->id ? 'selected' : '' }}>
+                                {{ $category->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('category_id')
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                    @enderror
+                </div>
+
+
                 <div class="d-flex gap-2">
                     <button class="btn btn-primary" type="submit">Simpan</button>
                     <a class="btn btn-outline-secondary" href="{{ route('company.projects.index') }}">Kembali</a>
