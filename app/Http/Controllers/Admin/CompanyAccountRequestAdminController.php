@@ -10,8 +10,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
+
 
 class CompanyAccountRequestAdminController extends Controller
 {
@@ -61,12 +60,15 @@ class CompanyAccountRequestAdminController extends Controller
         $companyRequest->note = $request->input('note');
         $companyRequest->save();
 
-        // Ubah role user yang email-nya sama dari freelancer -> company
+        // Approval company: cari user berdasarkan email perusahaan.
+        // Jika ditemukan, hanya ubah role menjadi `company`.
         $user = User::query()->where('email', $companyRequest->company_email)->first();
         if ($user) {
-            $user->role = 'company';
-            $user->save();
+            // Minimal change: jangan ubah password/email/data lain.
+            $user->update(['role' => 'company']);
         }
+
+
 
         return redirect()
             ->route('admin.company-account-requests.index')
@@ -87,16 +89,11 @@ class CompanyAccountRequestAdminController extends Controller
         $companyRequest->note = $request->input('note');
         $companyRequest->save();
 
-        // Jika user masih dalam proses register perusahaan (role awal freelancer), hapus user-nya.
-        $user = User::query()->where('email', $companyRequest->company_email)->first();
-        if ($user && $user->role === 'freelancer') {
-            $user->delete();
-        }
-
         return redirect()
             ->route('admin.company-account-requests.index')
             ->with('success', 'Permintaan akun perusahaan telah ditolak.');
 
     }
 }
+
 

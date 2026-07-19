@@ -41,7 +41,7 @@
         <div class="btns">
             <a class="button secondary" href="{{ route('login') }}">Login</a>
             <a class="button secondary" href="{{ route('register') }}">Register</a>
-            <a class="button" href="{{ route('company-account-requests.create') }}">Ajukan Akun Perusahaan</a>
+            {{-- <a class="button" href="{{ route('company-account-requests.create') }}">Ajukan Akun Perusahaan</a> --}}
         </div>
 
         <div class="muted">
