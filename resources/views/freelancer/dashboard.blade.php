@@ -117,7 +117,7 @@
                         @forelse($projects as $project)
                             <div class="bg-white border border-slate-200 rounded-2xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition">
                                 <div class="flex items-center gap-4">
-                                    <img src="{{ $project->image ? asset('images/projects/'.$project->image) : asset('images/no-image.png') }}" class="w-16 h-16 rounded-xl object-cover">
+                                   <img src="{{ $project->image ? asset('storage/'.$project->image) : asset('images/no-image.png') }}" class="w-16 h-16 rounded-xl object-cover">
                                     <div>
                                         <h2 class="text-sm font-bold">{{ $project->project_name }}</h2>
                                         <p class="text-[11px] text-slate-500">{{ $project->category->name ?? '-' }}</p>
