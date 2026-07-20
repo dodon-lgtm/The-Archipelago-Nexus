@@ -44,5 +44,6 @@ class ProjectBrowseController extends Controller
 
         return view('freelancer.projects.show', compact('project'));
     }
+    
 }
 

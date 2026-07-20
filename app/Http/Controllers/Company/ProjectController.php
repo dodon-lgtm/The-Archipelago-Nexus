@@ -27,20 +27,38 @@ class ProjectController extends Controller
         return view('company.projects.create', compact('categories'));
     }
 
-    public function store(ProjectStoreRequest $request): RedirectResponse
-    {
-        $data = $request->validated();
+   public function store(ProjectStoreRequest $request): RedirectResponse
+{
+    $data = $request->validated();
 
-        Project::create([
-            ...$data,
-            'user_id' => auth()->id(),
-        ]);
+    // Upload gambar
+    if ($request->hasFile('image')) {
 
-        return redirect()
-            ->route('company.projects.index')
-            ->with('success', 'Proyek berhasil dibuat.');
+        $image = time().'_'.$request->file('image')->getClientOriginalName();
+
+        $request->file('image')->move(public_path('images/projects'), $image);
+
+        $data['image'] = $image;
     }
 
+    // Upload lampiran
+    if ($request->hasFile('attachment')) {
+
+        $attachment = time().'_'.$request->file('attachment')->getClientOriginalName();
+
+        $request->file('attachment')->move(public_path('files/projects'), $attachment);
+
+        $data['attachment'] = $attachment;
+    }
+
+    $data['user_id'] = auth()->id();
+
+    Project::create($data);
+
+    return redirect()
+        ->route('company.projects.index')
+        ->with('success', 'Proyek berhasil dibuat.');
+}w
     public function show(Project $project): View
     {
         $this->authorizeCompanyProject($project);

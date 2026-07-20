@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\CompanyAccountRequestAdminController;
 use App\Http\Controllers\Company\ProjectController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Freelancer\ProjectBrowseController;
+use App\Http\Controllers\Freelancer\DashboardController;
 
 
 
@@ -27,10 +28,9 @@ Route::get('/', function () {
     return view('welcome');
 })->name('landing');
 
-Route::get('/freelancer/dashboard', function () {
-    return view('freelancer.dashboard');
-})->name('freelancer.dashboard');
-
+Route::get('/freelancer/dashboard', [DashboardController::class, 'index'])
+    ->name('freelancer.dashboard');
+    
 Route::get('/freelancer/projects', [ProjectBrowseController::class, 'index'])
     ->name('freelancer.projects.index');
 
