@@ -134,13 +134,78 @@
                     </div>
                 </div>
 
-                {{-- KANAN: Lamaran Terbaru (1 Kolom) --}}
-                <div class="space-y-6">
-                    <h2 class="text-xl font-black">Lamaran Terbaru</h2>
-                    <div class="bg-white rounded-2xl border p-6 text-center text-slate-500 min-h-[200px] flex items-center justify-center">
-                        Belum ada lamaran.
-                    </div>
+              <div class="bg-white rounded-2xl shadow-sm p-5">
+
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold">Lamaran Terbaru</h2>
+
+        <a href="#"
+           class="text-cyan-600 font-semibold text-sm hover:underline">
+            Lihat Semua
+        </a>
+    </div>
+
+    <div class="space-y-3">
+
+        @forelse($latestApplications as $app)
+
+        <div class="border rounded-xl p-3 hover:shadow transition">
+
+            <div class="flex justify-between">
+
+                <div>
+
+                    <h3 class="font-semibold text-sm">
+                        {{ $app->project->project_name }}
+                    </h3>
+
+                    <p class="text-xs text-gray-500">
+                        Rp {{ number_format($app->harga_penawaran,0,',','.') }}
+                    </p>
+
+                    <p class="text-xs text-gray-400">
+                        Estimasi {{ $app->estimasi_hari }} Hari
+                    </p>
+
                 </div>
+
+                <div class="text-right">
+
+                    @if($app->status=='Menunggu')
+                        <span class="px-2 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs">
+                            Menunggu
+                        </span>
+                    @elseif($app->status=='Diterima')
+                        <span class="px-2 py-1 rounded-full bg-green-100 text-green-700 text-xs">
+                            Diterima
+                        </span>
+                    @else
+                        <span class="px-2 py-1 rounded-full bg-red-100 text-red-700 text-xs">
+                            Ditolak
+                        </span>
+                    @endif
+
+                    <div class="text-[11px] text-gray-400 mt-2">
+                        {{ $app->created_at->format('d M Y') }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        @empty
+
+        <div class="text-center py-10 text-gray-400">
+            Belum ada lamaran.
+        </div>
+
+        @endforelse
+
+    </div>
+
+</div>
 
             </div>
 

@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\CompanyAccountRequestAdminController;
 use App\Http\Controllers\Company\ProjectController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Freelancer\ProjectBrowseController;
+use App\Http\Controllers\Freelancer\ProjectProposalController;
 use App\Http\Controllers\Freelancer\DashboardController;
 
 
@@ -17,6 +18,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
 use App\Http\Controllers\RegisterController;
+use App\Models\Penawaran;
 
 Route::get('/register', [RegisterController::class, 'showRegister'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
@@ -30,7 +32,7 @@ Route::get('/', function () {
 
 Route::get('/freelancer/dashboard', [DashboardController::class, 'index'])
     ->name('freelancer.dashboard');
-    
+
 Route::get('/freelancer/projects', [ProjectBrowseController::class, 'index'])
     ->name('freelancer.projects.index');
 
@@ -62,7 +64,16 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])->prefix('company')->nam
         Route::put('/projects/{project}', [ProjectController::class, 'update'])->name('projects.update');
         Route::delete('/projects/{project}', [ProjectController::class, 'destroy'])->name('projects.destroy');
     });
+  // Penawaran
+            Route::middleware('auth')->prefix('freelancer')->name('freelancer.')->group(function () {
 
+    Route::get('/projects/{project}/penawaran', [ProjectBrowseController::class, 'create'])
+        ->name('penawaran.create');
+
+    Route::post('/projects/{project}/penawaran', [ProjectBrowseController::class, 'store'])
+        ->name('penawaran.store');
+
+});
 
 Route::prefix('admin')
     ->name('admin.')
@@ -82,6 +93,9 @@ Route::prefix('admin')
 
         Route::post('/company-account-requests/{companyRequest}/reject', [CompanyAccountRequestAdminController::class, 'reject'])
             ->name('company-account-requests.reject');
+
+
+          
 
     });
 

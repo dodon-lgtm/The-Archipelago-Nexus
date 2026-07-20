@@ -3,17 +3,46 @@
 namespace App\Http\Controllers\Freelancer;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Project;
+use App\Models\Penawaran;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $projects = Project::latest()
-            ->take(3)
+        $search = $request->search;
+        $categoryId = $request->category_id;
+
+        $query = Project::with('category')->latest();
+
+        if ($search) {
+            $query->where('project_name', 'like', "%$search%");
+        }
+
+        if ($categoryId) {
+            $query->where('category_id', $categoryId);
+        }
+
+        $projects = $query->paginate(10)->withQueryString();
+
+        $categories = Category::orderBy('name')->get();
+
+        $latestApplications = Penawaran::with('project')
+            ->where('freelancer_id', Auth::id())
+            ->latest()
+            ->take(4)
             ->get();
 
-        return view('freelancer.dashboard', compact('projects'));
+        return view('freelancer.dashboard', compact(
+            'projects',
+            'categories',
+            'search',
+            'categoryId',
+            'latestApplications'
+        ));
     }
 }

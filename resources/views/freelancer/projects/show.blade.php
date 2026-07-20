@@ -116,7 +116,7 @@
                 </div>
 
                 <div class="mt-8 space-y-3">
-                    <a href="#" class="w-full block bg-cyan-600 hover:bg-cyan-700 text-white text-center py-3 rounded-xl font-bold">
+                    <a href="{{ route('freelancer.penawaran.create', $project)}}" class="w-full block bg-cyan-600 hover:bg-cyan-700 text-white text-center py-3 rounded-xl font-bold">
                         <i class="fa fa-paper-plane mr-2"></i> Kirim Penawaran
                     </a>
                     <button class="w-full border border-slate-300 py-3 rounded-xl hover:bg-slate-100">
