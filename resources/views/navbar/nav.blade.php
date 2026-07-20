@@ -2,16 +2,16 @@
 
     <!-- ================= LEFT ================= -->
     <div class="flex items-center gap-8">
-        <a href="/" class="text-lg font-black text-cyan-600">TAN</a>
+        <a href="/freelancer/dashboard" class="text-lg font-black text-cyan-600">NEXUS</a>
 
         <!-- Menu -->
         <nav class="hidden lg:flex items-center gap-6">
             @auth
                 {{-- ================= FREELANCER ================= --}}
                 @if(Auth::user()->role == 'freelancer')
-                    <a href="{{ route('freelancer.dashboard') }}" class="text-sm font-semibold hover:text-cyan-600 transition">Home</a>
-                    <a href="#" class="text-sm text-slate-600 hover:text-cyan-600 transition">Lamaran</a>
-                    <a href="#" class="text-sm text-slate-600 hover:text-cyan-600 transition">Tersimpan</a>
+                    {{-- <a href="{{ route('freelancer.dashboard') }}" class="text-sm font-semibold hover:text-cyan-600 transition">Home</a> --}}
+                    {{-- <a href="#" class="text-sm text-slate-600 hover:text-cyan-600 transition">Lamaran</a>
+                    <a href="#" class="text-sm text-slate-600 hover:text-cyan-600 transition">Tersimpan</a> --}}
                 
                 {{-- ================= COMPANY ================= --}}
                 @elseif(Auth::user()->role == 'company')
