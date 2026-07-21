@@ -37,12 +37,18 @@ class DashboardController extends Controller
             ->take(4)
             ->get();
 
+        $lamaranCount = Penawaran::where('freelancer_id', Auth::id())->count();
+
+        $savedCount = \App\Models\SavedProject::where('freelancer_id', Auth::id())->count();
+
         return view('freelancer.dashboard', compact(
             'projects',
             'categories',
             'search',
             'categoryId',
-            'latestApplications'
+            'latestApplications',
+            'lamaranCount',
+            'savedCount'
         ));
     }
 }

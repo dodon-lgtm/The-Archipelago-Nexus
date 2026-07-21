@@ -37,6 +37,16 @@ class ProjectBrowseController extends Controller
         ->take(4)
         ->get();
 
+    if ($request->route()->named('freelancer.proyek')) {
+        return view('freelancer.proyek', compact(
+            'projects',
+            'categories',
+            'search',
+            'categoryId',
+            'latestApplications'
+        ));
+    }
+
     return view('freelancer.projects.index', compact(
         'projects',
         'categories',

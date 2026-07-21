@@ -52,4 +52,15 @@ class User extends Authenticatable
 {
     return $this->hasMany(Penawaran::class, 'freelancer_id');
 }
+
+    public function savedProjects(): HasMany
+    {
+        return $this->hasMany(SavedProject::class, 'freelancer_id');
+    }
+
+    public function savedProjectsList()
+    {
+        return $this->belongsToMany(Project::class, 'saved_projects', 'freelancer_id', 'project_id')
+            ->withTimestamps();
+    }
 }

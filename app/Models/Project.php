@@ -37,4 +37,9 @@ class Project extends Model
 {
     return $this->hasMany(Penawaran::class);
 }
+
+    public function savedByFreelancers(): HasMany
+    {
+        return $this->hasMany(SavedProject::class, 'project_id');
+    }
 }

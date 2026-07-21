@@ -36,6 +36,9 @@ Route::get('/freelancer/dashboard', [DashboardController::class, 'index'])
 Route::get('/freelancer/projects', [ProjectBrowseController::class, 'index'])
     ->name('freelancer.projects.index');
 
+Route::get('/freelancer/proyek', [ProjectBrowseController::class, 'index'])
+    ->name('freelancer.proyek');
+
 Route::get('/freelancer/projects/{project}', [ProjectBrowseController::class, 'show'])
     ->name('freelancer.projects.show');
 
@@ -64,7 +67,7 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])->prefix('company')->nam
         Route::put('/projects/{project}', [ProjectController::class, 'update'])->name('projects.update');
         Route::delete('/projects/{project}', [ProjectController::class, 'destroy'])->name('projects.destroy');
     });
-  // Penawaran
+  // Penawaran & Saved Projects
             Route::middleware('auth')->prefix('freelancer')->name('freelancer.')->group(function () {
 
     Route::get('/projects/{project}/penawaran', [ProjectBrowseController::class, 'create'])
@@ -72,6 +75,19 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])->prefix('company')->nam
 
     Route::post('/projects/{project}/penawaran', [ProjectBrowseController::class, 'store'])
         ->name('penawaran.store');
+
+    Route::get('/lamaran', [\App\Http\Controllers\Freelancer\ProjectOfferController::class, 'index'])
+        ->name('lamaran');
+
+    // Saved Projects
+    Route::get('/simpan', [\App\Http\Controllers\Freelancer\SavedProjectController::class, 'index'])
+        ->name('saved-projects.index');
+
+    Route::post('/projects/{project}/simpan', [\App\Http\Controllers\Freelancer\SavedProjectController::class, 'store'])
+        ->name('saved-projects.store');
+
+    Route::delete('/projects/{project}/simpan', [\App\Http\Controllers\Freelancer\SavedProjectController::class, 'destroy'])
+        ->name('saved-projects.destroy');
 
 });
 

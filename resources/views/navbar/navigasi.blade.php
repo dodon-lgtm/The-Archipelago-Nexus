@@ -20,7 +20,7 @@
                     <i class="fa-solid fa-briefcase"></i> Proyek
                 </a>
                 <a href=""
-                    class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('proyek') ? 'bg-cyan-50 text-cyan-700 font-bold' : 'text-slate-600 hover:bg-slate-100' }}">
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('freelancer/proyek') ? 'bg-cyan-50 text-cyan-700 font-bold' : 'text-slate-600 hover:bg-slate-100' }}">
                     <i class="fa-solid fa-briefcase"></i> Cari Proyek
                 </a>
                 <a href=""

@@ -119,9 +119,29 @@
                     <a href="{{ route('freelancer.penawaran.create', $project)}}" class="w-full block bg-cyan-600 hover:bg-cyan-700 text-white text-center py-3 rounded-xl font-bold">
                         <i class="fa fa-paper-plane mr-2"></i> Kirim Penawaran
                     </a>
-                    <button class="w-full border border-slate-300 py-3 rounded-xl hover:bg-slate-100">
-                        <i class="fa fa-bookmark mr-2"></i> Simpan Proyek
-                    </button>
+
+                    @php
+                        $isSaved = $project->savedByFreelancers()
+                            ->where('freelancer_id', auth()->id())
+                            ->exists();
+                    @endphp
+
+                    @if($isSaved)
+                        <form action="{{ route('freelancer.saved-projects.destroy', $project) }}" method="POST" class="w-full">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="w-full border border-blue-300 bg-blue-50 text-blue-700 py-3 rounded-xl hover:bg-blue-100 font-semibold">
+                                <i class="fa fa-bookmark mr-2"></i> Tersimpan
+                            </button>
+                        </form>
+                    @else
+                        <form action="{{ route('freelancer.saved-projects.store', $project) }}" method="POST" class="w-full">
+                            @csrf
+                            <button type="submit" class="w-full border border-slate-300 py-3 rounded-xl hover:bg-slate-100">
+                                <i class="fa fa-bookmark mr-2"></i> Simpan Proyek
+                            </button>
+                        </form>
+                    @endif
                 </div>
             </div>
         </div>

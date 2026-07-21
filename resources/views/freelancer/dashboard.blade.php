@@ -48,7 +48,7 @@
                 <h3 class="text-2xl font-black">{{ $projects->count() }}</h3>
             </div>
         </div>
-        <a href="{{ route('freelancer.projects.index') }}" class="block text-center text-xs font-bold text-cyan-600 py-2 rounded-lg bg-cyan-50 hover:bg-cyan-600 hover:text-white transition">
+        <a href="{{ route('freelancer.proyek') }}" class="block text-center text-xs font-bold text-cyan-600 py-2 rounded-lg bg-cyan-50 hover:bg-cyan-600 hover:text-white transition">
             Lihat Semua
         </a>
     </div>
@@ -61,10 +61,10 @@
             </div>
             <div>
                 <p class="text-xs text-slate-400 font-bold">Lamaran Saya</p>
-                <h3 class="text-2xl font-black">0</h3>
+                <h3 class="text-2xl font-black">{{ $lamaranCount }}</h3>
             </div>
         </div>
-        <a href="#" class="block text-center text-xs font-bold text-blue-600 py-2 rounded-lg bg-blue-50 hover:bg-blue-600 hover:text-white transition">
+        <a href="{{ route('freelancer.lamaran') }}" class="block text-center text-xs font-bold text-blue-600 py-2 rounded-lg bg-blue-50 hover:bg-blue-600 hover:text-white transition">
             Lihat Semua
         </a>
     </div>
@@ -77,10 +77,10 @@
             </div>
             <div>
                 <p class="text-xs text-slate-400 font-bold">Tersimpan</p>
-                <h3 class="text-2xl font-black">0</h3>
+                <h3 class="text-2xl font-black">{{ $savedCount }}</h3>
             </div>
         </div>
-        <a href="#" class="block text-center text-xs font-bold text-purple-600 py-2 rounded-lg bg-purple-50 hover:bg-purple-600 hover:text-white transition">
+        <a href="{{ route('freelancer.saved-projects.index') }}" class="block text-center text-xs font-bold text-purple-600 py-2 rounded-lg bg-purple-50 hover:bg-purple-600 hover:text-white transition">
             Lihat Semua
         </a>
     </div>
@@ -139,7 +139,7 @@
     <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-bold">Lamaran Terbaru</h2>
 
-        <a href="#"
+        <a href="{{ route('freelancer.lamaran') }}"
            class="text-cyan-600 font-semibold text-sm hover:underline">
             Lihat Semua
         </a>
