@@ -116,10 +116,15 @@ Route::prefix('admin')
         Route::post('/company-account-requests/{companyRequest}/reject', [CompanyAccountRequestAdminController::class, 'reject'])
             ->name('company-account-requests.reject');
 
-
-          
-
     });
+
+// Notifikasi (hanya untuk authenticated users, terutama company)
+use App\Http\Controllers\NotificationController;
+Route::middleware('auth')->prefix('notifications')->name('notifications.')->group(function () {
+    Route::get('/', [NotificationController::class, 'index'])->name('index');
+    Route::post('/{notification}/read', [NotificationController::class, 'markRead'])->name('mark-read');
+    Route::post('/mark-all-read', [NotificationController::class, 'markAllRead'])->name('mark-all-read');
+});
 
 
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Freelancer;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Notification;
 use App\Models\Penawaran;
 use App\Models\Project;
 use Illuminate\Http\Request;
@@ -78,7 +79,7 @@ public function store(Request $request, Project $project)
     $proposal = $request->file('proposal')
         ->store('penawaran', 'public');
 
-    Penawaran::create([
+    $penawaran = Penawaran::create([
         'project_id'        => $project->id,
         'freelancer_id'     => Auth::id(),
         'harga_penawaran'   => $request->harga_penawaran,
@@ -87,6 +88,17 @@ public function store(Request $request, Project $project)
         'proposal'          => $proposal,
         'status'            => 'Menunggu',
     ]);
+
+    // Buat notifikasi untuk pemilik proyek (company)
+    if ($project->owner && $project->owner->id !== Auth::id()) {
+        Notification::create([
+            'user_id'       => $project->owner->id,
+            'penawaran_id'  => $penawaran->id,
+            'title'         => 'Penawaran Baru',
+            'message'       => Auth::user()->name . ' mengirimkan penawaran untuk proyek "' . $project->project_name . '".',
+            'is_read'       => false,
+        ]);
+    }
 
    return redirect()
     ->route('freelancer.dashboard')
