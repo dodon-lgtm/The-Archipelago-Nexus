@@ -58,7 +58,10 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])->prefix('company')->nam
     ->group(function () {
 
         Route::get('/dashboard', function () {
-            return view('company.dashboard');
+            $totalProjects = \App\Models\Project::where('user_id', auth()->id())->count();
+            $activeProjects = \App\Models\Project::where('user_id', auth()->id())->where('status', 'Open')->count();
+            $recentProjects = \App\Models\Project::where('user_id', auth()->id())->latest()->take(5)->get();
+            return view('company.dashboard', compact('totalProjects', 'activeProjects', 'recentProjects'));
         })->name('dashboard');
 
         Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
@@ -116,10 +119,15 @@ Route::prefix('admin')
         Route::post('/company-account-requests/{companyRequest}/reject', [CompanyAccountRequestAdminController::class, 'reject'])
             ->name('company-account-requests.reject');
 
-
-          
-
     });
+
+// Notifikasi (hanya untuk authenticated users, terutama company)
+use App\Http\Controllers\NotificationController;
+Route::middleware('auth')->prefix('notifications')->name('notifications.')->group(function () {
+    Route::get('/', [NotificationController::class, 'index'])->name('index');
+    Route::post('/{notification}/read', [NotificationController::class, 'markRead'])->name('mark-read');
+    Route::post('/mark-all-read', [NotificationController::class, 'markAllRead'])->name('mark-all-read');
+});
 
 
 

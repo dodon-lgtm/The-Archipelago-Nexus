@@ -51,7 +51,7 @@ class ProjectController extends Controller
             Project::create($data);
 
             return redirect()
-                ->route('company.projects.index')
+                ->route('company.dashboard')
                 ->with('success', 'Proyek berhasil dibuat.');
 
         } catch (\Exception $e) {
