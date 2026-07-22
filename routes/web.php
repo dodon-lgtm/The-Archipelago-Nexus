@@ -58,7 +58,10 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])->prefix('company')->nam
     ->group(function () {
 
         Route::get('/dashboard', function () {
-            return view('company.dashboard');
+            $totalProjects = \App\Models\Project::where('user_id', auth()->id())->count();
+            $activeProjects = \App\Models\Project::where('user_id', auth()->id())->where('status', 'Open')->count();
+            $recentProjects = \App\Models\Project::where('user_id', auth()->id())->latest()->take(5)->get();
+            return view('company.dashboard', compact('totalProjects', 'activeProjects', 'recentProjects'));
         })->name('dashboard');
 
         Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');

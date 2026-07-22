@@ -15,9 +15,9 @@
                 
                 {{-- ================= COMPANY ================= --}}
                 @elseif(Auth::user()->role == 'company')
-                    <a href="#" class="text-sm font-semibold hover:text-cyan-600 transition">Dashboard</a>
-                    <a href="#" class="text-sm text-slate-600 hover:text-cyan-600 transition">Tambah Proyek</a>
-                    <a href="#" class="text-sm text-slate-600 hover:text-cyan-600 transition">Proyek Saya</a>
+                    <a href="{{ route('company.dashboard') }}" class="text-sm font-semibold hover:text-cyan-600 transition">Dashboard</a>
+                    <a href="{{ route('company.projects.create') }}" class="text-sm text-slate-600 hover:text-cyan-600 transition">Tambah Proyek</a>
+                    <a href="{{ route('company.projects.index') }}" class="text-sm text-slate-600 hover:text-cyan-600 transition">Proyek Saya</a>
                 
                 {{-- ================= ADMIN ================= --}}
                 @elseif(Auth::user()->role == 'admin')
@@ -63,7 +63,7 @@
                 @if(Auth::user()->role == 'freelancer')
                     <a href="#" class="flex items-center gap-3 px-5 py-3 hover:bg-slate-50"><i class="fa-regular fa-file-lines"></i> Lamaran Saya</a>
                 @elseif(Auth::user()->role == 'company')
-                    <a href="#" class="flex items-center gap-3 px-5 py-3 hover:bg-slate-50"><i class="fa-solid fa-plus"></i> Tambah Proyek</a>
+                    <a href="{{ route('company.projects.create') }}" class="flex items-center gap-3 px-5 py-3 hover:bg-slate-50"><i class="fa-solid fa-plus"></i> Tambah Proyek</a>
                 @elseif(Auth::user()->role == 'admin')
                     <a href="#" class="flex items-center gap-3 px-5 py-3 hover:bg-slate-50"><i class="fa-solid fa-chart-line"></i> Dashboard Admin</a>
                 @endif

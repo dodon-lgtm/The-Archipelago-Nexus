@@ -34,17 +34,17 @@
 
             {{-- ================= COMPANY ================= --}}
             @elseif(Auth::user()->role == 'company')
-                <a href=""
-                    class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('perusahaan') ? 'bg-cyan-50 text-cyan-700 font-bold' : 'text-slate-600 hover:bg-slate-100' }}">
+                <a href="{{ route('company.dashboard') }}"
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('company.dashboard') ? 'bg-cyan-50 text-cyan-700 font-bold' : 'text-slate-600 hover:bg-slate-100' }}">
                     <i class="fa-solid fa-house"></i> Dashboard
                 </a>
-                <a href=""
-                    class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('tambahproyek') ? 'bg-cyan-50 text-cyan-700 font-bold' : 'text-slate-600 hover:bg-slate-100' }}">
+                <a href="{{ route('company.projects.create') }}"
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('company.projects.create') ? 'bg-cyan-50 text-cyan-700 font-bold' : 'text-slate-600 hover:bg-slate-100' }}">
                     <i class="fa-solid fa-plus"></i> Tambah Proyek
                 </a>
-                <a href=""
-                    class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('nontifikasi') ? 'bg-cyan-50 text-cyan-700 font-bold' : 'text-slate-600 hover:bg-slate-100' }}">
-                    <i class="fa-solid fa-bell"></i> Notifikasi
+                <a href="{{ route('company.projects.index') }}"
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('company.projects.index') ? 'bg-cyan-50 text-cyan-700 font-bold' : 'text-slate-600 hover:bg-slate-100' }}">
+                    <i class="fa-solid fa-bell"></i> Proyek Saya
                 </a>
 
             {{-- ================= ADMIN ================= --}}
