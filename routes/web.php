@@ -69,6 +69,9 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])->prefix('company')->nam
         Route::get('/projects/{project}/edit', [ProjectController::class, 'edit'])->name('projects.edit');
         Route::put('/projects/{project}', [ProjectController::class, 'update'])->name('projects.update');
         Route::delete('/projects/{project}', [ProjectController::class, 'destroy'])->name('projects.destroy');
+
+        Route::post('/projects/{project}/penawaran/{penawaran}/select', [ProjectController::class, 'selectFreelancer'])
+            ->name('projects.penawaran.select');
     });
   // Penawaran & Saved Projects
             Route::middleware('auth')->prefix('freelancer')->name('freelancer.')->group(function () {

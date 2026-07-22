@@ -38,7 +38,7 @@
                     class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('perusahaan') ? 'bg-cyan-50 text-cyan-700 font-bold' : 'text-slate-600 hover:bg-slate-100' }}">
                     <i class="fa-solid fa-house"></i> Dashboard
                 </a>
-                <a href=""
+                <a href="{{ route('company.projects.create') }}"
                     class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('tambahproyek') ? 'bg-cyan-50 text-cyan-700 font-bold' : 'text-slate-600 hover:bg-slate-100' }}">
                     <i class="fa-solid fa-plus"></i> Tambah Proyek
                 </a>

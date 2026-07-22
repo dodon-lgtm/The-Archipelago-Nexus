@@ -61,7 +61,7 @@
                         </p>
                     </div>
 
-                    <a href=""
+                    <a href="{{ route('company.projects.create') }}"
                        class="inline-flex items-center justify-center gap-2
                               bg-brand text-white px-5 py-3 rounded-lg
                               text-sm font-semibold
@@ -239,7 +239,7 @@
                                     Anda belum membuat proyek.
                                 </p>
 
-                                <a href=""
+                                <a href="{{ route('company.projects.create') }}"
                                    class="inline-flex items-center gap-2
                                           mt-5 px-4 py-2
                                           bg-brand text-white
