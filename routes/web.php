@@ -8,8 +8,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Freelancer\ProjectBrowseController;
 use App\Http\Controllers\Freelancer\ProjectProposalController;
 use App\Http\Controllers\Freelancer\DashboardController;
-
-
+use App\Http\Controllers\Freelancer\ProfilController;
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 
@@ -36,6 +35,15 @@ Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::get('/freelancer/dashboard', [DashboardController::class, 'index'])
     ->name('freelancer.dashboard');
 
+Route::get('/freelancer/profile', [ProfilController::class, 'profile'])
+        ->name('freelancer.profile');
+
+    Route::get('/freelancer/profile/edit', [ProfilController::class, 'editProfile'])
+        ->name('freelancer.profile.edit');
+
+    Route::post('/freelancer/profile/update', [ProfilController::class, 'updateProfile'])
+        ->name('freelancer.profile.update');
+
 Route::get('/freelancer/projects', [ProjectBrowseController::class, 'index'])
     ->name('freelancer.projects.index');
 
@@ -48,6 +56,8 @@ Route::get('/freelancer/projects/{project}', [ProjectBrowseController::class, 's
 
 Route::get('/company-account-requests/create', [CompanyAccountRequestController::class, 'create'])
     ->name('company-account-requests.create');
+
+
 
 
 
