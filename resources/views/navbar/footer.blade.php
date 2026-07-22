@@ -27,7 +27,7 @@
                 <a href="#" class="hover:text-teal-600 transition">FAQ</a>
             </div>
         </div>
-
+        
         <!-- Kolom 3: Kontak & Status Sistem -->
         <div class="space-y-3">
             <h4 class="text-[11px] font-bold text-slate-700 uppercase tracking-wider">Kontak & Dukungan</h4>

@@ -27,8 +27,11 @@ Route::post('/register', [RegisterController::class, 'register']);
 
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('landingpage');
 })->name('landing');
+
+
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 
 Route::get('/freelancer/dashboard', [DashboardController::class, 'index'])
     ->name('freelancer.dashboard');
