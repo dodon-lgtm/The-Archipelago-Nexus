@@ -30,8 +30,8 @@
             
             <!-- Auth Buttons -->
             <div class="flex items-center gap-3">
-                <a href="/login" class="px-5 py-2 text-sm font-semibold text-slate-700 hover:text-slate-950 border border-gray-300 rounded-lg hover:bg-gray-50 transition">LOGIN</a>
-                <a href="#" class="px-5 py-2 text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition shadow-sm">register</a>
+                <a href="{{ route('login') }}" class="px-5 py-2 text-sm font-semibold text-slate-700 hover:text-slate-950 border border-gray-300 rounded-lg hover:bg-gray-50 transition">LOGIN</a>
+                <a href="{{ route('register') }}" class="px-5 py-2 text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition shadow-sm">REGISTER</a>
             </div>
         </div>
     </header>
@@ -49,7 +49,7 @@
                 Hubungkan dengan freelancer terbaik dan wujudkan proyek Anda dengan mudah dan aman.
             </p>
             <div>
-                <a href="/login" class="inline-block px-8 py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded-lg shadow transition transform hover:-translate-y-0.5">
+                <a href="{{ route('login') }}" class="inline-block px-8 py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded-lg shadow transition transform hover:-translate-y-0.5">
                     Mulai sekarang
                 </a>
             </div>
@@ -116,24 +116,24 @@
     <section class="max-w-7xl mx-auto px-6 py-10">
         <h2 class="text-xs font-bold tracking-wider text-slate-400 uppercase mb-4">KATEGORI JASA POPULER</h2>
         <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
-            <a href="#" class="bg-white border border-gray-200 rounded-xl p-4 flex items-center justify-between shadow-sm hover:border-teal-500 transition group">
-                <span class="text-xs font-bold text-slate-800 group-hover:text-teal-600">Web Dev &gt;</span>
+            <a href="{{ route('login') }}" class="bg-white border border-gray-200 rounded-xl p-4 flex items-center justify-between shadow-sm hover:border-teal-500 transition group">
+                <span class="text-xs font-bold text-slate-800 group-hover:text-teal-600">Web Dev ></span>
                 <i class="fa-solid fa-code text-slate-400 group-hover:text-teal-500 text-sm"></i>
             </a>
-            <a href="#" class="bg-white border border-gray-200 rounded-xl p-4 flex items-center justify-between shadow-sm hover:border-teal-500 transition group">
-                <span class="text-xs font-bold text-slate-800 group-hover:text-teal-600">Desain Grafis &gt;</span>
+            <a href="{{ route('login') }}" class="bg-white border border-gray-200 rounded-xl p-4 flex items-center justify-between shadow-sm hover:border-teal-500 transition group">
+                <span class="text-xs font-bold text-slate-800 group-hover:text-teal-600">Desain Grafis ></span>
                 <i class="fa-solid fa-palette text-slate-400 group-hover:text-teal-500 text-sm"></i>
             </a>
-            <a href="#" class="bg-white border border-gray-200 rounded-xl p-4 flex items-center justify-between shadow-sm hover:border-teal-500 transition group">
-                <span class="text-xs font-bold text-slate-800 group-hover:text-teal-600">Penulisan &gt;</span>
+            <a href="{{ route('login') }}" class="bg-white border border-gray-200 rounded-xl p-4 flex items-center justify-between shadow-sm hover:border-teal-500 transition group">
+                <span class="text-xs font-bold text-slate-800 group-hover:text-teal-600">Penulisan ></span>
                 <i class="fa-solid fa-pen-nib text-slate-400 group-hover:text-teal-500 text-sm"></i>
             </a>
-            <a href="#" class="bg-white border border-gray-200 rounded-xl p-4 flex items-center justify-between shadow-sm hover:border-teal-500 transition group">
-                <span class="text-xs font-bold text-slate-800 group-hover:text-teal-600">Pemasaran Digital &gt;</span>
+            <a href="{{ route('login') }}" class="bg-white border border-gray-200 rounded-xl p-4 flex items-center justify-between shadow-sm hover:border-teal-500 transition group">
+                <span class="text-xs font-bold text-slate-800 group-hover:text-teal-600">Pemasaran Digital ></span>
                 <i class="fa-solid fa-bullhorn text-slate-400 group-hover:text-teal-500 text-sm"></i>
             </a>
-            <a href="#" class="bg-white border border-gray-200 rounded-xl p-4 flex items-center justify-between shadow-sm hover:border-teal-500 transition group col-span-2 md:col-span-1">
-                <span class="text-xs font-bold text-slate-800 group-hover:text-teal-600">Video & Animasi &gt;</span>
+            <a href="{{ route('login') }}" class="bg-white border border-gray-200 rounded-xl p-4 flex items-center justify-between shadow-sm hover:border-teal-500 transition group col-span-2 md:col-span-1">
+                <span class="text-xs font-bold text-slate-800 group-hover:text-teal-600">Video & Animasi ></span>
                 <i class="fa-solid fa-video text-slate-400 group-hover:text-teal-500 text-sm"></i>
             </a>
         </div>
@@ -145,7 +145,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             
             <!-- Card 1 -->
-            <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm flex flex-col justify-between hover:shadow-md transition">
+            <a href="{{ route('login') }}" class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm flex flex-col justify-between hover:shadow-md transition block">
                 <div>
                     <span class="text-[9px] bg-emerald-50 text-emerald-600 border border-emerald-100 px-2 py-0.5 rounded font-semibold">Web Development</span>
                     <h3 class="text-xs font-bold text-slate-800 mt-2 line-clamp-1">Pembuatan Website Company Profile</h3>
@@ -155,10 +155,10 @@
                 <div class="text-[9px] text-slate-400 mt-4 pt-2 border-t border-gray-100 text-right">
                     2 jam yang lalu
                 </div>
-            </div>
+            </a>
 
             <!-- Card 2 -->
-            <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm flex flex-col justify-between hover:shadow-md transition">
+            <a href="{{ route('login') }}" class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm flex flex-col justify-between hover:shadow-md transition block">
                 <div>
                     <span class="text-[9px] bg-purple-50 text-purple-600 border border-purple-100 px-2 py-0.5 rounded font-semibold">Desain Grafis</span>
                     <h3 class="text-xs font-bold text-slate-800 mt-2 line-clamp-1">Desain Logo untuk Brand Fashion</h3>
@@ -168,10 +168,10 @@
                 <div class="text-[9px] text-slate-400 mt-4 pt-2 border-t border-gray-100 text-right">
                     4 jam yang lalu
                 </div>
-            </div>
+            </a>
 
             <!-- Card 3 -->
-            <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm flex flex-col justify-between hover:shadow-md transition">
+            <a href="{{ route('login') }}" class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm flex flex-col justify-between hover:shadow-md transition block">
                 <div>
                     <span class="text-[9px] bg-blue-50 text-blue-600 border border-blue-100 px-2 py-0.5 rounded font-semibold">Penulisan</span>
                     <h3 class="text-xs font-bold text-slate-800 mt-2 line-clamp-1">Penulisan Artikel SEO 1000 Kata</h3>
@@ -181,10 +181,10 @@
                 <div class="text-[9px] text-slate-400 mt-4 pt-2 border-t border-gray-100 text-right">
                     6 jam yang lalu
                 </div>
-            </div>
+            </a>
 
             <!-- Card 4 -->
-            <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm flex flex-col justify-between hover:shadow-md transition">
+            <a href="{{ route('login') }}" class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm flex flex-col justify-between hover:shadow-md transition block">
                 <div>
                     <span class="text-[9px] bg-amber-50 text-amber-600 border border-amber-100 px-2 py-0.5 rounded font-semibold">Pemasaran Digital</span>
                     <h3 class="text-xs font-bold text-slate-800 mt-2 line-clamp-1">Kelola Iklan Facebook & Instagram</h3>
@@ -194,7 +194,7 @@
                 <div class="text-[9px] text-slate-400 mt-4 pt-2 border-t border-gray-100 text-right">
                     8 jam yang lalu
                 </div>
-            </div>
+            </a>
 
         </div>
     </section>
@@ -249,6 +249,65 @@
             
         </div>
     </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-slate-200 mt-12">
+        <div class="max-w-7xl mx-auto px-6 py-10">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+                
+                <!-- Kolom 1: Tentang -->
+                <div class="space-y-3">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 bg-slate-900 rounded-full flex items-center justify-center text-white font-bold text-xs">AN</div>
+                        <span class="font-bold text-sm tracking-tight text-slate-900">The Archipelago Nexus</span>
+                    </div>
+                    <p class="text-xs text-slate-500 leading-relaxed max-w-sm">
+                        Platform marketplace freelance terpercaya untuk menghubungkan talenta berbakat Nusantara dengan berbagai proyek industri kreatif dan teknologi secara aman dan transparan.
+                    </p>
+                </div>
+
+                <!-- Kolom 2: Navigasi -->
+                <div class="space-y-3">
+                    <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Jelajahi Platform</h4>
+                    <div class="grid grid-cols-2 gap-2 text-xs text-slate-500 font-medium">
+                        <a href="{{ route('login') }}" class="hover:text-teal-600 transition">Cari Lowongan</a>
+                        <a href="{{ route('login') }}" class="hover:text-teal-600 transition">Lihat Talent</a>
+                        <a href="{{ route('login') }}" class="hover:text-teal-600 transition">Cara Kerja</a>
+                        <a href="{{ route('login') }}" class="hover:text-teal-600 transition">Sistem Keamanan</a>
+                        <a href="{{ route('login') }}" class="hover:text-teal-600 transition">Hubungi Bantuan</a>
+                        <a href="{{ route('login') }}" class="hover:text-teal-600 transition">FAQ</a>
+                    </div>
+                </div>
+                
+                <!-- Kolom 3: Kontak -->
+                <div class="space-y-3">
+                    <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Kontak & Dukungan</h4>
+                    <div class="space-y-2 text-xs text-slate-500 font-medium">
+                        <p class="flex items-center gap-2">
+                            <i class="fa-regular fa-envelope text-slate-400 w-4"></i> support@archipelagonexus.id
+                        </p>
+                        <p class="flex items-center gap-2">
+                            <i class="fa-solid fa-headset text-slate-400 w-4"></i> Jam Kerja: 09:00 - 17:00 WIB
+                        </p>
+                    </div>
+                    <div class="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-600 px-3 py-1.5 rounded-full border border-emerald-200/40 text-[10px] font-bold">
+                        <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+                        <span>Semua Sistem Berjalan Normal</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Bagian Bawah Footer -->
+            <div class="mt-8 pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 font-medium">
+                <p>&copy; 2026 <span class="text-slate-700 font-bold">The Archipelago Nexus</span>. Hak Cipta Dilindungi.</p>
+                <div class="flex items-center gap-4">
+                    <a href="{{ route('login') }}" class="hover:text-slate-700 transition">Ketentuan Layanan</a>
+                    <a href="{{ route('login') }}" class="hover:text-slate-700 transition">Kebijakan Privasi</a>
+                </div>
+            </div>
+        </div>
+    </footer>
     
 </body>
 </html>
