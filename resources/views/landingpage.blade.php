@@ -23,7 +23,7 @@
             <!-- Brand Logo -->
             <div class="flex items-center gap-3">
                <div class="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center">
-   <img src="{{ asset('nexus.png') }}" alt="Logo" class="h-10 w-10 object-cover rounded-full">
+   <img src="{{ asset('images/snexus.jpg') }}" alt="Logo" class="h-10 w-10 object-cover rounded-full">
 </div>
                 <span class="font-bold text-lg tracking-tight text-slate-900">The Archipelago Nexus</span>
             </div>

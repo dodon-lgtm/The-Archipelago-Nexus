@@ -54,7 +54,7 @@ class AuthController extends Controller
 
         // Redirect khusus company ke halaman proyek company.
         if ($user->role === 'company') {
-            return redirect()->route('company.projects.index');
+            return redirect()->route('company.dashboard');
         }
 
         return redirect()->intended($this->redirectPathByRole($user));

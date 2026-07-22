@@ -3,7 +3,7 @@
     {{-- LOGO --}}
     <div class="p-6 flex items-center gap-3 border-b border-slate-100">
         <div class="w-10 h-10 rounded-full overflow-hidden">
-            <img src="{{ asset('images/projects/nexus.jpg') }}" class="w-full h-full object-cover">
+            <img src="{{ asset('images/nexus.jpg') }}" class="w-full h-full object-cover">
         </div>
         <div>
             <h2 class="font-extrabold text-sm leading-tight">The Archipelago<br>Nexus</h2>
