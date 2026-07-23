@@ -93,13 +93,16 @@
                                     </td>
                                     <td>
                                         @if ($penawaran->selected_at)
-                                            {{ \Carbon\Carbon::parse($penawaran->selected_at)->format('d M Y H:i') }}
+{{ $penawaran->selected_at->format('d M Y H:i') }}
                                         @else
                                             <span class="text-muted">-</span>
                                         @endif
                                     </td>
-                                    <td>
-                                        @if ($penawaran->status === 'Menunggu')
+<td>
+                                        @php
+                                            $hasAccepted = $project->penawarans->contains(fn($p) => $p->status === 'Diterima');
+                                        @endphp
+                                        @if ($penawaran->status === 'Menunggu' && !$hasAccepted)
                                             <form method="POST"
                                                 action="{{ route('company.projects.penawaran.select', [$project, $penawaran]) }}"
                                                 onsubmit="return confirm('Pilih freelancer ini? Penawaran lain akan otomatis ditolak.');">
@@ -107,7 +110,7 @@
                                                 <button type="submit" class="btn btn-success btn-sm">Pilih Freelancer</button>
                                             </form>
                                         @elseif ($penawaran->status === 'Diterima')
-<span class="badge bg-success">Freelancer Terpilih</span>
+                                            <span class="badge bg-success">Freelancer Terpilih</span>
                                         @else
                                             <span class="text-muted small">-</span>
                                         @endif

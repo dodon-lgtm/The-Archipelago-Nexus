@@ -58,10 +58,35 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])->prefix('company')->nam
     ->group(function () {
 
         Route::get('/dashboard', function () {
-            $totalProjects = \App\Models\Project::where('user_id', auth()->id())->count();
-            $activeProjects = \App\Models\Project::where('user_id', auth()->id())->where('status', 'Open')->count();
-            $recentProjects = \App\Models\Project::where('user_id', auth()->id())->latest()->take(5)->get();
-            return view('company.dashboard', compact('totalProjects', 'activeProjects', 'recentProjects'));
+            $userId = auth()->id();
+
+            $totalProjects = \App\Models\Project::where('user_id', $userId)->count();
+            $activeProjects = \App\Models\Project::where('user_id', $userId)->where('status', 'Open')->count();
+            $recentProjects = \App\Models\Project::where('user_id', $userId)->latest()->take(5)->get();
+
+            // Total freelancer yang sedang bekerja (penawaran Diterima dari project milik company)
+            $activeFreelancers = \App\Models\Penawaran::whereHas('project', function ($q) use ($userId) {
+                $q->where('user_id', $userId);
+            })->where('status', 'Diterima')->count();
+
+            // Total pengeluaran dari penawaran yang diterima
+            $totalSpending = \App\Models\Penawaran::whereHas('project', function ($q) use ($userId) {
+                $q->where('user_id', $userId);
+            })->where('status', 'Diterima')->sum('harga_penawaran');
+
+            // Proposal masuk (penawaran terbaru di project milik company)
+            $incomingProposals = \App\Models\Penawaran::whereHas('project', function ($q) use ($userId) {
+                $q->where('user_id', $userId);
+            })->with(['project', 'freelancer'])->latest()->take(10)->get();
+
+            return view('company.dashboard', compact(
+                'totalProjects',
+                'activeProjects',
+                'activeFreelancers',
+                'totalSpending',
+                'recentProjects',
+                'incomingProposals'
+            ));
         })->name('dashboard');
 
         Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
@@ -128,8 +153,3 @@ Route::middleware('auth')->prefix('notifications')->name('notifications.')->grou
     Route::post('/{notification}/read', [NotificationController::class, 'markRead'])->name('mark-read');
     Route::post('/mark-all-read', [NotificationController::class, 'markAllRead'])->name('mark-all-read');
 });
-
-
-
-
-

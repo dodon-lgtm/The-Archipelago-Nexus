@@ -9,7 +9,7 @@ use App\Models\Penawaran;
 use App\Models\Project;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
-use Illuminate\Support\Facades\Log; // Tambahkan ini
+use Illuminate\Support\Facades\Log;
 
 class ProjectController extends Controller
 {
@@ -32,10 +32,8 @@ class ProjectController extends Controller
     public function store(ProjectStoreRequest $request): RedirectResponse
     {
         try {
-            // 1. Ambil data tervalidasi
             $data = $request->validated();
 
-            // 2. Upload file (jika ada)
             if ($request->hasFile('image')) {
                 $data['image'] = $request->file('image')->store('projects/images', 'public');
             }
@@ -44,10 +42,8 @@ class ProjectController extends Controller
                 $data['attachment'] = $request->file('attachment')->store('projects/attachments', 'public');
             }
 
-            // 3. Set user_id
             $data['user_id'] = auth()->id();
 
-            // 4. Simpan ke database
             Project::create($data);
 
             return redirect()
@@ -55,10 +51,8 @@ class ProjectController extends Controller
                 ->with('success', 'Proyek berhasil dibuat.');
 
         } catch (\Exception $e) {
-            // Jika gagal, catat error ke file storage/logs/laravel.log
             Log::error("Gagal simpan project: " . $e->getMessage());
-            
-            // Kembalikan ke halaman sebelumnya dengan pesan error
+
             return back()
                 ->withInput()
                 ->withErrors(['error' => 'Terjadi kesalahan saat menyimpan: ' . $e->getMessage()]);
@@ -106,8 +100,23 @@ class ProjectController extends Controller
         // Pastikan penawaran milik project ini
         abort_unless((int) $penawaran->project_id === (int) $project->id, 403);
 
+        // Pastikan project belum memiliki freelancer yang diterima
+        $alreadyAccepted = Penawaran::where('project_id', $project->id)
+            ->where('status', 'Diterima')
+            ->exists();
+
+        if ($alreadyAccepted) {
+            return redirect()
+                ->route('company.projects.show', $project)
+                ->with('error', 'Project ini sudah memiliki freelancer yang diterima.');
+        }
+
         // Pastikan penawaran masih berstatus Menunggu
-        abort_if($penawaran->status !== 'Menunggu', 422, 'Penawaran sudah diproses sebelumnya.');
+        if ($penawaran->status !== 'Menunggu') {
+            return redirect()
+                ->route('company.projects.show', $project)
+                ->with('error', 'Penawaran sudah diproses sebelumnya.');
+        }
 
         // Ubah status penawaran terpilih menjadi Diterima + selected_at
         $penawaran->update([
