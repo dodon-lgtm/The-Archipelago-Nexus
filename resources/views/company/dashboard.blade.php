@@ -240,12 +240,12 @@
                                 Anda belum membuat proyek.
                             </p>
 
-                            <a href="{{ route('company.projects.create') }}"
-                               class="inline-flex items-center gap-2
-                                      mt-5 px-4 py-2
-                                      bg-brand text-white
-                                      rounded-lg text-sm font-semibold
-                                      hover:bg-blue-700 transition">
+                                <a href=""
+                                   class="inline-flex items-center gap-2
+                                          mt-5 px-4 py-2
+                                          bg-brand text-white
+                                          rounded-lg text-sm font-semibold
+                                          hover:bg-blue-700 transition">
 
                                 <i class="fa-solid fa-plus"></i>
 

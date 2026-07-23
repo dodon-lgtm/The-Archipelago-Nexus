@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Company;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Company\ProjectStoreRequest;
 use App\Http\Requests\Company\ProjectUpdateRequest;
+use App\Models\Penawaran;
 use App\Models\Project;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -67,6 +68,7 @@ class ProjectController extends Controller
     public function show(Project $project): View
     {
         $this->authorizeCompanyProject($project);
+        $project->load('penawarans.freelancer');
         return view('company.projects.show', compact('project'));
     }
 
@@ -95,6 +97,33 @@ class ProjectController extends Controller
         return redirect()
             ->route('company.projects.index')
             ->with('success', 'Proyek berhasil dihapus.');
+    }
+
+    public function selectFreelancer(Project $project, Penawaran $penawaran): RedirectResponse
+    {
+        $this->authorizeCompanyProject($project);
+
+        // Pastikan penawaran milik project ini
+        abort_unless((int) $penawaran->project_id === (int) $project->id, 403);
+
+        // Pastikan penawaran masih berstatus Menunggu
+        abort_if($penawaran->status !== 'Menunggu', 422, 'Penawaran sudah diproses sebelumnya.');
+
+        // Ubah status penawaran terpilih menjadi Diterima + selected_at
+        $penawaran->update([
+            'status' => 'Diterima',
+            'selected_at' => now(),
+        ]);
+
+        // Tolak semua penawaran lain pada project yang sama
+        Penawaran::where('project_id', $project->id)
+            ->where('id', '!=', $penawaran->id)
+            ->where('status', 'Menunggu')
+            ->update(['status' => 'Ditolak']);
+
+        return redirect()
+            ->route('company.projects.show', $project)
+            ->with('success', 'Freelancer berhasil dipilih. Penawaran lainnya otomatis ditolak.');
     }
 
     private function authorizeCompanyProject(Project $project): void
