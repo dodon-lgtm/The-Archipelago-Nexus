@@ -1,70 +1,47 @@
-# COMPLETED - Audit & Perbaikan Sistem Login, Middleware, dan Workspace
+# TODO: Admin Panel Development
 
-## DAFTAR FILE YANG DIBUAT
-1. `app/Http/Middleware/EnsureFreelancerOrAbort.php` - Middleware baru
+## Completed Steps
+- [x] Analyze existing codebase
+- [x] Plan approved by user
 
-## DAFTAR FILE YANG DIUBAH
-1. `app/Http/Middleware/EnsureCompanyAdminOrAbort.php` - Perbaikan logic
-2. `app/Http/Middleware/EnsureAdmin.php` - Ganti pengecekan env ke role
-3. `bootstrap/app.php` - Tambah alias middleware
-4. `routes/web.php` - Restruktur total routing
-5. `app/Http/Controllers/AuthController.php` - Perbaikan redirect
-6. `app/Http/Controllers/Company/ProjectController.php` - Hapus pembatasan freelancer
+## Step 1: Database & Model
+- [x] Create migration `create_reports_table`
+- [x] Create `Report` model
+- [x] Run `php artisan migrate`
 
-## BUG YANG DITEMUKAN & DIPERBAIKI
+## Step 2: Admin Layout
+- [x] Create `resources/views/admin/layouts/admin.blade.php`
 
-### Bug 1 (KRITIKAL): EnsureCompanyAdminOrAbort tidak memblokir non-company
-- **Lokasi**: `app/Http/Middleware/EnsureCompanyAdminOrAbort.php`
-- **Deskripsi**: Jika user role bukan `company`, middleware langsung mengizinkan akses dengan `return $next($request)`. Ini berarti freelancer dan admin bisa mengakses semua route company.
-- **Perbaikan**: Hanya `role = company` yang diizinkan lewat, selain itu 403.
+## Step 3: Controllers
+- [x] Create `DashboardController.php`
+- [x] Create `UserController.php`
+- [x] Create `CategoryController.php`
+- [x] Create `ProjectController.php`
+- [x] Create `PenawaranController.php`
+- [x] Create `HasilPekerjaanController.php`
+- [x] Create `ReportController.php`
 
-### Bug 2 (KRITIKAL): EnsureAdmin menggunakan ADMIN_EMAILS env bukan role
-- **Lokasi**: `app/Http/Middleware/EnsureAdmin.php`
-- **Deskripsi**: Pengecekan admin menggunakan environment variable `ADMIN_EMAILS` yang rentan konfigurasi salah. User dengan `role = admin` di database tetap ditolak jika emailnya tidak ada di env.
-- **Perbaikan**: Ganti dengan pengecekan `$user->role === 'admin'` sesuai data di database.
+## Step 4: Blade Views
+- [x] Create `admin/dashboard.blade.php`
+- [x] Create `admin/users/index.blade.php`
+- [x] Create `admin/users/show.blade.php`
+- [x] Create `admin/categories/index.blade.php`
+- [x] Create `admin/projects/index.blade.php`
+- [x] Create `admin/projects/show.blade.php`
+- [x] Create `admin/penawarans/index.blade.php`
+- [x] Create `admin/penawarans/show.blade.php`
+- [x] Create `admin/hasil-pekerjaan/index.blade.php`
+- [x] Create `admin/hasil-pekerjaan/show.blade.php`
+- [x] Create `admin/reports/index.blade.php`
+- [x] Create `admin/reports/show.blade.php`
 
-### Bug 3 (KRITIKAL): Route admin tanpa middleware
-- **Lokasi**: `routes/web.php`
-- **Deskripsi**: Group route `/admin/*` tidak memiliki middleware `auth` maupun `ensureAdmin`. Siapapun bisa mengakses halaman admin.
-- **Perbaikan**: Tambah middleware `['auth', 'ensureAdmin']` pada group admin.
+## Step 5: Update Existing Files
+- [x] Update `routes/web.php` - Add admin routes
+- [x] Update `resources/views/navbar/navigasi.blade.php` - Admin sidebar
+- [x] Update `resources/views/navbar/nav.blade.php` - Admin topbar links
 
-### Bug 4 (HIGH): Route freelancer tanpa middleware
-- **Lokasi**: `routes/web.php`
-- **Deskripsi**: Route `/freelancer/dashboard`, `/freelancer/projects`, `/freelancer/proyek` didefinisikan di luar group middleware. Bisa diakses guest.
-- **Perbaikan**: Semua route freelance dipindahkan ke dalam group middleware `['auth', 'ensureFreelancer']`.
-
-### Bug 5 (MEDIUM): Duplikasi route login
-- **Lokasi**: `routes/web.php`
-- **Deskripsi**: Route `/login` didefinisikan 2 kali (GET).
-- **Perbaikan**: Hanya satu definisi route login yang dipertahankan.
-
-### Bug 6 (MEDIUM): Duplikasi route workspace
-- **Lokasi**: `routes/web.php`
-- **Deskripsi**: Route workspace didefinisikan di 2 tempat: satu di group middleware `auth` dan satu di group freelance/company.
-- **Perbaikan**: Route workspace hanya ada di dalam group middleware yang sesuai.
-
-### Bug 7 (MEDIUM): Login company menggunakan redirect manual
-- **Lokasi**: `app/Http/Controllers/AuthController.php`
-- **Deskripsi**: Setelah login, company langsung redirect ke `company.dashboard` tanpa melalui `intended()`. Ini bypass intended URL.
-- **Perbaikan**: Gunakan `redirect()->intended()` untuk semua role, dengan default path sesuai role.
-
-## FITUR YANG TETAP TIDAK DIUBAH
-- ✅ Approval akun perusahaan oleh admin
-- ✅ CRUD Project (Company)
-- ✅ Kirim Penawaran Freelancer
-- ✅ Perusahaan memilih freelancer
-- ✅ Workspace & Chat
-- ✅ Progress & Complete Project
-- ✅ Dashboard (semua role)
-- ✅ Notifikasi
-- ✅ Saved Projects
-- ✅ Seluruh UI Blade tidak diubah
-
-## ATURAN FREELANCER
-Berdasarkan revisi:
-- ✅ Freelancer boleh mengirim penawaran ke banyak proyek
-- ✅ Freelancer boleh diterima di banyak proyek sekaligus
-- ✅ Freelancer boleh memiliki banyak workspace aktif
-- ✅ Satu project hanya boleh memiliki satu freelancer yang diterima
-- ✅ Setelah freelancer dipilih, penawaran lain pada project tersebut otomatis Ditolak
+## Step 6: Verification
+- [ ] Verify routes with `php artisan route:list`
+- [ ] Login as admin and check dashboard
+- [ ] Verify no 500 errors
 
