@@ -1,248 +1,254 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Dashboard Company - The Archipelago Nexus</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
-        .sidebar {
-            min-height: 100vh;
-            border-right: 1px solid rgba(0,0,0,.08);
+    <title>Dashboard Perusahaan</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    },
+                    colors: {
+                        brand: '#2563EB',
+                        surface: '#F8FAFC'
+                    }
+                }
+            }
         }
-        .brand-logo {
-            width: 42px;
-            height: 42px;
-            border-radius: 12px;
-            background: #111;
-            color: #fff;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            letter-spacing: .5px;
-        }
-        .nav-link {
-            color: rgba(0,0,0,.7);
-        }
-        .nav-link:hover {
-            color: rgba(0,0,0,.95);
-        }
-        .topbar {
-            position: sticky;
-            top: 0;
-            z-index: 1020;
-            background: rgba(255,255,255,.9);
-            backdrop-filter: blur(6px);
-            border-bottom: 1px solid rgba(0,0,0,.08);
-        }
-        .profile-avatar {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            background: #f1f1f1;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            color: #333;
-        }
-    </style>
+    </script>
 </head>
-<body class="bg-light">
-<div class="d-flex">
-    <!-- Sidebar (left) -->
-    <aside class="sidebar bg-white col-12 col-lg-2 d-none d-lg-block">
-        <div class="p-3">
-            <div class="d-flex align-items-center gap-2 mb-3">
-                <div class="brand-logo">A N</div>
-                <div>
-                    <div class="fw-bold">The Archipelago</div>
-                    <div class="text-muted" style="font-size:.85rem;">Nexus</div>
-                </div>
-            </div>
 
-            <nav class="nav flex-column gap-1">
-                <a class="nav-link fw-semibold py-2 px-2 rounded" href="#">
-                    <span class="me-2">🏠</span>Dashboard
-                </a>
-                <a class="nav-link fw-semibold py-2 px-2 rounded" href="{{ url('/company/projects') }}">
-                    <span class="me-2">📁</span>Proyek
-                </a>
-                <a class="nav-link fw-semibold py-2 px-2 rounded" href="{{ url('/company/projects/create') }}">
-                    <span class="me-2">➕</span>Buat Proyek
-                </a>
-                <a class="nav-link fw-semibold py-2 px-2 rounded" href="#">
-                    <span class="me-2">🗂️</span>Penawaran</a>
-                <a class="nav-link fw-semibold py-2 px-2 rounded" href="#">
-                    <span class="me-2">👤</span>Profil
-                </a>
+<body class="bg-surface text-slate-800 min-h-screen flex font-sans">
 
-                <div class="mt-2">
-                    <a class="nav-link fw-semibold py-2 px-2 rounded text-danger" href="{{ route('logout') }}"
-                       onclick="event.preventDefault(); document.getElementById('logout-form-company').submit();">
-                        <span class="me-2">🚪</span>Logout
+    {{-- SIDEBAR --}}
+    @include('navbar.navigasi')
+
+
+    {{-- AREA KANAN --}}
+    <div class="flex-1 flex flex-col min-h-screen overflow-hidden">
+
+        {{-- NAVBAR --}}
+        @include('navbar.nav')
+
+
+        {{-- KONTEN --}}
+        <main class="flex-1 overflow-y-auto p-6">
+
+            <div class="max-w-7xl mx-auto space-y-6">
+
+                {{-- WELCOME --}}
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+
+                    <div>
+                        @if(session('success'))
+                            <div class="mb-4 px-4 py-3 bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm font-medium rounded-lg">
+                                <i class="fa-solid fa-circle-check mr-1"></i> {{ session('success') }}
+                            </div>
+                        @endif
+                        <h1 class="text-2xl font-bold text-slate-800">
+                            Selamat datang kembali 👋
+                        </h1>
+
+                        <p class="text-sm text-slate-500 mt-1">
+                            Kelola proyek Anda dan temukan freelancer terbaik.
+                        </p>
+                    </div>
+
+                    <a href="{{ route('company.projects.create') }}"
+                       class="inline-flex items-center justify-center gap-2
+                              bg-brand text-white px-5 py-3 rounded-lg
+                              text-sm font-semibold
+                              hover:bg-blue-700 transition">
+
+                        <i class="fa-solid fa-plus"></i>
+                        Buat Proyek Baru
                     </a>
-                    <form id="logout-form-company" action="{{ route('logout') }}" method="POST" class="d-none">
-                        @csrf
-                    </form>
+
                 </div>
-            </nav>
-        </div>
-    </aside>
 
-    <!-- Main content -->
-    <div class="flex-grow-1">
-        <!-- Topbar (navbar top) -->
-        <header class="topbar">
-            <div class="container-fluid px-3 px-lg-4 py-2">
-                <div class="row align-items-center g-2">
-                    <div class="col-12 col-lg-7">
-                        <div class="input-group">
-                            <span class="input-group-text" style="background:#fff;">🔎</span>
-                            <input type="text" class="form-control" placeholder="Cari proyek / penawaran...">
-                        </div>
-                    </div>
 
-                    <div class="col-12 col-lg-5 d-flex justify-content-end align-items-center gap-2">
-                        <button class="btn btn-light border" type="button" aria-label="Notifikasi">🔔</button>
-                        <div class="d-flex align-items-center gap-2">
-                            <div class="profile-avatar">{{ auth()->user()->name ? strtoupper(substr(auth()->user()->name,0,1)) : 'C' }}</div>
-                            <div class="d-none d-md-block">
-                                <div class="fw-semibold" style="line-height:1.1;">{{ auth()->user()->name ?? 'Company' }}</div>
-                                <div class="text-muted" style="font-size:.85rem;">company</div>
+                {{-- STATISTIK --}}
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+                    {{-- TOTAL PROYEK --}}
+                    <div class="bg-white border border-slate-200 rounded-xl p-5">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-xl shrink-0">
+                                <i class="fa-regular fa-folder-open"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-500">Total Proyek</p>
+                                <h3 class="text-2xl font-bold text-slate-800">{{ $totalProjects }}</h3>
                             </div>
                         </div>
                     </div>
+
+                    {{-- PROYEK AKTIF --}}
+                    <div class="bg-white border border-slate-200 rounded-xl p-5">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl shrink-0">
+                                <i class="fa-solid fa-briefcase"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-500">Proyek Aktif</p>
+                                <h3 class="text-2xl font-bold text-slate-800">{{ $activeProjects }}</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- FREELANCER BEKERJA --}}
+                    <div class="bg-white border border-slate-200 rounded-xl p-5">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center text-xl shrink-0">
+                                <i class="fa-solid fa-user-group"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-500">Freelancer Bekerja</p>
+                                <h3 class="text-2xl font-bold text-slate-800">{{ $activeFreelancers }}</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- TOTAL PENGELUARAN --}}
+                    <div class="bg-white border border-slate-200 rounded-xl p-5">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center text-xl shrink-0">
+                                <i class="fa-solid fa-money-bill-wave"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-500">Total Pengeluaran</p>
+                                <h3 class="text-2xl font-bold text-slate-800">Rp {{ number_format($totalSpending, 0, ',', '.') }}</h3>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
+
+
+                {{-- PROYEK ANDA (FULL WIDTH) --}}
+                <div class="bg-white border border-slate-200 rounded-xl p-6">
+
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="font-bold text-slate-800">Proyek Anda</h2>
+                            <p class="text-xs text-slate-500 mt-1">Daftar proyek yang Anda buat</p>
+                        </div>
+                        <a href="{{ route('company.projects.index') }}" class="text-sm text-brand font-semibold hover:underline">Lihat Semua</a>
+                    </div>
+
+                    @if($recentProjects->count() > 0)
+                        <div class="space-y-3">
+                            @foreach($recentProjects as $project)
+                            <div class="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-100">
+                                <div class="min-w-0 flex-1">
+                                    <h4 class="text-sm font-semibold text-slate-800 truncate">
+                                        <a href="{{ route('company.projects.show', $project) }}" class="hover:text-brand transition">
+                                            {{ $project->project_name }}
+                                        </a>
+                                    </h4>
+                                    <div class="flex items-center gap-3 mt-1 text-xs text-slate-400">
+                                        @if($project->budget)
+                                        <span><i class="fa-regular fa-money-bill-1 mr-1"></i>Rp {{ number_format($project->budget, 0, ',', '.') }}</span>
+                                        @endif
+                                        @if($project->deadline)
+                                        <span><i class="fa-regular fa-calendar mr-1"></i>{{ \Carbon\Carbon::parse($project->deadline)->format('d M Y') }}</span>
+                                        @endif
+                                    </div>
+                                </div>
+                                <span class="text-[10px] font-semibold px-2.5 py-1 rounded-full shrink-0 ml-3
+                                    @if($project->status == 'Open') bg-emerald-50 text-emerald-600
+                                    @elseif($project->status == 'Closed') bg-red-50 text-red-600
+                                    @else bg-slate-100 text-slate-500 @endif
+                                ">
+                                    {{ $project->status ?? 'Draft' }}
+                                </span>
+                            </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="py-16 text-center">
+                            <div class="w-16 h-16 mx-auto mb-4 bg-slate-100 rounded-full flex items-center justify-center">
+                                <i class="fa-regular fa-folder-open text-2xl text-slate-400"></i>
+                            </div>
+                            <h3 class="font-semibold text-slate-700">Belum ada proyek</h3>
+                            <p class="text-sm text-slate-500 mt-2">Anda belum membuat proyek.</p>
+                            <a href="{{ route('company.projects.create') }}"
+                               class="inline-flex items-center gap-2 mt-5 px-4 py-2 bg-brand text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition">
+                                <i class="fa-solid fa-plus"></i>
+                                Buat Proyek
+                            </a>
+                        </div>
+                    @endif
+
+                </div>
+
+
+                {{-- PROPOSAL MASUK --}}
+                <div class="bg-white border border-slate-200 rounded-xl p-6">
+
+                    <div class="mb-6">
+                        <h2 class="font-bold text-slate-800">Proposal Masuk</h2>
+                        <p class="text-xs text-slate-500 mt-1">Penawaran freelancer untuk proyek Anda</p>
+                    </div>
+
+                    @if($incomingProposals->count() > 0)
+                        <div class="space-y-3">
+                            @foreach($incomingProposals as $proposal)
+                            <div class="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-100">
+                                <div class="min-w-0 flex-1">
+                                    <h4 class="text-sm font-semibold text-slate-800 truncate">
+                                        {{ $proposal->freelancer->name ?? 'Freelancer' }}
+                                    </h4>
+                                    <div class="flex items-center gap-3 mt-1 text-xs text-slate-400">
+                                        <span><i class="fa-regular fa-file-lines mr-1"></i>{{ $proposal->project->project_name ?? '-' }}</span>
+                                        <span><i class="fa-regular fa-money-bill-1 mr-1"></i>Rp {{ number_format($proposal->harga_penawaran, 0, ',', '.') }}</span>
+                                        <span><i class="fa-regular fa-clock mr-1"></i>{{ $proposal->estimasi_hari }} hari</span>
+                                    </div>
+                                </div>
+                                <span class="text-[10px] font-semibold px-2.5 py-1 rounded-full shrink-0 ml-3
+                                    @if($proposal->status == 'Menunggu') bg-yellow-50 text-yellow-600
+                                    @elseif($proposal->status == 'Diterima') bg-emerald-50 text-emerald-600
+                                    @else bg-red-50 text-red-600 @endif
+                                ">
+                                    {{ $proposal->status }}
+                                </span>
+                            </div>
+                            @endforeach
+                        </div>
+                        <div class="mt-4 text-center">
+                            <a href="{{ route('company.projects.index') }}" class="text-sm text-brand font-semibold hover:underline">Lihat Semua Proyek</a>
+                        </div>
+                    @else
+                        <div class="py-12 text-center">
+                            <div class="w-14 h-14 mx-auto mb-4 bg-slate-100 rounded-full flex items-center justify-center">
+                                <i class="fa-regular fa-envelope text-xl text-slate-400"></i>
+                            </div>
+                            <h3 class="text-sm font-semibold text-slate-700">Belum ada proposal</h3>
+                            <p class="text-xs text-slate-500 mt-2">Proposal dari freelancer akan muncul di sini.</p>
+                        </div>
+                    @endif
+
+                </div>
+
             </div>
-        </header>
 
-        <main class="container-fluid py-4 px-3 px-lg-4">
-            <div class="row g-3">
-                <!-- Content -->
-                <section class="col-12 col-lg-8">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <div class="d-flex align-items-start justify-content-between flex-wrap gap-2">
-                                <div>
-                                    <h2 class="h5 mb-1">Selamat datang di Dashboard Company</h2>
-                                    <p class="text-muted mb-0">Ringkasan dummy untuk visual dashboard.</p>
-                                </div>
-                                <div class="badge text-bg-primary">Dummy Data</div>
-                            </div>
-
-                            <hr>
-
-                            <div class="row g-3">
-                                <div class="col-12 col-md-6 col-xl-3">
-                                    <div class="p-3 bg-white border rounded">
-                                        <div class="text-muted">Total Proyek</div>
-                                        <div class="fs-4 fw-bold">12</div>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-md-6 col-xl-3">
-                                    <div class="p-3 bg-white border rounded">
-                                        <div class="text-muted">Proyek Aktif</div>
-                                        <div class="fs-4 fw-bold">8</div>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-md-6 col-xl-3">
-                                    <div class="p-3 bg-white border rounded">
-                                        <div class="text-muted">Penawaran Masuk</div>
-                                        <div class="fs-4 fw-bold">34</div>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-md-6 col-xl-3">
-                                    <div class="p-3 bg-white border rounded">
-                                        <div class="text-muted">Nilai Kontrak</div>
-                                        <div class="fs-4 fw-bold">Rp 76.500.000</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mt-3">
-                        <div class="d-flex align-items-center justify-content-between mb-2">
-                            <h3 class="h6 mb-0">Daftar Proyek Terbaru</h3>
-                            <a href="{{ url('/company/projects') }}" class="text-decoration-none">Lihat semua →</a>
-                        </div>
-
-                        <div class="row g-3">
-                            @for($i=1;$i<=3;$i++)
-                                <div class="col-12">
-                                    <div class="card shadow-sm">
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
-                                                <div>
-                                                    <div class="fw-bold h6 mb-1">Project {{ $i }}: Pengembangan Website Korporat</div>
-                                                    <div class="text-muted" style="font-size:.95rem;">
-                                                        Kategori: <span class="fw-semibold">Software</span>
-                                                    </div>
-                                                    <div class="text-muted" style="font-size:.95rem;">
-                                                        Budget: <span class="fw-semibold">Rp {{ number_format(12000000*$i,0,',','.') }}</span>
-                                                    </div>
-                                                    <div class="text-muted" style="font-size:.95rem;">
-                                                        Deadline: <span class="fw-semibold">{{ now()->addDays($i*10)->format('d M Y') }}</span>
-                                                    </div>
-                                                </div>
-                                                <div class="d-flex gap-2">
-                                                    <a href="{{ url('/company/projects') }}" class="btn btn-outline-primary btn-sm">Lihat Detail</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endfor
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Right sidebar -->
-                <aside class="col-12 col-lg-4">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center justify-content-between">
-                                <h3 class="h6 mb-0">Notifikasi Terbaru</h3>
-                                <span class="badge text-bg-secondary">3</span>
-                            </div>
-                            <hr>
-
-                            <div class="list-group list-group-flush">
-                                @foreach(range(1,3) as $n)
-                                    <div class="list-group-item">
-                                        <div class="d-flex justify-content-between gap-3">
-                                            <div>
-                                                <div class="fw-semibold">Ada penawaran baru</div>
-                                                <div class="text-muted" style="font-size:.9rem;">{{ now()->subHours($n*6)->format('d M Y H:i') }}</div>
-                                            </div>
-                                            <span class="badge text-bg-warning align-self-start">New</span>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card shadow-sm mt-3">
-                        <div class="card-body">
-                            <h3 class="h6">Panduan Singkat</h3>
-                            <ul class="text-muted mb-0" style="font-size:.95rem;">
-                                <li>Pastikan detail proyek jelas agar penawaran berkualitas.</li>
-                                <li>Tinjau penawaran secara rutin untuk mempercepat keputusan.</li>
-                                <li>Gunakan fitur pencarian untuk menemukan penawaran berdasarkan proyek.</li>
-                            </ul>
-                        </div>
-                    </div>
-                </aside>
-            </div>
         </main>
-    </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+        {{-- FOOTER --}}
+        @include('navbar.footer')
+
+    </div>
+
 </body>
 </html>
-

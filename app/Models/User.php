@@ -48,10 +48,11 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
     public function penawarans(): HasMany
-{
-    return $this->hasMany(Penawaran::class, 'freelancer_id');
-}
+    {
+        return $this->hasMany(Penawaran::class, 'freelancer_id');
+    }
 
     public function savedProjects(): HasMany
     {
@@ -62,5 +63,20 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Project::class, 'saved_projects', 'freelancer_id', 'project_id')
             ->withTimestamps();
+    }
+
+    public function workspacesAsCompany(): HasMany
+    {
+        return $this->hasMany(Workspace::class, 'company_id');
+    }
+
+    public function workspacesAsFreelancer(): HasMany
+    {
+        return $this->hasMany(Workspace::class, 'freelancer_id');
+    }
+
+    public function messages(): HasMany
+    {
+        return $this->hasMany(Message::class, 'sender_id');
     }
 }

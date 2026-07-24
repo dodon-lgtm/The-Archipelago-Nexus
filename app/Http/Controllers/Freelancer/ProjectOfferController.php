@@ -19,6 +19,7 @@ class ProjectOfferController extends Controller
             'project',
             'project.category',
             'project.owner',
+            'project.workspace',
         ])
             ->where('freelancer_id', Auth::id())
             ->latest()

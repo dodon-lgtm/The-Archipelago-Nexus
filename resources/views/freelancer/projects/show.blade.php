@@ -73,7 +73,7 @@
                             <div class="flex items-center gap-3">
                                 <div class="w-12 h-12 rounded-lg bg-red-100 flex items-center justify-center">
                                     <i class="fa-solid fa-file-pdf text-red-600 text-xl"></i>
-                                </div>
+                                </div>y
                                 <div>
                                     <p class="font-semibold text-sm truncate max-w-[200px]">{{ $project->attachment }}</p>
                                     <p class="text-xs text-slate-500">Lampiran proyek perusahaan</p>

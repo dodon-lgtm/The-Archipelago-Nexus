@@ -121,13 +121,22 @@
                                 </p>
 
                                 {{-- Action Button --}}
-                                @if($item->project)
-                                    <a href="{{ route('freelancer.projects.show', $item->project) }}"
-                                       class="inline-flex items-center gap-2 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-semibold rounded-xl transition-colors duration-200">
-                                        Lihat Detail Proyek
-                                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                                    </a>
-                                @endif
+                                <div class="flex items-center gap-2">
+                                    @if($item->project)
+                                        <a href="{{ route('freelancer.projects.show', $item->project) }}"
+                                           class="inline-flex items-center gap-2 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-semibold rounded-xl transition-colors duration-200">
+                                            Lihat Detail Proyek
+                                            <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                                        </a>
+                                    @endif
+                                    @if($item->status === 'Diterima' && $item->project && $item->project->workspace)
+                                        <a href="{{ route('freelancer.workspaces.show', $item->project->workspace) }}"
+                                           class="inline-flex items-center gap-2 px-4 py-2 bg-brand hover:bg-blue-700 text-white text-xs font-semibold rounded-xl transition-colors duration-200">
+                                            <i class="fa-solid fa-external-link-alt text-[10px]"></i>
+                                            Buka Workspace
+                                        </a>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     @endforeach

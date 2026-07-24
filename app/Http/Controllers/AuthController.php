@@ -52,13 +52,7 @@ class AuthController extends Controller
 
         Auth::login($user, true);
 
-        // Redirect khusus company ke halaman proyek company.
-        if ($user->role === 'company') {
-            return redirect()->route('company.projects.index');
-        }
-
         return redirect()->intended($this->redirectPathByRole($user));
-
     }
 
     public function logout(Request $request): RedirectResponse
@@ -73,9 +67,9 @@ class AuthController extends Controller
     private function redirectPathByRole(User $user): string
     {
         return match ($user->role) {
-            'admin' => '/admin/dashboard',
-            'freelancer' => '/freelancer/dashboard',
-            'company' => '/company/dashboard',
+            'admin' => route('admin.dashboard'),
+            'freelancer' => route('freelancer.dashboard'),
+            'company' => route('company.dashboard'),
             default => '/',
         };
     }

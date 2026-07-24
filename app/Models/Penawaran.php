@@ -18,13 +18,20 @@ class Penawaran extends Model
         'pesan',
         'proposal',
         'status',
+        'selected_at',
     ];
 
-   // app/Models/Penawaran.php
-public function project()
-{
-    return $this->belongsTo(Project::class, 'project_id');
-}
+    protected function casts(): array
+    {
+        return [
+            'selected_at' => 'datetime',
+        ];
+    }
+
+    public function project()
+    {
+        return $this->belongsTo(Project::class, 'project_id');
+    }
 
     public function freelancer(): BelongsTo
     {
