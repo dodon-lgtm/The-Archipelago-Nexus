@@ -287,7 +287,7 @@ Format JPG, JPEG, PNG. Maksimal 2MB.
             </div>
 
             {{-- Tarif --}}
-            <div class="col-md-6 mb-4">
+            {{-- <div class="col-md-6 mb-4">
 
                 <label class="form-label">
 
@@ -302,7 +302,7 @@ Format JPG, JPEG, PNG. Maksimal 2MB.
                 placeholder="100000"
                 value="{{ old('hourly_rate',$profile->hourly_rate) }}">
 
-            </div>
+            </div> --}}
 
         </div>
 

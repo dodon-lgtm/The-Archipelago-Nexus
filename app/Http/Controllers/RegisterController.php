@@ -36,7 +36,7 @@ class RegisterController extends Controller
             $active = CompanyAccountRequest::query()
                 ->where('company_email', $email)
                 ->where('request_status', 'menunggu')
-                ->exists();
+                ->exists(); 
 
             if ($active) {
                 return back()
@@ -44,10 +44,11 @@ class RegisterController extends Controller
                     ->withErrors(['email' => 'Email perusahaan masih memiliki permintaan yang belum diproses.']);
             }
 
-            // Simpan user company dengan role = company (harusnya)
+            // Simpan user company dengan role = company
             $user = User::create([
                 'name' => $data['name'],
                 'email' => $email,
+                'phone' => $data['phone'] ?? null,
                 'password' => Hash::make((string) $data['password']),
                 'role' => 'company',
             ]);
@@ -68,10 +69,11 @@ class RegisterController extends Controller
                 ->with('success', 'Registrasi berhasil. Akun perusahaan Anda sedang menunggu persetujuan Admin.');
         }
 
-        // Freelancer register langsung aktif
+        // Freelancer register langsung aktif (Disini nomor HP dimasukkan)
         User::create([
             'name' => $data['name'],
             'email' => $email,
+            'phone' => $data['phone'], // <--- Menyimpan nomor HP freelancer ke database
             'password' => Hash::make((string) $data['password']),
             'role' => 'freelancer',
         ]);
@@ -80,4 +82,3 @@ class RegisterController extends Controller
             ->with('success', 'Registrasi berhasil. Silakan login.');
     }
 }
-

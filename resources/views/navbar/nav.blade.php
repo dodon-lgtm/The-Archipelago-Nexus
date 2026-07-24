@@ -10,8 +10,6 @@
                 {{-- ================= FREELANCER ================= --}}
                 @if(Auth::user()->role == 'freelancer')
                     {{-- <a href="{{ route('freelancer.dashboard') }}" class="text-sm font-semibold hover:text-cyan-600 transition">Home</a> --}}
-                    {{-- <a href="#" class="text-sm text-slate-600 hover:text-cyan-600 transition">Lamaran</a>
-                    <a href="#" class="text-sm text-slate-600 hover:text-cyan-600 transition">Tersimpan</a> --}}
                 
                 {{-- ================= COMPANY ================= --}}
                 @elseif(Auth::user()->role == 'company')
@@ -57,8 +55,14 @@
         <!-- USER -->
         <div class="relative">
             <button id="userButton" class="flex items-center gap-3 hover:bg-slate-100 rounded-xl px-2 py-2 transition">
-                <div class="w-10 h-10 rounded-full overflow-hidden bg-cyan-500 flex items-center justify-center text-white">
-                    <i class="fa-solid fa-user"></i>
+                <div class="w-10 h-10 rounded-full overflow-hidden bg-cyan-500 flex items-center justify-center text-white shrink-0">
+                    @if(Auth::user()->role == 'company' && Auth::user()->companyProfile && Auth::user()->companyProfile->company_logo)
+                        <img src="{{ asset('storage/' . Auth::user()->companyProfile->company_logo) }}" alt="Logo Perusahaan" class="w-full h-full object-cover">
+                    @elseif(Auth::user()->profile && Auth::user()->profile->photo)
+                        <img src="{{ asset('storage/' . Auth::user()->profile->photo) }}" alt="Foto Profil" class="w-full h-full object-cover">
+                    @else
+                        <i class="fa-solid fa-user"></i>
+                    @endif
                 </div>
                 <div class="text-left">
                     <h2 class="text-sm font-semibold">{{ Auth::user()->name }}</h2>
@@ -74,7 +78,15 @@
                     <p class="text-sm text-slate-500">{{ Auth::user()->email }}</p>
                 </div>
                 
-                <a href="/freelancer/profile" class="flex items-center gap-3 px-5 py-3 hover:bg-slate-50"><i class="fa-regular fa-user"></i> Profil</a>
+                @if(Auth::user()->role == 'freelancer')
+                    <a href="{{ route('freelancer.profile') }}" class="flex items-center gap-3 px-5 py-3 hover:bg-slate-50"><i class="fa-regular fa-user"></i> Profil</a>
+                @elseif(Auth::user()->role == 'company')
+                    <a href="{{ route('company.profile') }}" class="flex items-center gap-3 px-5 py-3 hover:bg-slate-50">
+                        <i class="fa-regular fa-user"></i> Profil Perusahaan
+                    </a>
+                @elseif(Auth::user()->role == 'admin')
+                    <a href="#" class="flex items-center gap-3 px-5 py-3 hover:bg-slate-50"><i class="fa-regular fa-user"></i> Profil Admin</a>
+                @endif
                 
                 @if(Auth::user()->role == 'freelancer')
                     <a href="#" class="flex items-center gap-3 px-5 py-3 hover:bg-slate-50"><i class="fa-regular fa-file-lines"></i> Lamaran Saya</a>
@@ -99,20 +111,21 @@
     </div>
 </header>
 
-{{-- Script untuk mengontrol Dropdown --}}
+{{-- Script untuk mengontrol Dropdown & Notifikasi --}}
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const userButton = document.getElementById('userButton');
         const userDropdown = document.getElementById('userDropdown');
 
-        userButton.addEventListener('click', (e) => {
-            e.stopPropagation();
-            userDropdown.classList.toggle('hidden');
-        });
+        if (userButton && userDropdown) {
+            userButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                userDropdown.classList.toggle('hidden');
+            });
+        }
 
-        // Menutup dropdown saat klik di luar area
-        window.addEventListener('click', (e) => {
-            if (!userDropdown.classList.contains('hidden')) {
+        window.addEventListener('click', () => {
+            if (userDropdown && !userDropdown.classList.contains('hidden')) {
                 userDropdown.classList.add('hidden');
             }
         });
@@ -128,7 +141,6 @@
 
         if (!notifButton) return;
 
-        // Toggle dropdown
         notifButton.addEventListener('click', (e) => {
             e.stopPropagation();
             notifDropdown.classList.toggle('hidden');
@@ -137,14 +149,12 @@
             }
         });
 
-        // Close dropdown when clicking outside
-        window.addEventListener('click', (e) => {
-            if (!notifDropdown.classList.contains('hidden')) {
+        window.addEventListener('click', () => {
+            if (notifDropdown && !notifDropdown.classList.contains('hidden')) {
                 notifDropdown.classList.add('hidden');
             }
         });
 
-        // Fetch notifications from API
         function fetchNotifications() {
             fetch('{{ route("notifications.index") }}')
                 .then(res => res.json())
@@ -155,7 +165,6 @@
                 .catch(err => console.error('Notif fetch error:', err));
         }
 
-        // Update badge count
         function updateBadge(count) {
             if (count > 0) {
                 notifBadge.textContent = count;
@@ -165,7 +174,6 @@
             }
         }
 
-        // Render notification items
         function renderNotifications(notifications) {
             if (!notifications || notifications.length === 0) {
                 notifList.innerHTML = `
@@ -202,7 +210,6 @@
 
             notifList.innerHTML = html;
 
-            // Add click event to each notification
             document.querySelectorAll('.notification-item').forEach(item => {
                 item.addEventListener('click', function() {
                     const id = this.dataset.id;
@@ -212,7 +219,6 @@
             });
         }
 
-        // Mark single notification as read
         function markAsRead(id, redirectUrl) {
             fetch('{{ url("/notifications") }}/' + id + '/read', {
                 method: 'POST',
@@ -232,7 +238,6 @@
             .catch(err => console.error('Mark read error:', err));
         }
 
-        // Mark all as read
         if (markAllBtn) {
             markAllBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
@@ -254,7 +259,6 @@
             });
         }
 
-        // Helper: time ago
         function getTimeAgo(dateString) {
             const now = new Date();
             const date = new Date(dateString);
@@ -271,13 +275,11 @@
             return date.toLocaleDateString('id-ID');
         }
 
-        // Auto fetch badge count on page load
         fetch('{{ route("notifications.index") }}')
             .then(res => res.json())
             .then(data => updateBadge(data.unread_count))
             .catch(err => console.error('Notif init error:', err));
 
-        // Refresh badge every 30 seconds
         setInterval(() => {
             fetch('{{ route("notifications.index") }}')
                 .then(res => res.json())

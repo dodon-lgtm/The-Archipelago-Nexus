@@ -6,16 +6,17 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\CompanyAccountRequestController;
+use App\Http\Controllers\Freelancer\ProjectOfferController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\WorkspaceController;
 use App\Http\Controllers\Admin\CompanyAccountRequestAdminController;
+use App\Http\Controllers\Company\ProfilController as CompanyProfilController;
 use App\Http\Controllers\Company\ProjectController;
-use App\Http\Controllers\Freelancer\DashboardController;
 use App\Http\Controllers\Freelancer\ProjectBrowseController;
 use App\Http\Controllers\Freelancer\ProjectProposalController;
 use App\Http\Controllers\Freelancer\DashboardController;
-
-
+use App\Http\Controllers\Freelancer\ProfilController;
+use App\Http\Controllers\Freelancer\SavedProjectController;
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
@@ -31,29 +32,6 @@ Route::get('/', function () {
     return view('landingpage');
 })->name('landing');
 
-
-Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-
-Route::get('/freelancer/dashboard', [DashboardController::class, 'index'])
-    ->name('freelancer.dashboard');
-
-Route::get('/freelancer/projects', [ProjectBrowseController::class, 'index'])
-    ->name('freelancer.projects.index');
-
-Route::get('/freelancer/proyek', [ProjectBrowseController::class, 'index'])
-    ->name('freelancer.proyek');
-
-Route::get('/freelancer/projects/{project}', [ProjectBrowseController::class, 'show'])
-    ->name('freelancer.projects.show');
-
-
-Route::get('/company-account-requests/create', [CompanyAccountRequestController::class, 'create'])
-    ->name('company-account-requests.create');
-
-
-
-Route::post('/company-account-requests', [CompanyAccountRequestController::class, 'store'])
-    ->name('company-account-requests.store');
 
 // ──────────────────────────────────────────────
 // FREELANCER ROUTES (auth + ensureFreelancer)
@@ -94,6 +72,16 @@ Route::middleware(['auth', 'ensureFreelancer'])->prefix('freelancer')->name('fre
             ->name('workspaces.message');
         Route::post('/workspaces/{workspace}/progress', [WorkspaceController::class, 'updateProgress'])
             ->name('workspaces.progress');
+
+        Route::get('/profile', [ProfilController::class, 'profile'])
+    ->name('profile');
+
+Route::get('/profile/edit', [ProfilController::class, 'editProfile'])
+    ->name('profile.edit');
+
+Route::post('/profile/update', [ProfilController::class, 'updateProfile'])
+    ->name('profile.update');
+
     });
 
 // ──────────────────────────────────────────────
@@ -154,6 +142,15 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])->prefix('company')->nam
             ->name('workspaces.message');
         Route::post('/workspaces/{workspace}/complete', [WorkspaceController::class, 'complete'])
             ->name('workspaces.complete');
+
+       Route::get('/profile', [CompanyProfilController::class, 'profile'])
+            ->name('profile');
+
+        Route::get('/profile/edit', [CompanyProfilController::class, 'editProfile'])
+            ->name('profile.edit');
+
+        Route::post('/profile/update', [CompanyProfilController::class, 'updateProfile'])
+            ->name('profile.update');
     });
 
 // ──────────────────────────────────────────────

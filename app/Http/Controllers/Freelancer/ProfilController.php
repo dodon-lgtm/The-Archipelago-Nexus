@@ -61,7 +61,6 @@ public function updateProfile(Request $request)
         'skills' => 'nullable|string',
         'experience' => 'nullable|string',
         'portfolio_link' => 'nullable|url',
-        'hourly_rate' => 'nullable|numeric|min:0',
         'cv' => 'nullable|mimes:pdf|max:2048',
     ]);
 
@@ -86,7 +85,6 @@ public function updateProfile(Request $request)
     $profile->skills = $request->skills;
     $profile->experience = $request->experience;
     $profile->portfolio_link = $request->portfolio_link;
-    $profile->hourly_rate = $request->hourly_rate;
 
     $profile->save();
 

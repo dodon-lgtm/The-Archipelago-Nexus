@@ -22,17 +22,14 @@ class RegisterRequest extends FormRequest
             'password_confirmation' => ['required','same:password'],
             'is_company' => ['nullable','boolean'],
 
-            // freelancer fields
-            // (none)
+            // freelancer / general user phone field
+            'phone' => [$isCompany ? 'nullable' : 'required', 'string', 'max:255'],
 
             // company fields
             'company_name' => [$isCompany ? 'required' : 'nullable','string','max:255'],
             'company_phone' => [$isCompany ? 'required' : 'nullable','string','max:255'],
             'company_address' => [$isCompany ? 'required' : 'nullable','string'],
-            'company_description' => [$isCompany ? 'nullable' : 'nullable','string'],
-
-            // ensure company email unique vs users
-            // uniqueness rule for users.email is handled implicitly in validator below
+            'company_description' => ['nullable','string'],
         ];
     }
 }

@@ -37,7 +37,15 @@
     {{-- AREA KANAN --}}
     <div class="flex-1 flex flex-col min-h-screen overflow-hidden">
 
-        {{-- NAVBAR --}}
+        {{-- NAVBAR (Pastikan menyisipkan pengecekan foto profil dinamis di sini atau di dalam file nav.blade.php) --}}
+        {{-- Contoh jika ingin menampilkan foto profil dinamis di area navigasi/header: --}}
+        {{--
+        @if(Auth::user()->companyProfile && Auth::user()->companyProfile->company_logo)
+            <img src="{{ asset('storage/' . Auth::user()->companyProfile->company_logo) }}" alt="Logo" class="w-10 h-10 rounded-full object-cover">
+        @else
+            <img src="{{ asset('images/company.png') }}" alt="Default Logo" class="w-10 h-10 rounded-full object-cover">
+        @endif
+        --}}
         @include('navbar.nav')
 
 

@@ -43,193 +43,108 @@ body{
 /* ===================== */
 
 .profile-card{
-
     background:white;
-
     border-radius:22px;
-
     overflow:hidden;
-
     box-shadow:0 15px 40px rgba(0,0,0,.08);
-
 }
 
 /* ===================== */
 
 .profile-header{
-
     background:linear-gradient(135deg,#eef5ff,#d8e8ff);
-
     padding:40px;
-
 }
 
 /* ===================== */
 
 .profile-photo{
-
     width:140px;
-
     height:140px;
-
     border-radius:50%;
-
     object-fit:cover;
-
     border:6px solid white;
-
     box-shadow:0 10px 25px rgba(0,0,0,.15);
-
 }
 
 /* ===================== */
 
 .profile-name{
-
     font-size:38px;
-
     font-weight:700;
-
     color:#1f2937;
-
 }
 
 /* ===================== */
 
 .badge-freelancer{
-
     background:#0d6efd;
-
     color:white;
-
     padding:8px 18px;
-
     border-radius:50px;
-
     font-size:14px;
-
     display:inline-block;
-
     margin-top:8px;
-
 }
 
 /* ===================== */
 
 .profile-info{
-
     color:#5f6c7b;
-
     font-size:17px;
-
     margin-top:12px;
-
 }
 
 .profile-info i{
-
     width:22px;
-
     color:#0d6efd;
-
 }
 
 /* ===================== */
 
-.rate-box{
-
-    text-align:right;
-
-}
-
-.rate-title{
-
-    font-size:18px;
-
-    color:#666;
-
-}
-
-.rate-price{
-
-    font-size:38px;
-
-    color:#198754;
-
-    font-weight:bold;
-
-}
-
 .edit-btn{
-
     border-radius:50px;
-
     padding:10px 28px;
-
 }
 
 /* ===================== */
 
 .stat-box{
-
     text-align:center;
-
     padding:28px;
-
     border-right:1px solid #ececec;
-
 }
 
 .stat-box:last-child{
-
     border-right:none;
-
 }
 
 .stat-title{
-
     color:#777;
-
     font-size:14px;
-
 }
 
 .stat-value{
-
     margin-top:8px;
-
     font-size:30px;
-
     font-weight:bold;
-
     color:#0d6efd;
-
 }
 
 /* ===================== */
 
 .content-card{
-
     background:white;
-
     border-radius:18px;
-
     box-shadow:0 10px 30px rgba(0,0,0,.06);
-
     padding:28px;
-
     height:100%;
-
 }
 
 .content-title{
-
     font-size:25px;
-
     font-weight:700;
-
     margin-bottom:25px;
-
 }
 
 </style>
@@ -239,31 +154,27 @@ body{
 <body>
 
 @php
-
-$total=7;
-
-$isi=0;
-
+$total = 7;
+$isi = 0;
 if($profile->photo) $isi++;
-
 if($profile->bio) $isi++;
-
 if($profile->skills) $isi++;
-
+if($profile->experience) $isi++;
 if($profile->portfolio_link) $isi++;
-
-if(Auth::user()->phone) $isi++;
-
 if($profile->cv) $isi++;
-
-if($profile->hourly_rate) $isi++;
-
-$progress=round(($isi/$total)*100);
-
+if($profile->location) $isi++;
+$progress = round(($isi / $total) * 100);
 @endphp
 
 
 <div class="container">
+
+<!-- Tombol Back ke Dashboard -->
+<div class="mb-4">
+    <a href="{{ route('freelancer.dashboard') }}" class="btn btn-secondary rounded-pill px-4">
+        <i class="fa-solid fa-arrow-left me-2"></i> Kembali ke Dashboard
+    </a>
+</div>
 
 <h1 class="page-title">
 Profil Saya
@@ -301,7 +212,7 @@ class="profile-photo">
 
 <!-- BIODATA -->
 
-<div class="col-lg-6">
+<div class="col-lg-7">
 
 <h2 class="profile-name">
 
@@ -331,6 +242,7 @@ Freelancer
 
 </div>
 
+<!-- NOMOR HP / WHATSAPP -->
 <div class="profile-info">
 
 <i class="fa-solid fa-phone"></i>
@@ -351,37 +263,9 @@ Bergabung sejak
 
 </div>
 
-<!-- TARIF -->
+<!-- TOMBOL EDIT -->
 
- <div class="col-lg-4 rate-box">
-
-{{-- <div class="rate-title">
-
-Tarif
-
-</div>
-
-<div class="rate-price">
-
-@if($profile->hourly_rate)
-
-Rp {{ number_format($profile->hourly_rate,0,',','.') }}
-
-@else
-
--
-
-@endif
-
-</div>
-
-<div class="text-muted">
-
-/ Jam
-
-</div> --}}
-
-<br>
+<div class="col-lg-3 text-lg-end text-center mt-3 mt-lg-0">
 
 <a
 href="{{ route('freelancer.profile.edit') }}"
@@ -467,25 +351,10 @@ CV
 
 </div>
 
-<div class="col stat-box">
-
-<div class="stat-title">
-
-Rate
-
-</div>
-
-<div class="stat-value">
-
-{{ $profile->hourly_rate ? '✔' : '-' }}
-
 </div>
 
 </div>
 
-</div>
-
-</div>
 {{-- ===========================
     CONTENT
 =========================== --}}
@@ -551,6 +420,20 @@ Rate
                 <div class="col-md-6 mb-3">
 
                     <small class="text-muted">
+                        Nomor HP / WhatsApp
+                    </small>
+
+                    <h6>
+
+                        {{ Auth::user()->phone ?: '-' }}
+
+                    </h6>
+
+                </div>
+
+                <div class="col-md-6 mb-3">
+
+                    <small class="text-muted">
                         Lokasi
                     </small>
 
@@ -562,35 +445,11 @@ Rate
 
                 </div>
 
-                <div class="col-md-6 mb-3">
-
-                    <small class="text-muted">
-                        Tarif
-                    </small>
-
-                    <h6>
-
-                        @if($profile->hourly_rate)
-
-                            Rp {{ number_format($profile->hourly_rate,0,',','.') }}/Jam
-
-                        @else
-
-                            -
-
-                        @endif
-
-                    </h6>
-
-                </div>
-
             </div>
 
         </div>
 
     </div>
-
-
 
     <!-- Skill -->
 
@@ -635,8 +494,6 @@ Rate
 
 </div>
 
-
-
 {{-- ===========================
     PORTFOLIO
 =========================== --}}
@@ -658,11 +515,8 @@ Rate
             @if($profile->portfolio_link)
 
                 <a
-
                 href="{{ $profile->portfolio_link }}"
-
                 target="_blank"
-
                 class="btn btn-outline-primary">
 
                     <i class="fa-solid fa-arrow-up-right-from-square"></i>
@@ -684,7 +538,8 @@ Rate
         </div>
 
     </div>
-        {{-- ================= CV ================= --}}
+
+    {{-- ================= CV ================= --}}
 
     <div class="col-lg-6 mb-4">
 
@@ -757,7 +612,6 @@ Rate
             <div class="progress mb-4">
 
                 <div class="progress-bar progress-bar-striped progress-bar-animated"
-
                      style="width:{{ $progress }}%">
 
                 </div>
@@ -846,20 +700,6 @@ Rate
                     @else
 
                         <span class="text-danger">✖ CV</span>
-
-                    @endif
-
-                </div>
-
-                <div class="col-md-3 mb-3">
-
-                    @if($profile->hourly_rate)
-
-                        <span class="text-success">✔ Tarif</span>
-
-                    @else
-
-                        <span class="text-danger">✖ Tarif</span>
 
                     @endif
 
