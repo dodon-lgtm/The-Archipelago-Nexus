@@ -2,23 +2,26 @@
 
     <!-- ================= LEFT ================= -->
     <div class="flex items-center gap-8">
-        <a href="/freelancer/dashboard" class="text-lg font-black text-cyan-600">NEXUS</a>
 
         <!-- Menu -->
         <nav class="hidden lg:flex items-center gap-6">
             @auth
                 {{-- ================= FREELANCER ================= --}}
                 @if(Auth::user()->role == 'freelancer')
+                        <a href="/freelancer/dashboard" class="text-lg font-black text-cyan-600">NEXUS</a>
+
                     {{-- <a href="{{ route('freelancer.dashboard') }}" class="text-sm font-semibold hover:text-cyan-600 transition">Home</a> --}}
                     {{-- <a href="#" class="text-sm text-slate-600 hover:text-cyan-600 transition">Lamaran</a>
                     <a href="#" class="text-sm text-slate-600 hover:text-cyan-600 transition">Tersimpan</a> --}}
                 
                 {{-- ================= COMPANY ================= --}}
                 @elseif(Auth::user()->role == 'company')
-                    <a href="{{ route('company.dashboard') }}" class="text-sm font-semibold hover:text-cyan-600 transition">Dashboard</a>
+                        <a href="/company/dashboard" class="text-lg font-black text-cyan-600">NEXUS</a>
+
+                    {{-- <a href="{{ route('company.dashboard') }}" class="text-sm font-semibold hover:text-cyan-600 transition">Dashboard</a>
                     <a href="{{ route('company.projects.create') }}" class="text-sm text-slate-600 hover:text-cyan-600 transition">Tambah Proyek</a>
                     <a href="{{ route('company.projects.index') }}" class="text-sm text-slate-600 hover:text-cyan-600 transition">Proyek Saya</a>
-                
+                 --}}
                 {{-- ================= ADMIN ================= --}}
                 @elseif(Auth::user()->role == 'admin')
                     <a href="#" class="text-sm font-semibold hover:text-cyan-600 transition">Dashboard</a>

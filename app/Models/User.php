@@ -79,4 +79,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Message::class, 'sender_id');
     }
+
+    public function projectSubmissions(): HasMany
+    {
+        return $this->hasMany(ProjectSubmission::class, 'submitted_by');
+    }
 }

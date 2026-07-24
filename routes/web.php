@@ -80,6 +80,10 @@ Route::middleware(['auth', 'ensureFreelancer'])->prefix('freelancer')->name('fre
             ->name('workspaces.message');
         Route::post('/workspaces/{workspace}/progress', [WorkspaceController::class, 'updateProgress'])
             ->name('workspaces.progress');
+
+        // Submissions
+        Route::post('/workspaces/{workspace}/submissions', [\App\Http\Controllers\ProjectSubmissionController::class, 'store'])
+            ->name('workspaces.submissions.store');
     });
 
 // ──────────────────────────────────────────────
@@ -140,6 +144,12 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])->prefix('company')->nam
             ->name('workspaces.message');
         Route::post('/workspaces/{workspace}/complete', [WorkspaceController::class, 'complete'])
             ->name('workspaces.complete');
+
+        // Submissions
+        Route::post('/workspaces/{workspace}/submissions/{submission}/accept', [\App\Http\Controllers\ProjectSubmissionController::class, 'accept'])
+            ->name('workspaces.submissions.accept');
+        Route::post('/workspaces/{workspace}/submissions/{submission}/revision', [\App\Http\Controllers\ProjectSubmissionController::class, 'requestRevision'])
+            ->name('workspaces.submissions.revision');
     });
 
 // ──────────────────────────────────────────────

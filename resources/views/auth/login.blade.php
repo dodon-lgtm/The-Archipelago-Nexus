@@ -321,6 +321,28 @@
                 </div>
 
 
+                <!-- REMEMBER ME -->
+                <div class="flex items-center gap-2">
+
+                    <input
+                        id="remember"
+                        type="checkbox"
+                        name="remember"
+                        value="1"
+                        {{ old('remember') ? 'checked' : '' }}
+                        class="w-4 h-4 rounded border-slate-600 bg-slate-800 text-blue-600 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer"
+                    >
+
+                    <label
+                        for="remember"
+                        class="text-xs text-slate-400 cursor-pointer select-none"
+                    >
+                        Ingat Saya
+                    </label>
+
+                </div>
+
+
                 <!-- TOMBOL LOGIN -->
                 <button
                     type="submit"

@@ -1,70 +1,69 @@
-# COMPLETED - Audit & Perbaikan Sistem Login, Middleware, dan Workspace
+# COMPLETED - Tugas 3.15 (Freelancer Mengirim Hasil Pekerjaan) - REVISI
 
-## DAFTAR FILE YANG DIBUAT
-1. `app/Http/Middleware/EnsureFreelancerOrAbort.php` - Middleware baru
+## DAFTAR FILE BARU (6 file)
+1. `database/migrations/2026_07_30_000001_create_project_submissions_table.php` - Tabel utama submission
+2. `database/migrations/2026_07_31_000001_create_submission_files_table.php` - Tabel multiple file per submission
+3. `app/Models/ProjectSubmission.php` - Model submission dengan relasi files()
+4. `app/Models/SubmissionFile.php` - Model file individual dengan accessor icon, color, size
+5. `app/Http/Controllers/ProjectSubmissionController.php` - Controller handle upload multi-file (100MB, 20+ ekstensi)
+6. `resources/views/workspace/_submissions.blade.php` - Partial view submissions dengan file list per item
 
-## DAFTAR FILE YANG DIUBAH
-1. `app/Http/Middleware/EnsureCompanyAdminOrAbort.php` - Perbaikan logic
-2. `app/Http/Middleware/EnsureAdmin.php` - Ganti pengecekan env ke role
-3. `bootstrap/app.php` - Tambah alias middleware
-4. `routes/web.php` - Restruktur total routing
-5. `app/Http/Controllers/AuthController.php` - Perbaikan redirect
-6. `app/Http/Controllers/Company/ProjectController.php` - Hapus pembatasan freelancer
+## DAFTAR FILE YANG DIUBAH (4 file)
+1. `app/Http/Controllers/WorkspaceController.php` - Load `submissions` dengan `files` relation
+2. `resources/views/workspace/show.blade.php` - Layout single column: Info/Progress → Chat → Submissions → Timeline/Actions
+3. `routes/web.php` - Route submission store, accept, revision
+4. `app/Models/User.php` - Tambah relasi projectSubmissions()
 
-## BUG YANG DITEMUKAN & DIPERBAIKI
+## DETAIL IMPLEMENTASI
 
-### Bug 1 (KRITIKAL): EnsureCompanyAdminOrAbort tidak memblokir non-company
-- **Lokasi**: `app/Http/Middleware/EnsureCompanyAdminOrAbort.php`
-- **Deskripsi**: Jika user role bukan `company`, middleware langsung mengizinkan akses dengan `return $next($request)`. Ini berarti freelancer dan admin bisa mengakses semua route company.
-- **Perbaikan**: Hanya `role = company` yang diizinkan lewat, selain itu 403.
+### ✅ Multiple File Upload
+- `<input type="file" name="files[]" multiple>` pada modal upload
+- Semua file disimpan sebagai satu submission
+- Setiap file direkam di tabel `submission_files`
 
-### Bug 2 (KRITIKAL): EnsureAdmin menggunakan ADMIN_EMAILS env bukan role
-- **Lokasi**: `app/Http/Middleware/EnsureAdmin.php`
-- **Deskripsi**: Pengecekan admin menggunakan environment variable `ADMIN_EMAILS` yang rentan konfigurasi salah. User dengan `role = admin` di database tetap ditolak jika emailnya tidak ada di env.
-- **Perbaikan**: Ganti dengan pengecekan `$user->role === 'admin'` sesuai data di database.
+### ✅ Tabel `submission_files`
+- `id`, `submission_id` (FK), `file_name`, `file_path`, `file_size`, `mime_type`, `created_at`
+- Relasi: ProjectSubmission hasMany SubmissionFile
 
-### Bug 3 (KRITIKAL): Route admin tanpa middleware
-- **Lokasi**: `routes/web.php`
-- **Deskripsi**: Group route `/admin/*` tidak memiliki middleware `auth` maupun `ensureAdmin`. Siapapun bisa mengakses halaman admin.
-- **Perbaikan**: Tambah middleware `['auth', 'ensureAdmin']` pada group admin.
+### ✅ Format File Diizinkan (20+ ekstensi)
+- Images: png, jpg, jpeg, webp, gif
+- Video: mp4, mov, avi, mkv
+- Document: pdf, doc, docx, xls, xlsx, ppt, pptx, txt
+- Database/Archive: sql, zip, rar, 7z
+- Source Code/Lain: json, xml, fig, apk
 
-### Bug 4 (HIGH): Route freelancer tanpa middleware
-- **Lokasi**: `routes/web.php`
-- **Deskripsi**: Route `/freelancer/dashboard`, `/freelancer/projects`, `/freelancer/proyek` didefinisikan di luar group middleware. Bisa diakses guest.
-- **Perbaikan**: Semua route freelance dipindahkan ke dalam group middleware `['auth', 'ensureFreelancer']`.
+### ✅ Validasi
+- Minimal 1 file
+- Total ukuran seluruh file maksimal 100 MB
+- Ekstensi sesuai daftar yang diizinkan
 
-### Bug 5 (MEDIUM): Duplikasi route login
-- **Lokasi**: `routes/web.php`
-- **Deskripsi**: Route `/login` didefinisikan 2 kali (GET).
-- **Perbaikan**: Hanya satu definisi route login yang dipertahankan.
+### ✅ Tampilan File per Submission
+- Card: Daftar File dengan icon sesuai tipe
+- Nama file, ukuran terformat (KB/MB/GB)
+- Tombol Download per file
 
-### Bug 6 (MEDIUM): Duplikasi route workspace
-- **Lokasi**: `routes/web.php`
-- **Deskripsi**: Route workspace didefinisikan di 2 tempat: satu di group middleware `auth` dan satu di group freelance/company.
-- **Perbaikan**: Route workspace hanya ada di dalam group middleware yang sesuai.
+### ✅ UI Layout Baru (Single Column)
+1. Breadcrumb
+2. Row 1: Info Project + Progress Bar + Stage (grid 3 kolom)
+3. Row 2: Chat (full width, h-[450px])
+4. Row 3: Hasil Pekerjaan / Submissions (full width)
+5. Row 4: Timeline Progress (2/3) + Actions (1/3)
 
-### Bug 7 (MEDIUM): Login company menggunakan redirect manual
-- **Lokasi**: `app/Http/Controllers/AuthController.php`
-- **Deskripsi**: Setelah login, company langsung redirect ke `company.dashboard` tanpa melalui `intended()`. Ini bypass intended URL.
-- **Perbaikan**: Gunakan `redirect()->intended()` untuk semua role, dengan default path sesuai role.
+### ✅ System Messages (via Chat)
+- "Freelancer telah mengirim hasil pekerjaan."
+- "Perusahaan telah menerima hasil pekerjaan. Catatan: ..."
+- "Perusahaan meminta revisi terhadap hasil pekerjaan. Catatan: ..."
 
-## FITUR YANG TETAP TIDAK DIUBAH
-- ✅ Approval akun perusahaan oleh admin
-- ✅ CRUD Project (Company)
-- ✅ Kirim Penawaran Freelancer
-- ✅ Perusahaan memilih freelancer
-- ✅ Workspace & Chat
-- ✅ Progress & Complete Project
-- ✅ Dashboard (semua role)
-- ✅ Notifikasi
-- ✅ Saved Projects
-- ✅ Seluruh UI Blade tidak diubah
+### ✅ Fitur Lain
+- Submission terbaru tampil paling atas (timeline)
+- Riwayat submission tidak pernah dihapus
+- Jika sudah ada submission accepted, freelancer tidak bisa upload
+- Company hanya bisa Terima/Minta Revisi pada submission pending
 
-## ATURAN FREELANCER
-Berdasarkan revisi:
-- ✅ Freelancer boleh mengirim penawaran ke banyak proyek
-- ✅ Freelancer boleh diterima di banyak proyek sekaligus
-- ✅ Freelancer boleh memiliki banyak workspace aktif
-- ✅ Satu project hanya boleh memiliki satu freelancer yang diterima
-- ✅ Setelah freelancer dipilih, penawaran lain pada project tersebut otomatis Ditolak
+## FITUR LAMA YANG TETAP KOMPATIBEL
+- ✅ Workspace, Progress, Chat
+- ✅ Remember Me, Login
+- ✅ Middleware, Dashboard (semua role)
+- ✅ CRUD Project, Penawaran, Approval Company
+- ✅ Notifikasi, Saved Projects
 
