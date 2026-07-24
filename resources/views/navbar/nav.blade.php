@@ -78,7 +78,7 @@
                     <p class="text-sm text-slate-500">{{ Auth::user()->email }}</p>
                 </div>
                 
-                <a href="#" class="flex items-center gap-3 px-5 py-3 hover:bg-slate-50"><i class="fa-regular fa-user"></i> Profil</a>
+                <a href="/freelancer/profile" class="flex items-center gap-3 px-5 py-3 hover:bg-slate-50"><i class="fa-regular fa-user"></i> Profil</a>
                 
                 @if(Auth::user()->role == 'freelancer')
                     <a href="#" class="flex items-center gap-3 px-5 py-3 hover:bg-slate-50"><i class="fa-regular fa-file-lines"></i> Lamaran Saya</a>

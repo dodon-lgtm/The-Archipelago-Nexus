@@ -19,12 +19,11 @@ use App\Http\Controllers\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\Company\ProjectController as CompanyProjectController;
 use App\Http\Controllers\Freelancer\DashboardController as FreelancerDashboardController;
 use App\Http\Controllers\Freelancer\ProjectBrowseController;
-use App\Http\Controllers\Freelancer\ProjectOfferController;
-use App\Http\Controllers\Freelancer\SavedProjectController;
+use App\Http\Controllers\Freelancer\ProjectProposalController;
+use App\Http\Controllers\Freelancer\DashboardController;
 
-// ──────────────────────────────────────────────
-// AUTH (login/register/logout) - PUBLIC
-// ──────────────────────────────────────────────
+
+
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
@@ -39,11 +38,26 @@ Route::get('/', function () {
     return view('landingpage');
 })->name('landing');
 
-// ──────────────────────────────────────────────
-// COMPANY ACCOUNT REQUEST - PUBLIC
-// ──────────────────────────────────────────────
+
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+
+Route::get('/freelancer/dashboard', [DashboardController::class, 'index'])
+    ->name('freelancer.dashboard');
+
+Route::get('/freelancer/projects', [ProjectBrowseController::class, 'index'])
+    ->name('freelancer.projects.index');
+
+Route::get('/freelancer/proyek', [ProjectBrowseController::class, 'index'])
+    ->name('freelancer.proyek');
+
+Route::get('/freelancer/projects/{project}', [ProjectBrowseController::class, 'show'])
+    ->name('freelancer.projects.show');
+
+
 Route::get('/company-account-requests/create', [CompanyAccountRequestController::class, 'create'])
     ->name('company-account-requests.create');
+
+
 
 Route::post('/company-account-requests', [CompanyAccountRequestController::class, 'store'])
     ->name('company-account-requests.store');
