@@ -1,115 +1,101 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Detail Permintaan Akun Perusahaan - The Archipelago Nexus</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
-<div class="container py-4">
-    <div class="mb-3">
-        <a href="{{ route('admin.company-account-requests.index') }}" class="btn btn-outline-secondary btn-sm">&larr; Kembali</a>
+@extends('layouts.admin')
+
+@section('title', 'Detail Permintaan Akun Perusahaan')
+@section('breadcrumb', 'Detail Permintaan')
+
+@section('content')
+    <div class="mb-4">
+        <a href="{{ route('admin.company-account-requests.index') }}" class="text-sm text-cyan-600 hover:text-cyan-700 font-semibold inline-flex items-center gap-1">
+            <i class="fa-solid fa-arrow-left"></i> Kembali
+        </a>
     </div>
 
-    @if (session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
-    @if (session('error'))
-        <div class="alert alert-danger">{{ session('error') }}</div>
-    @endif
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                <h2 class="text-lg font-bold text-slate-800 mb-4">Data Permintaan</h2>
+                <dl class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div class="md:col-span-2">
+                        <dt class="text-xs text-slate-500 font-semibold">Nama Perusahaan</dt>
+                        <dd class="font-semibold text-slate-800 mt-1">{{ $companyRequest->company_name }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-xs text-slate-500 font-semibold">Nama Penanggung Jawab</dt>
+                        <dd class="font-semibold text-slate-800 mt-1">{{ $companyRequest->contact_person }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-xs text-slate-500 font-semibold">Email Perusahaan</dt>
+                        <dd class="font-semibold text-slate-800 mt-1">{{ $companyRequest->company_email }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-xs text-slate-500 font-semibold">Nomor Telepon</dt>
+                        <dd class="font-semibold text-slate-800 mt-1">{{ $companyRequest->company_phone }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-xs text-slate-500 font-semibold">Tanggal Permintaan</dt>
+                        <dd class="font-semibold text-slate-800 mt-1">{{ $companyRequest->created_at?->format('Y-m-d H:i') }}</dd>
+                    </div>
+                    <div class="md:col-span-2">
+                        <dt class="text-xs text-slate-500 font-semibold">Alamat Perusahaan</dt>
+                        <dd class="font-semibold text-slate-800 mt-1">{{ $companyRequest->company_address }}</dd>
+                    </div>
+                    <div class="md:col-span-2">
+                        <dt class="text-xs text-slate-500 font-semibold">Deskripsi Singkat</dt>
+                        <dd class="text-slate-700 mt-1">{{ $companyRequest->company_description ?? 'Tidak ada deskripsi.' }}</dd>
+                    </div>
+                    <div class="md:col-span-2">
+                        <dt class="text-xs text-slate-500 font-semibold">Catatan Admin</dt>
+                        <dd class="text-slate-700 mt-1">{{ $companyRequest->note ?? '—' }}</dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
 
-    <div class="card shadow-sm mb-3">
-        <div class="card-body">
-            <h2 class="h5 mb-3">Data Permintaan</h2>
-            <dl class="row mb-0">
-                <dt class="col-12 col-md-4">Nama perusahaan</dt>
-                <dd class="col-12 col-md-8">{{ $companyRequest->company_name }}</dd>
-
-                <dt class="col-12 col-md-4">Nama penanggung jawab</dt>
-                <dd class="col-12 col-md-8">{{ $companyRequest->contact_person }}</dd>
-
-                <dt class="col-12 col-md-4">Email perusahaan</dt>
-                <dd class="col-12 col-md-8">{{ $companyRequest->company_email }}</dd>
-
-                <dt class="col-12 col-md-4">Nomor telepon</dt>
-                <dd class="col-12 col-md-8">{{ $companyRequest->company_phone }}</dd>
-
-                <dt class="col-12 col-md-4">Alamat perusahaan</dt>
-                <dd class="col-12 col-md-8">{{ $companyRequest->company_address }}</dd>
-
-                <dt class="col-12 col-md-4">Deskripsi singkat</dt>
-                <dd class="col-12 col-md-8">{{ $companyRequest->company_description }}</dd>
-
-                <dt class="col-12 col-md-4">Status permintaan</dt>
-                <dd class="col-12 col-md-8">
+        <div class="space-y-6">
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+                <h3 class="font-bold text-slate-800 mb-3">Status Permintaan</h3>
+                <div class="text-center">
                     @if($companyRequest->request_status==='menunggu')
-                        <span class="badge text-bg-warning">menunggu</span>
+                        <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-50 text-amber-600 font-semibold text-sm">
+                            <i class="fa-solid fa-clock"></i> Menunggu
+                        </span>
                     @elseif($companyRequest->request_status==='disetujui')
-                        <span class="badge text-bg-success">disetujui</span>
+                        <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 text-emerald-600 font-semibold text-sm">
+                            <i class="fa-solid fa-circle-check"></i> Disetujui
+                        </span>
                     @else
-                        <span class="badge text-bg-danger">ditolak</span>
+                        <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-50 text-red-600 font-semibold text-sm">
+                            <i class="fa-solid fa-circle-xmark"></i> Ditolak
+                        </span>
                     @endif
-                </dd>
+                </div>
+            </div>
 
-                <dt class="col-12 col-md-4">Tanggal permintaan</dt>
-                <dd class="col-12 col-md-8">{{ $companyRequest->created_at?->format('Y-m-d H:i') }}</dd>
+            @if($companyRequest->request_status==='menunggu')
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+                    <h3 class="font-bold text-emerald-600 text-sm mb-3"><i class="fa-solid fa-check mr-1"></i> Setujui Permintaan</h3>
+                    <form method="POST" action="{{ route('admin.company-account-requests.approve', ['companyRequest' => $companyRequest->id]) }}">
+                        @csrf
+                        <div class="mb-3">
+                            <label class="text-xs font-semibold text-slate-600 mb-1 block">Catatan (opsional)</label>
+                            <textarea class="w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-2.5 text-sm focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100 outline-none" id="note" name="note" rows="2">{{ old('note') }}</textarea>
+                        </div>
+                        <button class="w-full px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-sm font-semibold transition" type="submit">Konfirmasi Setujui</button>
+                    </form>
+                </div>
 
-                <dt class="col-12 col-md-4">Catatan admin</dt>
-                <dd class="col-12 col-md-8">{{ $companyRequest->note }}</dd>
-            </dl>
+                <div class="bg-white rounded-2xl border border-red-200 shadow-sm p-5">
+                    <h3 class="font-bold text-red-600 text-sm mb-3"><i class="fa-solid fa-xmark mr-1"></i> Tolak Permintaan</h3>
+                    <form method="POST" action="{{ route('admin.company-account-requests.reject', ['companyRequest' => $companyRequest->id]) }}">
+                        @csrf
+                        <div class="mb-3">
+                            <label class="text-xs font-semibold text-slate-600 mb-1 block">Alasan Penolakan <span class="text-red-500">*</span></label>
+                            <textarea class="w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-2.5 text-sm focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100 outline-none" name="note" rows="2" required>{{ old('note') }}</textarea>
+                        </div>
+                        <button class="w-full px-4 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-xl text-sm font-semibold transition" type="submit">Konfirmasi Tolak</button>
+                    </form>
+                </div>
+            @endif
         </div>
     </div>
-
-    @if($companyRequest->request_status==='menunggu')
-        <div class="row g-3">
-            <div class="col-12 col-lg-6">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h3 class="h6">Setujui permintaan</h3>
-                        <form method="POST" action="{{ route('admin.company-account-requests.approve', ['companyRequest' => $companyRequest->id]) }}">
-
-                            @csrf
-
-                            <div class="mb-3">
-                                <label class="form-label" for="note">Catatan admin (opsional)</label>
-                                <textarea class="form-control @error('note') is-invalid @enderror" id="note" name="note" rows="3">{{ old('note') }}</textarea>
-                                @error('note')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <button class="btn btn-success w-100" type="submit">Konfirmasi Setujui</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-12 col-lg-6">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h3 class="h6">Tolak permintaan</h3>
-                        <form method="POST" action="{{ route('admin.company-account-requests.reject', ['companyRequest' => $companyRequest->id]) }}">
-
-
-                            @csrf
-
-                            <div class="mb-3">
-                                <label class="form-label" for="note_reject">Alasan penolakan (note)</label>
-                                <textarea class="form-control @error('note') is-invalid @enderror" id="note_reject" name="note" rows="4" required>{{ old('note') }}</textarea>
-                                @error('note')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <button class="btn btn-danger w-100" type="submit">Konfirmasi Tolak</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    @endif
-</div>
-</body>
-</html>
-
+@endsection

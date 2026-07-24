@@ -50,7 +50,8 @@ class AuthController extends Controller
             }
         }
 
-        Auth::login($user, true);
+        Auth::login($user, $request->boolean('remember'));
+        $request->session()->regenerate();
 
         return redirect()->intended($this->redirectPathByRole($user));
     }

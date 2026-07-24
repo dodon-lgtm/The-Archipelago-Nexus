@@ -2,21 +2,35 @@
 
 use Illuminate\Support\Facades\Route;
 
-// ─── ALL CONTROLLER IMPORTS ───────────────────
+// ─── GENERAL CONTROLLERS ─────────────────────────
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RegisterController;
-use App\Http\Controllers\CompanyAccountRequestController;
-use App\Http\Controllers\Freelancer\ProjectOfferController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\WorkspaceController;
+use App\Http\Controllers\ProjectSubmissionController; // Di-import dari branch incoming
+
+// ─── ADMIN CONTROLLERS ───────────────────────────
 use App\Http\Controllers\Admin\CompanyAccountRequestAdminController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+use App\Http\Controllers\Admin\ProjectController as AdminProjectController;
+use App\Http\Controllers\Admin\PenawaranController as AdminPenawaranController;
+use App\Http\Controllers\Admin\HasilPekerjaanController as AdminHasilPekerjaanController;
+use App\Http\Controllers\Admin\ReportController as AdminReportController;
+
+// ─── COMPANY CONTROLLERS ─────────────────────────
+use App\Http\Controllers\Company\ProjectController as CompanyProjectController;
 use App\Http\Controllers\Company\ProfilController as CompanyProfilController;
-use App\Http\Controllers\Company\ProjectController;
+
+// ─── FREELANCER CONTROLLERS ──────────────────────
+use App\Http\Controllers\Freelancer\DashboardController as FreelancerDashboardController;
 use App\Http\Controllers\Freelancer\ProjectBrowseController;
 use App\Http\Controllers\Freelancer\ProjectProposalController;
-use App\Http\Controllers\Freelancer\DashboardController;
-use App\Http\Controllers\Freelancer\ProfilController;
 use App\Http\Controllers\Freelancer\SavedProjectController;
+use App\Http\Controllers\Freelancer\ProjectOfferController;
+use App\Http\Controllers\Freelancer\ProfilController as FreelancerProfilController;
+
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
@@ -40,7 +54,7 @@ Route::middleware(['auth', 'ensureFreelancer'])->prefix('freelancer')->name('fre
     ->group(function () {
 
         // Dashboard
-        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/dashboard', [FreelancerDashboardController::class, 'index'])->name('dashboard');
 
         // Projects browsing
         Route::get('/projects', [ProjectBrowseController::class, 'index'])->name('projects.index');
@@ -73,15 +87,17 @@ Route::middleware(['auth', 'ensureFreelancer'])->prefix('freelancer')->name('fre
         Route::post('/workspaces/{workspace}/progress', [WorkspaceController::class, 'updateProgress'])
             ->name('workspaces.progress');
 
-        Route::get('/profile', [ProfilController::class, 'profile'])
-    ->name('profile');
+        // Submissions
+        Route::post('/workspaces/{workspace}/submissions', [ProjectSubmissionController::class, 'store'])
+            ->name('workspaces.submissions.store');
 
-Route::get('/profile/edit', [ProfilController::class, 'editProfile'])
-    ->name('profile.edit');
-
-Route::post('/profile/update', [ProfilController::class, 'updateProfile'])
-    ->name('profile.update');
-
+        // Profile
+        Route::get('/profile', [FreelancerProfilController::class, 'profile'])
+            ->name('profile');
+        Route::get('/profile/edit', [FreelancerProfilController::class, 'editProfile'])
+            ->name('profile.edit');
+        Route::post('/profile/update', [FreelancerProfilController::class, 'updateProfile'])
+            ->name('profile.update');
     });
 
 // ──────────────────────────────────────────────
@@ -121,16 +137,16 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])->prefix('company')->nam
         })->name('dashboard');
 
         // Projects CRUD
-        Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
-        Route::get('/projects/create', [ProjectController::class, 'create'])->name('projects.create');
-        Route::post('/projects', [ProjectController::class, 'store'])->name('projects.store');
-        Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('projects.show');
-        Route::get('/projects/{project}/edit', [ProjectController::class, 'edit'])->name('projects.edit');
-        Route::put('/projects/{project}', [ProjectController::class, 'update'])->name('projects.update');
-        Route::delete('/projects/{project}', [ProjectController::class, 'destroy'])->name('projects.destroy');
+        Route::get('/projects', [CompanyProjectController::class, 'index'])->name('projects.index');
+        Route::get('/projects/create', [CompanyProjectController::class, 'create'])->name('projects.create');
+        Route::post('/projects', [CompanyProjectController::class, 'store'])->name('projects.store');
+        Route::get('/projects/{project}', [CompanyProjectController::class, 'show'])->name('projects.show');
+        Route::get('/projects/{project}/edit', [CompanyProjectController::class, 'edit'])->name('projects.edit');
+        Route::put('/projects/{project}', [CompanyProjectController::class, 'update'])->name('projects.update');
+        Route::delete('/projects/{project}', [CompanyProjectController::class, 'destroy'])->name('projects.destroy');
 
         // Select freelancer
-        Route::post('/projects/{project}/penawaran/{penawaran}/select', [ProjectController::class, 'selectFreelancer'])
+        Route::post('/projects/{project}/penawaran/{penawaran}/select', [CompanyProjectController::class, 'selectFreelancer'])
             ->name('projects.penawaran.select');
 
         // Workspace
@@ -143,12 +159,17 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])->prefix('company')->nam
         Route::post('/workspaces/{workspace}/complete', [WorkspaceController::class, 'complete'])
             ->name('workspaces.complete');
 
-       Route::get('/profile', [CompanyProfilController::class, 'profile'])
-            ->name('profile');
+        // Submissions
+        Route::post('/workspaces/{workspace}/submissions/{submission}/accept', [ProjectSubmissionController::class, 'accept'])
+            ->name('workspaces.submissions.accept');
+        Route::post('/workspaces/{workspace}/submissions/{submission}/revision', [ProjectSubmissionController::class, 'requestRevision'])
+            ->name('workspaces.submissions.revision');
 
+        // Profile
+        Route::get('/profile', [CompanyProfilController::class, 'profile'])
+            ->name('profile');
         Route::get('/profile/edit', [CompanyProfilController::class, 'editProfile'])
             ->name('profile.edit');
-
         Route::post('/profile/update', [CompanyProfilController::class, 'updateProfile'])
             ->name('profile.update');
     });
@@ -159,19 +180,46 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])->prefix('company')->nam
 Route::middleware(['auth', 'ensureAdmin'])->prefix('admin')->name('admin.')
     ->group(function () {
 
-        Route::get('/dashboard', function () {
-            return redirect()->route('admin.company-account-requests.index');
-        })->name('dashboard');
+        // Dashboard
+        Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
+        // Users
+        Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
+        Route::get('/users/{user}', [AdminUserController::class, 'show'])->name('users.show');
+        Route::post('/users/{user}/update-role', [AdminUserController::class, 'updateRole'])->name('users.update-role');
+        Route::delete('/users/{user}', [AdminUserController::class, 'destroy'])->name('users.destroy');
+
+        // Categories
+        Route::get('/categories', [AdminCategoryController::class, 'index'])->name('categories.index');
+        Route::post('/categories', [AdminCategoryController::class, 'store'])->name('categories.store');
+        Route::put('/categories/{category}', [AdminCategoryController::class, 'update'])->name('categories.update');
+        Route::delete('/categories/{category}', [AdminCategoryController::class, 'destroy'])->name('categories.destroy');
+
+        // Projects
+        Route::get('/projects', [AdminProjectController::class, 'index'])->name('projects.index');
+        Route::get('/projects/{project}', [AdminProjectController::class, 'show'])->name('projects.show');
+        Route::delete('/projects/{project}', [AdminProjectController::class, 'destroy'])->name('projects.destroy');
+
+        // Penawarans
+        Route::get('/penawarans', [AdminPenawaranController::class, 'index'])->name('penawarans.index');
+        Route::get('/penawarans/{penawaran}', [AdminPenawaranController::class, 'show'])->name('penawarans.show');
+
+        // Hasil Pekerjaan (Workspaces)
+        Route::get('/hasil-pekerjaan', [AdminHasilPekerjaanController::class, 'index'])->name('hasil-pekerjaan.index');
+        Route::get('/hasil-pekerjaan/{workspace}', [AdminHasilPekerjaanController::class, 'show'])->name('hasil-pekerjaan.show');
+
+        // Reports
+        Route::get('/reports', [AdminReportController::class, 'index'])->name('reports.index');
+        Route::get('/reports/{report}', [AdminReportController::class, 'show'])->name('reports.show');
+        Route::post('/reports/{report}/update-status', [AdminReportController::class, 'updateStatus'])->name('reports.update-status');
+
+        // Company Account Requests
         Route::get('/company-account-requests', [CompanyAccountRequestAdminController::class, 'index'])
             ->name('company-account-requests.index');
-
         Route::get('/company-account-requests/{request}', [CompanyAccountRequestAdminController::class, 'show'])
             ->name('company-account-requests.show');
-
         Route::post('/company-account-requests/{companyRequest}/approve', [CompanyAccountRequestAdminController::class, 'approve'])
             ->name('company-account-requests.approve');
-
         Route::post('/company-account-requests/{companyRequest}/reject', [CompanyAccountRequestAdminController::class, 'reject'])
             ->name('company-account-requests.reject');
     });
@@ -184,4 +232,3 @@ Route::middleware('auth')->prefix('notifications')->name('notifications.')->grou
     Route::post('/{notification}/read', [NotificationController::class, 'markRead'])->name('mark-read');
     Route::post('/mark-all-read', [NotificationController::class, 'markAllRead'])->name('mark-all-read');
 });
-

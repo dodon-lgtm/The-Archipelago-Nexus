@@ -9,7 +9,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Notifications\Notifiable;
-use Symfony\Component\HttpKernel\Profiler\Profile;
 
 class User extends Authenticatable
 {
@@ -22,12 +21,12 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-    'name',
-    'email',
-    'phone', // <--- Pastikan baris ini ada
-    'password',
-    'role',
-];
+        'name',
+        'email',
+        'phone',
+        'password',
+        'role',
+    ];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -84,12 +83,17 @@ class User extends Authenticatable
     }
 
     public function profile(): HasOne
-{
-    return $this->hasOne(FreelancerProfile::class, 'user_id'); // Sesuaikan foreign key jika berbeda (misal: user_id)
-}
+    {
+        return $this->hasOne(FreelancerProfile::class, 'user_id');
+    }
 
-    public function companyProfile()
-{
-    return $this->hasOne(CompanyProfile::class); // sesuaikan nama model profile Anda
-}
+    public function companyProfile(): HasOne
+    {
+        return $this->hasOne(CompanyProfile::class, 'user_id');
+    }
+
+    public function projectSubmissions(): HasMany
+    {
+        return $this->hasMany(ProjectSubmission::class, 'submitted_by');
+    }
 }

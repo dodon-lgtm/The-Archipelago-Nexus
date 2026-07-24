@@ -68,6 +68,9 @@ class WorkspaceController extends Controller
                 $q->latest();
             },
             'latestProgress',
+            'submissions' => function ($q) {
+                $q->with(['submitter', 'files'])->latest();
+            },
         ]);
 
         $allStages = [
