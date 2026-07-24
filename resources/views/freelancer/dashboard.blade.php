@@ -96,7 +96,7 @@
                 <h3 class="text-2xl font-black">0</h3>
             </div>
         </div>
-        <a href="#" class="block text-center text-xs font-bold text-amber-600 py-2 rounded-lg bg-amber-50 hover:bg-amber-600 hover:text-white transition">
+        <a href="/freelancer/workspaces" class="block text-center text-xs font-bold text-amber-600 py-2 rounded-lg bg-amber-50 hover:bg-amber-600 hover:text-white transition">
             Lihat Pesan
         </a>
     </div>

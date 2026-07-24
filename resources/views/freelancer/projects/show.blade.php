@@ -21,7 +21,7 @@
 <div class="max-w-7xl mx-auto py-10 px-6">
 
     <!-- Tombol Kembali -->
-    <a href="{{ route('freelancer.projects.index') }}"
+    <a href="{{ route('freelancer.dashboard') }}"
         class="inline-flex items-center gap-2 text-cyan-600 hover:text-cyan-700 font-semibold mb-6">
         <i class="fa fa-arrow-left"></i> Kembali
     </a>

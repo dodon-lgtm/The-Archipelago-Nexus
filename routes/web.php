@@ -21,6 +21,7 @@ use App\Http\Controllers\Freelancer\DashboardController as FreelancerDashboardCo
 use App\Http\Controllers\Freelancer\ProjectBrowseController;
 use App\Http\Controllers\Freelancer\ProjectProposalController;
 use App\Http\Controllers\Freelancer\DashboardController;
+use App\Http\Controllers\Freelancer\SavedProjectController;
 
 
 
