@@ -41,6 +41,18 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
+        // Recent penawarans
+        $recentPenawarans = Penawaran::with(['freelancer', 'project'])
+            ->latest()
+            ->take(5)
+            ->get();
+
+        // Recent reports
+        $recentReports = Report::with('reporter')
+            ->latest()
+            ->take(5)
+            ->get();
+
         return view('admin.dashboard', compact(
             'totalUsers',
             'totalFreelancers',
@@ -52,7 +64,9 @@ class DashboardController extends Controller
             'pendingCompanyRequests',
             'recentProjects',
             'recentUsers',
-            'recentRequests'
+            'recentRequests',
+            'recentPenawarans',
+            'recentReports'
         ));
     }
 }

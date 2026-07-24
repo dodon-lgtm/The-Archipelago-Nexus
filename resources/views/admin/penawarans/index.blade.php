@@ -1,18 +1,9 @@
-@extends('admin.layouts.admin')
+@extends('layouts.admin')
 
-@section('title', 'Kelola Penawaran')
+@section('title', 'Penawaran')
+@section('breadcrumb', 'Penawaran')
 
 @section('content')
-    <div class="mb-6">
-        <h1 class="text-2xl font-extrabold text-slate-800">Kelola Penawaran</h1>
-        <p class="text-sm text-slate-500 mt-1">Semua penawaran dari freelancer</p>
-    </div>
-
-    {{-- Flash Messages --}}
-    @if (session('success'))
-        <div class="flash-message mb-4 bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-xl text-sm font-medium">{{ session('success') }}</div>
-    @endif
-
     {{-- Search & Filter --}}
     <div class="bg-white rounded-2xl border border-slate-200 p-4 mb-4 shadow-sm">
         <form method="GET" action="{{ route('admin.penawarans.index') }}" class="flex flex-wrap gap-3 items-end">
@@ -31,12 +22,8 @@
                     <option value="Ditolak" @selected(request('status') == 'Ditolak')>Ditolak</option>
                 </select>
             </div>
-            <button type="submit" class="px-5 py-2.5 bg-cyan-500 hover:bg-cyan-600 text-white rounded-xl text-sm font-semibold transition">
-                <i class="fa-solid fa-search mr-1"></i> Cari
-            </button>
-            <a href="{{ route('admin.penawarans.index') }}" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-sm font-semibold transition">
-                Reset
-            </a>
+            <button type="submit" class="px-5 py-2.5 bg-cyan-500 hover:bg-cyan-600 text-white rounded-xl text-sm font-semibold transition"><i class="fa-solid fa-search mr-1"></i> Cari</button>
+            <a href="{{ route('admin.penawarans.index') }}" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-sm font-semibold transition">Reset</a>
         </form>
     </div>
 
@@ -61,9 +48,7 @@
                         <tr class="hover:bg-slate-50 transition">
                             <td class="px-5 py-4">
                                 <div class="flex items-center gap-2">
-                                    <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs font-bold">
-                                        {{ strtoupper(substr($penawaran->freelancer->name ?? '?', 0, 1)) }}
-                                    </div>
+                                    <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs font-bold">{{ strtoupper(substr($penawaran->freelancer->name ?? '?', 0, 1)) }}</div>
                                     <span class="font-semibold text-slate-800">{{ $penawaran->freelancer->name ?? '—' }}</span>
                                 </div>
                             </td>
@@ -75,30 +60,19 @@
                                 <span class="text-xs px-2.5 py-1 rounded-full font-semibold
                                     @if($penawaran->status == 'Diterima') bg-emerald-50 text-emerald-600
                                     @elseif($penawaran->status == 'Ditolak') bg-red-50 text-red-600
-                                    @else bg-amber-50 text-amber-600 @endif">
-                                    {{ $penawaran->status }}
-                                </span>
+                                    @else bg-amber-50 text-amber-600 @endif">{{ $penawaran->status }}</span>
                             </td>
                             <td class="px-5 py-4 text-center text-xs text-slate-500">{{ $penawaran->created_at->format('d M Y') }}</td>
                             <td class="px-5 py-4 text-right">
-                                <a href="{{ route('admin.penawarans.show', $penawaran) }}"
-                                   class="px-3 py-1.5 text-xs font-semibold bg-cyan-50 text-cyan-600 hover:bg-cyan-100 rounded-lg transition">
-                                    Detail
-                                </a>
+                                <a href="{{ route('admin.penawarans.show', $penawaran) }}" class="px-3 py-1.5 text-xs font-semibold bg-cyan-50 text-cyan-600 hover:bg-cyan-100 rounded-lg transition">Detail</a>
                             </td>
                         </tr>
                     @empty
-                        <tr>
-                            <td colspan="8" class="px-5 py-12 text-center text-sm text-slate-400">Belum ada penawaran.</td>
-                        </tr>
+                        <tr><td colspan="8" class="px-5 py-12 text-center text-sm text-slate-400">Belum ada penawaran.</td></tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
     </div>
-
-    <div class="mt-4">
-        {{ $penawarans->links() }}
-    </div>
+    <div class="mt-4">{{ $penawarans->links() }}</div>
 @endsection
-

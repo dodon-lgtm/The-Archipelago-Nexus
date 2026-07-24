@@ -1,22 +1,14 @@
-@extends('admin.layouts.admin')
+@extends('layouts.admin')
 
 @section('title', 'Detail Pengguna')
+@section('breadcrumb', 'Detail Pengguna')
 
 @section('content')
-    <div class="mb-6">
-        <a href="{{ route('admin.users.index') }}" class="text-sm text-cyan-600 hover:text-cyan-700 font-semibold mb-2 inline-block">
-            <i class="fa-solid fa-arrow-left mr-1"></i> Kembali ke Daftar Pengguna
+    <div class="mb-4">
+        <a href="{{ route('admin.users.index') }}" class="text-sm text-cyan-600 hover:text-cyan-700 font-semibold inline-flex items-center gap-1">
+            <i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Pengguna
         </a>
-        <h1 class="text-2xl font-extrabold text-slate-800">Detail Pengguna</h1>
     </div>
-
-    {{-- Flash Messages --}}
-    @if (session('success'))
-        <div class="flash-message mb-4 bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-xl text-sm font-medium">{{ session('success') }}</div>
-    @endif
-    @if (session('error'))
-        <div class="flash-message mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm font-medium">{{ session('error') }}</div>
-    @endif
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {{-- Profile Card --}}
@@ -46,7 +38,6 @@
                 </div>
             </div>
 
-            {{-- Change Role Form --}}
             @if($user->id !== auth()->id())
                 <div class="border-t border-slate-100 pt-4 mt-4">
                     <h3 class="text-sm font-bold text-slate-700 mb-2">Ubah Role</h3>
@@ -65,9 +56,8 @@
             @endif
         </div>
 
-        {{-- Stats & Activity --}}
+        {{-- Stats --}}
         <div class="lg:col-span-2 space-y-6">
-            {{-- Stats --}}
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
                     <div class="text-2xl font-extrabold text-slate-800">{{ $user->penawarans_count }}</div>
@@ -100,15 +90,13 @@
                 </div>
             </div>
 
-            {{-- Delete User --}}
             @if($user->id !== auth()->id() && $user->role !== 'admin')
                 <div class="bg-white rounded-2xl border border-red-200 shadow-sm p-5">
                     <h3 class="font-bold text-red-600 text-sm mb-1">Zona Berbahaya</h3>
                     <p class="text-xs text-slate-500 mb-3">Hapus akun pengguna ini secara permanen.</p>
                     <form method="POST" action="{{ route('admin.users.destroy', $user) }}"
                           onsubmit="return confirm('Yakin ingin menghapus pengguna {{ $user->name }}? Semua data terkait akan ikut terhapus.')">
-                        @csrf
-                        @method('DELETE')
+                        @csrf @method('DELETE')
                         <button type="submit" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl text-sm font-semibold transition">
                             <i class="fa-solid fa-trash-can mr-1"></i> Hapus Pengguna
                         </button>
@@ -118,4 +106,3 @@
         </div>
     </div>
 @endsection
-

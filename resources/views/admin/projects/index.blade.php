@@ -1,21 +1,9 @@
-@extends('admin.layouts.admin')
+@extends('layouts.admin')
 
-@section('title', 'Kelola Proyek')
+@section('title', 'Proyek')
+@section('breadcrumb', 'Proyek')
 
 @section('content')
-    <div class="mb-6">
-        <h1 class="text-2xl font-extrabold text-slate-800">Kelola Proyek</h1>
-        <p class="text-sm text-slate-500 mt-1">Semua proyek dari seluruh perusahaan</p>
-    </div>
-
-    {{-- Flash Messages --}}
-    @if (session('success'))
-        <div class="flash-message mb-4 bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-xl text-sm font-medium">{{ session('success') }}</div>
-    @endif
-    @if (session('error'))
-        <div class="flash-message mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm font-medium">{{ session('error') }}</div>
-    @endif
-
     {{-- Search & Filter --}}
     <div class="bg-white rounded-2xl border border-slate-200 p-4 mb-4 shadow-sm">
         <form method="GET" action="{{ route('admin.projects.index') }}" class="flex flex-wrap gap-3 items-end">
@@ -72,50 +60,31 @@
                             <td class="px-5 py-4 font-semibold text-slate-800">{{ $project->project_name }}</td>
                             <td class="px-5 py-4 text-slate-600">{{ $project->owner->name ?? '—' }}</td>
                             <td class="px-5 py-4">
-                                <span class="text-xs px-2 py-1 rounded-full bg-slate-100 text-slate-600">
-                                    {{ $project->category->name ?? 'Tanpa Kategori' }}
-                                </span>
+                                <span class="text-xs px-2 py-1 rounded-full bg-slate-100 text-slate-600">{{ $project->category->name ?? 'Tanpa Kategori' }}</span>
                             </td>
-                            <td class="px-5 py-4 text-right font-semibold text-slate-700">
-                                {{ $project->budget ? 'Rp ' . number_format($project->budget) : '—' }}
-                            </td>
+                            <td class="px-5 py-4 text-right font-semibold text-slate-700">{{ $project->budget ? 'Rp ' . number_format($project->budget) : '—' }}</td>
                             <td class="px-5 py-4 text-center">
                                 <span class="text-xs px-2.5 py-1 rounded-full font-semibold
                                     @if($project->status == 'Open') bg-emerald-50 text-emerald-600
-                                    @else bg-slate-100 text-slate-600 @endif">
-                                    {{ $project->status }}
-                                </span>
+                                    @else bg-slate-100 text-slate-600 @endif">{{ $project->status }}</span>
                             </td>
                             <td class="px-5 py-4 text-center text-xs text-slate-500">{{ $project->created_at->format('d M Y') }}</td>
                             <td class="px-5 py-4 text-right">
                                 <div class="flex items-center justify-end gap-2">
-                                    <a href="{{ route('admin.projects.show', $project) }}"
-                                       class="px-3 py-1.5 text-xs font-semibold bg-cyan-50 text-cyan-600 hover:bg-cyan-100 rounded-lg transition">
-                                        Detail
-                                    </a>
-                                    <form method="POST" action="{{ route('admin.projects.destroy', $project) }}"
-                                          onsubmit="return confirm('Hapus proyek {{ $project->project_name }}?')" class="inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="px-3 py-1.5 text-xs font-semibold bg-red-50 text-red-600 hover:bg-red-100 rounded-lg transition">
-                                            Hapus
-                                        </button>
+                                    <a href="{{ route('admin.projects.show', $project) }}" class="px-3 py-1.5 text-xs font-semibold bg-cyan-50 text-cyan-600 hover:bg-cyan-100 rounded-lg transition">Detail</a>
+                                    <form method="POST" action="{{ route('admin.projects.destroy', $project) }}" onsubmit="return confirm('Hapus proyek {{ $project->project_name }}?')" class="inline">
+                                        @csrf @method('DELETE')
+                                        <button type="submit" class="px-3 py-1.5 text-xs font-semibold bg-red-50 text-red-600 hover:bg-red-100 rounded-lg transition">Hapus</button>
                                     </form>
                                 </div>
                             </td>
                         </tr>
                     @empty
-                        <tr>
-                            <td colspan="7" class="px-5 py-12 text-center text-sm text-slate-400">Belum ada proyek.</td>
-                        </tr>
+                        <tr><td colspan="7" class="px-5 py-12 text-center text-sm text-slate-400">Belum ada proyek.</td></tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
     </div>
-
-    <div class="mt-4">
-        {{ $projects->links() }}
-    </div>
+    <div class="mt-4">{{ $projects->links() }}</div>
 @endsection
-

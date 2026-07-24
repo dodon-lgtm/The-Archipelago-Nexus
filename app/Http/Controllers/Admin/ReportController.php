@@ -15,7 +15,7 @@ class ReportController extends Controller
         $query = Report::with([
             'reporter',
             'project',
-            'handler',
+            'reportedUser',
         ]);
 
         // Filter by status
@@ -23,14 +23,14 @@ class ReportController extends Controller
             $query->where('status', $status);
         }
 
-        // Search by reporter name or description
+        // Search by subject, description, or reporter name
         if ($search = $request->input('search')) {
             $query->where(function ($q) use ($search) {
-                $q->whereHas('reporter', function ($sub) use ($search) {
-                    $sub->where('name', 'like', "%{$search}%");
-                })
-                ->orWhere('description', 'like', "%{$search}%")
-                ->orWhere('category', 'like', "%{$search}%");
+                $q->where('subject', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%")
+                  ->orWhereHas('reporter', function ($sub) use ($search) {
+                      $sub->where('name', 'like', "%{$search}%");
+                  });
             });
         }
 
@@ -43,8 +43,9 @@ class ReportController extends Controller
     {
         $report->load([
             'reporter',
+            'reportedUser',
             'project.owner',
-            'handler',
+            'penawaran.freelancer',
         ]);
 
         return view('admin.reports.show', compact('report'));
@@ -60,8 +61,6 @@ class ReportController extends Controller
         $report->update([
             'status' => $validated['status'],
             'admin_note' => $validated['admin_note'] ?? $report->admin_note,
-            'handled_by' => auth()->id(),
-            'handled_at' => now(),
         ]);
 
         return redirect()
@@ -69,4 +68,3 @@ class ReportController extends Controller
             ->with('success', 'Status laporan berhasil diperbarui.');
     }
 }
-

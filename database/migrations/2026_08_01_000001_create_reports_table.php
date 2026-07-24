@@ -11,10 +11,16 @@ return new class extends Migration
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('user_id')
+            $table->foreignId('reporter_id')
                 ->constrained('users')
                 ->cascadeOnDelete()
                 ->comment('Pelapor');
+
+            $table->foreignId('reported_user_id')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete()
+                ->comment('User yang dilaporkan (opsional)');
 
             $table->foreignId('project_id')
                 ->nullable()
@@ -22,8 +28,14 @@ return new class extends Migration
                 ->nullOnDelete()
                 ->comment('Proyek terkait laporan (opsional)');
 
-            $table->string('category')
-                ->comment('Kategori laporan: penipuan, pelanggaran, spam, lainnya');
+            $table->foreignId('penawaran_id')
+                ->nullable()
+                ->constrained('penawarans')
+                ->nullOnDelete()
+                ->comment('Penawaran terkait laporan (opsional)');
+
+            $table->string('subject')
+                ->comment('Judul/subjek laporan');
 
             $table->text('description')
                 ->comment('Deskripsi laporan');
@@ -38,14 +50,6 @@ return new class extends Migration
 
             $table->text('admin_note')->nullable()
                 ->comment('Catatan admin');
-
-            $table->foreignId('handled_by')
-                ->nullable()
-                ->constrained('users')
-                ->nullOnDelete()
-                ->comment('Admin yang menangani');
-
-            $table->timestamp('handled_at')->nullable();
 
             $table->timestamps();
         });

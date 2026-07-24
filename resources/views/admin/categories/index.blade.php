@@ -1,25 +1,15 @@
-@extends('admin.layouts.admin')
+@extends('layouts.admin')
 
-@section('title', 'Kelola Kategori')
+@section('title', 'Kategori')
+@section('breadcrumb', 'Kategori')
 
 @section('content')
-    <div class="mb-6">
-        <h1 class="text-2xl font-extrabold text-slate-800">Kelola Kategori</h1>
-        <p class="text-sm text-slate-500 mt-1">Atur kategori proyek di platform</p>
-    </div>
-
-    {{-- Flash Messages --}}
-    @if (session('success'))
-        <div class="flash-message mb-4 bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-xl text-sm font-medium">{{ session('success') }}</div>
-    @endif
-    @if (session('error'))
-        <div class="flash-message mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm font-medium">{{ session('error') }}</div>
-    @endif
-
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {{-- Add Category Form --}}
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
-            <h2 class="font-bold text-slate-800 mb-4">Tambah Kategori</h2>
+            <h2 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-plus-circle text-cyan-500"></i> Tambah Kategori
+            </h2>
             <form method="POST" action="{{ route('admin.categories.store') }}">
                 @csrf
                 <div class="mb-3">
@@ -81,19 +71,17 @@
                                     <td class="px-5 py-4 text-center text-slate-500 text-xs">{{ $category->created_at->format('d M Y') }}</td>
                                     <td class="px-5 py-4 text-right">
                                         <div class="flex items-center justify-end gap-2">
-                                            {{-- Edit Button triggers modal --}}
                                             <button type="button" onclick="openEditModal({{ $category->id }}, '{{ $category->name }}')"
                                                     class="px-3 py-1.5 text-xs font-semibold bg-amber-50 text-amber-600 hover:bg-amber-100 rounded-lg transition">
-                                                Edit
+                                                <i class="fa-solid fa-pen mr-1"></i> Edit
                                             </button>
-
                                             <form method="POST" action="{{ route('admin.categories.destroy', $category) }}"
                                                   onsubmit="return confirm('Hapus kategori {{ $category->name }}?')" class="inline">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="px-3 py-1.5 text-xs font-semibold bg-red-50 text-red-600 hover:bg-red-100 rounded-lg transition"
                                                     @if($category->projects_count > 0) disabled title="Kategori memiliki proyek" @endif>
-                                                    Hapus
+                                                    <i class="fa-solid fa-trash-can mr-1"></i> Hapus
                                                 </button>
                                             </form>
                                         </div>
@@ -156,10 +144,8 @@
         document.getElementById('editModal').classList.add('hidden');
     }
 
-    // Close modal on outside click
     document.getElementById('editModal')?.addEventListener('click', function(e) {
         if (e.target === this) closeEditModal();
     });
 </script>
 @endpush
-

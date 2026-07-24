@@ -1,22 +1,9 @@
-@extends('admin.layouts.admin')
+@extends('layouts.admin')
 
-@section('title', 'Kelola Pengguna')
+@section('title', 'Pengguna')
+@section('breadcrumb', 'Pengguna')
 
 @section('content')
-    <div class="mb-6">
-        <h1 class="text-2xl font-extrabold text-slate-800">Kelola Pengguna</h1>
-        <p class="text-sm text-slate-500 mt-1">Daftar semua pengguna terdaftar di platform</p>
-    </div>
-
-    {{-- Flash Messages --}}
-    @if (session('success'))
-        <div class="flash-message mb-4 bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-xl text-sm font-medium">{{ session('success') }}</div>
-    @endif
-    @if (session('error'))
-        <div class="flash-message mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm font-medium">{{ session('error') }}</div>
-    @endif
-
-    {{-- Search & Filter --}}
     <div class="bg-white rounded-2xl border border-slate-200 p-4 mb-4 shadow-sm">
         <form method="GET" action="{{ route('admin.users.index') }}" class="flex flex-wrap gap-3 items-end">
             <div class="flex-1 min-w-[200px]">
@@ -43,7 +30,6 @@
         </form>
     </div>
 
-    {{-- Users Table --}}
     <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
@@ -122,9 +108,7 @@
         </div>
     </div>
 
-    {{-- Pagination --}}
     <div class="mt-4">
         {{ $users->links() }}
     </div>
 @endsection
-

@@ -11,23 +11,24 @@ class Report extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
+        'reporter_id',
+        'reported_user_id',
         'project_id',
-        'category',
+        'penawaran_id',
+        'subject',
         'description',
         'status',
         'admin_note',
-        'handled_by',
-        'handled_at',
-    ];
-
-    protected $casts = [
-        'handled_at' => 'datetime',
     ];
 
     public function reporter(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'reporter_id');
+    }
+
+    public function reportedUser(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'reported_user_id');
     }
 
     public function project(): BelongsTo
@@ -35,9 +36,9 @@ class Report extends Model
         return $this->belongsTo(Project::class, 'project_id');
     }
 
-    public function handler(): BelongsTo
+    public function penawaran(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'handled_by');
+        return $this->belongsTo(Penawaran::class, 'penawaran_id');
     }
 }
 
