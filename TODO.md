@@ -1,47 +1,69 @@
-# TODO: Admin Panel Development
+# COMPLETED - Tugas 3.15 (Freelancer Mengirim Hasil Pekerjaan) - REVISI
 
-## Completed Steps
-- [x] Analyze existing codebase
-- [x] Plan approved by user
+## DAFTAR FILE BARU (6 file)
+1. `database/migrations/2026_07_30_000001_create_project_submissions_table.php` - Tabel utama submission
+2. `database/migrations/2026_07_31_000001_create_submission_files_table.php` - Tabel multiple file per submission
+3. `app/Models/ProjectSubmission.php` - Model submission dengan relasi files()
+4. `app/Models/SubmissionFile.php` - Model file individual dengan accessor icon, color, size
+5. `app/Http/Controllers/ProjectSubmissionController.php` - Controller handle upload multi-file (100MB, 20+ ekstensi)
+6. `resources/views/workspace/_submissions.blade.php` - Partial view submissions dengan file list per item
 
-## Step 1: Database & Model
-- [x] Create migration `create_reports_table`
-- [x] Create `Report` model
-- [x] Run `php artisan migrate`
+## DAFTAR FILE YANG DIUBAH (4 file)
+1. `app/Http/Controllers/WorkspaceController.php` - Load `submissions` dengan `files` relation
+2. `resources/views/workspace/show.blade.php` - Layout single column: Info/Progress → Chat → Submissions → Timeline/Actions
+3. `routes/web.php` - Route submission store, accept, revision
+4. `app/Models/User.php` - Tambah relasi projectSubmissions()
 
-## Step 2: Admin Layout
-- [x] Create `resources/views/admin/layouts/admin.blade.php`
+## DETAIL IMPLEMENTASI
 
-## Step 3: Controllers
-- [x] Create `DashboardController.php`
-- [x] Create `UserController.php`
-- [x] Create `CategoryController.php`
-- [x] Create `ProjectController.php`
-- [x] Create `PenawaranController.php`
-- [x] Create `HasilPekerjaanController.php`
-- [x] Create `ReportController.php`
+### ✅ Multiple File Upload
+- `<input type="file" name="files[]" multiple>` pada modal upload
+- Semua file disimpan sebagai satu submission
+- Setiap file direkam di tabel `submission_files`
 
-## Step 4: Blade Views
-- [x] Create `admin/dashboard.blade.php`
-- [x] Create `admin/users/index.blade.php`
-- [x] Create `admin/users/show.blade.php`
-- [x] Create `admin/categories/index.blade.php`
-- [x] Create `admin/projects/index.blade.php`
-- [x] Create `admin/projects/show.blade.php`
-- [x] Create `admin/penawarans/index.blade.php`
-- [x] Create `admin/penawarans/show.blade.php`
-- [x] Create `admin/hasil-pekerjaan/index.blade.php`
-- [x] Create `admin/hasil-pekerjaan/show.blade.php`
-- [x] Create `admin/reports/index.blade.php`
-- [x] Create `admin/reports/show.blade.php`
+### ✅ Tabel `submission_files`
+- `id`, `submission_id` (FK), `file_name`, `file_path`, `file_size`, `mime_type`, `created_at`
+- Relasi: ProjectSubmission hasMany SubmissionFile
 
-## Step 5: Update Existing Files
-- [x] Update `routes/web.php` - Add admin routes
-- [x] Update `resources/views/navbar/navigasi.blade.php` - Admin sidebar
-- [x] Update `resources/views/navbar/nav.blade.php` - Admin topbar links
+### ✅ Format File Diizinkan (20+ ekstensi)
+- Images: png, jpg, jpeg, webp, gif
+- Video: mp4, mov, avi, mkv
+- Document: pdf, doc, docx, xls, xlsx, ppt, pptx, txt
+- Database/Archive: sql, zip, rar, 7z
+- Source Code/Lain: json, xml, fig, apk
 
-## Step 6: Verification
-- [ ] Verify routes with `php artisan route:list`
-- [ ] Login as admin and check dashboard
-- [ ] Verify no 500 errors
+### ✅ Validasi
+- Minimal 1 file
+- Total ukuran seluruh file maksimal 100 MB
+- Ekstensi sesuai daftar yang diizinkan
+
+### ✅ Tampilan File per Submission
+- Card: Daftar File dengan icon sesuai tipe
+- Nama file, ukuran terformat (KB/MB/GB)
+- Tombol Download per file
+
+### ✅ UI Layout Baru (Single Column)
+1. Breadcrumb
+2. Row 1: Info Project + Progress Bar + Stage (grid 3 kolom)
+3. Row 2: Chat (full width, h-[450px])
+4. Row 3: Hasil Pekerjaan / Submissions (full width)
+5. Row 4: Timeline Progress (2/3) + Actions (1/3)
+
+### ✅ System Messages (via Chat)
+- "Freelancer telah mengirim hasil pekerjaan."
+- "Perusahaan telah menerima hasil pekerjaan. Catatan: ..."
+- "Perusahaan meminta revisi terhadap hasil pekerjaan. Catatan: ..."
+
+### ✅ Fitur Lain
+- Submission terbaru tampil paling atas (timeline)
+- Riwayat submission tidak pernah dihapus
+- Jika sudah ada submission accepted, freelancer tidak bisa upload
+- Company hanya bisa Terima/Minta Revisi pada submission pending
+
+## FITUR LAMA YANG TETAP KOMPATIBEL
+- ✅ Workspace, Progress, Chat
+- ✅ Remember Me, Login
+- ✅ Middleware, Dashboard (semua role)
+- ✅ CRUD Project, Penawaran, Approval Company
+- ✅ Notifikasi, Saved Projects
 

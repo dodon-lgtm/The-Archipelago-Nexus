@@ -52,5 +52,11 @@ class Workspace extends Model
         return $this->hasOne(ProgressHistory::class, 'workspace_id')
             ->latestOfMany();
     }
+
+    public function submissions(): HasMany
+    {
+        return $this->hasMany(ProjectSubmission::class, 'workspace_id')
+            ->latest();
+    }
 }
 
