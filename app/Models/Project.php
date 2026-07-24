@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Project extends Model
 {
@@ -33,13 +34,19 @@ class Project extends Model
     {
         return $this->belongsTo(Category::class);
     }
+
     public function penawarans(): HasMany
-{
-    return $this->hasMany(Penawaran::class);
-}
+    {
+        return $this->hasMany(Penawaran::class);
+    }
 
     public function savedByFreelancers(): HasMany
     {
         return $this->hasMany(SavedProject::class, 'project_id');
+    }
+
+    public function workspace(): HasOne
+    {
+        return $this->hasOne(Workspace::class, 'project_id');
     }
 }

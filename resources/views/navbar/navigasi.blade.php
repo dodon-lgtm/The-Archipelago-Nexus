@@ -24,31 +24,31 @@
 
             @if(Auth::user()->role == 'freelancer')
 
-                <a href="{{ route('freelancer.projects.index') }}"
+                <a href="{{ route('freelancer.dashboard') }}"
                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition
-                   {{ request()->routeIs('freelancer.projects.*')
+                   {{ request()->routeIs('freelancer.dashboard')
                         ? 'bg-cyan-50 text-cyan-700 font-bold'
                         : 'text-slate-600 hover:bg-slate-100' }}">
-                    <i class="fa-solid fa-briefcase w-5"></i>
-                    <span>Proyek</span>
+                    <i class="fa-solid fa-house w-5"></i>
+                    <span>Dashboard</span>
                 </a>
 
-                <a href="#"
-                   class="flex items-center gap-3 px-4 py-3 rounded-xl transition text-slate-600 hover:bg-slate-100">
+                <a href="{{ route('freelancer.proyek') }}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-xl transition
+                   {{ request()->routeIs('freelancer.proyek')
+                        ? 'bg-cyan-50 text-cyan-700 font-bold'
+                        : 'text-slate-600 hover:bg-slate-100' }}">
                     <i class="fa-solid fa-magnifying-glass w-5"></i>
                     <span>Cari Proyek</span>
                 </a>
 
-                <a href="#"
-                   class="flex items-center gap-3 px-4 py-3 rounded-xl transition text-slate-600 hover:bg-slate-100">
-                    <i class="fa-regular fa-bookmark w-5"></i>
-                    <span>Tersimpan</span>
-                </a>
-
-                <a href="#"
-                   class="flex items-center gap-3 px-4 py-3 rounded-xl transition text-slate-600 hover:bg-slate-100">
-                    <i class="fa-solid fa-bell w-5"></i>
-                    <span>Notifikasi</span>
+                <a href="{{ route('freelancer.workspaces.index') }}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-xl transition
+                   {{ request()->routeIs('freelancer.workspaces.*')
+                        ? 'bg-cyan-50 text-cyan-700 font-bold'
+                        : 'text-slate-600 hover:bg-slate-100' }}">
+                    <i class="fa-solid fa-layer-group w-5"></i>
+                    <span>Workspace Saya</span>
                 </a>
 
             @elseif(Auth::user()->role == 'company')
@@ -79,6 +79,15 @@
                         : 'text-slate-600 hover:bg-slate-100' }}">
                     <i class="fa-solid fa-folder-open w-5"></i>
                     <span>Proyek Saya</span>
+                </a>
+
+                <a href="{{ route('company.workspaces.index') }}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-xl transition
+                   {{ request()->routeIs('company.workspaces.*')
+                        ? 'bg-cyan-50 text-cyan-700 font-bold'
+                        : 'text-slate-600 hover:bg-slate-100' }}">
+                    <i class="fa-solid fa-layer-group w-5"></i>
+                    <span>Workspace</span>
                 </a>
 
             @elseif(Auth::user()->role == 'admin')

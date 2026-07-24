@@ -892,18 +892,28 @@
 
                                                 @elseif ($penawaran->status === 'Diterima')
 
-                                                    <span class="inline-flex items-center gap-2
-                                                                 px-4 py-2.5
-                                                                 bg-emerald-50
-                                                                 text-emerald-600
-                                                                 rounded-lg
-                                                                 text-xs font-bold">
+                                                    <div class="flex items-center gap-2">
+                                                        <span class="inline-flex items-center gap-2
+                                                                     px-4 py-2.5
+                                                                     bg-emerald-50
+                                                                     text-emerald-600
+                                                                     rounded-lg
+                                                                     text-xs font-bold">
 
-                                                        <i class="fa-solid fa-circle-check"></i>
+                                                            <i class="fa-solid fa-circle-check"></i>
 
-                                                        Freelancer Terpilih
+                                                            Freelancer Terpilih
 
-                                                    </span>
+                                                        </span>
+
+                                                        @if($project->workspace)
+                                                            <a href="{{ route('company.workspaces.show', $project->workspace) }}"
+                                                               class="inline-flex items-center gap-2 px-4 py-2.5 bg-brand text-white rounded-lg text-xs font-bold hover:bg-blue-700 transition">
+                                                                <i class="fa-solid fa-external-link-alt"></i>
+                                                                Buka Workspace
+                                                            </a>
+                                                        @endif
+                                                    </div>
 
 
                                                 @else
