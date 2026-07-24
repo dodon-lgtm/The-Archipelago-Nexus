@@ -24,10 +24,14 @@
                  --}}
                 {{-- ================= ADMIN ================= --}}
                 @elseif(Auth::user()->role == 'admin')
-                    <a href="#" class="text-sm font-semibold hover:text-cyan-600 transition">Dashboard</a>
-                    <a href="#" class="text-sm text-slate-600 hover:text-cyan-600 transition">User</a>
-                    <a href="#" class="text-sm text-slate-600 hover:text-cyan-600 transition">Proyek</a>
-                    <a href="#" class="text-sm text-slate-600 hover:text-cyan-600 transition">Ulasan</a>
+                    <a href="{{ route('admin.dashboard') }}" class="text-sm font-semibold hover:text-cyan-600 transition
+                       {{ request()->routeIs('admin.dashboard') ? 'text-cyan-600' : '' }}">Dashboard</a>
+                    <a href="{{ route('admin.users.index') }}" class="text-sm text-slate-600 hover:text-cyan-600 transition
+                       {{ request()->routeIs('admin.users.*') ? 'text-cyan-600' : '' }}">Pengguna</a>
+                    <a href="{{ route('admin.projects.index') }}" class="text-sm text-slate-600 hover:text-cyan-600 transition
+                       {{ request()->routeIs('admin.projects.*') ? 'text-cyan-600' : '' }}">Proyek</a>
+                    <a href="{{ route('admin.reports.index') }}" class="text-sm text-slate-600 hover:text-cyan-600 transition
+                       {{ request()->routeIs('admin.reports.*') ? 'text-cyan-600' : '' }}">Laporan</a>
                 @endif
             @endauth
         </nav>
@@ -77,7 +81,7 @@
                     <p class="text-sm text-slate-500">{{ Auth::user()->email }}</p>
                 </div>
                 
-                <a href="#" class="flex items-center gap-3 px-5 py-3 hover:bg-slate-50"><i class="fa-regular fa-user"></i> Profil</a>
+                <a href="/freelancer/profile" class="flex items-center gap-3 px-5 py-3 hover:bg-slate-50"><i class="fa-regular fa-user"></i> Profil</a>
                 
                 @if(Auth::user()->role == 'freelancer')
                     <a href="#" class="flex items-center gap-3 px-5 py-3 hover:bg-slate-50"><i class="fa-regular fa-file-lines"></i> Lamaran Saya</a>

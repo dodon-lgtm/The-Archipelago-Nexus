@@ -92,16 +92,76 @@
 
             @elseif(Auth::user()->role == 'admin')
 
-                <a href="#"
-                   class="flex items-center gap-3 px-4 py-3 rounded-xl transition text-slate-600 hover:bg-slate-100">
+                <a href="{{ route('admin.dashboard') }}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-xl transition
+                   {{ request()->routeIs('admin.dashboard')
+                        ? 'bg-cyan-50 text-cyan-700 font-bold'
+                        : 'text-slate-600 hover:bg-slate-100' }}">
                     <i class="fa-solid fa-chart-line w-5"></i>
                     <span>Dashboard</span>
                 </a>
 
-                <a href="#"
-                   class="flex items-center gap-3 px-4 py-3 rounded-xl transition text-slate-600 hover:bg-slate-100">
+                <a href="{{ route('admin.users.index') }}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-xl transition
+                   {{ request()->routeIs('admin.users.*')
+                        ? 'bg-cyan-50 text-cyan-700 font-bold'
+                        : 'text-slate-600 hover:bg-slate-100' }}">
+                    <i class="fa-solid fa-users w-5"></i>
+                    <span>Pengguna</span>
+                </a>
+
+                <a href="{{ route('admin.categories.index') }}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-xl transition
+                   {{ request()->routeIs('admin.categories.*')
+                        ? 'bg-cyan-50 text-cyan-700 font-bold'
+                        : 'text-slate-600 hover:bg-slate-100' }}">
+                    <i class="fa-solid fa-tags w-5"></i>
+                    <span>Kategori</span>
+                </a>
+
+                <a href="{{ route('admin.projects.index') }}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-xl transition
+                   {{ request()->routeIs('admin.projects.*')
+                        ? 'bg-cyan-50 text-cyan-700 font-bold'
+                        : 'text-slate-600 hover:bg-slate-100' }}">
                     <i class="fa-solid fa-folder-open w-5"></i>
-                    <span>Semua Proyek</span>
+                    <span>Proyek</span>
+                </a>
+
+                <a href="{{ route('admin.penawarans.index') }}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-xl transition
+                   {{ request()->routeIs('admin.penawarans.*')
+                        ? 'bg-cyan-50 text-cyan-700 font-bold'
+                        : 'text-slate-600 hover:bg-slate-100' }}">
+                    <i class="fa-solid fa-file-invoice w-5"></i>
+                    <span>Penawaran</span>
+                </a>
+
+                <a href="{{ route('admin.hasil-pekerjaan.index') }}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-xl transition
+                   {{ request()->routeIs('admin.hasil-pekerjaan.*')
+                        ? 'bg-cyan-50 text-cyan-700 font-bold'
+                        : 'text-slate-600 hover:bg-slate-100' }}">
+                    <i class="fa-solid fa-layer-group w-5"></i>
+                    <span>Hasil Pekerjaan</span>
+                </a>
+
+                <a href="{{ route('admin.reports.index') }}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-xl transition
+                   {{ request()->routeIs('admin.reports.*')
+                        ? 'bg-cyan-50 text-cyan-700 font-bold'
+                        : 'text-slate-600 hover:bg-slate-100' }}">
+                    <i class="fa-solid fa-flag w-5"></i>
+                    <span>Laporan</span>
+                </a>
+
+                <a href="{{ route('admin.company-account-requests.index') }}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-xl transition
+                   {{ request()->routeIs('admin.company-account-requests.*')
+                        ? 'bg-cyan-50 text-cyan-700 font-bold'
+                        : 'text-slate-600 hover:bg-slate-100' }}">
+                    <i class="fa-solid fa-building w-5"></i>
+                    <span>Permintaan Akun Company</span>
                 </a>
 
             @endif
