@@ -122,6 +122,16 @@
                     <span class="text-sm">Hasil Pekerjaan</span>
                 </a>
 
+                {{-- Pembayaran --}}
+                <a href="{{ route('admin.payments.index') }}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all
+                   {{ request()->routeIs('admin.payments.*')
+                        ? 'bg-cyan-50 text-cyan-700 font-bold shadow-sm border border-cyan-100'
+                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800' }}">
+                    <i class="fa-solid fa-credit-card w-5 text-center"></i>
+                    <span class="text-sm">Pembayaran</span>
+                </a>
+
                 {{-- Laporan --}}
                 <a href="{{ route('admin.reports.index') }}"
                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all

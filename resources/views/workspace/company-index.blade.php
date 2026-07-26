@@ -57,6 +57,8 @@
                                 $stageColors = [
                                     'Sedang Dikerjakan' => 'bg-blue-50 text-blue-600 border-blue-200',
                                     'Menunggu Revisi' => 'bg-amber-50 text-amber-600 border-amber-200',
+                                    'Menunggu Pembayaran' => 'bg-purple-50 text-purple-600 border-purple-200',
+                                    'Menunggu Verifikasi Admin' => 'bg-orange-50 text-orange-600 border-orange-200',
                                     'Selesai' => 'bg-emerald-50 text-emerald-600 border-emerald-200',
                                 ];
                                 $wsStatusColor = $stageColors[$ws->status] ?? 'bg-slate-50 text-slate-600 border-slate-200';

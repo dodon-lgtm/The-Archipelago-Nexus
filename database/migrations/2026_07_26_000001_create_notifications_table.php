@@ -10,11 +10,20 @@ return new class extends Migration
     {
         Schema::create('notifications', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('penawaran_id')->constrained('penawarans')->cascadeOnDelete();
+
+            $table->foreignId('user_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
+            $table->foreignId('penawaran_id')
+                ->nullable()
+                ->constrained('penawarans')
+                ->nullOnDelete();
+
             $table->string('title');
             $table->text('message');
             $table->boolean('is_read')->default(false);
+
             $table->timestamps();
         });
     }
@@ -24,4 +33,3 @@ return new class extends Migration
         Schema::dropIfExists('notifications');
     }
 };
-
