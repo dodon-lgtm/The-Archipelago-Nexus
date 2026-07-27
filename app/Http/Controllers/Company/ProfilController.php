@@ -5,23 +5,35 @@ namespace App\Http\Controllers\Company;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\ClientProfile; // <--- Pastikan use model ini ada
 use App\Models\CompanyProfile;
+use App\Models\Project;
 
 class ProfilController extends Controller
 {
     public function profile()
     {
-        // DIPERBAIKI: Mengubah ClientProfil menjadi ClientProfile
+        $userId = Auth::id();
+
         $profile = CompanyProfile::firstOrCreate(
             [
-                'user_id' => Auth::id()
+                'user_id' => $userId
             ]
         );
 
+        // 1. Total Project yang pernah dibuat
+        $totalProjects = Project::where('user_id', $userId)->count();
+        
+        // 2. Project Selesai (Mencakup berbagai variasi nama status di database)
+        $completedProjects = Project::where('user_id', $userId)
+                                    ->whereIn('status', ['completed', 'selesai', 'done', 'finished', 'closed']) 
+                                    ->count();
+
+        $paymentRate = '100%'; 
+        $successRate = $totalProjects > 0 ? round(($completedProjects / $totalProjects) * 100) . '%' : '0%';   
+
         return view(
             'company.profil',
-            compact('profile')
+            compact('profile', 'totalProjects', 'completedProjects', 'paymentRate', 'successRate')
         );
     }
 

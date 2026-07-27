@@ -96,4 +96,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(ProjectSubmission::class, 'submitted_by');
     }
+
+    public function reviewsReceived()
+    {
+        return $this->hasMany(Review::class, 'freelancer_id');
+    }
 }

@@ -1,499 +1,335 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Edit Profil Perusahaan - Ultra Modern</title>
 
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>Edit Profil Client</title>
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-<link rel="stylesheet"
-href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5.3 & Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- AOS Animation Library CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
 <style>
-
-*{
-
-margin:0;
-
-padding:0;
-
-box-sizing:border-box;
-
-font-family:'Poppins',sans-serif;
-
-}
-
-body{
-
-background:#f4f8ff;
-
-}
-
-.container{
-
-max-width:950px;
-
-margin-top:40px;
-
-margin-bottom:50px;
-
-}
-
-.card{
-
-border:none;
-
-border-radius:20px;
-
-box-shadow:0 10px 25px rgba(0,0,0,.08);
-
-overflow:hidden;
-
-}
-
-.card-header{
-
-background:linear-gradient(135deg,#2563eb,#3b82f6);
-
-color:white;
-
-padding:25px;
-
-border:none;
-
-}
-
-.card-header h3{
-
-margin:0;
-
-font-weight:700;
-
-}
-
-.card-body{
-
-padding:35px;
-
-}
-
-.logo-preview{
-
-width:150px;
-
-height:150px;
-
-border-radius:50%;
-
-object-fit:cover;
-
-border:5px solid #ddd;
-
-margin-bottom:20px;
-
-}
-
-.form-control{
-
-border-radius:10px;
-
-padding:12px;
-
-}
-
-textarea{
-
-resize:none;
-
-}
-
-.btn-save{
-
-background:#2563eb;
-
-color:white;
-
-padding:12px 30px;
-
-border-radius:10px;
-
-font-weight:600;
-
-}
-
-.btn-save:hover{
-
-background:#1d4ed8;
-
-color:white;
-
-}
-
-.btn-back{
-
-padding:12px 30px;
-
-border-radius:10px;
-
-}
-
-.form-control:focus,
-.form-select:focus{
-
-border-color:#2563eb;
-
-box-shadow:0 0 0 .2rem rgba(37,99,235,.15);
-
-}
-
-.logo-preview{
-
-transition:.3s;
-
-cursor:pointer;
-
-}
-
-.logo-preview:hover{
-
-transform:scale(1.05);
-
-}
-
-.btn-save{
-
-transition:.3s;
-
-}
-
-.btn-save:hover{
-
-transform:translateY(-2px);
-
-box-shadow:0 10px 20px rgba(37,99,235,.25);
-
-}
-
-.card{
-
-animation:fadeUp .5s ease;
-
-}
-
-@keyframes fadeUp{
-
-from{
-
-opacity:0;
-
-transform:translateY(20px);
-
-}
-
-to{
-
-opacity:1;
-
-transform:translateY(0);
-
-}
-
-}
-
+    :root {
+        --primary-color: #0284c7;
+        --primary-gradient: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%);
+        --bg-color: #f0f9ff;
+        --card-bg: rgba(255, 255, 255, 0.85);
+        --text-main: #0f172a;
+        --text-muted: #64748b;
+        --border-color: rgba(186, 230, 253, 0.6);
+    }
+
+    body {
+        background-color: var(--bg-color);
+        background-image: 
+            radial-gradient(at 0% 0%, rgba(2, 132, 199, 0.08) 0px, transparent 50%),
+            radial-gradient(at 100% 100%, rgba(56, 189, 248, 0.06) 0px, transparent 50%);
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        color: var(--text-main);
+        overflow-x: hidden;
+        min-height: 100vh;
+    }
+
+    .container {
+        max-width: 950px;
+        margin-top: 50px;
+        margin-bottom: 80px;
+    }
+
+    /* Glassmorphism Main Card dengan Efek Floating */
+    .card {
+        background: var(--card-bg);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--border-color);
+        border-radius: 32px;
+        box-shadow: 0 25px 50px -12px rgba(2, 132, 199, 0.1);
+        overflow: hidden;
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, rgba(224, 242, 254, 0.9) 0%, rgba(186, 230, 253, 0.4) 100%);
+        color: var(--text-main);
+        padding: 30px 40px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .card-header h3 {
+        margin: 0;
+        font-weight: 800;
+        font-size: 24px;
+        letter-spacing: -0.5px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .card-header h3 i {
+        color: var(--primary-color);
+        background: rgba(2, 132, 199, 0.1);
+        padding: 10px;
+        border-radius: 14px;
+    }
+
+    .card-body {
+        padding: 40px;
+    }
+
+    /* Logo Preview Interaktif */
+    .logo-preview-wrapper {
+        position: relative;
+        display: inline-block;
+    }
+
+    .logo-preview {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid white;
+        box-shadow: 0 15px 35px rgba(2, 132, 199, 0.2);
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .logo-preview:hover {
+        transform: scale(1.08) rotate(3deg);
+        box-shadow: 0 20px 40px rgba(2, 132, 199, 0.3);
+    }
+
+    /* Modern Floating-Style Form Controls */
+    .form-label {
+        font-weight: 700;
+        color: var(--text-main);
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 8px;
+    }
+
+    .form-control, .form-select {
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 14px 20px;
+        font-size: 14px;
+        color: var(--text-main);
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 4px 12px rgba(2, 132, 199, 0.02);
+    }
+
+    .form-control:focus, .form-select:focus {
+        background: #ffffff;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 5px rgba(2, 132, 199, 0.15);
+        transform: translateY(-2px);
+    }
+
+    textarea {
+        resize: none;
+    }
+
+    /* Tombol Simpan Modern Bergradasi */
+    .btn-save {
+        background: var(--primary-gradient);
+        border: none;
+        color: white;
+        padding: 14px 35px;
+        border-radius: 16px;
+        font-weight: 700;
+        font-size: 14px;
+        letter-spacing: 0.3px;
+        box-shadow: 0 10px 25px rgba(2, 132, 199, 0.35);
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-save:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 15px 30px rgba(2, 132, 199, 0.5);
+        color: white;
+    }
+
+    .btn-save:active {
+        transform: translateY(-1px);
+    }
+
+    /* Tombol Kembali dengan Efek Blur Glass */
+    .btn-back {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--border-color);
+        color: var(--text-muted);
+        padding: 14px 28px;
+        border-radius: 16px;
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-back:hover {
+        background: #ffffff;
+        color: var(--text-main);
+        border-color: #7dd3fc;
+        transform: translateX(-5px);
+        box-shadow: 0 8px 20px rgba(2, 132, 199, 0.08);
+    }
+
+    /* Custom File Input Upload Styling */
+    input[type="file"]::file-selector-button {
+        background: #e0f2fe;
+        color: var(--primary-color);
+        border: none;
+        padding: 8px 16px;
+        border-radius: 10px;
+        font-weight: 700;
+        cursor: pointer;
+        margin-right: 12px;
+        transition: all 0.3s ease;
+    }
+
+    input[type="file"]::file-selector-button:hover {
+        background: #bae6fd;
+        transform: scale(1.02);
+    }
 </style>
-
 </head>
 
 <body>
 
-<div class="container">
+<div class="container" data-aos="fade-up" data-aos-duration="1000" data-aos-easing="ease-out-cubic">
+    <div class="card">
+        <div class="card-header">
+            <h3>
+                <i class="bi bi-building-gear"></i>
+                Edit Profil Perusahaan
+            </h3>
+        </div>
 
-<div class="card">
+        <div class="card-body">
+            <!-- Alert Error Validasi -->
+            @if($errors->any())
+                <div class="alert alert-danger border-0 shadow-sm rounded-4 mb-4" data-aos="shake" data-aos-duration="500">
+                    <ul class="mb-0">
+                        @foreach($errors->all() as $error)
+                            <li><i class="bi bi-exclamation-circle-fill me-2"></i>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
-<div class="card-header">
+            <form action="{{ route('company.profile.update') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                
+                <div class="row align-items-center mb-4">
+                    <!-- LOGO UPLOAD SECTION -->
+                    <div class="col-md-4 text-center mb-4 mb-md-0" data-aos="zoom-in" data-aos-delay="200">
+                        <div class="logo-preview-wrapper mb-3">
+                            @if($profile->company_logo)
+                                <img src="{{ asset('storage/'.$profile->company_logo) }}" id="preview" class="logo-preview">
+                            @else
+                                <img src="{{ asset('images/company.png') }}" id="preview" class="logo-preview" onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($profile->company_name ?? 'Company') }}&background=0284c7&color=fff&size=140'">
+                            @endif
+                        </div>
+                        <div>
+                            <label class="form-label d-block text-muted small fw-bold mb-2">Ganti Logo Perusahaan</label>
+                            <input type="file" name="company_logo" class="form-control form-control-sm shadow-sm" accept="image/*" onchange="previewImage(event)">
+                        </div>
+                    </div>
 
-<h3>
+                    <!-- INPUT UTAMA -->
+                    <div class="col-md-8" data-aos="fade-left" data-aos-delay="300">
+                        <div class="mb-3">
+                            <label class="form-label">Nama Perusahaan</label>
+                            <input type="text" name="company_name" class="form-control" value="{{ old('company_name', $profile->company_name) }}" placeholder="PT. Contoh Indonesia">
+                        </div>
 
-<i class="bi bi-building"></i>
+                        <div class="mb-3">
+                            <label class="form-label">Bidang Usaha</label>
+                            <select name="industry" class="form-select">
+                                <option value="">-- Pilih Bidang Usaha --</option>
+                                <option value="Teknologi" {{ $profile->industry=='Teknologi'?'selected':'' }}>Teknologi</option>
+                                <option value="Pendidikan" {{ $profile->industry=='Pendidikan'?'selected':'' }}>Pendidikan</option>
+                                <option value="Kesehatan" {{ $profile->industry=='Kesehatan'?'selected':'' }}>Kesehatan</option>
+                                <option value="Keuangan" {{ $profile->industry=='Keuangan'?'selected':'' }}>Keuangan</option>
+                                <option value="Manufaktur" {{ $profile->industry=='Manufaktur'?'selected':'' }}>Manufaktur</option>
+                                <option value="Media" {{ $profile->industry=='Media'?'selected':'' }}>Media</option>
+                                <option value="Lainnya" {{ $profile->industry=='Lainnya'?'selected':'' }}>Lainnya</option>
+                            </select>
+                        </div>
 
-Edit Profil Perusahaan
+                        <div class="mb-3">
+                            <label class="form-label">Website Resmi</label>
+                            <input type="url" name="website" class="form-control" value="{{ old('website', $profile->website) }}" placeholder="https://company.com">
+                        </div>
+                    </div>
+                </div>
 
-</h3>
+                <div class="row" data-aos="fade-up" data-aos-delay="400">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Lokasi</label>
+                            <input type="text" name="location" class="form-control" value="{{ old('location', $profile->location) }}" placeholder="Jakarta, Indonesia">
+                        </div>
+                    </div>
 
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Nomor Telepon</label>
+                            <input type="text" name="phone" class="form-control" value="{{ old('phone', $profile->phone) }}" placeholder="08123456789">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-4" data-aos="fade-up" data-aos-delay="500">
+                    <label class="form-label">Deskripsi Perusahaan</label>
+                    <textarea name="description" rows="5" class="form-control" placeholder="Ceritakan mengenai latar belakang, budaya, dan visi perusahaan Anda...">{{ old('description', $profile->description) }}</textarea>
+                </div>
+
+                <!-- BUTTON ACTIONS -->
+                <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top" style="border-color: var(--border-color) !important;" data-aos="fade-up" data-aos-delay="600">
+                    <a href="{{ route('company.profile') }}" class="btn btn-back">
+                        <i class="bi bi-arrow-left"></i> Kembali
+                    </a>
+                    <button type="submit" class="btn btn-save">
+                        <i class="bi bi-check-circle me-1"></i> Simpan Perubahan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
-<div class="card-body">
-
-@if($errors->any())
-
-<div class="alert alert-danger">
-
-<ul class="mb-0">
-
-@foreach($errors->all() as $error)
-
-<li>{{ $error }}</li>
-
-@endforeach
-
-</ul>
-
-</div>
-
-@endif
-
-<form
-
-action="{{ route('company.profile.update') }}"
-
-method="POST"
-
-enctype="multipart/form-data">
-
-@csrf
-<div class="row">
-
-<div class="col-md-4 text-center">
-
-@if($profile->company_logo)
-
-<img
-src="{{ asset('storage/'.$profile->company_logo) }}"
-id="preview"
-class="logo-preview">
-
-@else
-
-<img
-src="{{ asset('images/company.png') }}"
-id="preview"
-class="logo-preview">
-
-@endif
-
-<div class="mb-3">
-
-<label class="form-label fw-bold">
-
-Logo Perusahaan
-
-</label>
-
-<input
-type="file"
-name="company_logo"
-class="form-control"
-accept="image/*"
-onchange="previewImage(event)">
-
-</div>
-
-</div>
-
-<div class="col-md-8">
-
-<div class="mb-3">
-
-<label class="form-label">
-
-Nama Perusahaan
-
-</label>
-
-<input
-type="text"
-name="company_name"
-class="form-control"
-value="{{ old('company_name',$profile->company_name) }}"
-placeholder="PT. Contoh Indonesia">
-
-</div>
-
-<div class="mb-3">
-
-<label class="form-label">
-
-Bidang Usaha
-
-</label>
-
-<select
-name="industry"
-class="form-select">
-
-<option value="">-- Pilih Bidang Usaha --</option>
-
-<option value="Teknologi"
-{{ $profile->industry=='Teknologi'?'selected':'' }}>
-Teknologi
-</option>
-
-<option value="Pendidikan"
-{{ $profile->industry=='Pendidikan'?'selected':'' }}>
-Pendidikan
-</option>
-
-<option value="Kesehatan"
-{{ $profile->industry=='Kesehatan'?'selected':'' }}>
-Kesehatan
-</option>
-
-<option value="Keuangan"
-{{ $profile->industry=='Keuangan'?'selected':'' }}>
-Keuangan
-</option>
-
-<option value="Manufaktur"
-{{ $profile->industry=='Manufaktur'?'selected':'' }}>
-Manufaktur
-</option>
-
-<option value="Media"
-{{ $profile->industry=='Media'?'selected':'' }}>
-Media
-</option>
-
-<option value="Lainnya"
-{{ $profile->industry=='Lainnya'?'selected':'' }}>
-Lainnya
-</option>
-
-</select>
-
-</div>
-
-<div class="mb-3">
-
-<label class="form-label">
-
-Website
-
-</label>
-
-<input
-type="url"
-name="website"
-class="form-control"
-value="{{ old('website',$profile->website) }}"
-placeholder="https://company.com">
-
-</div>
-
-<div class="row">
-
-<div class="col-md-6">
-
-<div class="mb-3">
-
-<label class="form-label">
-
-Lokasi
-
-</label>
-
-<input
-type="text"
-name="location"
-class="form-control"
-value="{{ old('location',$profile->location) }}"
-placeholder="Jakarta">
-
-</div>
-
-</div>
-
-<div class="col-md-6">
-
-<div class="mb-3">
-
-<label class="form-label">
-
-Nomor Telepon
-
-</label>
-
-<input
-type="text"
-name="phone"
-class="form-control"
-value="{{ old('phone',$profile->phone) }}"
-placeholder="08123456789">
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-<div class="mb-4">
-
-<label class="form-label">
-
-Deskripsi Perusahaan
-
-</label>
-
-<textarea
-name="description"
-rows="6"
-class="form-control"
-placeholder="Ceritakan mengenai perusahaan Anda...">{{ old('description',$profile->description) }}</textarea>
-
-</div>
-<div class="d-flex justify-content-between mt-4">
-
-    <a
-        href="{{ route('company.profile') }}"
-        class="btn btn-secondary btn-back">
-
-        <i class="bi bi-arrow-left"></i>
-
-        Kembali
-
-    </a>
-
-    <button
-        type="submit"
-        class="btn btn-save">
-
-        <i class="bi bi-check-circle"></i>
-
-        Simpan Perubahan
-
-    </button>
-
-</div>
-
-</form>
-
-</div>
-
-</div>
-
-</div>
-
+<!-- Bootstrap JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- AOS Animation Library JS -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
+  // Inisialisasi AOS Animation
+  AOS.init({
+    once: true,
+    offset: 50,
+    easing: 'ease-out-cubic'
+  });
 
-function previewImage(event){
-
-    const image=document.getElementById('preview');
-
-    image.src=URL.createObjectURL(event.target.files[0]);
-
-}
-
+  // Fungsi Preview Gambar Logo dengan transisi halus
+  function previewImage(event){
+      const image = document.getElementById('preview');
+      image.style.opacity = '0.3';
+      setTimeout(() => {
+          image.src = URL.createObjectURL(event.target.files[0]);
+          image.style.opacity = '1';
+      }, 150);
+  }
 </script>
 
 </body>
-
-</html>
+</html> 

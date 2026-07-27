@@ -30,7 +30,7 @@ use App\Http\Controllers\Freelancer\ProjectProposalController;
 use App\Http\Controllers\Freelancer\SavedProjectController;
 use App\Http\Controllers\Freelancer\ProjectOfferController;
 use App\Http\Controllers\Freelancer\ProfilController as FreelancerProfilController;
-
+use App\Http\Controllers\review\ReviewController;
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
@@ -144,7 +144,9 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])->prefix('company')->nam
         Route::get('/projects/{project}/edit', [CompanyProjectController::class, 'edit'])->name('projects.edit');
         Route::put('/projects/{project}', [CompanyProjectController::class, 'update'])->name('projects.update');
         Route::delete('/projects/{project}', [CompanyProjectController::class, 'destroy'])->name('projects.destroy');
-
+        Route::get('/client/project/{project}/review', [ReviewController::class, 'create'])->name('client.review.create');
+        Route::post('/client/project/{project}/review', [ReviewController::class, 'store'])->name('client.review.store');
+        
         // Select freelancer
         Route::post('/projects/{project}/penawaran/{penawaran}/select', [CompanyProjectController::class, 'selectFreelancer'])
             ->name('projects.penawaran.select');
