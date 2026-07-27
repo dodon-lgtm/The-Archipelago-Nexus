@@ -23,125 +23,135 @@
     </style>
 </head>
 
-<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex items-center justify-center p-4 md:p-6">
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex items-center justify-center p-3 md:p-6">
 
     <!-- Container Utama -->
-    <div class="max-w-6xl w-full bg-white rounded-3xl shadow-2xl shadow-slate-200/80 border border-slate-100 overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[640px]">
+    <div class="max-w-6xl w-full bg-white rounded-3xl shadow-2xl shadow-slate-200/80 border border-slate-100 overflow-hidden grid grid-cols-1 lg:grid-cols-12">
 
         <!-- ================= SISI KIRI ================= -->
-        <div class="lg:col-span-7 p-8 md:p-12 flex flex-col justify-between space-y-8">
+        <div class="lg:col-span-7 p-6 md:p-10 flex flex-col justify-between space-y-6 relative overflow-hidden bg-white">
 
-            <!-- Header Brand -->
-            <div class="flex items-center gap-3">
-
-                <div class="w-10 h-10 bg-slate-900 text-white rounded-xl flex items-center justify-center font-bold text-sm shadow-md shadow-slate-900/20">
-                    <i class="fa-solid fa-layer-group"></i>
-                </div>
-
-                <span class="font-extrabold text-lg tracking-tight text-slate-900">
-                    The Archipelago Nexus
-                </span>
-
+            <!-- Background Gedung dengan Opacity 80% di Area Kosong Sisi Kiri -->
+            <div class="absolute inset-0 z-0 pointer-events-none">
+                <img src="{{ asset('images/gedung.jpg') }}" alt="Background Gedung" class="w-full h-full object-cover opacity-80">
+                <div class="absolute inset-0 bg-white/60"></div>
             </div>
 
+            <!-- Konten Sisi Kiri (Dibungkus relative z-10 agar berada di atas background gedung) -->
+            <div class="relative z-10 flex flex-col justify-between space-y-6 h-full">
 
-            <!-- Teks Utama -->
-            <div class="space-y-4">
+                <!-- Header Brand -->
+                <div class="flex items-center gap-3">
 
-                <h1 class="text-3xl md:text-4xl font-black text-slate-900 leading-tight">
-                    Temukan Bakat Terampil
-                    <br>
-                    atau Proyek Impian Anda
-                    <br>
-                    di
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
+                    <div class="w-9 h-9 bg-slate-900 text-white rounded-xl flex items-center justify-center font-bold text-xs shadow-md shadow-slate-900/20 overflow-hidden">
+                        <!-- Logo Gambar Sisi Kiri (Bulat) -->
+                        <img src="{{ asset('images/nexus.jpg') }}" alt="Logo Nexus" class="w-7 h-7 rounded-full object-cover">
+                    </div>
+
+                    <span class="font-extrabold text-base tracking-tight text-slate-900">
                         The Archipelago Nexus
                     </span>
-                </h1>
 
-                <p class="text-sm text-slate-500 max-w-md leading-relaxed">
-                    Hubungkan dengan freelancer terbaik dan wujudkan proyek Anda
-                    dengan mudah, cepat, dan aman.
-                </p>
-
-            </div>
+                </div>
 
 
-            <!-- Fitur -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <!-- Teks Utama -->
+                <div class="space-y-3">
 
-                <!-- Fitur 1 -->
-                <div class="bg-slate-50 border border-slate-100 p-4 rounded-xl flex items-start gap-3">
+                    <h1 class="text-2xl md:text-3xl font-black text-slate-900 leading-tight">
+                        Temukan Bakat Terampil
+                        <br>
+                        atau Proyek Impian Anda
+                        <br>
+                        di
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
+                            The Archipelago Nexus
+                        </span>
+                    </h1>
 
-                    <div class="w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-xs shrink-0">
-                        <i class="fa-solid fa-user-shield"></i>
+                    <p class="text-xs md:text-sm text-slate-600 max-w-md leading-relaxed">
+                        Hubungkan dengan freelancer terbaik dan wujudkan proyek Anda
+                        dengan mudah, cepat, dan aman.
+                    </p>
+
+                </div>
+
+
+                <!-- Fitur -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+
+                    <!-- Fitur 1 -->
+                    <div class="bg-white/90 backdrop-blur-sm border border-slate-100 p-3 rounded-xl flex items-start gap-2.5 shadow-sm">
+
+                        <div class="w-7 h-7 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-xs shrink-0">
+                            <i class="fa-solid fa-user-shield"></i>
+                        </div>
+
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-900">
+                                Freelancer Terpercaya
+                            </h4>
+
+                            <p class="text-[10px] text-slate-500 mt-0.5">
+                                Banyak freelancer berkualitas.
+                            </p>
+                        </div>
+
                     </div>
 
-                    <div>
-                        <h4 class="text-xs font-bold text-slate-900">
-                            Freelancer Terpercaya
-                        </h4>
 
-                        <p class="text-[10px] text-slate-400 mt-0.5">
-                            Banyak freelancer berkualitas.
-                        </p>
+                    <!-- Fitur 2 -->
+                    <div class="bg-white/90 backdrop-blur-sm border border-slate-100 p-3 rounded-xl flex items-start gap-2.5 shadow-sm">
+
+                        <div class="w-7 h-7 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center text-xs shrink-0">
+                            <i class="fa-solid fa-wallet"></i>
+                        </div>
+
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-900">
+                                Proses Aman
+                            </h4>
+
+                            <p class="text-[10px] text-slate-500 mt-0.5">
+                                Transaksi aman & terjamin.
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <!-- Fitur 3 -->
+                    <div class="bg-white/90 backdrop-blur-sm border border-slate-100 p-3 rounded-xl flex items-start gap-2.5 shadow-sm">
+
+                        <div class="w-7 h-7 bg-amber-50 text-amber-600 rounded-lg flex items-center justify-center text-xs shrink-0">
+                            <i class="fa-solid fa-business-time"></i>
+                        </div>
+
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-900">
+                                Proyek Tepat Waktu
+                            </h4>
+
+                            <p class="text-[10px] text-slate-500 mt-0.5">
+                                Selesai sesuai deadline.
+                            </p>
+                        </div>
+
                     </div>
 
                 </div>
 
 
-                <!-- Fitur 2 -->
-                <div class="bg-slate-50 border border-slate-100 p-4 rounded-xl flex items-start gap-3">
+                <!-- Gambar Ilustrasi Utama -->
+                <div class="w-full mt-4 rounded-2xl overflow-hidden shadow-sm relative group">
 
-                    <div class="w-8 h-8 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center text-xs shrink-0">
-                        <i class="fa-solid fa-wallet"></i>
-                    </div>
-
-                    <div>
-                        <h4 class="text-xs font-bold text-slate-900">
-                            Proses Aman
-                        </h4>
-
-                        <p class="text-[10px] text-slate-400 mt-0.5">
-                            Transaksi aman dan terjamin.
-                        </p>
-                    </div>
+                    {{-- <img
+                        src="{{ asset('images/image.jpg') }}"
+                        alt="Ilustrasi Kerja"
+                        class="w-full h-auto max-h-72 object-cover object-top rounded-2xl transition duration-500 group-hover:scale-105"
+                    > --}}
 
                 </div>
-
-
-                <!-- Fitur 3 -->
-                <div class="bg-slate-50 border border-slate-100 p-4 rounded-xl flex items-start gap-3">
-
-                    <div class="w-8 h-8 bg-amber-50 text-amber-600 rounded-lg flex items-center justify-center text-xs shrink-0">
-                        <i class="fa-solid fa-business-time"></i>
-                    </div>
-
-                    <div>
-                        <h4 class="text-xs font-bold text-slate-900">
-                            Proyek Tepat Waktu
-                        </h4>
-
-                        <p class="text-[10px] text-slate-400 mt-0.5">
-                            Selesai sesuai deadline.
-                        </p>
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- Gambar -->
-            <div class="w-full h-48 bg-gradient-to-br from-blue-50 to-indigo-50/50 rounded-2xl border border-blue-100/30 overflow-hidden flex items-center justify-center p-2 relative group">
-
-                <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-blue-200/30 rounded-full blur-xl"></div>
-
-                <img
-                    src="{{ asset('images/beranda.png') }}"
-                    alt="Ilustrasi Kerja"
-                    class="max-h-full max-w-full object-contain rounded-xl transition duration-500 group-hover:scale-105"
-                >
 
             </div>
 
@@ -149,7 +159,7 @@
 
 
         <!-- ================= SISI KANAN ================= -->
-        <div class="lg:col-span-5 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-950 p-8 md:p-12 flex flex-col justify-between text-white relative overflow-hidden">
+        <div class="lg:col-span-5 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-950 p-6 md:p-10 flex flex-col justify-between text-white relative overflow-hidden">
 
             <!-- Dekorasi -->
             <div class="absolute -top-20 -right-20 w-44 h-44 bg-blue-500/10 rounded-full blur-3xl"></div>
@@ -158,13 +168,14 @@
 
 
             <!-- Logo dan Judul -->
-            <div class="text-center space-y-3 relative z-10 mt-4">
+            <div class="text-center space-y-2 relative z-10">
 
-                <div class="w-16 h-16 bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl mx-auto flex items-center justify-center shadow-inner overflow-hidden">
+                <div class="w-14 h-14 bg-white/15 backdrop-blur-md border border-white/10 rounded-2xl mx-auto flex items-center justify-center shadow-inner overflow-hidden">
 
-                    <div class="w-10 h-10 bg-gradient-to-br from-slate-800 to-black rounded-xl shadow-md flex items-center justify-center">
+                    <div class="w-9 h-9 bg-gradient-to-br from-slate-800 to-black rounded-xl shadow-md flex items-center justify-center overflow-hidden">
 
-                        <i class="fa-solid fa-fingerprint text-white text-base"></i>
+                        <!-- Logo Gambar Sisi Kanan (Bulat) -->
+                        <img src="{{ asset('images/nexus.jpg') }}" alt="Logo Nexus" class="w-6 h-6 rounded-full object-cover">
 
                     </div>
 
@@ -172,11 +183,11 @@
 
                 <div>
 
-                    <h2 class="font-extrabold text-lg tracking-wide text-white">
+                    <h2 class="font-extrabold text-base tracking-wide text-white">
                         The Archipelago<span class="text-blue-400">Nexus</span>
                     </h2>
 
-                    <p class="text-xs text-slate-400 font-medium mt-1">
+                    <p class="text-[11px] text-slate-400 font-medium mt-0.5">
                         Masuk ke akun untuk melanjutkan
                     </p>
 
@@ -190,7 +201,7 @@
             <form
                 action="{{ route('login') }}"
                 method="POST"
-                class="space-y-4 my-auto py-6 relative z-10"
+                class="space-y-3.5 my-auto py-4 relative z-10"
             >
 
                 @csrf
@@ -199,7 +210,7 @@
                 <!-- Pesan Success -->
                 @if (session('success'))
 
-                    <div class="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs">
+                    <div class="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs">
                         <i class="fa-solid fa-circle-check mr-1"></i>
                         {{ session('success') }}
                     </div>
@@ -210,7 +221,7 @@
                 <!-- Pesan Error Umum -->
                 @if ($errors->any())
 
-                    <div class="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-300 text-xs">
+                    <div class="p-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-300 text-xs">
 
                         <i class="fa-solid fa-circle-exclamation mr-1"></i>
 
@@ -222,11 +233,11 @@
 
 
                 <!-- EMAIL -->
-                <div class="space-y-1.5">
+                <div class="space-y-1">
 
                     <label
                         for="email"
-                        class="text-[11px] font-bold tracking-wider text-slate-400 uppercase block"
+                        class="text-[10px] font-bold tracking-wider text-slate-400 uppercase block"
                     >
                         Email
                     </label>
@@ -246,7 +257,7 @@
                             autocomplete="email"
                             autofocus
                             required
-                            class="w-full text-xs pl-10 pr-4 py-3 bg-slate-800/80 border
+                            class="w-full text-xs pl-10 pr-4 py-2.5 bg-slate-800/80 border
                             {{ $errors->has('email') ? 'border-red-500' : 'border-slate-700/60' }}
                             rounded-xl text-white placeholder-slate-500
                             focus:bg-slate-800 focus:border-blue-500
@@ -257,7 +268,7 @@
 
                     @error('email')
 
-                        <p class="text-[10px] text-red-400 mt-1">
+                        <p class="text-[10px] text-red-400 mt-0.5">
                             {{ $message }}
                         </p>
 
@@ -267,13 +278,13 @@
 
 
                 <!-- PASSWORD -->
-                <div class="space-y-1.5">
+                <div class="space-y-1">
 
                     <div class="flex justify-between items-center">
 
                         <label
                             for="password"
-                            class="text-[11px] font-bold tracking-wider text-slate-400 uppercase block"
+                            class="text-[10px] font-bold tracking-wider text-slate-400 uppercase block"
                         >
                             Password
                         </label>
@@ -301,7 +312,7 @@
                             placeholder="Masukkan password Anda"
                             autocomplete="current-password"
                             required
-                            class="w-full text-xs pl-10 pr-4 py-3 bg-slate-800/80 border
+                            class="w-full text-xs pl-10 pr-4 py-2.5 bg-slate-800/80 border
                             {{ $errors->has('password') ? 'border-red-500' : 'border-slate-700/60' }}
                             rounded-xl text-white placeholder-slate-500
                             focus:bg-slate-800 focus:border-blue-500
@@ -312,7 +323,7 @@
 
                     @error('password')
 
-                        <p class="text-[10px] text-red-400 mt-1">
+                        <p class="text-[10px] text-red-400 mt-0.5">
                             {{ $message }}
                         </p>
 
@@ -322,7 +333,7 @@
 
 
                 <!-- REMEMBER ME -->
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2 pt-0.5">
 
                     <input
                         id="remember"
@@ -346,7 +357,7 @@
                 <!-- TOMBOL LOGIN -->
                 <button
                     type="submit"
-                    class="w-full py-3 mt-2
+                    class="w-full py-2.5 mt-1
                     bg-gradient-to-r from-blue-600 to-indigo-600
                     hover:from-blue-700 hover:to-indigo-700
                     text-white text-xs font-bold rounded-xl
@@ -362,7 +373,7 @@
 
 
                 <!-- OR -->
-                <div class="relative flex py-2 items-center">
+                <div class="relative flex py-1.5 items-center">
 
                     <div class="flex-grow border-t border-slate-700/50"></div>
 
@@ -403,7 +414,7 @@
 
 
             <!-- REGISTER -->
-            <div class="text-center text-xs text-slate-400 pt-4 relative z-10">
+            <div class="text-center text-xs text-slate-400 pt-2 relative z-10">
 
                 Belum punya akun?
 
@@ -422,4 +433,3 @@
 
 </body>
 </html>
-

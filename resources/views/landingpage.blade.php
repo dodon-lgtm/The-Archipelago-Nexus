@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Archipelago Nexus </title>
+    <title>The Archipelago Nexus</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome untuk Icon -->
@@ -23,8 +23,8 @@
             <!-- Brand Logo -->
             <div class="flex items-center gap-3">
                <div class="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center">
-   <img src="{{ asset('images/nexus.jpg') }}" alt="Logo" class="h-10 w-10 object-cover rounded-full">
-</div>
+                  <img src="{{ asset('images/nexus.jpg') }}" alt="Logo" class="h-10 w-10 object-cover rounded-full">
+               </div>
                 <span class="font-bold text-lg tracking-tight text-slate-900">The Archipelago Nexus</span>
             </div>
             
@@ -37,77 +37,85 @@
     </header>
 
     <!-- HERO SECTION -->
-    <section class="max-w-7xl mx-auto px-6 py-12 md:py-20 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        <!-- Hero Text -->
-        <div class="space-y-6">
-            <h1 class="text-3xl md:text-5xl font-extrabold text-slate-900 leading-tight">
-                Temukan Bakat Terampil <br>
-                atau Proyek Impian Anda <br>
-                di <span class="text-teal-600">The Archipelago Nexus</span>
-            </h1>
-            <p class="text-base text-slate-600 max-w-md leading-relaxed">
-                Hubungkan dengan freelancer terbaik dan wujudkan proyek Anda dengan mudah dan aman.
-            </p>
-            <div>
-                <a href="{{ route('login') }}" class="inline-block px-8 py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded-lg shadow transition transform hover:-translate-y-0.5">
-                    Mulai sekarang
-                </a>
-            </div>
-            
-            <!-- Slider Dots -->
-            <div class="flex gap-2 pt-4">
-                <span class="w-6 h-2 bg-slate-800 rounded-full"></span>
-                <span class="w-2 h-2 bg-slate-300 rounded-full"></span>
-                <span class="w-2 h-2 bg-slate-300 rounded-full"></span>
-                <span class="w-2 h-2 bg-slate-300 rounded-full"></span>
-            </div>
+    <section class="relative overflow-hidden bg-slate-50 py-12 md:py-20">
+        <!-- Background Gedung dengan Opacity 90% (Sangat Jelas/Tebal) -->
+        <div class="absolute inset-0 z-0 pointer-events-none">
+            <img src="{{ asset('images/gedung.jpg') }}" alt="Gedung Background" class="w-full h-full object-cover opacity-90">
+            <div class="absolute inset-0 bg-gradient-to-r from-slate-50/80 via-slate-50/50 to-slate-50/30"></div>
         </div>
 
-        <!-- Hero Graphics Vector / Mockup Bergaya Premium Baru -->
-        <div class="relative flex justify-center items-center h-[360px] md:h-[400px]">
-            <!-- Lingkaran Besar Gradasi Warna di Belakang (Biru Kehijauan) -->
-            <div class="absolute right-4 w-[280px] h-[280px] md:w-[360px] md:h-[360px] bg-gradient-to-br from-blue-500 via-teal-400 to-emerald-400 rounded-full -z-10 opacity-90 shadow-2xl"></div>
-            
-            <!-- Main Mockup Card (Frame Browser Putih) -->
-            <div class="bg-white border border-slate-200/60 rounded-2xl shadow-2xl p-4 w-full max-w-[280px] md:max-w-[320px] h-[280px] md:h-[320px] relative overflow-hidden flex flex-col justify-between">
-                <!-- Mac-style top dots -->
-                <div class="flex gap-1.5 mb-2">
-                    <span class="w-2 h-2 bg-red-400 rounded-full"></span>
-                    <span class="w-2 h-2 bg-yellow-400 rounded-full"></span>
-                    <span class="w-2 h-2 bg-green-400 rounded-full"></span>
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
+            <!-- Hero Text -->
+            <div class="space-y-6">
+                <h1 class="text-3xl md:text-5xl font-extrabold text-slate-900 leading-tight">
+                    Temukan Bakat Terampil <br>
+                    atau Proyek Impian Anda <br>
+                    di <span class="text-teal-600">The Archipelago Nexus</span>
+                </h1>
+                <p class="text-base text-slate-600 max-w-md leading-relaxed">
+                    Hubungkan dengan freelancer terbaik dan wujudkan proyek Anda dengan mudah dan aman.
+                </p>
+                <div>
+                    <a href="{{ route('login') }}" class="inline-block px-8 py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded-lg shadow-lg transition transform hover:-translate-y-0.5">
+                        Mulai sekarang
+                    </a>
                 </div>
                 
-                <!-- TEMPAT PEMANGGILAN FOTO KAMU -->
-                <div class="w-full h-full bg-gradient-to-t from-blue-50 to-transparent rounded-xl overflow-hidden flex items-end justify-center relative">
-                    <img src="{{ asset('images/beranda.png') }}" 
-                         alt="Freelancer" 
-                         class="w-full h-full object-cover object-center relative z-10" />
+                <!-- Slider Dots -->
+                <div class="flex gap-2 pt-4">
+                    <span class="w-6 h-2 bg-slate-800 rounded-full"></span>
+                    <span class="w-2 h-2 bg-slate-300 rounded-full"></span>
+                    <span class="w-2 h-2 bg-slate-300 rounded-full"></span>
+                    <span class="w-2 h-2 bg-slate-300 rounded-full"></span>
                 </div>
-                
-                <!-- Floating Mini Card Kiri (Username) -->
-                <div class="absolute bottom-12 -left-8 bg-white/95 backdrop-blur border border-slate-100 rounded-lg shadow-lg py-1.5 px-2.5 flex items-center gap-2 z-20">
-                    <span class="w-2 h-2 bg-emerald-500 rounded-full"></span>
-                    <span class="text-[9px] font-bold text-slate-700 font-mono">@orremiana</span>
-                </div>
+            </div>
 
-                <!-- Floating Mini Card Kanan (Detail Status Ulasan) -->
-                <div class="absolute top-12 -right-6 bg-white border border-slate-100 rounded-lg shadow-lg p-2 w-24 z-20">
-                    <p class="text-[8px] text-gray-400 font-medium">Rating</p>
-                    <div class="w-12 h-1.5 bg-blue-100 rounded-full my-1 overflow-hidden">
-                        <div class="w-4/5 h-full bg-teal-500 rounded-full"></div>
+            <!-- Hero Graphics Vector / Mockup Bergaya Premium Baru -->
+            <div class="relative flex justify-center items-center h-[360px] md:h-[400px]">
+                <!-- Lingkaran Besar Gradasi Warna di Belakang (Biru Kehijauan) -->
+                <div class="absolute right-4 w-[280px] h-[280px] md:w-[360px] md:h-[360px] bg-gradient-to-br from-blue-500 via-teal-400 to-emerald-400 rounded-full -z-10 opacity-90 shadow-2xl"></div>
+                
+                <!-- Main Mockup Card (Frame Browser Putih) -->
+                <div class="bg-white/90 backdrop-blur-md border border-slate-200/60 rounded-2xl shadow-2xl p-4 w-full max-w-[280px] md:max-w-[320px] h-[280px] md:h-[320px] relative overflow-hidden flex flex-col justify-between">
+                    <!-- Mac-style top dots -->
+                    <div class="flex gap-1.5 mb-2">
+                        <span class="w-2 h-2 bg-red-400 rounded-full"></span>
+                        <span class="w-2 h-2 bg-yellow-400 rounded-full"></span>
+                        <span class="w-2 h-2 bg-green-400 rounded-full"></span>
                     </div>
-                    <p class="text-[8px] font-bold text-slate-700">For Teams</p>
+                    
+                    <!-- TEMPAT PEMANGGILAN FOTO KAMU -->
+                    <div class="w-full h-full bg-gradient-to-t from-blue-50 to-transparent rounded-xl overflow-hidden flex items-end justify-center relative">
+                        <img src="{{ asset('images/beranda.png') }}" 
+                             alt="Freelancer" 
+                             class="w-full h-full object-cover object-center relative z-10" />
+                    </div>
+                    
+                    <!-- Floating Mini Card Kiri (Username) -->
+                    <div class="absolute bottom-12 -left-8 bg-white/95 backdrop-blur border border-slate-100 rounded-lg shadow-lg py-1.5 px-2.5 flex items-center gap-2 z-20">
+                        <span class="w-2 h-2 bg-emerald-500 rounded-full"></span>
+                        <span class="text-[9px] font-bold text-slate-700 font-mono">@orremiana</span>
+                    </div>
+
+                    <!-- Floating Mini Card Kanan (Detail Status Ulasan) -->
+                    <div class="absolute top-12 -right-6 bg-white border border-slate-100 rounded-lg shadow-lg p-2 w-24 z-20">
+                        <p class="text-[8px] text-gray-400 font-medium">Rating</p>
+                        <div class="w-12 h-1.5 bg-blue-100 rounded-full my-1 overflow-hidden">
+                            <div class="w-4/5 h-full bg-teal-500 rounded-full"></div>
+                        </div>
+                        <p class="text-[8px] font-bold text-slate-700">For Teams</p>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Floating Check Badge Right -->
-            <div class="absolute top-1/2 -right-6 w-12 h-12 bg-white border border-gray-100 rounded-full shadow-lg flex items-center justify-center text-emerald-500 text-xl z-20">
-                <i class="fa-solid fa-circle-check"></i>
-            </div>
+                <!-- Floating Check Badge Right -->
+                <div class="absolute top-1/2 -right-6 w-12 h-12 bg-white border border-gray-100 rounded-full shadow-lg flex items-center justify-center text-emerald-500 text-xl z-20">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
 
-            <!-- Emoji Floating Smiley Kiri -->
-            <div class="absolute top-24 left-4 bg-white w-8 h-8 rounded-full shadow-md flex items-center justify-center text-sm z-20">
-                😍
+                <!-- Emoji Floating Smiley Kiri -->
+                <div class="absolute top-24 left-4 bg-white w-8 h-8 rounded-full shadow-md flex items-center justify-center text-sm z-20">
+                    😍
+                </div>
             </div>
         </div>
     </section>
