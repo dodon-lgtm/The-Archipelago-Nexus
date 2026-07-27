@@ -49,4 +49,9 @@ class Project extends Model
     {
         return $this->hasOne(Workspace::class, 'project_id');
     }
+
+    public function review()
+    {
+        return $this->hasOne(Review::class);
+    }
 }

@@ -21,75 +21,84 @@ class ProfilController extends Controller
             ]
         );
 
-        return view('freelancer.profil', compact('profile'));
+        // Ambil data user yang sedang login (freelancer)
+        $user = Auth::user();
+
+        // Ambil ulasan yang diterima beserta data client-nya
+        $reviews = $user->reviewsReceived()->with('client')->latest()->get();
+        
+        // Hitung rata-rata rating dan total ulasan
+        $averageRating = $reviews->avg('rating');
+        $totalReview = $reviews->count();
+
+        return view('freelancer.profil', compact(
+            'profile', 
+            'reviews', 
+            'averageRating', 
+            'totalReview'
+        ));
     }
 
-public function dashboard()
-{
-    // $categories = Category::all();
-
-    // $projects = Project::latest()->take(8)->get();
-
-    // return view('welcome', compact(
-    //     'categories',
-    //     'projects'
-    // ));
-}
+    public function dashboard()
+    {
+        // $categories = Category::all();
+        // $projects = Project::latest()->take(8)->get();
+        // return view('welcome', compact('categories', 'projects'));
+    }
 
     // public function index()
     // {
     //     $freelancers = User::where('role', 'freelancer')->get();
-
     //     return view('freelancer.index', compact('freelancers'));
     // }
     
     public function editProfile()
-{
-    $profile = FreelancerProfile::firstOrCreate(
-        ['user_id' => Auth::id()]
-    );
+    {
+        $profile = FreelancerProfile::firstOrCreate(
+            ['user_id' => Auth::id()]
+        );
 
-    return view('freelancer.edit_profile', compact('profile'));
-}
-
-public function updateProfile(Request $request)
-{
-    $request->validate([
-        'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-        'bio' => 'nullable|string',
-        'location' => 'nullable|string|max:255',
-        'skills' => 'nullable|string',
-        'experience' => 'nullable|string',
-        'portfolio_link' => 'nullable|url',
-        'cv' => 'nullable|mimes:pdf|max:2048',
-    ]);
-
-    $profile = FreelancerProfile::firstOrCreate([
-        'user_id' => Auth::id()
-    ]);
-
-    // Upload Foto
-    if ($request->hasFile('photo')) {
-        $photo = $request->file('photo')->store('profile', 'public');
-        $profile->photo = $photo;
+        return view('freelancer.edit_profile', compact('profile'));
     }
 
-    // Upload CV
-    if ($request->hasFile('cv')) {
-        $cv = $request->file('cv')->store('cv', 'public');
-        $profile->cv = $cv;
+    public function updateProfile(Request $request)
+    {
+        $request->validate([
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'bio' => 'nullable|string',
+            'location' => 'nullable|string|max:255',
+            'skills' => 'nullable|string',
+            'experience' => 'nullable|string',
+            'portfolio_link' => 'nullable|url',
+            'cv' => 'nullable|mimes:pdf|max:2048',
+        ]);
+
+        $profile = FreelancerProfile::firstOrCreate([
+            'user_id' => Auth::id()
+        ]);
+
+        // Upload Foto
+        if ($request->hasFile('photo')) {
+            $photo = $request->file('photo')->store('profile', 'public');
+            $profile->photo = $photo;
+        }
+
+        // Upload CV
+        if ($request->hasFile('cv')) {
+            $cv = $request->file('cv')->store('cv', 'public');
+            $profile->cv = $cv;
+        }
+
+        $profile->bio = $request->bio;
+        $profile->location = $request->location;
+        $profile->skills = $request->skills;
+        $profile->experience = $request->experience;
+        $profile->portfolio_link = $request->portfolio_link;
+
+        $profile->save();
+
+        return redirect()
+            ->route('freelancer.profile')
+            ->with('success', 'Profil berhasil diperbarui.');
     }
-
-    $profile->bio = $request->bio;
-    $profile->location = $request->location;
-    $profile->skills = $request->skills;
-    $profile->experience = $request->experience;
-    $profile->portfolio_link = $request->portfolio_link;
-
-    $profile->save();
-
-    return redirect()
-        ->route('freelancer.profile')
-        ->with('success', 'Profil berhasil diperbarui.');
-}
 }

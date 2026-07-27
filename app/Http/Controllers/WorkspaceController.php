@@ -8,6 +8,7 @@ use App\Models\ProgressHistory;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Auth;
 
 class WorkspaceController extends Controller
 {
@@ -26,7 +27,7 @@ class WorkspaceController extends Controller
             'company',
             'latestProgress',
         ])
-            ->where('freelancer_id', auth()->id())
+            ->where('freelancer_id', Auth::id())
             ->latest()
             ->paginate(10);
 
@@ -43,7 +44,7 @@ class WorkspaceController extends Controller
             'freelancer',
             'latestProgress',
         ])
-            ->where('company_id', auth()->id())
+            ->where('company_id', Auth::id())
             ->latest()
             ->paginate(10);
 
@@ -83,9 +84,13 @@ class WorkspaceController extends Controller
         $latestProgress = $workspace->latestProgress;
         $progressValue = $latestProgress?->progress ?? 0;
 
+        // Load payment data if exists
+        $payment = $workspace->payment;
+
         return view('workspace.show', compact(
             'workspace', 'allStages', 'activeStage',
-            'activeStageIndex', 'latestProgress', 'progressValue'
+            'activeStageIndex', 'latestProgress', 'progressValue',
+            'payment'
         ));
     }
 
@@ -102,14 +107,14 @@ class WorkspaceController extends Controller
 
         Message::create([
             'workspace_id' => $workspace->id,
-            'sender_id' => auth()->id(),
+            'sender_id' => Auth::id(),
             'message' => $request->message,
             'type' => 'user',
         ]);
 
         return redirect()
             ->route(
-                auth()->user()->role === 'company' ? 'company.workspaces.show' : 'freelancer.workspaces.show',
+                Auth::user()->role === 'company' ? 'company.workspaces.show' : 'freelancer.workspaces.show',
                 $workspace
             )
             ->with('success', 'Pesan berhasil dikirim.');
@@ -121,7 +126,7 @@ class WorkspaceController extends Controller
     public function updateProgress(Request $request, Workspace $workspace): RedirectResponse
     {
         // Hanya freelancer yang bisa update progress
-        if ((int) $workspace->freelancer_id !== (int) auth()->id()) {
+        if ((int) $workspace->freelancer_id !== (int) Auth::id()) {
             abort(403, 'Hanya freelancer yang dapat mengupdate progress.');
         }
 
@@ -154,7 +159,7 @@ class WorkspaceController extends Controller
             'stage' => $request->stage,
             'progress' => $newProgress,
             'description' => $request->description,
-            'updated_by' => auth()->id(),
+            'updated_by' => Auth::id(),
         ]);
 
         // Jika progress 100%, otomatis status workspace jadi "Menunggu Revisi"
@@ -164,7 +169,7 @@ class WorkspaceController extends Controller
 
             Message::create([
                 'workspace_id' => $workspace->id,
-                'sender_id' => auth()->id(),
+                'sender_id' => Auth::id(),
                 'message' => 'Freelander telah menyelesaikan pekerjaan dan menunggu konfirmasi perusahaan.',
                 'type' => 'system',
             ]);
@@ -181,7 +186,7 @@ class WorkspaceController extends Controller
     public function complete(Workspace $workspace): RedirectResponse
     {
         // Hanya company yang bisa konfirmasi
-        if ((int) $workspace->company_id !== (int) auth()->id()) {
+        if ((int) $workspace->company_id !== (int) Auth::id()) {
             abort(403, 'Hanya perusahaan yang dapat mengkonfirmasi pekerjaan selesai.');
         }
 
@@ -199,7 +204,7 @@ class WorkspaceController extends Controller
         // System message
         Message::create([
             'workspace_id' => $workspace->id,
-            'sender_id' => auth()->id(),
+            'sender_id' => Auth::id(),
             'message' => 'Pekerjaan telah dikonfirmasi selesai.',
             'type' => 'system',
         ]);
@@ -214,7 +219,7 @@ class WorkspaceController extends Controller
      */
     private function authorizeAccess(Workspace $workspace): void
     {
-        $user = auth()->user();
+        $user = Auth::user();
         $isCompany = (int) $workspace->company_id === (int) $user->id;
         $isFreelancer = (int) $workspace->freelancer_id === (int) $user->id;
 

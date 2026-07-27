@@ -51,6 +51,15 @@
                     <span>Workspace Saya</span>
                 </a>
 
+                <a href="{{ route('freelancer.pendapatan.index') }}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-xl transition
+                   {{ request()->routeIs('freelancer.pendapatan.*')
+                        ? 'bg-cyan-50 text-cyan-700 font-bold'
+                        : 'text-slate-600 hover:bg-slate-100' }}">
+                    <i class="fa-solid fa-wallet w-5"></i>
+                    <span>Pendapatan</span>
+                </a>
+
             @elseif(Auth::user()->role == 'company')
 
                 <a href="{{ route('company.dashboard') }}"

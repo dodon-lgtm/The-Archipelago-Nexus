@@ -66,9 +66,7 @@
                 {{-- Layout Single Column --}}
                 <div class="space-y-6">
 
-                    {{-- ============================================================
-                         ROW 1: INFO PROJECT + PROGRESS (compact cards side by side)
-                    ============================================================ --}}
+                    {{-- ROW 1: INFO PROJECT + PROGRESS --}}
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
                         {{-- Card: Info Project --}}
@@ -120,25 +118,27 @@
 
                         {{-- Card: Progress Bar --}}
                         <div
-                            class="md:col-span-1 bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-                            <div class="px-5 py-4 border-b border-slate-100">
-                                <h2 class="font-bold text-sm text-slate-800">Progress Pengerjaan</h2>
-                            </div>
-                            <div class="p-5">
-                                <div class="text-center mb-3">
-                                    <span class="text-3xl font-extrabold text-brand">{{ $progressValue }}%</span>
-                                    @if ($workspace->latestProgress)
-                                        <p class="text-xs text-slate-400 mt-1">{{ $workspace->latestProgress->stage }}
-                                        </p>
-                                    @endif
+                            class="md:col-span-1 bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden flex flex-col justify-between">
+                            <div>
+                                <div class="px-5 py-4 border-b border-slate-100">
+                                    <h2 class="font-bold text-sm text-slate-800">Progress Pengerjaan</h2>
                                 </div>
-                                <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
-                                    <div class="h-full rounded-full bg-gradient-to-r from-brand to-cyan-400 transition-all duration-700"
-                                        style="width: {{ $progressValue }}%"></div>
+                                <div class="p-5">
+                                    <div class="text-center mb-3">
+                                        <span class="text-3xl font-extrabold text-brand">{{ $progressValue }}%</span>
+                                        @if ($workspace->latestProgress)
+                                            <p class="text-xs text-slate-400 mt-1">{{ $workspace->latestProgress->stage }}
+                                            </p>
+                                        @endif
+                                    </div>
+                                    <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+                                        <div class="h-full rounded-full bg-gradient-to-r from-brand to-cyan-400 transition-all duration-700"
+                                            style="width: {{ $progressValue }}%"></div>
+                                    </div>
                                 </div>
                             </div>
                             @if (auth()->user()->role === 'freelancer')
-                                <div class="mt-24 px-5">
+                                <div class="mt-20 px-5">
                                     <button type="button"
                                         onclick="document.getElementById('progressModal').classList.remove('hidden')"
                                         class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-brand text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition">
@@ -201,12 +201,9 @@
 
                     </div>
 
-                    {{-- ============================================================
-                         ROW 2: CHAT (full width)
-                    ============================================================ --}}
+                    {{-- ROW 2: CHAT --}}
                     <div
                         class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden flex flex-col h-[450px]">
-
                         {{-- Chat Header --}}
                         <div
                             class="px-5 py-4 border-b border-slate-100 bg-white flex items-center justify-between shrink-0">
@@ -226,6 +223,8 @@
                                 $chatStatusColors = [
                                     'Sedang Dikerjakan' => 'bg-blue-500',
                                     'Menunggu Revisi' => 'bg-amber-500',
+                                    'Menunggu Pembayaran' => 'bg-purple-500',
+                                    'Menunggu Verifikasi Admin' => 'bg-orange-500',
                                     'Selesai' => 'bg-emerald-500',
                                 ];
                             @endphp
@@ -295,13 +294,111 @@
                         </div>
                     </div>
 
-                    {{-- ============================================================
-                         ROW 3: HASIL PEKERJAAN / SUBMISSIONS (full width)
-                    ============================================================ --}}
+                    {{-- ROW 3: HASIL PEKERJAAN / SUBMISSIONS --}}
                     @include('workspace._submissions')
 
+                    {{-- ROW 4: TIMELINE + ACTIONS --}}
                     {{-- ============================================================
-                         ROW 4: TIMELINE + ACTIONS (side by side)
+                         ROW 4: INVOICE (untuk company saat Menunggu Pembayaran / Menunggu Verifikasi Admin)
+                    ============================================================ --}}
+                    @if(auth()->user()->role === 'company' && in_array($workspace->status, ['Menunggu Pembayaran', 'Menunggu Verifikasi Admin']) && $payment)
+                        <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+                            <div class="px-5 py-4 border-b border-slate-100">
+                                <h2 class="font-bold text-sm text-slate-800">Invoice Pembayaran</h2>
+                            </div>
+                            <div class="p-5 space-y-4">
+                                {{-- Invoice Info --}}
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="bg-slate-50 rounded-xl p-4 space-y-2">
+                                        <div class="flex items-center justify-between">
+                                            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Nomor Invoice</p>
+                                            <span class="text-xs font-bold text-slate-800">{{ $payment->invoice_number }}</span>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Total</p>
+                                            <span class="text-sm font-bold text-slate-800">Rp {{ number_format($payment->amount, 0, ',', '.') }}</span>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Biaya Platform (5%)</p>
+                                            <span class="text-xs font-semibold text-slate-600">Rp {{ number_format($payment->platform_fee, 0, ',', '.') }}</span>
+                                        </div>
+                                        <div class="flex items-center justify-between pt-2 border-t border-slate-200">
+                                            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Total Dibayar</p>
+                                            <span class="text-sm font-bold text-emerald-600">Rp {{ number_format($payment->amount, 0, ',', '.') }}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="bg-slate-50 rounded-xl p-4 space-y-2">
+                                        <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Status Pembayaran</p>
+                                        @php
+                                            $psColor = $payment->status === 'pending' ? 'bg-amber-50 text-amber-600 border-amber-200' : 'bg-slate-50 text-slate-600 border-slate-200';
+                                            $psLabel = $payment->status === 'pending' ? 'Belum Dibayar' : 'Menunggu Verifikasi';
+                                        @endphp
+                                        <span class="text-[10px] font-bold px-2.5 py-1 rounded-full border {{ $psColor }}">
+                                            {{ $psLabel }}
+                                        </span>
+
+                                        @if($payment->status === 'rejected')
+                                            <div class="mt-3 px-3 py-2 bg-red-50 border border-red-200 rounded-lg">
+                                                <p class="text-[10px] font-semibold text-red-700">Pembayaran ditolak. Silakan upload ulang.</p>
+                                                @if($payment->admin_note)
+                                                    <p class="text-[9px] text-red-600 mt-1">Alasan: {{ $payment->admin_note }}</p>
+                                                @endif
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                {{-- Payment Upload Form (hanya jika status pending atau rejected) --}}
+                                @if(in_array($payment->status, ['pending', 'rejected']))
+                                    <form method="POST" action="{{ route('company.payments.upload', $workspace) }}" enctype="multipart/form-data" class="space-y-4">
+                                        @csrf
+
+                                        <div>
+                                            <label class="block text-xs font-semibold text-slate-600 mb-1.5">Metode Pembayaran</label>
+                                            <select name="payment_method" required
+                                                    class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/30">
+                                                <option value="">Pilih Metode</option>
+                                                <option value="Transfer Bank">Transfer Bank</option>
+                                                <option value="QRIS">QRIS</option>
+                                                <option value="E-Wallet">E-Wallet</option>
+                                            </select>
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-xs font-semibold text-slate-600 mb-1.5">Upload Bukti Pembayaran</label>
+                                            <input type="file" name="payment_proof" required accept=".jpg,.jpeg,.png,.pdf"
+                                                   class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/30 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-brand file:text-white hover:file:bg-blue-700 transition">
+                                            <p class="text-[10px] text-slate-400 mt-1">Format: jpg, jpeg, png, pdf. Maksimal 10 MB.</p>
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-xs font-semibold text-slate-600 mb-1.5">Catatan (opsional)</label>
+                                            <textarea name="company_note" rows="2" maxlength="2000"
+                                                      placeholder="Tambahkan catatan..."
+                                                      class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/30 resize-none"></textarea>
+                                        </div>
+
+                                        <button type="submit"
+                                                class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-brand text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition">
+                                            <i class="fa-solid fa-paper-plane"></i> Kirim Pembayaran
+                                        </button>
+                                    </form>
+                                @endif
+
+                                {{-- Status waiting verification --}}
+                                @if($payment->status === 'waiting_verification')
+                                    <div class="flex items-center gap-3 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-700">
+                                        <i class="fa-solid fa-clock"></i>
+                                        <p class="text-xs font-medium">Bukti pembayaran telah dikirim. Menunggu verifikasi admin.</p>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    @endif
+
+                    {{-- ============================================================
+                         ROW 5: TIMELINE + ACTIONS (side by side)
                     ============================================================ --}}
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
@@ -344,27 +441,58 @@
                             </div>
                         </div>
 
-                        {{-- Card: Actions --}}
+                        {{-- Card: Actions & Rating --}}
                         <div
-                            class="md:col-span-1 bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-                            <div class="px-5 py-4 border-b border-slate-100">
-                                <h2 class="font-bold text-sm text-slate-800">Aksi</h2>
-                            </div>
-                            <div class="p-5 space-y-3">
+                            class="md:col-span-1 bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden flex flex-col justify-between">
+                            <div>
+                                <div class="px-5 py-4 border-b border-slate-100">
+                                    <h2 class="font-bold text-sm text-slate-800">Aksi & Ulasan</h2>
+                                </div>
+                                <div class="p-5 space-y-3">
+                                    @if (auth()->user()->role === 'company' && $progressValue == 100 && $workspace->status !== 'Selesai')
+                                        {{-- Confirm Completion Button (Company Only) --}}
+                                        <form method="POST"
+                                            action="{{ route('company.workspaces.complete', $workspace) }}"
+                                            onsubmit="return confirm('Konfirmasi bahwa pekerjaan telah selesai?')">
+                                            @csrf
+                                            <button type="submit"
+                                                class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-500 text-white rounded-xl text-sm font-semibold hover:bg-emerald-600 transition">
+                                                <i class="fa-solid fa-check-circle"></i> Konfirmasi Pekerjaan Selesai
+                                            </button>
+                                        </form>
+                                    @endif
 
-
-                                @if (auth()->user()->role === 'company' && $progressValue == 100 && $workspace->status !== 'Selesai')
-                                    {{-- Confirm Completion Button (Company Only) --}}
-                                    <form method="POST"
-                                        action="{{ route('company.workspaces.complete', $workspace) }}"
-                                        onsubmit="return confirm('Konfirmasi bahwa pekerjaan telah selesai?')">
-                                        @csrf
-                                        <button type="submit"
-                                            class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-500 text-white rounded-xl text-sm font-semibold hover:bg-emerald-600 transition">
-                                            <i class="fa-solid fa-check-circle"></i> Konfirmasi Pekerjaan Selesai
-                                        </button>
-                                    </form>
-                                @endif
+                                    {{-- Bagian Rating / Ulasan --}}
+                                    @if ($workspace->status === 'Selesai')
+                                        <div class="pt-2 border-t border-slate-100">
+                                            @if (isset($workspace->rating) && $workspace->rating)
+                                                <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-center">
+                                                    <p class="text-xs font-bold text-amber-800 mb-1">Rating Diberikan</p>
+                                                    <div class="flex justify-center gap-1 text-amber-500 text-sm mb-1">
+                                                        @for ($i = 1; $i <= 5; $i++)
+                                                            <i class="fa-{{ $i <= $workspace->rating->score ? 'solid' : 'regular' }} fa-star"></i>
+                                                        @endfor
+                                                    </div>
+                                                    @if ($workspace->rating->review)
+                                                        <p class="text-[11px] text-slate-600 italic">"{{ $workspace->rating->review }}"</p>
+                                                    @endif
+                                                </div>
+                                            @else
+                                                @if (auth()->user()->role === 'company')
+                                                    <button type="button"
+                                                        onclick="document.getElementById('ratingModal').classList.remove('hidden')"
+                                                        class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-amber-500 text-white rounded-xl text-sm font-semibold hover:bg-amber-600 transition">
+                                                        <i class="fa-solid fa-star"></i> Beri Rating & Ulasan
+                                                    </button>
+                                                @else
+                                                    <div class="text-center py-2">
+                                                        <p class="text-xs text-slate-400">Belum ada rating dari perusahaan.</p>
+                                                    </div>
+                                                @endif
+                                            @endif
+                                        </div>
+                                    @endif
+                                </div>
                             </div>
                         </div>
 
@@ -377,9 +505,7 @@
         @include('navbar.footer')
     </div>
 
-    {{-- ============================================================
-         MODAL UPDATE PROGRESS
-    ============================================================ --}}
+    {{-- MODAL UPDATE PROGRESS --}}
     <div id="progressModal"
         class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
@@ -428,6 +554,51 @@
             </form>
         </div>
     </div>
+
+    {{-- MODAL RATING & ULASAN (Untuk Company) --}}
+    @if (auth()->user()->role === 'company' && $workspace->status === 'Selesai')
+        <div id="ratingModal"
+            class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
+                <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
+                    <h3 class="font-bold text-slate-800">Beri Rating & Ulasan</h3>
+                    <button type="button" onclick="document.getElementById('ratingModal').classList.add('hidden')"
+                        class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center hover:bg-slate-200 transition">
+                        <i class="fa-solid fa-xmark text-slate-500"></i>
+                    </button>
+                </div>
+                {{-- Sesuaikan route endpoint aksi penyimpanan rating di backend Anda --}}
+                {{-- Ubah action route-nya mengarah ke review project --}}
+<form method="POST" action="{{ route('company.client.review.store', $workspace->project_id) }}" class="p-6 space-y-4">
+    @csrf
+
+    <div>
+        <label class="block text-xs font-semibold text-slate-600 mb-1.5">Pilih Rating (1 - 5 Bintang)</label>
+        <select name="rating" required
+            class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/30">
+            <option value="5">⭐⭐⭐⭐⭐ (5 - Sempurna)</option>
+            <option value="4">⭐⭐⭐⭐ (4 - Sangat Baik)</option>
+            <option value="3">⭐⭐⭐ (3 - Cukup)</option>
+            <option value="2">⭐⭐ (2 - Kurang)</option>
+            <option value="1">⭐ (1 - Buruk)</option>
+        </select>
+    </div>
+
+    <div>
+        <label class="block text-xs font-semibold text-slate-600 mb-1.5">Ulasan / Testimoni</label>
+        <textarea name="review" rows="3" maxlength="500"
+            class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/30 resize-none"
+            placeholder="Tulis ulasan kinerja freelancer ini..."></textarea>
+    </div>
+
+    <button type="submit"
+        class="w-full py-2.5 bg-amber-500 text-white rounded-xl text-sm font-semibold hover:bg-amber-600 transition flex items-center justify-center gap-2">
+        <i class="fa-solid fa-star"></i> Kirim Ulasan
+    </button>
+</form>
+            </div>
+        </div>
+    @endif
 
     <script>
         // Auto scroll chat ke bawah

@@ -15,6 +15,7 @@ class SubmissionFile extends Model
         'file_path',
         'file_size',
         'mime_type',
+        'category',
     ];
 
     protected $casts = [
