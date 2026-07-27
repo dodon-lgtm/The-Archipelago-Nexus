@@ -49,7 +49,27 @@ Route::post('/register', [RegisterController::class, 'register']);
 // LANDING PAGE
 // ──────────────────────────────────────────────
 Route::get('/', function () {
-    return view('landingpage');
+    $recentProjects = \App\Models\Project::with(['category', 'owner'])
+        ->where('status', 'Open')
+        ->latest()
+        ->take(6)
+        ->get();
+
+    $categories = \App\Models\Category::orderBy('name')->get();
+
+    $totalProjects     = \App\Models\Project::count();
+    $totalFreelancers  = \App\Models\User::where('role', 'freelancer')->count();
+    $totalCompanies    = \App\Models\User::where('role', 'company')->count();
+    $totalProjectsCompleted = \App\Models\Project::where('status', 'Closed')->count();
+
+    return view('landingpage', compact(
+        'recentProjects',
+        'categories',
+        'totalProjects',
+        'totalFreelancers',
+        'totalCompanies',
+        'totalProjectsCompleted'
+    ));
 })->name('landing');
 
 
