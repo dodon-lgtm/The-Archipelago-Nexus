@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\WorkspaceController;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\ProjectSubmissionController; // Di-import dari branch incoming
 
 // ─── ADMIN CONTROLLERS ───────────────────────────
@@ -18,10 +19,15 @@ use App\Http\Controllers\Admin\ProjectController as AdminProjectController;
 use App\Http\Controllers\Admin\PenawaranController as AdminPenawaranController;
 use App\Http\Controllers\Admin\HasilPekerjaanController as AdminHasilPekerjaanController;
 use App\Http\Controllers\Admin\ReportController as AdminReportController;
+use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
 
 // ─── COMPANY CONTROLLERS ─────────────────────────
 use App\Http\Controllers\Company\ProjectController as CompanyProjectController;
 use App\Http\Controllers\Company\ProfilController as CompanyProfilController;
+use App\Http\Controllers\Company\PaymentController as CompanyPaymentController;
+
+// ─── FREELANCER CONTROLLERS ──────────────────────
+use App\Http\Controllers\Freelancer\PendapatanController as FreelancerPendapatanController;
 
 // ─── FREELANCER CONTROLLERS ──────────────────────
 use App\Http\Controllers\Freelancer\DashboardController as FreelancerDashboardController;
@@ -98,6 +104,10 @@ Route::middleware(['auth', 'ensureFreelancer'])->prefix('freelancer')->name('fre
             ->name('profile.edit');
         Route::post('/profile/update', [FreelancerProfilController::class, 'updateProfile'])
             ->name('profile.update');
+
+        // Pendapatan
+        Route::get('/pendapatan', [FreelancerPendapatanController::class, 'index'])
+            ->name('pendapatan.index');
     });
 
 // ──────────────────────────────────────────────
@@ -108,7 +118,7 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])->prefix('company')->nam
 
         // Dashboard
         Route::get('/dashboard', function () {
-            $userId = auth()->id();
+            $userId = Auth::id();
 
             $totalProjects = \App\Models\Project::where('user_id', $userId)->count();
             $activeProjects = \App\Models\Project::where('user_id', $userId)->where('status', 'Open')->count();
@@ -161,11 +171,15 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])->prefix('company')->nam
         Route::post('/workspaces/{workspace}/complete', [WorkspaceController::class, 'complete'])
             ->name('workspaces.complete');
 
-        // Submissions
+// Submissions
         Route::post('/workspaces/{workspace}/submissions/{submission}/accept', [ProjectSubmissionController::class, 'accept'])
             ->name('workspaces.submissions.accept');
         Route::post('/workspaces/{workspace}/submissions/{submission}/revision', [ProjectSubmissionController::class, 'requestRevision'])
             ->name('workspaces.submissions.revision');
+
+        // Payment
+Route::post('/workspaces/{workspace}/payment/upload', [CompanyPaymentController::class, 'uploadProof'])
+            ->name('payments.upload');
 
         // Profile
         Route::get('/profile', [CompanyProfilController::class, 'profile'])
@@ -224,6 +238,12 @@ Route::middleware(['auth', 'ensureAdmin'])->prefix('admin')->name('admin.')
             ->name('company-account-requests.approve');
         Route::post('/company-account-requests/{companyRequest}/reject', [CompanyAccountRequestAdminController::class, 'reject'])
             ->name('company-account-requests.reject');
+
+        // Payments
+        Route::get('/payments', [AdminPaymentController::class, 'index'])->name('payments.index');
+        Route::get('/payments/{payment}', [AdminPaymentController::class, 'show'])->name('payments.show');
+        Route::post('/payments/{payment}/verify', [AdminPaymentController::class, 'verify'])->name('payments.verify');
+        Route::post('/payments/{payment}/reject', [AdminPaymentController::class, 'reject'])->name('payments.reject');
     });
 
 // ──────────────────────────────────────────────

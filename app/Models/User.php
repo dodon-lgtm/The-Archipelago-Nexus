@@ -101,4 +101,19 @@ class User extends Authenticatable
     {
         return $this->hasMany(Review::class, 'freelancer_id');
     }
+
+    public function paymentsAsCompany(): HasMany
+    {
+        return $this->hasMany(Payment::class, 'company_id');
+    }
+
+    public function paymentsAsFreelancer(): HasMany
+    {
+        return $this->hasMany(Payment::class, 'freelancer_id');
+    }
+
+    public function paymentsVerified(): HasMany
+    {
+        return $this->hasMany(Payment::class, 'verified_by');
+    }
 }

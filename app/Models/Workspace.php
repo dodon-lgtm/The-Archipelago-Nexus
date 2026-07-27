@@ -58,5 +58,10 @@ class Workspace extends Model
         return $this->hasMany(ProjectSubmission::class, 'workspace_id')
             ->latest();
     }
+
+    public function payment()
+    {
+        return $this->hasOne(Payment::class, 'workspace_id');
+    }
 }
 
