@@ -184,10 +184,24 @@
                 <div class="flex items-center gap-4">
                     {{-- Notifications --}}
                     <div class="relative">
-                        <button class="relative w-10 h-10 rounded-full border border-slate-200 hover:bg-slate-100 flex items-center justify-center transition">
+                        <button id="adminNotificationButton" class="relative w-10 h-10 rounded-full border border-slate-200 hover:bg-slate-100 flex items-center justify-center transition">
                             <i class="fa-regular fa-bell text-slate-500"></i>
-                            <span class="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-red-500 text-white text-[8px] font-bold flex items-center justify-center">3</span>
+                            <span id="adminNotificationBadge" class="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 rounded-full bg-red-500 text-white text-[8px] font-bold flex items-center justify-center px-1 hidden"></span>
                         </button>
+
+                        {{-- Dropdown Notifikasi Admin --}}
+                        <div id="adminNotificationDropdown" class="hidden absolute right-0 mt-3 w-[380px] bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden z-[100]">
+                            <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+                                <h3 class="font-bold text-sm text-slate-800">Notifikasi</h3>
+                                <button id="adminMarkAllReadBtn" class="text-[11px] text-cyan-600 font-semibold hover:underline">Tandai semua sudah dibaca</button>
+                            </div>
+                            <div id="adminNotificationList" class="max-h-[360px] overflow-y-auto">
+                                <div class="p-6 text-center text-sm text-slate-400">
+                                    <i class="fa-regular fa-bell-slash text-xl mb-2 block"></i>
+                                    Tidak ada notifikasi
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     {{-- Profile Dropdown --}}
@@ -245,7 +259,7 @@
 
     </div>
 
-    {{-- Profile Dropdown Script --}}
+{{-- Profile Dropdown Script --}}
     <script>
         function toggleProfileDropdown() {
             const dropdown = document.getElementById('profileDropdown');
@@ -277,6 +291,170 @@
                     }, 500);
                 }, 4000);
             });
+        });
+
+        // ============= NOTIFIKASI ADMIN =============
+        document.addEventListener('DOMContentLoaded', function () {
+            const notifButton = document.getElementById('adminNotificationButton');
+            const notifDropdown = document.getElementById('adminNotificationDropdown');
+            const notifList = document.getElementById('adminNotificationList');
+            const notifBadge = document.getElementById('adminNotificationBadge');
+            const markAllBtn = document.getElementById('adminMarkAllReadBtn');
+
+            if (!notifButton) return;
+
+            // Toggle dropdown
+            notifButton.addEventListener('click', function (e) {
+                e.stopPropagation();
+                notifDropdown.classList.toggle('hidden');
+                if (!notifDropdown.classList.contains('hidden')) {
+                    fetchNotifications();
+                }
+            });
+
+            // Close dropdown when clicking outside
+            window.addEventListener('click', function () {
+                if (notifDropdown && !notifDropdown.classList.contains('hidden')) {
+                    notifDropdown.classList.add('hidden');
+                }
+            });
+
+            function fetchNotifications() {
+                fetch('{{ route("notifications.index") }}')
+                    .then(res => res.json())
+                    .then(data => {
+                        updateBadge(data.unread_count);
+                        renderNotifications(data.notifications);
+                    })
+                    .catch(err => console.error('Notif fetch error:', err));
+            }
+
+            function updateBadge(count) {
+                if (count > 0) {
+                    notifBadge.textContent = count > 99 ? '99+' : count;
+                    notifBadge.classList.remove('hidden');
+                } else {
+                    notifBadge.classList.add('hidden');
+                }
+            }
+
+            function renderNotifications(notifications) {
+                if (!notifications || notifications.length === 0) {
+                    notifList.innerHTML = `
+                        <div class="p-6 text-center text-sm text-slate-400">
+                            <i class="fa-regular fa-bell-slash text-xl mb-2 block"></i>
+                            Tidak ada notifikasi
+                        </div>
+                    `;
+                    return;
+                }
+
+                let html = '';
+                notifications.forEach(notif => {
+                    const isUnread = !notif.is_read;
+                    const timeAgo = getTimeAgo(notif.created_at);
+                    const redirectUrl = notif.data?.redirect || '#';
+                    const icon = getNotifIcon(notif.type);
+
+                    html += `
+                        <div class="notification-item p-4 border-b border-slate-50 cursor-pointer hover:bg-slate-50 transition ${isUnread ? 'bg-blue-50/40' : ''}" data-url="${redirectUrl}">
+                            <div class="flex items-start gap-3">
+                                <div class="w-8 h-8 rounded-full bg-brand/10 text-brand flex items-center justify-center shrink-0 text-sm">
+                                    <i class="${icon}"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center gap-2">
+                                        <h4 class="text-xs font-bold text-slate-800 ${isUnread ? '' : 'text-slate-500'}">${notif.title}</h4>
+                                        ${isUnread ? '<span class="w-1.5 h-1.5 rounded-full bg-cyan-500 shrink-0"></span>' : ''}
+                                    </div>
+                                    <p class="text-[11px] text-slate-500 mt-0.5 line-clamp-2">${notif.message}</p>
+                                    <p class="text-[10px] text-slate-400 mt-1">${timeAgo}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                notifList.innerHTML = html;
+
+                document.querySelectorAll('.notification-item').forEach(item => {
+                    item.addEventListener('click', function () {
+                        const url = this.dataset.url;
+                        if (url && url !== '#') {
+                            window.location.href = url;
+                        }
+                    });
+                });
+            }
+
+            function getNotifIcon(type) {
+                const iconMap = {
+                    'company_request.created': 'fa-solid fa-building',
+                    'payment.waiting': 'fa-solid fa-credit-card',
+                    'payment.verified': 'fa-solid fa-check-circle',
+                    'payment.rejected': 'fa-solid fa-times-circle',
+                    'offer.sent': 'fa-solid fa-paper-plane',
+                    'offer.accepted': 'fa-solid fa-check',
+                    'offer.rejected': 'fa-solid fa-ban',
+                    'workspace.message': 'fa-regular fa-comment-dots',
+                    'submission.uploaded': 'fa-solid fa-upload',
+                    'submission.accepted': 'fa-solid fa-check-double',
+                    'submission.revision_requested': 'fa-solid fa-pen',
+                };
+                return iconMap[type] || 'fa-regular fa-bell';
+            }
+
+            function getTimeAgo(dateString) {
+                const now = new Date();
+                const date = new Date(dateString);
+                const diffMs = now - date;
+                const diffSec = Math.floor(diffMs / 1000);
+                const diffMin = Math.floor(diffSec / 60);
+                const diffHour = Math.floor(diffMin / 60);
+                const diffDay = Math.floor(diffHour / 24);
+
+                if (diffSec < 60) return 'Baru saja';
+                if (diffMin < 60) return diffMin + ' menit yang lalu';
+                if (diffHour < 24) return diffHour + ' jam yang lalu';
+                if (diffDay < 7) return diffDay + ' hari yang lalu';
+                return date.toLocaleDateString('id-ID');
+            }
+
+            // Mark all as read
+            if (markAllBtn) {
+                markAllBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    fetch('{{ route("notifications.mark-all-read") }}', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Content-Type': 'application/json',
+                        }
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            updateBadge(0);
+                            fetchNotifications();
+                        }
+                    })
+                    .catch(err => console.error('Mark all read error:', err));
+                });
+            }
+
+            // Initial fetch for badge count
+            fetch('{{ route("notifications.index") }}')
+                .then(res => res.json())
+                .then(data => updateBadge(data.unread_count))
+                .catch(err => console.error('Notif init error:', err));
+
+            // Polling every 60 seconds
+            setInterval(function () {
+                fetch('{{ route("notifications.index") }}')
+                    .then(res => res.json())
+                    .then(data => updateBadge(data.unread_count))
+                    .catch(() => {});
+            }, 60000);
         });
     </script>
 

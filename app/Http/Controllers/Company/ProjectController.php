@@ -10,6 +10,7 @@ use App\Models\Project;
 use App\Models\Workspace;
 use App\Models\ProgressHistory;
 use App\Models\Message;
+use App\Services\NotificationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
@@ -169,6 +170,38 @@ class ProjectController extends Controller
                 'message' => 'Perusahaan telah memilih freelancer dan workspace proyek telah dibuat.',
                 'type' => 'system',
             ]);
+
+            // Notifikasi untuk freelancer yang dipilih
+            NotificationService::sendTo(
+                user: $penawaran->freelancer_id,
+                type: 'offer.accepted',
+                title: 'Penawaran Diterima',
+                message: 'Selamat! Penawaran Anda untuk proyek "' . $project->project_name . '" telah diterima. Workspace proyek telah dibuat.',
+                redirect: route('freelancer.workspaces.show', $workspace),
+                senderId: auth()->id(),
+                penawaranId: $penawaran->id,
+                projectId: $project->id,
+                workspaceId: $workspace->id,
+            );
+
+            // Notifikasi untuk freelancer lain yang ditolak
+            $rejectedPenawarans = Penawaran::where('project_id', $project->id)
+                ->where('id', '!=', $penawaran->id)
+                ->where('status', 'Ditolak')
+                ->get();
+
+            foreach ($rejectedPenawarans as $rejected) {
+                NotificationService::sendTo(
+                    user: $rejected->freelancer_id,
+                    type: 'offer.rejected',
+                    title: 'Penawaran Ditolak',
+                    message: 'Maaf, penawaran Anda untuk proyek "' . $project->project_name . '" telah ditolak karena perusahaan memilih freelancer lain.',
+                    redirect: route('freelancer.projects.show', $project),
+                    senderId: auth()->id(),
+                    penawaranId: $rejected->id,
+                    projectId: $project->id,
+                );
+            }
 
             DB::commit();
 

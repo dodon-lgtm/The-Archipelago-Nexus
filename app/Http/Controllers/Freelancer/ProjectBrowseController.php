@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Freelancer;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
-use App\Models\Notification;
 use App\Models\Penawaran;
 use App\Models\Project;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
@@ -91,13 +91,16 @@ public function store(Request $request, Project $project)
 
     // Buat notifikasi untuk pemilik proyek (company)
     if ($project->owner && $project->owner->id !== Auth::id()) {
-        Notification::create([
-            'user_id'       => $project->owner->id,
-            'penawaran_id'  => $penawaran->id,
-            'title'         => 'Penawaran Baru',
-            'message'       => Auth::user()->name . ' mengirimkan penawaran untuk proyek "' . $project->project_name . '".',
-            'is_read'       => false,
-        ]);
+NotificationService::sendTo(
+            user: $project->owner->id,
+            type: 'offer.sent',
+            title: 'Penawaran Baru',
+            message: Auth::user()->name . ' mengirimkan penawaran untuk proyek "' . $project->project_name . '".',
+            redirect: route('company.projects.show', $project),
+            senderId: Auth::id(),
+            penawaranId: $penawaran->id,
+            projectId: $project->id,
+        );
     }
 
    return redirect()
