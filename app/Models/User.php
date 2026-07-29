@@ -116,4 +116,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Payment::class, 'verified_by');
     }
+
+        public function companyRequest()
+    {
+        return $this->hasOne(CompanyAccountRequest::class, 'company_email', 'email');
+    }
 }

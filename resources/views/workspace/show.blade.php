@@ -24,6 +24,80 @@
             }
         }
     </script>
+    <style>
+        @keyframes fadeInBackdrop {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes modalPop {
+            from { opacity: 0; transform: scale(.92) translateY(12px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .modal-backdrop { animation: fadeInBackdrop .25s ease-out; }
+        .modal-panel { animation: modalPop .35s cubic-bezier(.34, 1.56, .64, 1); }
+
+        @keyframes iconPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,.45); }
+            50% { box-shadow: 0 0 0 9px rgba(255,255,255,0); }
+        }
+        .icon-badge { animation: iconPulse 2.4s ease-in-out infinite; }
+
+        @keyframes starPop {
+            0% { transform: scale(1) rotate(0); }
+            45% { transform: scale(1.4) rotate(-10deg); }
+            100% { transform: scale(1.05) rotate(0); }
+        }
+        .star-btn.pop { animation: starPop .38s ease; }
+
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-6px) rotate(8deg); }
+        }
+        .deco-star {
+            position: absolute;
+            color: rgba(255,255,255,.35);
+            animation: floatSlow 3.5s ease-in-out infinite;
+        }
+
+        .modal-header-pattern {
+            background-image: radial-gradient(rgba(255,255,255,.16) 1.5px, transparent 1.5px);
+            background-size: 16px 16px;
+        }
+
+        .star-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.85rem;
+            color: #cbd5e1;
+            filter: drop-shadow(0 0 0 rgba(251,191,36,0));
+            transition: transform .18s ease, color .18s ease, filter .18s ease;
+        }
+        .star-btn:hover { transform: scale(1.18); }
+        .star-btn.active {
+            color: #fbbf24;
+            transform: scale(1.05);
+            filter: drop-shadow(0 2px 6px rgba(251,191,36,.55));
+        }
+
+        .btn-shimmer { position: relative; overflow: hidden; isolation: isolate; }
+        .btn-shimmer::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -75%;
+            width: 50%; height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,.4), transparent);
+            transform: skewX(-20deg);
+            transition: left .65s ease;
+        }
+        .btn-shimmer:hover::after { left: 125%; }
+
+        .field-shell:focus-within {
+            box-shadow: 0 0 0 4px rgba(37,99,235,.12);
+        }
+    </style>
 </head>
 
 <body class="bg-surface text-slate-800 min-h-screen flex font-sans">
@@ -465,10 +539,11 @@
                                     {{-- Bagian Rating / Ulasan --}}
                                     @if ($workspace->status === 'Selesai')
                                         <div class="pt-2 border-t border-slate-100">
-                                            @if (isset($workspace->rating) && $workspace->rating)
-                                                <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-center">
-                                                    <p class="text-xs font-bold text-amber-800 mb-1">Rating Diberikan</p>
-                                                    <div class="flex justify-center gap-1 text-amber-500 text-sm mb-1">
+                                            @if ($workspace->rating)
+                                                {{-- Tampilan saat rating sudah diberikan --}}
+                                                <div class="bg-blue-50 border border-blue-100 rounded-xl p-3 text-center">
+                                                    <p class="text-xs font-bold text-brand mb-1">Rating Telah Diberikan</p>
+                                                    <div class="flex justify-center gap-1 text-amber-400 text-sm mb-1">
                                                         @for ($i = 1; $i <= 5; $i++)
                                                             <i class="fa-{{ $i <= $workspace->rating->score ? 'solid' : 'regular' }} fa-star"></i>
                                                         @endfor
@@ -478,14 +553,15 @@
                                                     @endif
                                                 </div>
                                             @else
+                                                {{-- Tampilan saat belum pernah diberi rating --}}
                                                 @if (auth()->user()->role === 'company')
                                                     <button type="button"
                                                         onclick="document.getElementById('ratingModal').classList.remove('hidden')"
-                                                        class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-amber-500 text-white rounded-xl text-sm font-semibold hover:bg-amber-600 transition">
+                                                        class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-brand to-cyan-500 text-white rounded-xl text-sm font-semibold hover:shadow-lg hover:shadow-brand/30 hover:-translate-y-0.5 active:translate-y-0 transition-all">
                                                         <i class="fa-solid fa-star"></i> Beri Rating & Ulasan
                                                     </button>
                                                 @else
-                                                    <div class="text-center py-2">
+                                                    <div class="text-center py-2 bg-slate-50 rounded-xl border border-slate-100">
                                                         <p class="text-xs text-slate-400">Belum ada rating dari perusahaan.</p>
                                                     </div>
                                                 @endif
@@ -507,48 +583,80 @@
 
     {{-- MODAL UPDATE PROGRESS --}}
     <div id="progressModal"
-        class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
-            <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
-                <h3 class="font-bold text-slate-800">Update Progress</h3>
-                <button type="button" onclick="document.getElementById('progressModal').classList.add('hidden')"
-                    class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center hover:bg-slate-200 transition">
-                    <i class="fa-solid fa-xmark text-slate-500"></i>
-                </button>
+        class="hidden modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+        <div class="modal-panel bg-white rounded-3xl shadow-2xl shadow-brand/10 w-full max-w-md overflow-hidden border border-slate-100 ring-1 ring-black/[.03]">
+            {{-- Gradient header with pattern + floating decor --}}
+            <div class="relative px-6 py-7 bg-gradient-to-br from-blue-600 via-brand to-cyan-400 overflow-hidden">
+                <div class="absolute inset-0 modal-header-pattern"></div>
+                <div class="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full"></div>
+                <div class="absolute -bottom-12 -left-8 w-28 h-28 bg-white/10 rounded-full"></div>
+                <i class="fa-solid fa-chart-simple deco-star text-xl" style="top:14px; right:56px; animation-delay:.2s;"></i>
+                <i class="fa-solid fa-bolt deco-star text-sm" style="bottom:16px; left:70px; animation-delay:.8s;"></i>
+                <div class="relative flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="icon-badge w-12 h-12 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center ring-1 ring-white/30">
+                            <i class="fa-solid fa-chart-line text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white text-base tracking-tight">Update Progress</h3>
+                            <p class="text-[11px] text-white/75">Perbarui status pekerjaan Anda</p>
+                        </div>
+                    </div>
+                    <button type="button" onclick="document.getElementById('progressModal').classList.add('hidden')"
+                        class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 hover:rotate-90 flex items-center justify-center transition-all duration-300">
+                        <i class="fa-solid fa-xmark text-white text-sm"></i>
+                    </button>
+                </div>
             </div>
+
             <form method="POST" action="{{ route('freelancer.workspaces.progress', $workspace) }}"
-                class="p-6 space-y-4">
+                class="p-6 space-y-4 bg-gradient-to-b from-blue-50/40 to-white">
                 @csrf
 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1.5">Stage</label>
-                    <select name="stage" required
-                        class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/30">
-                        @foreach ($allStages as $stage)
-                            <option value="{{ $stage }}" {{ $activeStage === $stage ? 'selected' : '' }}>
-                                {{ $stage }}</option>
-                        @endforeach
-                    </select>
+                    <label class="flex items-center gap-1.5 text-xs font-semibold text-slate-600 mb-1.5">
+                        <i class="fa-solid fa-layer-group text-brand text-[11px]"></i> Stage
+                    </label>
+                    <div class="field-shell rounded-2xl transition">
+                        <select name="stage" required
+                            class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:border-brand transition">
+                            @foreach ($allStages as $stage)
+                                <option value="{{ $stage }}" {{ $activeStage === $stage ? 'selected' : '' }}>
+                                    {{ $stage }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1.5">Progress (0-100%)</label>
-                    <input type="number" name="progress" min="0" max="100"
-                        value="{{ $progressValue }}" required
-                        class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/30">
-                    <p class="text-[10px] text-slate-400 mt-1">Progress minimal: {{ $progressValue }}% (tidak boleh
-                        turun)</p>
+                    <label class="flex items-center gap-1.5 text-xs font-semibold text-slate-600 mb-1.5">
+                        <i class="fa-solid fa-gauge-high text-brand text-[11px]"></i> Progress (0-100%)
+                    </label>
+                    <div class="field-shell rounded-2xl transition">
+                        <input type="number" name="progress" min="0" max="100"
+                            value="{{ $progressValue }}" required
+                            class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:border-brand transition">
+                    </div>
+                    <p class="text-[10px] text-slate-400 mt-1.5 flex items-center gap-1">
+                        <i class="fa-solid fa-circle-info"></i> Progress minimal: {{ $progressValue }}% (tidak boleh turun)
+                    </p>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1.5">Deskripsi</label>
-                    <textarea name="description" rows="3" maxlength="500"
-                        class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/30 resize-none"
-                        placeholder="Jelaskan update progress..."></textarea>
+                    <label class="flex items-center gap-1.5 text-xs font-semibold text-slate-600 mb-1.5">
+                        <i class="fa-solid fa-pen text-brand text-[11px]"></i> Deskripsi
+                    </label>
+                    <div class="field-shell rounded-2xl transition">
+                        <textarea name="description" rows="3" maxlength="500" id="progressDesc"
+                            oninput="document.getElementById('progressDescCount').textContent = this.value.length"
+                            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:border-brand transition resize-none"
+                            placeholder="Jelaskan update progress..."></textarea>
+                    </div>
+                    <p class="text-[10px] text-slate-400 mt-1 text-right"><span id="progressDescCount">0</span>/500</p>
                 </div>
 
                 <button type="submit"
-                    class="w-full py-2.5 bg-brand text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition flex items-center justify-center gap-2">
+                    class="btn-shimmer w-full py-3 bg-gradient-to-r from-brand via-blue-600 to-cyan-500 text-white rounded-2xl text-sm font-semibold shadow-lg shadow-brand/30 hover:shadow-xl hover:shadow-brand/40 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2">
                     <i class="fa-solid fa-floppy-disk"></i> Simpan Progress
                 </button>
             </form>
@@ -558,46 +666,93 @@
     {{-- MODAL RATING & ULASAN (Untuk Company) --}}
     @if (auth()->user()->role === 'company' && $workspace->status === 'Selesai')
         <div id="ratingModal"
-            class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
-                <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
-                    <h3 class="font-bold text-slate-800">Beri Rating & Ulasan</h3>
-                    <button type="button" onclick="document.getElementById('ratingModal').classList.add('hidden')"
-                        class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center hover:bg-slate-200 transition">
-                        <i class="fa-solid fa-xmark text-slate-500"></i>
-                    </button>
+            class="hidden modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+            <div class="modal-panel bg-white rounded-3xl shadow-2xl shadow-brand/10 w-full max-w-md overflow-hidden border border-slate-100 ring-1 ring-black/[.03]">
+                {{-- Gradient header with pattern + floating decor --}}
+                <div class="relative px-6 py-7 bg-gradient-to-br from-blue-600 via-brand to-cyan-400 overflow-hidden">
+                    <div class="absolute inset-0 modal-header-pattern"></div>
+                    <div class="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full"></div>
+                    <div class="absolute -bottom-12 -left-8 w-28 h-28 bg-white/10 rounded-full"></div>
+                    <i class="fa-solid fa-star deco-star text-lg" style="top:16px; right:60px; animation-delay:.1s;"></i>
+                    <i class="fa-solid fa-star deco-star text-xs" style="bottom:14px; left:78px; animation-delay:.6s;"></i>
+                    <i class="fa-regular fa-star deco-star text-sm" style="top:40px; right:100px; animation-delay:1.1s;"></i>
+                    <div class="relative flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="icon-badge w-12 h-12 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center ring-1 ring-white/30">
+                                <i class="fa-solid fa-star text-white text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-white text-base tracking-tight">Beri Rating & Ulasan</h3>
+                                <p class="text-[11px] text-white/75">Bagikan pengalaman Anda</p>
+                            </div>
+                        </div>
+                        <button type="button" onclick="document.getElementById('ratingModal').classList.add('hidden')"
+                            class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 hover:rotate-90 flex items-center justify-center transition-all duration-300">
+                            <i class="fa-solid fa-xmark text-white text-sm"></i>
+                        </button>
+                    </div>
                 </div>
+
                 {{-- Sesuaikan route endpoint aksi penyimpanan rating di backend Anda --}}
-                {{-- Ubah action route-nya mengarah ke review project --}}
-<form method="POST" action="{{ route('company.client.review.store', $workspace->project_id) }}" class="p-6 space-y-4">
-    @csrf
+                <form method="POST" action="{{ route('company.client.review.store', $workspace->project_id) }}"
+                    class="p-6 space-y-5 bg-gradient-to-b from-blue-50/40 to-white">
+                    @csrf
 
-    <div>
-        <label class="block text-xs font-semibold text-slate-600 mb-1.5">Pilih Rating (1 - 5 Bintang)</label>
-        <select name="rating" required
-            class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/30">
-            <option value="5">⭐⭐⭐⭐⭐ (5 - Sempurna)</option>
-            <option value="4">⭐⭐⭐⭐ (4 - Sangat Baik)</option>
-            <option value="3">⭐⭐⭐ (3 - Cukup)</option>
-            <option value="2">⭐⭐ (2 - Kurang)</option>
-            <option value="1">⭐ (1 - Buruk)</option>
-        </select>
-    </div>
+                    <div class="text-center bg-gradient-to-b from-blue-50 to-white border border-blue-100 rounded-2xl py-5 px-4">
+                        <label class="block text-xs font-semibold text-slate-500 mb-3 uppercase tracking-wide">Pilih Rating</label>
+                        <input type="hidden" name="rating" id="ratingInput" value="5">
+                        <div class="flex justify-center gap-1.5" id="starRating">
+                            @for ($i = 1; $i <= 5; $i++)
+                                <button type="button" class="star-btn active" data-value="{{ $i }}"
+                                    onclick="setRating({{ $i }})">
+                                    <i class="fa-solid fa-star"></i>
+                                </button>
+                            @endfor
+                        </div>
+                        <p class="text-xs font-bold text-brand mt-2.5 bg-white inline-block px-3 py-1 rounded-full shadow-sm border border-blue-100" id="ratingLabel">5 - Sempurna</p>
+                    </div>
 
-    <div>
-        <label class="block text-xs font-semibold text-slate-600 mb-1.5">Ulasan / Testimoni</label>
-        <textarea name="review" rows="3" maxlength="500"
-            class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/30 resize-none"
-            placeholder="Tulis ulasan kinerja freelancer ini..."></textarea>
-    </div>
+                    <div>
+                        <label class="flex items-center gap-1.5 text-xs font-semibold text-slate-600 mb-1.5">
+                            <i class="fa-solid fa-comment-dots text-brand text-[11px]"></i> Ulasan / Testimoni
+                        </label>
+                        <div class="field-shell rounded-2xl transition">
+                            <textarea name="review" rows="3" maxlength="500" id="reviewText"
+                                oninput="document.getElementById('reviewCount').textContent = this.value.length"
+                                class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:border-brand transition resize-none"
+                                placeholder="Tulis ulasan kinerja freelancer ini..."></textarea>
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-1 text-right"><span id="reviewCount">0</span>/500</p>
+                    </div>
 
-    <button type="submit"
-        class="w-full py-2.5 bg-amber-500 text-white rounded-xl text-sm font-semibold hover:bg-amber-600 transition flex items-center justify-center gap-2">
-        <i class="fa-solid fa-star"></i> Kirim Ulasan
-    </button>
-</form>
+                    <button type="submit"
+                        class="btn-shimmer w-full py-3 bg-gradient-to-r from-brand via-blue-600 to-cyan-500 text-white rounded-2xl text-sm font-semibold shadow-lg shadow-brand/30 hover:shadow-xl hover:shadow-brand/40 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-paper-plane"></i> Kirim Ulasan
+                    </button>
+                </form>
             </div>
         </div>
+
+        <script>
+            const ratingLabels = { 1: '1 - Buruk', 2: '2 - Kurang', 3: '3 - Cukup', 4: '4 - Sangat Baik', 5: '5 - Sempurna' };
+            function setRating(v) {
+                document.getElementById('ratingInput').value = v;
+                document.getElementById('ratingLabel').textContent = ratingLabels[v];
+                document.querySelectorAll('#starRating .star-btn').forEach((btn, idx) => {
+                    if (idx < v) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+                const clicked = document.querySelector('#starRating .star-btn[data-value="' + v + '"]');
+                if (clicked) {
+                    clicked.classList.remove('pop');
+                    void clicked.offsetWidth;
+                    clicked.classList.add('pop');
+                }
+            }
+        </script>
     @endif
 
     <script>

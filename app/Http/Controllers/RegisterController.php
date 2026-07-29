@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterRequest;
 use App\Models\CompanyAccountRequest;
+use App\Models\CompanyProfile;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
@@ -44,38 +45,55 @@ class RegisterController extends Controller
                     ->withErrors(['email' => 'Email perusahaan masih memiliki permintaan yang belum diproses.']);
             }
 
+            // Pengaman fallback untuk mencegah nilai NULL di database
+            $companyName    = $data['company_name'] ?? $data['name'] ?? 'Nama Perusahaan';
+            $companyPhone   = $data['company_phone'] ?? $data['phone'] ?? null;
+            $companyAddress = $data['company_address'] ?? null;
+            $companyDesc    = $data['company_description'] ?? null;
+            $contactPerson  = $data['name'] ?? $companyName;
+
             // Simpan user company dengan role = company
             $user = User::create([
-                'name' => $data['name'],
-                'email' => $email,
-                'phone' => $data['phone'] ?? null,
+                'name'     => $companyName, 
+                'email'    => $email,
+                'phone'    => $companyPhone,
                 'password' => Hash::make((string) $data['password']),
-                'role' => 'company',
+                'role'     => 'company',
             ]);
 
+            // Simpan data otomatis ke tabel CompanyProfile
+            CompanyProfile::create([
+                'user_id'      => $user->id,
+                'company_name' => $companyName,
+                'location'     => $companyAddress,
+                'phone'        => $companyPhone,
+                'description'  => $companyDesc,
+            ]);
+
+            // Simpan permintaan akun perusahaan ke database
             CompanyAccountRequest::create([
-                'company_name' => $data['company_name'],
-                'contact_person' => $data['name'],
-                'company_email' => $email,
-                'company_phone' => $data['company_phone'],
-                'company_address' => $data['company_address'],
-                'company_description' => $data['company_description'] ?? null,
-                'request_status' => 'menunggu',
-                'reviewed_by' => null,
-                'note' => null,
+                'company_name'        => $companyName,
+                'contact_person'      => $contactPerson, 
+                'company_email'       => $email,
+                'company_phone'       => $companyPhone,
+                'company_address'     => $companyAddress,
+                'company_description' => $companyDesc,
+                'request_status'      => 'menunggu',
+                'reviewed_by'         => null,
+                'note'                => null,
             ]);
 
             return redirect()->route('login')
                 ->with('success', 'Registrasi berhasil. Akun perusahaan Anda sedang menunggu persetujuan Admin.');
         }
 
-        // Freelancer register langsung aktif (Disini nomor HP dimasukkan)
+        // Freelancer register langsung aktif
         User::create([
-            'name' => $data['name'],
-            'email' => $email,
-            'phone' => $data['phone'], // <--- Menyimpan nomor HP freelancer ke database
+            'name'     => $data['name'], 
+            'email'    => $email,
+            'phone'    => $data['phone'],
             'password' => Hash::make((string) $data['password']),
-            'role' => 'freelancer',
+            'role'     => 'freelancer',
         ]);
 
         return redirect()->route('login')
