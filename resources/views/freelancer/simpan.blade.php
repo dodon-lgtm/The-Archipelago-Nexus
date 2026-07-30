@@ -143,7 +143,7 @@
                     <p class="text-sm text-slate-400 text-center max-w-md">
                         Kamu belum menyimpan proyek apa pun. Simpan proyek yang menarik agar mudah ditemukan kembali.
                     </p>
-                    <a href="{{ route('freelancer.projects.index') }}"
+                    <a href="{{ route('freelancer.proyek') }}"
                        class="mt-6 inline-flex items-center gap-2 px-5 py-2.5 bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-semibold rounded-xl transition-colors duration-200">
                         <i class="fa-solid fa-search text-xs"></i>
                         Cari Proyek

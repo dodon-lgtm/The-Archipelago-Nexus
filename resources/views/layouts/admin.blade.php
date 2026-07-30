@@ -36,17 +36,33 @@
 
     <div class="min-h-screen bg-slate-50 flex">
 
-        {{-- =============== SIDEBAR =============== --}}
-        <aside class="w-64 bg-white border-r border-slate-200 flex flex-col h-screen sticky top-0 shrink-0 z-30">
+{{-- =============== SIDEBAR =============== --}}
+        <aside id="sidebar" class="w-64 bg-white border-r border-slate-200 flex flex-col h-screen sticky top-0 shrink-0 z-30">
 
             {{-- Logo --}}
-            <div class="p-6 flex items-center gap-3 border-b border-slate-100 shrink-0">
+            <div class="sidebar-logo-wrapper p-6 flex items-center gap-3 border-b border-slate-100 shrink-0 transition-all duration-300">
+
+                {{-- Mobile hamburger --}}
+                <button id="mobileSidebarToggle" class="sidebar-hamburger-mobile w-10 h-10 rounded-xl hover:bg-slate-100 flex items-center justify-center shrink-0 transition mr-1">
+                    <i class="fa-solid fa-bars text-slate-600 text-lg"></i>
+                </button>
+
                 <div class="w-10 h-10 rounded-full overflow-hidden shrink-0">
                     <img src="{{ asset('images/nexus.jpg') }}" alt="Nexus Logo" class="w-full h-full object-cover">
                 </div>
-                <div>
-                    <h2 class="font-extrabold text-sm leading-tight text-slate-800">The Archipelago<br>Nexus</h2>
+                <div class="sidebar-logo-text transition-all duration-300 overflow-hidden">
+                    <h2 class="font-extrabold text-sm leading-tight text-slate-800 whitespace-nowrap">The Archipelago<br>Nexus</h2>
                 </div>
+
+                {{-- Desktop toggle button --}}
+                <button id="sidebarToggle" class="sidebar-toggle-desktop w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center shrink-0 ml-auto transition">
+                    <i class="sidebar-toggle-icon fa-solid fa-chevron-left text-slate-400 text-sm transition-transform duration-300"></i>
+                </button>
+
+                {{-- Collapsed toggle --}}
+                <button id="sidebarToggleCollapsed" class="sidebar-toggle-collapsed w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center shrink-0 mx-auto transition">
+                    <i class="sidebar-toggle-icon fa-solid fa-chevron-right text-slate-400 text-sm"></i>
+                </button>
             </div>
 
             {{-- Menu --}}
@@ -57,7 +73,8 @@
                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all
                    {{ request()->routeIs('admin.dashboard')
                         ? 'bg-cyan-50 text-cyan-700 font-bold shadow-sm border border-cyan-100'
-                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800' }}">
+                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800' }}"
+                   data-tooltip="Dashboard">
                     <i class="fa-solid fa-chart-line w-5 text-center"></i>
                     <span class="text-sm">Dashboard</span>
                 </a>
@@ -67,7 +84,8 @@
                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all
                    {{ request()->routeIs('admin.users.*')
                         ? 'bg-cyan-50 text-cyan-700 font-bold shadow-sm border border-cyan-100'
-                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800' }}">
+                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800' }}"
+                   data-tooltip="Pengguna">
                     <i class="fa-solid fa-users w-5 text-center"></i>
                     <span class="text-sm">Pengguna</span>
                 </a>
@@ -77,7 +95,8 @@
                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all
                    {{ request()->routeIs('admin.company-account-requests.*')
                         ? 'bg-cyan-50 text-cyan-700 font-bold shadow-sm border border-cyan-100'
-                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800' }}">
+                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800' }}"
+                   data-tooltip="Permintaan Akun Perusahaan">
                     <i class="fa-solid fa-building w-5 text-center"></i>
                     <span class="text-sm">Permintaan Akun Perusahaan</span>
                 </a>
@@ -87,7 +106,8 @@
                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all
                    {{ request()->routeIs('admin.categories.*')
                         ? 'bg-cyan-50 text-cyan-700 font-bold shadow-sm border border-cyan-100'
-                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800' }}">
+                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800' }}"
+                   data-tooltip="Kategori">
                     <i class="fa-solid fa-tags w-5 text-center"></i>
                     <span class="text-sm">Kategori</span>
                 </a>
@@ -97,7 +117,8 @@
                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all
                    {{ request()->routeIs('admin.projects.*')
                         ? 'bg-cyan-50 text-cyan-700 font-bold shadow-sm border border-cyan-100'
-                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800' }}">
+                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800' }}"
+                   data-tooltip="Proyek">
                     <i class="fa-solid fa-folder-open w-5 text-center"></i>
                     <span class="text-sm">Proyek</span>
                 </a>
@@ -107,7 +128,8 @@
                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all
                    {{ request()->routeIs('admin.penawarans.*')
                         ? 'bg-cyan-50 text-cyan-700 font-bold shadow-sm border border-cyan-100'
-                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800' }}">
+                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800' }}"
+                   data-tooltip="Penawaran">
                     <i class="fa-solid fa-file-invoice w-5 text-center"></i>
                     <span class="text-sm">Penawaran</span>
                 </a>
@@ -117,7 +139,8 @@
                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all
                    {{ request()->routeIs('admin.hasil-pekerjaan.*')
                         ? 'bg-cyan-50 text-cyan-700 font-bold shadow-sm border border-cyan-100'
-                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800' }}">
+                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800' }}"
+                   data-tooltip="Hasil Pekerjaan">
                     <i class="fa-solid fa-layer-group w-5 text-center"></i>
                     <span class="text-sm">Hasil Pekerjaan</span>
                 </a>
@@ -127,7 +150,8 @@
                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all
                    {{ request()->routeIs('admin.payments.*')
                         ? 'bg-cyan-50 text-cyan-700 font-bold shadow-sm border border-cyan-100'
-                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800' }}">
+                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800' }}"
+                   data-tooltip="Pembayaran">
                     <i class="fa-solid fa-credit-card w-5 text-center"></i>
                     <span class="text-sm">Pembayaran</span>
                 </a>
@@ -137,7 +161,8 @@
                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all
                    {{ request()->routeIs('admin.reports.*')
                         ? 'bg-cyan-50 text-cyan-700 font-bold shadow-sm border border-cyan-100'
-                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800' }}">
+                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800' }}"
+                   data-tooltip="Laporan">
                     <i class="fa-solid fa-flag w-5 text-center"></i>
                     <span class="text-sm">Laporan</span>
                 </a>
@@ -147,7 +172,8 @@
 
                 {{-- Back to Home --}}
                 <a href="{{ url('/') }}"
-                   class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-slate-500 hover:bg-slate-100 hover:text-slate-700">
+                   class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-slate-500 hover:bg-slate-100 hover:text-slate-700"
+                   data-tooltip="Kembali ke Website">
                     <i class="fa-solid fa-globe w-5 text-center"></i>
                     <span class="text-sm">Kembali ke Website</span>
                 </a>
@@ -155,15 +181,24 @@
             </nav>
 
             {{-- Sidebar Footer --}}
-            <div class="p-4 shrink-0 border-t border-slate-100">
-                <div class="rounded-2xl bg-gradient-to-r from-cyan-500 to-teal-500 p-4 text-white">
-                    <h3 class="font-bold text-sm">The Archipelago Nexus</h3>
-                    <p class="text-xs mt-1 opacity-90">Admin Panel</p>
-                    <div class="mt-3 text-[10px] opacity-80">© 2026</div>
+            <div class="p-4 shrink-0 border-t border-slate-100 sidebar-footer-wrapper">
+                <div class="sidebar-footer-card rounded-2xl bg-gradient-to-r from-cyan-500 to-teal-500 p-4 text-white overflow-hidden transition-all duration-300">
+                    <h3 class="font-bold text-sm whitespace-nowrap">The Archipelago Nexus</h3>
+                    <p class="text-xs mt-1 opacity-90 whitespace-nowrap">Admin Panel</p>
+                    <div class="mt-3 text-[10px] opacity-80 whitespace-nowrap">© 2026</div>
+                </div>
+                {{-- Collapsed footer minimal --}}
+                <div class="sidebar-footer-mini hidden">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-r from-cyan-500 to-teal-500 flex items-center justify-center mx-auto">
+                        <i class="fa-solid fa-globe text-white text-xs"></i>
+                    </div>
                 </div>
             </div>
 
         </aside>
+
+        {{-- MOBILE OVERLAY --}}
+        <div id="sidebarOverlay" class="hidden fixed inset-0 bg-black/40 z-20 lg:hidden transition-opacity duration-300"></div>
 
         {{-- =============== MAIN CONTENT =============== --}}
         <div class="flex-1 min-w-0 flex flex-col">
@@ -458,7 +493,304 @@
         });
     </script>
 
-    @stack('scripts')
+@stack('scripts')
+
+    {{-- Sidebar CSS & JS (same as navigasi) --}}
+    <style>
+        /* Sidebar base transition */
+        #sidebar {
+            transition: width 0.3s ease, transform 0.3s ease;
+        }
+        #sidebar.collapsed {
+            width: 72px !important;
+        }
+        #sidebar.collapsed .sidebar-logo-text {
+            opacity: 0;
+            visibility: hidden;
+            width: 0;
+            margin: 0;
+            overflow: hidden;
+            transition: opacity 0.2s ease, visibility 0.2s ease, width 0.3s ease;
+        }
+        #sidebar.collapsed .sidebar-logo-text * {
+            white-space: nowrap;
+        }
+        #sidebar.collapsed nav a {
+            justify-content: center;
+            padding: 0;
+            width: 44px;
+            height: 44px;
+            margin-left: auto;
+            margin-right: auto;
+            gap: 0;
+            border-radius: 12px;
+        }
+        #sidebar.collapsed nav a i {
+            margin: 0;
+            width: auto;
+        }
+        #sidebar.collapsed nav a span {
+            display: none;
+        }
+        #sidebar.collapsed .sidebar-footer-card {
+            opacity: 0;
+            visibility: hidden;
+            height: 0;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+            transition: opacity 0.2s ease, visibility 0.2s ease, height 0.3s ease, padding 0.3s ease;
+        }
+        #sidebar.collapsed .sidebar-footer-mini {
+            display: block !important;
+        }
+        #sidebar.collapsed .sidebar-toggle-icon {
+            transform: rotate(180deg);
+        }
+        #sidebar.collapsed .sidebar-logo-wrapper {
+            justify-content: center;
+            padding: 12px 4px;
+        }
+        #sidebar.collapsed .sidebar-logo-wrapper > button,
+        #sidebar.collapsed .sidebar-logo-wrapper > .sidebar-logo-text {
+            display: none;
+        }
+        #sidebar.collapsed .sidebar-logo-wrapper > .sidebar-toggle-collapsed {
+            display: flex !important;
+        }
+        #sidebar:not(.collapsed) .sidebar-logo-wrapper > .sidebar-toggle-collapsed {
+            display: none;
+        }
+        /* Tooltip on collapsed hover */
+        #sidebar.collapsed nav a {
+            position: relative;
+        }
+        #sidebar.collapsed nav a:hover::after {
+            content: attr(data-tooltip);
+            position: fixed;
+            left: 84px;
+            top: var(--tooltip-top, 50%);
+            transform: translateY(-50%);
+            background: #1e293b;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+            z-index: 100;
+            pointer-events: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            animation: tooltipFadeIn 0.2s ease forwards;
+        }
+        #sidebar.collapsed nav a:hover::before {
+            content: '';
+            position: fixed;
+            left: 78px;
+            top: var(--tooltip-top, 50%);
+            transform: translateY(-50%);
+            border: 6px solid transparent;
+            border-right-color: #1e293b;
+            z-index: 100;
+            pointer-events: none;
+            animation: tooltipFadeIn 0.2s ease forwards;
+        }
+        @keyframes tooltipFadeIn {
+            from { opacity: 0; transform: translateY(2px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Mobile drawer */
+        @media (max-width: 1023px) {
+            #sidebar {
+                position: fixed !important;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                z-index: 40 !important;
+                transform: translateX(-100%);
+                width: 280px !important;
+                transition: transform 0.3s ease;
+                border-right: 1px solid #e2e8f0 !important;
+            }
+            #sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            #sidebar.collapsed {
+                width: 280px !important;
+            }
+            #sidebar.collapsed .sidebar-logo-text {
+                opacity: 1;
+                visibility: visible;
+                width: auto;
+                margin: 0;
+            }
+            #sidebar.collapsed nav a {
+                justify-content: flex-start;
+                padding: 12px 16px;
+                width: auto;
+                height: auto;
+                margin: 0;
+                gap: 12px;
+            }
+            #sidebar.collapsed nav a i {
+                margin: 0;
+                width: 20px;
+            }
+            #sidebar.collapsed nav a span {
+                display: inline;
+            }
+            #sidebar.collapsed .sidebar-footer-card {
+                opacity: 1;
+                visibility: visible;
+                height: auto;
+                padding: 16px;
+                margin: 0;
+            }
+            #sidebar.collapsed .sidebar-footer-mini {
+                display: none !important;
+            }
+            #sidebar.collapsed .sidebar-toggle-icon {
+                transform: rotate(0deg);
+            }
+            #sidebar.collapsed .sidebar-logo-wrapper {
+                justify-content: flex-start;
+                padding: 16px 24px;
+            }
+            #sidebar.collapsed .sidebar-logo-wrapper > button,
+            #sidebar.collapsed .sidebar-logo-wrapper > .sidebar-logo-text {
+                display: flex;
+            }
+            #sidebar.collapsed .sidebar-logo-wrapper > .sidebar-toggle-collapsed {
+                display: none !important;
+            }
+            #sidebar.collapsed nav a:hover::after,
+            #sidebar.collapsed nav a:hover::before {
+                display: none !important;
+                content: none !important;
+            }
+            .sidebar-toggle-desktop {
+                display: none !important;
+            }
+            .sidebar-hamburger-mobile {
+                display: flex !important;
+            }
+        }
+        @media (min-width: 1024px) {
+            .sidebar-hamburger-mobile {
+                display: none !important;
+            }
+            .sidebar-toggle-desktop {
+                display: flex !important;
+            }
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('sidebar');
+            const toggleDesktop = document.getElementById('sidebarToggle');
+            const toggleMobile = document.getElementById('mobileSidebarToggle');
+            const overlay = document.getElementById('sidebarOverlay');
+
+            function updateTooltipPositions() {
+                if (window.innerWidth >= 1024 && sidebar.classList.contains('collapsed')) {
+                    const links = sidebar.querySelectorAll('nav a');
+                    links.forEach(link => {
+                        const rect = link.getBoundingClientRect();
+                        link.style.setProperty('--tooltip-top', (rect.top + rect.height/2) + 'px');
+                    });
+                }
+            }
+
+            if (toggleDesktop) {
+                toggleDesktop.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    if (window.innerWidth >= 1024) {
+                        sidebar.classList.toggle('collapsed');
+                        localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed') ? 'true' : 'false');
+                        window.dispatchEvent(new CustomEvent('sidebar-toggle', { 
+                            detail: { collapsed: sidebar.classList.contains('collapsed') }
+                        }));
+                        setTimeout(updateTooltipPositions, 50);
+                    }
+                });
+            }
+
+            if (toggleMobile) {
+                toggleMobile.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    sidebar.classList.toggle('mobile-open');
+                    if (overlay) overlay.classList.toggle('hidden');
+                    document.body.classList.toggle('overflow-hidden');
+                });
+            }
+
+            if (overlay) {
+                overlay.addEventListener('click', function() {
+                    sidebar.classList.remove('mobile-open');
+                    overlay.classList.add('hidden');
+                    document.body.classList.remove('overflow-hidden');
+                });
+            }
+
+            if (window.innerWidth >= 1024) {
+                const savedState = localStorage.getItem('sidebarCollapsed');
+                if (savedState === 'true') {
+                    sidebar.classList.add('collapsed');
+                }
+            }
+
+            let resizeTimer;
+            window.addEventListener('resize', function() {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function() {
+                    if (window.innerWidth >= 1024) {
+                        sidebar.classList.remove('mobile-open');
+                        if (overlay) overlay.classList.add('hidden');
+                        document.body.classList.remove('overflow-hidden');
+                        const savedState = localStorage.getItem('sidebarCollapsed');
+                        if (savedState === 'true') {
+                            sidebar.classList.add('collapsed');
+                        } else {
+                            sidebar.classList.remove('collapsed');
+                        }
+                    } else {
+                        sidebar.style.width = '';
+                        sidebar.classList.remove('collapsed');
+                    }
+                    window.dispatchEvent(new CustomEvent('sidebar-toggle', { 
+                        detail: { collapsed: sidebar.classList.contains('collapsed') }
+                    }));
+                }, 250);
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && window.innerWidth < 1024) {
+                    sidebar.classList.remove('mobile-open');
+                    if (overlay) overlay.classList.add('hidden');
+                    document.body.classList.remove('overflow-hidden');
+                }
+            });
+
+            window.addEventListener('scroll', updateTooltipPositions, { passive: true });
+            window.addEventListener('resize', updateTooltipPositions);
+
+            if (sidebar) {
+                const observer = new MutationObserver(function() {
+                    if (window.innerWidth >= 1024 && sidebar.classList.contains('collapsed')) {
+                        updateTooltipPositions();
+                    }
+                });
+                observer.observe(sidebar, { attributes: true, attributeFilter: ['class'] });
+            }
+
+            setTimeout(function() {
+                window.dispatchEvent(new CustomEvent('sidebar-toggle', { 
+                    detail: { collapsed: sidebar.classList.contains('collapsed') }
+                }));
+            }, 100);
+        });
+    </script>
 </body>
 </html>
 
