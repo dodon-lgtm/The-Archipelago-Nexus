@@ -4,301 +4,435 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Daftar Akun - The Archipelago Nexus</title>
+    
     <!-- Bootstrap CSS v5.3.3 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Google Fonts: Poppins -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    
+    <!-- AOS Animation Library CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
     <style>
+        :root {
+            --bg-body: #f8fafc;
+            --container-bg: #ffffff;
+            --primary-gradient: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-glass: #e2e8f0;
+        }
+
         * {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             box-sizing: border-box;
         }
+
         body {
-            background: #f1f5f9;
+            background-color: var(--bg-body);
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(37, 99, 235, 0.06) 0%, transparent 45%),
+                radial-gradient(circle at 85% 85%, rgba(2, 132, 199, 0.05) 0%, transparent 45%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 30px 20px;
             margin: 0;
+            color: var(--text-main);
         }
+
         .main-container {
             width: 100%;
-            max-width: 1150px;
-            background: #ffffff;
-            border-radius: 24px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            max-width: 1200px;
+            background: var(--container-bg);
+            border: 1px solid var(--border-glass);
+            border-radius: 32px;
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.03);
             overflow: hidden;
             display: flex;
-            min-height: 700px;
+            height: 780px;
         }
-        /* Kolom Kiri (Banner / Branding) */
+
+        /* Kolom Kiri: Banner Branding */
         .left-banner {
             flex: 1.1;
-            background: #ffffff;
+            background: linear-gradient(145deg, #f0f9ff 0%, #e0f2fe 100%);
             padding: 50px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            border-right: 1px solid #f1f5f9;
+            border-right: 1px solid var(--border-glass);
+            position: relative;
+            overflow: hidden;
         }
+
+        .left-banner::before {
+            content: '';
+            position: absolute;
+            top: -60px;
+            left: -60px;
+            width: 220px;
+            height: 220px;
+            background: rgba(37, 99, 235, 0.08);
+            filter: blur(50px);
+            border-radius: 50%;
+        }
+
         .brand-logo {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
             font-weight: 700;
             color: #0f172a;
-            font-size: 16px;
+            font-size: 18px;
+            letter-spacing: -0.3px;
         }
+
         .brand-logo .icon-box {
-            width: 38px;
-            height: 38px;
-            background: #0f172a;
+            width: 44px;
+            height: 44px;
+            background: var(--primary-gradient);
             color: #fff;
-            border-radius: 10px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 20px;
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
         }
+
         .banner-title {
-            font-size: 36px;
-            font-weight: 700;
+            font-size: 34px;
+            font-weight: 800;
             color: #0f172a;
-            line-height: 1.3;
-            margin-bottom: 15px;
+            line-height: 1.25;
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
         }
+
         .banner-title span {
-            color: #2563eb;
+            background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
+
         .banner-desc {
-            color: #64748b;
+            color: var(--text-muted);
             font-size: 14px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             line-height: 1.6;
         }
+
         .feature-cards {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 12px;
-            margin-bottom: 35px;
+            margin-bottom: 25px;
         }
+
         .feature-item {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
+            background: #ffffff;
+            border: 1px solid rgba(2, 132, 199, 0.12);
+            border-radius: 14px;
             padding: 14px;
             text-align: left;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03);
         }
+
+        .feature-item:hover {
+            transform: translateY(-4px);
+            border-color: #0284c7;
+            box-shadow: 0 10px 20px rgba(2, 132, 199, 0.08);
+        }
+
         .feature-item i {
             font-size: 18px;
-            color: #2563eb;
+            color: #0284c7;
             margin-bottom: 8px;
             display: block;
         }
+
         .feature-item h6 {
-            font-size: 13px;
-            font-weight: 600;
-            color: #1e293b;
-            margin-bottom: 2px;
-        }
-        .feature-item p {
-            font-size: 11px;
-            color: #64748b;
-            margin: 0;
-            line-height: 1.3;
-        }
-        .illustration-box {
-            background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
-            border-radius: 16px;
-            height: 140px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #64748b;
-            font-size: 13px;
-            font-weight: 500;
+            font-size: 12px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 3px;
         }
 
-        /* Kolom Kanan (Form Register) */
+        .feature-item p {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        .illustration-box {
+            background: #ffffff;
+            border: 1px solid var(--border-glass);
+            border-radius: 14px;
+            padding: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 500;
+            box-shadow: 0 4px 10px rgba(15, 23, 42, 0.02);
+        }
+
+        .illustration-box i {
+            font-size: 20px;
+            color: #0284c7;
+        }
+
+        /* Kolom Kanan: Form Register */
         .right-form {
-            flex: 1;
-            background: #0b1120;
+            flex: 1.15;
+            background: #ffffff;
             padding: 45px 50px;
-            color: #ffffff;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            overflow-y: auto;
-            max-height: 85vh;
+            overflow-y: auto; 
+            height: 100%;
         }
+
+        /* Kustomisasi Scrollbar */
+        .right-form::-webkit-scrollbar {
+            width: 6px;
+        }
+        .right-form::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .right-form::-webkit-scrollbar-thumb {
+            gap: 10px;
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        .right-form::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
         .form-header {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
+
         .form-header .mini-logo {
-            width: 44px;
-            height: 44px;
-            background: #1e293b;
+            width: 42px;
+            height: 42px;
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
             border-radius: 12px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            color: #fff;
+            color: #0284c7;
             font-size: 20px;
-            margin-bottom: 12px;
-            border: 1px solid #334155;
+            margin-bottom: 8px;
         }
+
         .form-header h3 {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 4px;
-            color: #f8fafc;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 2px;
+            color: #0f172a;
+            letter-spacing: -0.5px;
         }
+
         .form-header p {
-            font-size: 13px;
-            color: #94a3b8;
+            font-size: 12px;
+            color: var(--text-muted);
             margin: 0;
         }
+
+        .role-switcher {
+            background: #f8fafc;
+            border: 1px solid var(--border-glass);
+            border-radius: 14px;
+            padding: 5px;
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+        }
+
+        .role-btn {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .role-btn.active {
+            background: var(--primary-gradient);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+        }
+
         .form-label-custom {
             font-size: 11px;
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #94a3b8;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
             margin-bottom: 6px;
             display: block;
         }
+
         .input-group-custom {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 10px;
+            background: #f8fafc;
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
             overflow: hidden;
             display: flex;
             align-items: center;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
         }
+
         .input-group-custom:focus-within {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+            border-color: #0284c7;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.1);
         }
+
         .input-group-custom .input-group-text {
             background: transparent;
             border: none;
-            color: #94a3b8;
+            color: #64748b;
             padding-left: 14px;
-            padding-right: 10px;
+            padding-right: 8px;
+            font-size: 15px;
         }
+
         .input-group-custom .form-control {
             background: transparent;
             border: none;
-            color: #ffffff;
+            color: #0f172a;
             padding: 11px 12px;
             font-size: 13px;
         }
+
         .input-group-custom .form-control:focus {
             box-shadow: none;
             background: transparent;
-            color: #ffffff;
+            color: #0f172a;
         }
-        .input-group-custom textarea.form-control {
-            resize: none;
+
+        .input-group-custom .form-control::placeholder {
+            color: #94a3b8;
         }
+
         .error {
-            color: #f87171;
+            color: #dc2626;
             font-size: 11px;
             margin-top: 4px;
+            font-weight: 500;
         }
+
         .flash {
-            background: rgba(245, 158, 11, 0.15);
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            color: #fbbf24;
+            background: #fef3c7;
+            border: 1px solid #fde68a;
+            color: #b45309;
             padding: 10px 14px;
-            border-radius: 8px;
-            font-size: 12px;
-            margin-bottom: 20px;
-        }
-        .company-box-dark {
-            background: #111827;
-            border: 1px dashed #374151;
-            border-radius: 12px;
-            padding: 16px;
-            margin-top: 15px;
-            margin-bottom: 15px;
-        }
-        .btn-submit-dark {
-            width: 100%;
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            border: none;
             border-radius: 10px;
+            font-size: 12px;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .company-box-luxury {
+            background: #f8fafc;
+            border: 1px dashed #0284c7;
+            border-radius: 14px;
+            padding: 16px;
+            margin-top: 14px;
+            margin-bottom: 14px;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn-submit-luxury {
+            width: 100%;
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: 12px;
             color: #ffffff;
-            padding: 12px;
-            font-weight: 600;
-            font-size: 14px;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-            margin-top: 5px;
-        }
-        .btn-submit-dark:hover {
-            opacity: 0.95;
-            transform: translateY(-1px);
-        }
-        .form-check-input {
-            background-color: #1e293b;
-            border-color: #475569;
-            cursor: pointer;
-        }
-        .form-check-input:checked {
-            background-color: #3b82f6;
-            border-color: #3b82f6;
-        }
-        .form-check-label {
-            color: #cbd5e1;
+            padding: 13px;
+            font-weight: 700;
             font-size: 13px;
+            letter-spacing: 0.3px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+            margin-top: 10px;
             cursor: pointer;
         }
+
+        .btn-submit-luxury:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(2, 132, 199, 0.4);
+            opacity: 0.95;
+        }
+
         .footer-links {
             text-align: center;
             margin-top: 20px;
-            font-size: 13px;
-            color: #94a3b8;
+            font-size: 12px;
+            color: var(--text-muted);
+            padding-bottom: 15px;
         }
+
         .footer-links a {
-            color: #60a5fa;
+            color: #0284c7;
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 600;
+            transition: color 0.2s;
         }
+
         .footer-links a:hover {
+            color: #2563eb;
             text-decoration: underline;
         }
 
-        /* Responsive Breakpoint */
-        @media (max-width: 900px) {
+        @media (max-width: 992px) {
             .main-container {
                 flex-direction: column;
                 max-width: 550px;
+                height: auto;
+            }
+            .right-form {
+                height: auto;
+                max-height: 600px;
+                padding: 30px;
             }
             .left-banner {
                 padding: 30px;
-            }
-            .right-form {
-                padding: 30px;
-                max-height: none;
             }
         }
     </style>
 </head>
 <body>
 
-<div class="main-container">
+<div class="main-container" data-aos="zoom-in" data-aos-duration="800">
     
     <!-- Kolom Kiri: Banner Branding -->
     <div class="left-banner">
         <div>
-            <div class="brand-logo mb-4">
+            <div class="brand-logo mb-3">
                 <div class="icon-box"><i class="bi bi-layers-fill"></i></div>
                 <span>The Archipelago Nexus</span>
             </div>
@@ -308,45 +442,57 @@
             <div class="feature-cards">
                 <div class="feature-item">
                     <i class="bi bi-person-check"></i>
-                    <h6>Freelancer Terpercaya</h6>
+                    <h6>Terpercaya</h6>
                     <p>Banyak freelancer berkualitas.</p>
                 </div>
                 <div class="feature-item">
                     <i class="bi bi-shield-check"></i>
                     <h6>Proses Aman</h6>
-                    <p>Transaksi aman dan terjamin.</p>
+                    <p>Transaksi terjamin.</p>
                 </div>
                 <div class="feature-item">
                     <i class="bi bi-clock-history"></i>
-                    <h6>Proyek Tepat Waktu</h6>
-                    <p>Selesai sesuai deadline.</p>
+                    <h6>Tepat Waktu</h6>
+                    <p>Sesuai deadline.</p>
                 </div>
             </div>
         </div>
 
         <div class="illustration-box">
+            <i class="bi bi-people-fill"></i>
             <span>Bergabunglah dengan ribuan profesional lainnya</span>
         </div>
     </div>
 
     <!-- Kolom Kanan: Form Registrasi -->
-    <div class="right-form">
+    <div class="right-form" id="rightFormContainer">
         <div class="form-header">
             <div class="mini-logo">
                 <i class="bi bi-layers-fill"></i>
             </div>
-            <h3>The ArchipelagoNexus</h3>
+            <h3>The Archipelago Nexus</h3>
             <p>Buat akun baru untuk melanjutkan</p>
         </div>
 
         @if (session('success'))
-            <div class="flash"><i class="bi bi-check-circle me-1"></i> {{ session('success') }}</div>
+            <div class="flash"><i class="bi bi-check-circle-fill"></i> {{ session('success') }}</div>
         @endif
 
         <form method="POST" action="{{ route('register') }}">
             @csrf
 
-            <!-- Nama -->
+            <input type="hidden" name="is_company" id="is_company_input" value="{{ old('is_company', 0) }}">
+
+            <div class="role-switcher">
+                <button type="button" class="role-btn {{ old('is_company') ? '' : 'active' }}" id="btnFreelancer" onclick="setRole(false)">
+                    Freelancer
+                </button>
+                <button type="button" class="role-btn {{ old('is_company') ? 'active' : '' }}" id="btnCompany" onclick="setRole(true)">
+                    Perusahaan / Client
+                </button>
+            </div>
+
+            <!-- Nama Lengkap PIC -->
             <div class="mb-3">
                 <label class="form-label-custom">Nama Lengkap</label>
                 <div class="input-group-custom {{ $errors->has('name') ? 'border-danger' : '' }}">
@@ -366,7 +512,7 @@
                 @error('email')<div class="error">{{ $message }}</div>@enderror
             </div>
 
-            <!-- Nomor HP Freelancer -->
+            <!-- Nomor HP / WhatsApp -->
             <div class="mb-3">
                 <label class="form-label-custom">Nomor HP / WhatsApp</label>
                 <div class="input-group-custom {{ $errors->has('phone') ? 'border-danger' : '' }}">
@@ -383,7 +529,7 @@
                     <span class="input-group-text"><i class="bi bi-lock"></i></span>
                     <input id="password" name="password" type="password" class="form-control" placeholder="Minimal 8 karakter" required>
                     <button class="btn text-muted border-0 bg-transparent px-3" type="button" onclick="togglePassword('password', this)">
-                        <i class="bi bi-eye text-secondary"></i>
+                        <i class="bi bi-eye"></i>
                     </button>
                 </div>
                 @error('password')<div class="error">{{ $message }}</div>@enderror
@@ -396,50 +542,44 @@
                     <span class="input-group-text"><i class="bi bi-shield-lock"></i></span>
                     <input id="password_confirmation" name="password_confirmation" type="password" class="form-control" placeholder="Ulangi password" required>
                     <button class="btn text-muted border-0 bg-transparent px-3" type="button" onclick="togglePassword('password_confirmation', this)">
-                        <i class="bi bi-eye text-secondary"></i>
+                        <i class="bi bi-eye"></i>
                     </button>
                 </div>
             </div>
 
-            <!-- Checkbox Perusahaan -->
-            <div class="mb-3 form-check">
-                <input class="form-check-input" type="checkbox" name="is_company" value="1" id="is_company" {{ old('is_company') ? 'checked' : '' }} onchange="toggleCompanyFields()">
-                <label class="form-check-label" for="is_company">
-                    Daftar sebagai Perusahaan / Client
-                </label>
-            </div>
-
             <!-- Bagian Form Perusahaan -->
-            <div id="companyFields" class="company-box-dark" style="display: {{ old('is_company') ? 'block' : 'none' }};">
-                <div class="text-info fw-semibold mb-3" style="font-size: 12px;"><i class="bi bi-building me-1"></i> Informasi Detail Perusahaan</div>
+            <div id="companyFields" class="company-box-luxury" style="display: {{ old('is_company') ? 'block' : 'none' }};">
+                <div class="text-primary fw-semibold mb-3" style="font-size: 11px; letter-spacing: 0.5px;">
+                    <i class="bi bi-building-fill-gear me-1"></i> INFORMASI DETAIL PERUSAHAAN
+                </div>
                 
                 <div class="mb-3">
                     <label class="form-label-custom">Nama Perusahaan</label>
-                    <input name="company_name" type="text" value="{{ old('company_name') }}" class="form-control bg-transparent text-white border border-secondary rounded-2 px-3 py-2 fs-7" style="font-size: 13px;" placeholder="PT / CV / Nama Usaha">
+                    <input name="company_name" type="text" value="{{ old('company_name') }}" class="form-control bg-white text-dark border border-secondary-subtle rounded-3 px-3 py-2" style="font-size: 13px;" placeholder="PT / CV / Nama Usaha">
                     @error('company_name')<div class="error">{{ $message }}</div>@enderror
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label-custom">Nomor Telepon Perusahaan</label>
-                    <input name="company_phone" type="text" value="{{ old('company_phone') }}" class="form-control bg-transparent text-white border border-secondary rounded-2 px-3 py-2" style="font-size: 13px;" placeholder="08xxxxxxxxxx">
+                    <input name="company_phone" type="text" value="{{ old('company_phone') }}" class="form-control bg-white text-dark border border-secondary-subtle rounded-3 px-3 py-2" style="font-size: 13px;" placeholder="08xxxxxxxxxx">
                     @error('company_phone')<div class="error">{{ $message }}</div>@enderror
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label-custom">Alamat Perusahaan</label>
-                    <textarea name="company_address" rows="2" class="form-control bg-transparent text-white border border-secondary rounded-2 px-3 py-2" style="font-size: 13px;" placeholder="Alamat lengkap lokasi">{{ old('company_address') }}</textarea>
+                    <textarea name="company_address" rows="2" class="form-control bg-white text-dark border border-secondary-subtle rounded-3 px-3 py-2" style="font-size: 13px; resize: none;" placeholder="Alamat lengkap lokasi">{{ old('company_address') }}</textarea>
                     @error('company_address')<div class="error">{{ $message }}</div>@enderror
                 </div>
 
                 <div class="mb-0">
                     <label class="form-label-custom">Deskripsi Perusahaan (Opsional)</label>
-                    <textarea name="company_description" rows="2" class="form-control bg-transparent text-white border border-secondary rounded-2 px-3 py-2" style="font-size: 13px;" placeholder="Ceritakan sedikit...">{{ old('company_description') }}</textarea>
+                    <textarea name="company_description" rows="2" class="form-control bg-white text-dark border border-secondary-subtle rounded-3 px-3 py-2" style="font-size: 13px; resize: none;" placeholder="Ceritakan sedikit...">{{ old('company_description') }}</textarea>
                 </div>
             </div>
 
             <!-- Tombol Submit -->
-            <button class="btn-submit-dark" type="submit">
-                Daftar Sekarang
+            <button class="btn-submit-luxury" type="submit">
+                Daftar Sekarang <i class="bi bi-arrow-right ms-1"></i>
             </button>
         </form>
 
@@ -450,11 +590,38 @@
 
 </div>
 
+<!-- Bootstrap JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- AOS Animation Library JS -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
-    function toggleCompanyFields() {
+    AOS.init({ once: true });
+
+    // Memastikan saat halaman dimuat, posisi scroll form kanan berada di paling atas
+    window.addEventListener('DOMContentLoaded', () => {
+        const formContainer = document.getElementById('rightFormContainer');
+        if (formContainer) {
+            formContainer.scrollTop = 0;
+        }
+    });
+
+    function setRole(isCompany) {
+        const btnFreelancer = document.getElementById('btnFreelancer');
+        const btnCompany = document.getElementById('btnCompany');
         const companyFields = document.getElementById('companyFields');
-        const checked = document.querySelector('input[name="is_company"]').checked;
-        companyFields.style.display = checked ? 'block' : 'none';
+        const hiddenInput = document.getElementById('is_company_input');
+
+        if (isCompany) {
+            btnCompany.classList.add('active');
+            btnFreelancer.classList.remove('active');
+            companyFields.style.display = 'block';
+            hiddenInput.value = '1';
+        } else {
+            btnFreelancer.classList.add('active');
+            btnCompany.classList.remove('active');
+            companyFields.style.display = 'none';
+            hiddenInput.value = '0';
+        }
     }
 
     function togglePassword(fieldId, button) {

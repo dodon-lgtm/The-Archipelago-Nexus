@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Payment;
 use App\Models\Workspace;
 use App\Models\Message;
+use App\Models\User;
+use App\Services\NotificationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -111,6 +113,22 @@ class PaymentController extends Controller
             'message' => 'Perusahaan telah mengirim bukti pembayaran dan menunggu verifikasi admin.',
             'type' => 'system',
         ]);
+
+// Notifikasi untuk semua admin (pembayaran perlu diverifikasi)
+        $admins = User::where('role', 'admin')->get();
+        foreach ($admins as $admin) {
+            NotificationService::sendTo(
+                user: $admin->id,
+                type: 'payment.waiting',
+                title: 'Pembayaran Perlu Diverifikasi',
+                message: 'Perusahaan "' . (Auth::user()->companyProfile->company_name ?? Auth::user()->name) . '" telah mengirim bukti pembayaran untuk proyek "' . ($workspace->project->project_name ?? '') . '". Silakan lakukan verifikasi.',
+                redirect: route('admin.payments.show', $payment),
+                senderId: Auth::id(),
+                paymentId: $payment->id,
+                workspaceId: $workspace->id,
+                projectId: $workspace->project_id,
+            );
+        }
 
         return redirect()
             ->route('company.workspaces.show', $workspace)

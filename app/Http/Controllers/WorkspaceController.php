@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Workspace;
 use App\Models\Message;
 use App\Models\ProgressHistory;
+use App\Services\NotificationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -111,6 +112,29 @@ class WorkspaceController extends Controller
             'message' => $request->message,
             'type' => 'user',
         ]);
+
+        // Tentukan penerima notifikasi (lawan bicara)
+        $receiverId = Auth::id() === (int) $workspace->company_id
+            ? $workspace->freelancer_id
+            : $workspace->company_id;
+
+        // Tentukan redirect sesuai role penerima
+        $receiverRole = ($receiverId === (int) $workspace->company_id) ? 'company' : 'freelancer';
+        $redirectRoute = $receiverRole === 'company'
+            ? route('company.workspaces.show', $workspace)
+            : route('freelancer.workspaces.show', $workspace);
+
+        // Notifikasi ke lawan bicara: pesan baru
+        NotificationService::sendTo(
+            user: $receiverId,
+            type: 'workspace.message',
+            title: 'Pesan Baru',
+            message: 'Anda menerima pesan baru pada workspace proyek "' . ($workspace->project->project_name ?? '') . '".',
+            redirect: $redirectRoute,
+            senderId: Auth::id(),
+            workspaceId: $workspace->id,
+            projectId: $workspace->project_id,
+        );
 
         return redirect()
             ->route(

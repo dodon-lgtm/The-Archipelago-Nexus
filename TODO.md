@@ -1,62 +1,46 @@
-# COMPLETED - Tugas 3.16 (Sistem Pembayaran Proyek dengan Verifikasi Admin)
+# TODO - Sistem Notifikasi
 
-## Ringkasan Implementasi
+## ✅ = Selesai, ⬜ = Belum, 🔄 = Sedang Dikerjakan
 
-### SELESAI ✅ - Semua file telah dibuat/diubah
+### TAHAP 1: Database & Migration
+- [✅] Buat migration `2026_08_20_000001_add_columns_to_notifications_table.php`
+  - Kolom: sender_id, type, workspace_id, project_id, payment_id, company_account_request_id, data (JSON), read_at
+  - Index: [user_id, is_read], type, created_at
+- [✅] Jalankan migration
 
-#### File Baru Dibuat
-1. `database/migrations/2026_08_10_000001_add_payment_status_to_workspaces_table.php` - Menambah status 'Menunggu Pembayaran' & 'Menunggu Verifikasi Admin' ke enum status workspace
-2. `database/migrations/2026_08_10_000002_create_payments_table.php` - Migration tabel payments
-3. `app/Models/Payment.php` - Model Payment dengan relasi workspace(), company(), freelancer(), verifier(), status_label, status_color
-4. `app/Http/Controllers/Company/PaymentController.php` - Controller upload bukti pembayaran (company)
-5. `app/Http/Controllers/Admin/PaymentController.php` - Controller verifikasi/tolak pembayaran (admin)
-6. `app/Http/Controllers/Freelancer/PendapatanController.php` - Controller daftar pendapatan (freelancer)
-7. `resources/views/admin/payments/index.blade.php` - Daftar pembayaran (admin)
-8. `resources/views/admin/payments/show.blade.php` - Detail pembayaran + aksi verifikasi/tolak (admin)
-9. `resources/views/freelancer/pendapatan/index.blade.php` - Halaman pendapatan freelancer
+### TAHAP 2: Model Notification
+- [✅] Update model dengan fillable baru (sender_id, type, workspace_id, project_id, payment_id, company_account_request_id, data, read_at)
+- [✅] Casts: data => array, read_at => datetime
+- [✅] Scopes: unread(), forUser(), ofType()
+- [✅] Relasi: sender(), workspace(), project(), payment(), companyAccountRequest()
 
-#### File Diubah
-1. `app/Models/Workspace.php` - Tambah relasi `payment()` hasOne
-2. `app/Models/User.php` - Tambah relasi `paymentsAsCompany()`, `paymentsAsFreelancer()`, `paymentsVerified()`
-3. `app/Http/Controllers/ProjectSubmissionController.php` - accept() kini membuat Payment otomatis & set workspace ke 'Menunggu Pembayaran'
-4. `app/Http/Controllers/WorkspaceController.php` - show() load payment data
-5. `resources/views/workspace/show.blade.php` - Tambah Invoice card + form upload bukti pembayaran (company), status badges baru
-6. `resources/views/workspace/company-index.blade.php` - Tambah warna status untuk 'Menunggu Pembayaran' (purple) & 'Menunggu Verifikasi Admin' (orange)
-7. `resources/views/workspace/freelancer-index.blade.php` - Tambah warna status untuk 'Menunggu Pembayaran' (purple) & 'Menunggu Verifikasi Admin' (orange)
-8. `resources/views/layouts/admin.blade.php` - Tambah menu "Pembayaran" di sidebar admin
-9. `resources/views/navbar/navigasi.blade.php` - Tambah menu "Pendapatan" di sidebar freelancer
-10. `routes/web.php` - Tambah route payment (company), admin payment, freelancer pendapatan
+### TAHAP 3: NotificationService
+- [✅] Buat `app/Services/NotificationService.php`
+- [✅] Method `send(array $data): ?Notification`
+- [✅] Method `sendTo()` dengan named arguments
 
-#### Fitur yang Tidak Diubah
-- ✅ Login/Register
-- ✅ Approval akun perusahaan
-- ✅ CRUD Project
-- ✅ Penawaran Freelancer
-- ✅ Pemilihan Freelancer
-- ✅ Workspace & Chat
-- ✅ Progress Project
-- ✅ Submission & Hasil Pekerjaan
-- ✅ Dashboard (semua role)
-- ✅ Middleware
-- ✅ Notifikasi yang sudah ada
-- ✅ Saved Projects
+### TAHAP 4: Integrasi Controller
+- [✅] `Admin/PaymentController@verify` — notif ke freelancer & company (payment.verified)
+- [✅] `Admin/PaymentController@reject` — notif ke freelancer & company (payment.rejected)
+- [✅] `Company/PaymentController@uploadProof` — notif ke admin (payment.waiting)
+- [✅] `Company/ProjectController@selectFreelancer` — notif accepted + rejected (offer.accepted, offer.rejected)
+- [✅] `Freelancer/ProjectBrowseController@store` — notif ke company (offer.sent)
+- [✅] `ProjectSubmissionController@store` — notif ke company (submission.uploaded)
+- [✅] `ProjectSubmissionController@accept` — notif ke freelancer (submission.accepted)
+- [✅] `ProjectSubmissionController@requestRevision` — notif ke freelancer (submission.revision_requested)
+- [✅] `WorkspaceController@sendMessage` — notif ke lawan bicara (workspace.message)
+- [✅] `CompanyAccountRequestController@store` — notif ke admin (company_request.created)
 
-### Alur Sistem Pembayaran
-1. **Freelancer upload hasil pekerjaan** → submission pending
-2. **Company menerima hasil** → otomatis buat Payment (invoice INV-YYYYMMDD-XXXX), workspace → 'Menunggu Pembayaran'
-3. **Company upload bukti pembayaran** (jpg/jpeg/png/pdf max 10MB) → payment → 'waiting_verification', workspace → 'Menunggu Verifikasi Admin'
-4. **Admin verifikasi** → payment → 'paid', workspace → 'Selesai', notifikasi ke freelancer & company
-5. **Admin tolak** → payment → 'rejected', workspace → 'Menunggu Pembayaran', company bisa upload ulang
+### TAHAP 5: Frontend
+- [✅] Update `navbar/nav.blade.php` — polling 60 detik, icon dinamis per type, redirect dari data.redirect
+- [✅] Update `layouts/admin.blade.php` — dropdown notifikasi admin lengkap
 
-### Status Workspace
-- Sedang Dikerjakan (blue)
-- Menunggu Revisi (amber)
-- Menunggu Pembayaran (purple)
-- Menunggu Verifikasi Admin (orange)
-- Selesai (emerald)
+### VERIFIKASI (lakukan setelah semua tahap):
+- [⬜] Login sebagai Freelancer → klik ikon lonceng → lihat notifikasi
+- [⬜] Login sebagai Company → klik ikon lonceng → lihat notifikasi
+- [⬜] Login sebagai Admin → klik ikon lonceng → lihat notifikasi
+- [⬜] Notifikasi muncul secara realtime (polling 60 detik)
+- [⬜] Klik notifikasi → redirect ke halaman yang sesuai
+- [⬜] Tombol "Tandai semua sudah dibaca" berfungsi
+- [⬜] Badge jumlah notifikasi tidak terbaca berubah secara otomatis
 
-### Status Payment
-- pending (Belum Dibayar)
-- waiting_verification (Menunggu Verifikasi)
-- paid (Dibayar)
-- rejected (Ditolak)

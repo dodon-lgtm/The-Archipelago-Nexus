@@ -196,11 +196,36 @@
             notifications.forEach(notif => {
                 const isUnread = !notif.is_read;
                 const timeAgo = getTimeAgo(notif.created_at);
+const redirectUrl = notif.data?.redirect || '';
+                // Tentukan icon berdasarkan type notifikasi
+                let iconClass = 'fa-solid fa-paper-plane';
+                let iconBg = 'bg-brand/10 text-brand';
+                if (notif.type) {
+                    if (notif.type.startsWith('offer.accepted') || notif.type.startsWith('payment.verified')) {
+                        iconClass = 'fa-solid fa-check-circle';
+                        iconBg = 'bg-emerald-50 text-emerald-600';
+                    } else if (notif.type.startsWith('offer.rejected') || notif.type.startsWith('payment.rejected')) {
+                        iconClass = 'fa-solid fa-times-circle';
+                        iconBg = 'bg-red-50 text-red-600';
+                    } else if (notif.type.startsWith('workspace.message')) {
+                        iconClass = 'fa-solid fa-comment-dots';
+                        iconBg = 'bg-blue-50 text-blue-600';
+                    } else if (notif.type.startsWith('submission.')) {
+                        iconClass = 'fa-solid fa-file-upload';
+                        iconBg = 'bg-purple-50 text-purple-600';
+                    } else if (notif.type === 'payment.waiting') {
+                        iconClass = 'fa-solid fa-credit-card';
+                        iconBg = 'bg-amber-50 text-amber-600';
+                    } else if (notif.type.startsWith('company_request')) {
+                        iconClass = 'fa-solid fa-building';
+                        iconBg = 'bg-cyan-50 text-cyan-600';
+                    }
+                }
                 html += `
-                    <div class="notification-item p-4 border-b border-slate-50 cursor-pointer hover:bg-slate-50 transition ${isUnread ? 'bg-blue-50/40' : ''}" data-id="${notif.id}" data-url="{{ url('/company/projects') }}/${notif.penawaran?.project_id || ''}">
+                    <div class="notification-item p-4 border-b border-slate-50 cursor-pointer hover:bg-slate-50 transition ${isUnread ? 'bg-blue-50/40' : ''}" data-id="${notif.id}" data-url="${redirectUrl}">
                         <div class="flex items-start gap-3">
-                            <div class="w-8 h-8 rounded-full bg-brand/10 text-brand flex items-center justify-center shrink-0 text-sm">
-                                <i class="fa-solid fa-paper-plane"></i>
+                            <div class="w-8 h-8 rounded-full ${iconBg} flex items-center justify-center shrink-0 text-sm">
+                                <i class="${iconClass}"></i>
                             </div>
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center gap-2">
@@ -292,6 +317,6 @@
                 .then(res => res.json())
                 .then(data => updateBadge(data.unread_count))
                 .catch(() => {});
-        }, 30000);
+        }, 60000);
     });
 </script>

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CompanyAccountRequestStoreRequest;
 use App\Models\CompanyAccountRequest;
+use App\Models\User;
+use App\Services\NotificationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -19,10 +21,25 @@ class CompanyAccountRequestController extends Controller
     {
         $validated = $request->validated();
 
-        CompanyAccountRequest::create([
+        $companyAccountRequest = CompanyAccountRequest::create([
             ...$validated,
             'request_status' => 'menunggu',
         ]);
+
+        // Notifikasi ke semua admin: permintaan akun perusahaan baru
+        User::where('role', 'admin')->chunk(100, function ($admins) use ($companyAccountRequest, $validated) {
+            foreach ($admins as $admin) {
+                NotificationService::sendTo(
+                    user: $admin->id,
+                    type: 'company_request.created',
+                    title: 'Permintaan Akun Perusahaan Baru',
+                    message: 'Terdapat permintaan akun perusahaan baru dari "' . ($validated['company_name'] ?? '') . '" yang menunggu verifikasi.',
+                    redirect: route('admin.company-account-requests.show', $companyAccountRequest),
+                    senderId: auth()->id(),
+                    companyAccountRequestId: $companyAccountRequest->id,
+                );
+            }
+        });
 
         return redirect()
             ->route('company-account-requests.create')

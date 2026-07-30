@@ -8,6 +8,7 @@ use App\Models\Payment;
 use App\Models\ProjectSubmission;
 use App\Models\SubmissionFile;
 use App\Models\Penawaran;
+use App\Services\NotificationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -144,6 +145,18 @@ class ProjectSubmissionController extends Controller
             'type' => 'system',
         ]);
 
+        // Notifikasi ke company: hasil pekerjaan telah diupload
+        NotificationService::sendTo(
+            user: $workspace->company_id,
+            type: 'submission.uploaded',
+            title: 'Hasil Pekerjaan Diupload',
+            message: Auth::user()->name . ' telah mengirim hasil pekerjaan untuk proyek "' . ($workspace->project->project_name ?? '') . '".',
+            redirect: route('company.workspaces.show', $workspace),
+            senderId: Auth::id(),
+            workspaceId: $workspace->id,
+            projectId: $workspace->project_id,
+        );
+
         return redirect()
             ->route('freelancer.workspaces.show', $workspace)
             ->with('success', 'Hasil pekerjaan (' . $fileCount . ' file) berhasil dikirim.');
@@ -257,6 +270,18 @@ class ProjectSubmissionController extends Controller
                 'type' => 'system',
             ]);
 
+            // Notifikasi ke freelancer: hasil pekerjaan diterima
+            NotificationService::sendTo(
+                user: $workspace->freelancer_id,
+                type: 'submission.accepted',
+                title: 'Hasil Pekerjaan Diterima',
+                message: 'Hasil pekerjaan Anda untuk proyek "' . ($workspace->project->project_name ?? '') . '" telah diterima oleh perusahaan. Invoice telah diterbitkan.',
+                redirect: route('freelancer.workspaces.show', $workspace),
+                senderId: Auth::id(),
+                workspaceId: $workspace->id,
+                projectId: $workspace->project_id,
+            );
+
             DB::commit();
 
             return redirect()
@@ -317,6 +342,19 @@ class ProjectSubmissionController extends Controller
             'message' => $messageText,
             'type' => 'system',
         ]);
+
+        // Notifikasi ke freelancer: revisi diminta
+        NotificationService::sendTo(
+            user: $workspace->freelancer_id,
+            type: 'submission.revision_requested',
+            title: 'Permintaan Revisi',
+            message: 'Perusahaan meminta revisi terhadap hasil pekerjaan untuk proyek "' . ($workspace->project->project_name ?? '') . '".'
+                . ($request->filled('company_note') ? "\n\nCatatan: " . $request->company_note : ''),
+            redirect: route('freelancer.workspaces.show', $workspace),
+            senderId: Auth::id(),
+            workspaceId: $workspace->id,
+            projectId: $workspace->project_id,
+        );
 
         return redirect()
             ->route('company.workspaces.show', $workspace)

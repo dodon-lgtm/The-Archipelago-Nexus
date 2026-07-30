@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Payment;
 use App\Models\Message;
 use App\Models\Workspace;
-use App\Models\Notification;
+use App\Services\NotificationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -78,20 +78,28 @@ class PaymentController extends Controller
         ]);
 
         // Notification for freelancer
-        Notification::create([
-            'user_id' => $payment->freelancer_id,
-            'title' => 'Pembayaran Diverifikasi',
-            'message' => 'Pembayaran untuk proyek "' . ($workspace->project->project_name ?? '') . '" telah diverifikasi. Saldo sebesar Rp ' . number_format($payment->freelancer_receive, 0, ',', '.') . ' telah diterima.',
-            'is_read' => false,
-        ]);
+        NotificationService::sendTo(
+            user: $payment->freelancer_id,
+            type: 'payment.verified',
+            title: 'Pembayaran Diverifikasi',
+            message: 'Pembayaran untuk proyek "' . ($workspace->project->project_name ?? '') . '" telah diverifikasi. Saldo sebesar Rp ' . number_format($payment->freelancer_receive, 0, ',', '.') . ' telah diterima.',
+            redirect: route('freelancer.workspaces.show', $workspace),
+            senderId: Auth::id(),
+            paymentId: $payment->id,
+            workspaceId: $workspace->id,
+        );
 
         // Notification for company
-        Notification::create([
-            'user_id' => $payment->company_id,
-            'title' => 'Pembayaran Diverifikasi',
-            'message' => 'Pembayaran untuk proyek "' . ($workspace->project->project_name ?? '') . '" berhasil diverifikasi oleh Admin. Status workspace telah menjadi Selesai.',
-            'is_read' => false,
-        ]);
+        NotificationService::sendTo(
+            user: $payment->company_id,
+            type: 'payment.verified',
+            title: 'Pembayaran Diverifikasi',
+            message: 'Pembayaran untuk proyek "' . ($workspace->project->project_name ?? '') . '" berhasil diverifikasi oleh Admin. Status workspace telah menjadi Selesai.',
+            redirect: route('company.workspaces.show', $workspace),
+            senderId: Auth::id(),
+            paymentId: $payment->id,
+            workspaceId: $workspace->id,
+        );
 
         return redirect()
             ->route('admin.payments.show', $payment)
@@ -141,20 +149,28 @@ class PaymentController extends Controller
         ]);
 
         // Notification for company
-        Notification::create([
-            'user_id' => $payment->company_id,
-            'title' => 'Pembayaran Ditolak',
-            'message' => 'Pembayaran untuk proyek "' . ($workspace->project->project_name ?? '') . '" ditolak oleh Admin. Silakan upload ulang bukti pembayaran.' . ($request->filled('admin_note') ? "\n\nAlasan: " . $request->admin_note : ''),
-            'is_read' => false,
-        ]);
+        NotificationService::sendTo(
+            user: $payment->company_id,
+            type: 'payment.rejected',
+            title: 'Pembayaran Ditolak',
+            message: 'Pembayaran untuk proyek "' . ($workspace->project->project_name ?? '') . '" ditolak oleh Admin. Silakan upload ulang bukti pembayaran.' . ($request->filled('admin_note') ? "\n\nAlasan: " . $request->admin_note : ''),
+            redirect: route('company.workspaces.show', $workspace),
+            senderId: Auth::id(),
+            paymentId: $payment->id,
+            workspaceId: $workspace->id,
+        );
 
         // Notification for freelancer
-        Notification::create([
-            'user_id' => $payment->freelancer_id,
-            'title' => 'Pembayaran Ditolak',
-            'message' => 'Pembayaran untuk proyek "' . ($workspace->project->project_name ?? '') . '" ditolak oleh Admin. Menunggu perusahaan mengupload ulang bukti pembayaran.',
-            'is_read' => false,
-        ]);
+        NotificationService::sendTo(
+            user: $payment->freelancer_id,
+            type: 'payment.rejected',
+            title: 'Pembayaran Ditolak',
+            message: 'Pembayaran untuk proyek "' . ($workspace->project->project_name ?? '') . '" ditolak oleh Admin. Menunggu perusahaan mengupload ulang bukti pembayaran.',
+            redirect: route('freelancer.workspaces.show', $workspace),
+            senderId: Auth::id(),
+            paymentId: $payment->id,
+            workspaceId: $workspace->id,
+        );
 
         return redirect()
             ->route('admin.payments.show', $payment)
