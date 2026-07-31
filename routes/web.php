@@ -157,6 +157,7 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])->prefix('company')->nam
                 $q->where('user_id', $userId);
             })->where('status', 'Diterima')->count();
 
+        
             $totalSpending = \App\Models\Penawaran::whereHas('project', function ($q) use ($userId) {
                 $q->where('user_id', $userId);
             })->where('status', 'Diterima')->sum('harga_penawaran');
@@ -199,6 +200,9 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])->prefix('company')->nam
             ->name('workspaces.message');
         Route::post('/workspaces/{workspace}/complete', [WorkspaceController::class, 'complete'])
             ->name('workspaces.complete');
+        // Profile Freelancer (Read-only untuk Company)
+        Route::get('/freelancer-profile/{id}', [FreelancerProfilController::class, 'profile'])->name('freelancer.profile');
+
 
         // Submissions
         Route::post('/workspaces/{workspace}/submissions/{submission}/accept', [ProjectSubmissionController::class, 'accept'])

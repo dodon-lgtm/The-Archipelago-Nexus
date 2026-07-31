@@ -9,35 +9,47 @@ use Illuminate\Support\Facades\Auth;
 
 class ProfilController extends Controller
 {
-    public function profile()
-    {
-        $profile = FreelancerProfile::firstOrCreate(
-            ['user_id' => Auth::id()],
-            [
-                'bio' => '',
-                'location' => '',
-                'skills' => '',
-                'portfolio_link' => '',
-            ]
-        );
-
-        // Ambil data user yang sedang login (freelancer)
+    public function profile($id = null)
+{
+    // Jika $id ada (artinya company/orang lain yang lihat), ambil user berdasarkan $id.
+    // Jika $id kosong, ambil user yang sedang login (milik freelancer itu sendiri).
+    if ($id) {
+        $user = \App\Models\User::findOrFail($id);
+    } else {
         $user = Auth::user();
-
-        // Ambil ulasan yang diterima beserta data client-nya
-        $reviews = $user->reviewsReceived()->with('client')->latest()->get();
-        
-        // Hitung rata-rata rating dan total ulasan
-        $averageRating = $reviews->avg('rating');
-        $totalReview = $reviews->count();
-
-        return view('freelancer.profil', compact(
-            'profile', 
-            'reviews', 
-            'averageRating', 
-            'totalReview'
-        ));
     }
+
+    // Ambil profil berdasarkan user_id dari user tersebut
+    $profile = FreelancerProfile::firstOrCreate(
+        ['user_id' => $user->id],
+        [
+            'bio' => '',
+            'location' => '',
+            'skills' => '',
+            'portfolio_link' => '',
+        ]
+    );
+
+    // Ambil ulasan yang diterima freelancer tersebut
+    $reviews = $user->reviewsReceived()->with('client')->latest()->get();
+    
+    // Hitung rata-rata rating dan total ulasan
+    $averageRating = $reviews->avg('rating');
+    $totalReview = $reviews->count();
+
+    // Tentukan apakah ini mode "hanya lihat" (view-only)
+    // True jika yang login adalah company / bukan pemilik akun profil ini
+    $isViewOnly = Auth::id() !== $user->id;
+
+    return view('freelancer.profil', compact(
+        'profile', 
+        'user', 
+        'reviews', 
+        'averageRating', 
+        'totalReview',
+        'isViewOnly'
+    ));
+}
 
     public function dashboard()
     {
