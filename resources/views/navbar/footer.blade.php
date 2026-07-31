@@ -1,16 +1,16 @@
 <footer class="w-full border-t border-slate-200 bg-white">
 
-    <div class="max-w-7xl mx-auto px-6 py-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
 
         {{-- BAGIAN ATAS --}}
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
 
             {{-- TENTANG --}}
             <div class="space-y-3">
 
                 <div class="flex items-center gap-2">
 
-                    <div class="w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center text-white">
+                    <div class="w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center text-white shrink-0">
                         <i class="fa-solid fa-globe text-xs"></i>
                     </div>
 
@@ -36,7 +36,7 @@
                     Jelajahi Platform
                 </h4>
 
-                <div class="grid grid-cols-2 gap-3 text-xs text-slate-400">
+                <div class="grid grid-cols-2 gap-x-4 gap-y-3 text-xs text-slate-400">
 
                     <a href="#" class="hover:text-cyan-600 transition">
                         Cari Lowongan
@@ -76,14 +76,20 @@
 
                 <div class="space-y-2 text-xs text-slate-400">
 
-                    <p class="flex items-center gap-2">
-                        <i class="fa-regular fa-envelope w-4"></i>
-                        support@archipelagonexus.id
+                    <p class="flex items-start gap-2">
+                        <i class="fa-regular fa-envelope w-4 mt-0.5 shrink-0"></i>
+
+                        <span class="break-all sm:break-normal">
+                            support@archipelagonexus.id
+                        </span>
                     </p>
 
-                    <p class="flex items-center gap-2">
-                        <i class="fa-solid fa-headset w-4"></i>
-                        Jam Kerja: 09:00 - 17:00 WIB
+                    <p class="flex items-start gap-2">
+                        <i class="fa-solid fa-headset w-4 mt-0.5 shrink-0"></i>
+
+                        <span>
+                            Jam Kerja: 09:00 - 17:00 WIB
+                        </span>
                     </p>
 
                 </div>
@@ -93,11 +99,14 @@
                             bg-emerald-50 text-emerald-600
                             px-3 py-1.5 rounded-full
                             border border-emerald-200
-                            text-[10px] font-bold">
+                            text-[10px] font-bold
+                            max-w-full">
 
-                    <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+                    <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse shrink-0"></span>
 
-                    Semua Sistem Berjalan Normal
+                    <span class="truncate">
+                        Semua Sistem Berjalan Normal
+                    </span>
 
                 </div>
 
@@ -109,8 +118,10 @@
         {{-- COPYRIGHT --}}
         <div class="mt-8 pt-6 border-t border-slate-100
                     flex flex-col sm:flex-row
-                    items-center justify-between gap-3
-                    text-[10px] text-slate-400">
+                    items-center justify-between
+                    gap-4 sm:gap-3
+                    text-[10px] text-slate-400
+                    text-center sm:text-left">
 
             <p>
                 © 2026
@@ -120,7 +131,7 @@
                 Hak Cipta Dilindungi.
             </p>
 
-            <div class="flex items-center gap-4">
+            <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
 
                 <a href="#" class="hover:text-slate-600 transition">
                     Ketentuan Layanan
@@ -129,7 +140,7 @@
                 <a href="#" class="hover:text-slate-600 transition">
                     Kebijakan Privasi
                 </a>
-                
+
             </div>
 
         </div>

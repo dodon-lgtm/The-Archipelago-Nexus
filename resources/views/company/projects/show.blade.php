@@ -603,15 +603,20 @@
 
                                             {{-- FREELANCER (DENGAN LINK KE PROFIL) --}}
                                             <div class="flex items-center gap-4">
-                                                @if($penawaran->freelancer && $penawaran->freelancer->foto)
+                                                @php
+                                                    // Mengambil foto dari relasi freelance_profile -> kolom photo
+                                                    $fotoFreelancer = optional($penawaran->freelancer->freelanceProfile)->photo;
+                                                @endphp
+
+                                                @if($penawaran->freelancer && $fotoFreelancer)
                                                     <a href="{{ route('company.freelancer.profile', $penawaran->freelancer->id) }}" class="block shrink-0">
-                                                        <img src="{{ asset('storage/' . $penawaran->freelancer->foto) }}" 
-                                                             alt="{{ $penawaran->freelancer->name }}" 
-                                                             class="w-12 h-12 rounded-full object-cover hover:opacity-90 transition">
+                                                        <img src="{{ Str::startsWith($fotoFreelancer, ['http://', 'https://']) ? $fotoFreelancer : asset('storage/' . $fotoFreelancer) }}" 
+                                                            alt="{{ $penawaran->freelancer->name }}" 
+                                                            class="w-12 h-12 rounded-full object-cover hover:opacity-90 transition">
                                                     </a>
                                                 @else
                                                     <a href="{{ $penawaran->freelancer ? route('company.freelancer.profile', $penawaran->freelancer->id) : '#' }}" 
-                                                       class="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold shrink-0 hover:bg-blue-200 transition">
+                                                    class="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold shrink-0 hover:bg-blue-200 transition">
                                                         {{ strtoupper(substr($penawaran->freelancer->name ?? 'F', 0, 1)) }}
                                                     </a>
                                                 @endif

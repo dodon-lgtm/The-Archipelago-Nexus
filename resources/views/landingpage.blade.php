@@ -9,6 +9,8 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        html { scroll-behavior: smooth; }
+        .scroll-offset { scroll-margin-top: 80px; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased">
@@ -32,6 +34,15 @@
             <button id="mobile-menu-btn" class="lg:hidden p-2 rounded-lg text-slate-600 hover:bg-slate-100 transition" aria-label="Toggle menu">
                 <i class="fa-solid fa-bars text-xl"></i>
             </button>
+
+            <!-- Desktop Navigation -->
+            <nav class="hidden lg:flex items-center gap-1">
+                <a href="#home" class="nav-link px-3 py-2 text-sm font-medium text-slate-600 hover:text-cyan-700 hover:bg-cyan-50 rounded-lg transition">Beranda</a>
+                <a href="#categories" class="nav-link px-3 py-2 text-sm font-medium text-slate-600 hover:text-cyan-700 hover:bg-cyan-50 rounded-lg transition">Kategori</a>
+                <a href="#projects" class="nav-link px-3 py-2 text-sm font-medium text-slate-600 hover:text-cyan-700 hover:bg-cyan-50 rounded-lg transition">Proyek Terbaru</a>
+                <a href="#freelancer" class="nav-link px-3 py-2 text-sm font-medium text-slate-600 hover:text-cyan-700 hover:bg-cyan-50 rounded-lg transition">Freelancer</a>
+                <a href="#company" class="nav-link px-3 py-2 text-sm font-medium text-slate-600 hover:text-cyan-700 hover:bg-cyan-50 rounded-lg transition">Perusahaan</a>
+            </nav>
 
             <!-- Desktop Auth -->
             <div class="hidden lg:flex items-center gap-3">
@@ -112,7 +123,7 @@
     <!-- ============================================================ -->
     <!-- 2. HERO SECTION -->
     <!-- ============================================================ -->
-    <section class="relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-cyan-50">
+    <section id="home" class="relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-cyan-50">
         <div class="absolute inset-0 z-0 pointer-events-none">
             <img src="{{ asset('images/gedung.jpg') }}" alt="Gedung" class="w-full h-full object-cover opacity-30 sm:opacity-40">
             <div class="absolute inset-0 bg-gradient-to-r from-white/90 via-white/70 to-transparent"></div>
@@ -233,7 +244,7 @@
     <!-- ============================================================ -->
     <!-- 4. KATEGORI -->
     <!-- ============================================================ -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+    <section id="categories" class="scroll-offset max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
         <div class="text-center mb-8 sm:mb-12">
             <span class="inline-block px-3 py-1 bg-cyan-100 text-cyan-700 text-xs font-bold rounded-full uppercase tracking-wide mb-3">Kategori</span>
             <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Jelajahi Kategori Proyek</h2>
@@ -242,7 +253,7 @@
         @if($categories->count() > 0)
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
             @foreach($categories as $category)
-            <a href="{{ route('register') }}" class="group bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 text-center hover:border-cyan-300 hover:shadow-lg transition-all hover:-translate-y-1">
+            <a href="{{ route('login') }}" class="group bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 text-center hover:border-cyan-300 hover:shadow-lg transition-all hover:-translate-y-1">
                 <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-cyan-100 to-teal-100 rounded-xl flex items-center justify-center mx-auto mb-2 sm:mb-3 group-hover:from-cyan-500 group-hover:to-teal-500 transition-all">
                     <i class="fa-solid fa-folder-open text-cyan-600 text-sm sm:text-base group-hover:text-white transition"></i>
                 </div>
@@ -260,7 +271,7 @@
     <!-- ============================================================ -->
     <!-- 5. PROYEK TERBARU -->
     <!-- ============================================================ -->
-    <section class="bg-white py-12 sm:py-16">
+    <section id="projects" class="scroll-offset bg-white py-12 sm:py-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-8 sm:mb-12">
                 <span class="inline-block px-3 py-1 bg-cyan-100 text-cyan-700 text-xs font-bold rounded-full uppercase tracking-wide mb-3">Proyek Terbaru</span>
@@ -321,7 +332,7 @@
                 @endforeach
             </div>
             <div class="text-center mt-8 sm:mt-10">
-                <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-xl transition shadow-md hover:shadow-lg">
+                <a href="{{ route('login') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-xl transition shadow-md hover:shadow-lg">
                     Lihat Semua Proyek
                     <i class="fa-solid fa-arrow-right text-sm"></i>
                 </a>
@@ -340,7 +351,7 @@
     <!-- ============================================================ -->
     <!-- 6. UNTUK FREELANCER -->
     <!-- ============================================================ -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+    <section id="freelancer" class="scroll-offset max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
         <div class="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
             <div class="space-y-6">
                 <span class="inline-block px-3 py-1 bg-teal-100 text-teal-700 text-xs font-bold rounded-full uppercase tracking-wide">Untuk Freelancer</span>
@@ -411,7 +422,7 @@
     <!-- ============================================================ -->
     <!-- 7. UNTUK PERUSAHAAN -->
     <!-- ============================================================ -->
-    <section class="bg-gradient-to-br from-slate-900 to-slate-800 py-12 sm:py-16">
+    <section id="company" class="scroll-offset bg-gradient-to-br from-slate-900 to-slate-800 py-12 sm:py-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
                 <div class="relative h-[300px] sm:h-[400px] rounded-2xl overflow-hidden shadow-xl order-2 lg:order-1">

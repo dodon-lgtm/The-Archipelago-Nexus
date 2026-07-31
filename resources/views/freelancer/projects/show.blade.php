@@ -142,6 +142,12 @@
                             </button>
                         </form>
                     @endif
+
+                    {{-- Tombol Laporkan Proyek --}}
+                    <a href="{{ route('freelancer.reports.create', ['project_id' => $project->id]) }}"
+                       class="w-full block border border-red-200 bg-red-50 text-red-600 hover:bg-red-100 text-center py-3 rounded-xl font-semibold transition">
+                        <i class="fa-solid fa-flag mr-2"></i> Laporkan Proyek
+                    </a>
                 </div>
             </div>
         </div>

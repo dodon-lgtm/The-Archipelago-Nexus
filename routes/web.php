@@ -25,9 +25,11 @@ use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
 use App\Http\Controllers\Company\ProjectController as CompanyProjectController;
 use App\Http\Controllers\Company\ProfilController as CompanyProfilController;
 use App\Http\Controllers\Company\PaymentController as CompanyPaymentController;
+use App\Http\Controllers\Company\ReportController as CompanyReportController;
 
 // ─── FREELANCER CONTROLLERS ──────────────────────
 use App\Http\Controllers\Freelancer\PendapatanController as FreelancerPendapatanController;
+use App\Http\Controllers\Freelancer\ReportController as FreelancerReportController;
 
 // ─── FREELANCER CONTROLLERS ──────────────────────
 use App\Http\Controllers\Freelancer\DashboardController as FreelancerDashboardController;
@@ -37,6 +39,7 @@ use App\Http\Controllers\Freelancer\SavedProjectController;
 use App\Http\Controllers\Freelancer\ProjectOfferController;
 use App\Http\Controllers\Freelancer\ProfilController as FreelancerProfilController;
 use App\Http\Controllers\review\ReviewController;
+use App\Http\Controllers\ReportController;
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
@@ -128,6 +131,12 @@ Route::middleware(['auth', 'ensureFreelancer'])->prefix('freelancer')->name('fre
         // Pendapatan
         Route::get('/pendapatan', [FreelancerPendapatanController::class, 'index'])
             ->name('pendapatan.index');
+
+        // Reports
+        Route::get('/reports', [FreelancerReportController::class, 'index'])->name('reports.index');
+        Route::get('/reports/create', [FreelancerReportController::class, 'create'])->name('reports.create');
+        Route::post('/reports', [FreelancerReportController::class, 'store'])->name('reports.store');
+        Route::get('/reports/{report}', [FreelancerReportController::class, 'show'])->name('reports.show');
     });
 
 // ──────────────────────────────────────────────
@@ -205,13 +214,19 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])->prefix('company')->nam
 Route::post('/workspaces/{workspace}/payment/upload', [CompanyPaymentController::class, 'uploadProof'])
             ->name('payments.upload');
 
-        // Profile
+// Profile
         Route::get('/profile', [CompanyProfilController::class, 'profile'])
             ->name('profile');
         Route::get('/profile/edit', [CompanyProfilController::class, 'editProfile'])
             ->name('profile.edit');
         Route::post('/profile/update', [CompanyProfilController::class, 'updateProfile'])
             ->name('profile.update');
+
+        // Reports
+        Route::get('/reports', [CompanyReportController::class, 'index'])->name('reports.index');
+        Route::get('/reports/create', [CompanyReportController::class, 'create'])->name('reports.create');
+        Route::post('/reports', [CompanyReportController::class, 'store'])->name('reports.store');
+        Route::get('/reports/{report}', [CompanyReportController::class, 'show'])->name('reports.show');
     });
 
 // ──────────────────────────────────────────────
@@ -269,6 +284,14 @@ Route::middleware(['auth', 'ensureAdmin'])->prefix('admin')->name('admin.')
         Route::post('/payments/{payment}/verify', [AdminPaymentController::class, 'verify'])->name('payments.verify');
         Route::post('/payments/{payment}/reject', [AdminPaymentController::class, 'reject'])->name('payments.reject');
     });
+
+// ──────────────────────────────────────────────
+// REPORTS (auth only - for any authenticated user)
+// ──────────────────────────────────────────────
+Route::middleware('auth')->prefix('reports')->name('reports.')->group(function () {
+    Route::get('/create', [ReportController::class, 'create'])->name('create');
+    Route::post('/', [ReportController::class, 'store'])->name('store');
+});
 
 // ──────────────────────────────────────────────
 // NOTIFICATIONS (auth only - for any authenticated user)
