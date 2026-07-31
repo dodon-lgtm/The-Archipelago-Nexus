@@ -856,7 +856,7 @@
 
 
 
-                                            {{-- ACTION --}}
+{{-- ACTION --}}
                                             <div>
 
                                                 @if ($penawaran->status === 'Menunggu' && !$hasAccepted)
@@ -922,6 +922,15 @@
                                                         Penawaran tidak tersedia
                                                     </span>
 
+                                                @endif
+
+                                                {{-- Tombol Laporkan Freelancer --}}
+                                                @if($penawaran->freelancer)
+                                                    <a href="{{ route('company.reports.create', ['penawaran_id' => $penawaran->id]) }}"
+                                                       class="inline-flex items-center gap-2 px-4 py-2.5 mt-2 border border-red-200 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-xs font-bold transition">
+                                                        <i class="fa-solid fa-flag"></i>
+                                                        Laporkan Freelancer
+                                                    </a>
                                                 @endif
 
                                             </div>

@@ -23,7 +23,7 @@
                 The Archipelago<br>Nexus
             </h2>
         </div>
-
+        
         {{-- Desktop toggle button (visible only on desktop) --}}
         <button id="sidebarToggle" class="sidebar-toggle-desktop w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center shrink-0 ml-auto transition">
             <i class="sidebar-toggle-icon fa-solid fa-chevron-left text-slate-400 text-sm transition-transform duration-300"></i>
@@ -82,6 +82,16 @@
                     <span>Pendapatan</span>
                 </a>
 
+                <a href="{{ route('freelancer.reports.index') }}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-xl transition
+                   {{ request()->routeIs('freelancer.reports.*')
+                        ? 'bg-cyan-50 text-cyan-700 font-bold'
+                        : 'text-slate-600 hover:bg-slate-100' }}"
+                   data-tooltip="Laporan">
+                    <i class="fa-solid fa-flag w-5"></i>
+                    <span>Laporan</span>
+                </a>
+
             @elseif(Auth::user()->role == 'company')
 
 <a href="{{ route('company.dashboard') }}"
@@ -115,7 +125,7 @@
                     <span>Proyek Saya</span>
                 </a>
 
-                <a href="{{ route('company.workspaces.index') }}"
+<a href="{{ route('company.workspaces.index') }}"
                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition
                    {{ request()->routeIs('company.workspaces.*')
                         ? 'bg-cyan-50 text-cyan-700 font-bold'
@@ -123,6 +133,16 @@
                    data-tooltip="Workspace">
                     <i class="fa-solid fa-layer-group w-5"></i>
                     <span>Workspace</span>
+                </a>
+
+                <a href="{{ route('company.reports.index') }}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-xl transition
+                   {{ request()->routeIs('company.reports.*')
+                        ? 'bg-cyan-50 text-cyan-700 font-bold'
+                        : 'text-slate-600 hover:bg-slate-100' }}"
+                   data-tooltip="Laporan">
+                    <i class="fa-solid fa-flag w-5"></i>
+                    <span>Laporan</span>
                 </a>
 
             @elseif(Auth::user()->role == 'admin')
@@ -350,8 +370,8 @@
         animation: tooltipFadeIn 0.2s ease forwards;
     }
     @keyframes tooltipFadeIn {
-        from { opacity: 0; transform: translateY(2px); }
-        to { opacity: 1; transform: translateY(0); }
+        from { opacity: 0; }
+        to { opacity: 1; }
     }
 
     /* ===== MOBILE DRAWER ===== */
@@ -478,7 +498,7 @@
             }
         }
         
-        // Desktop toggle: collapse/expand
+
         if (toggleDesktop) {
             toggleDesktop.addEventListener('click', function(e) {
                 e.stopPropagation();

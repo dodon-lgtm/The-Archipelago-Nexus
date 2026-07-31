@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ a ,<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -596,8 +596,8 @@
             animation: tooltipFadeIn 0.2s ease forwards;
         }
         @keyframes tooltipFadeIn {
-            from { opacity: 0; transform: translateY(2px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
         /* Mobile drawer */
         @media (max-width: 1023px) {
