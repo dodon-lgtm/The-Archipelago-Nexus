@@ -196,6 +196,8 @@
         font-weight: 600;
         font-size: 13px;
         transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
     }
 
     .btn-back:hover {
@@ -342,17 +344,25 @@ $progress = round(($isi / $total) * 100);
 
 <div class="container">
 
-    <!-- Tombol Back ke Dashboard -->
+    <!-- Tombol Back Dinamis -->
     <div class="mb-4" data-aos="fade-down" data-aos-duration="600">
-        <a href="{{ route('freelancer.dashboard') }}" class="btn btn-back shadow-sm">
-            <i class="fa-solid fa-arrow-left me-2"></i> Kembali ke Dashboard
-        </a>
+        @if(isset($isViewOnly) && $isViewOnly)
+            <a href="{{ url()->previous() }}" class="btn btn-back shadow-sm">
+                <i class="fa-solid fa-arrow-left me-2"></i> Kembali
+            </a>
+        @else
+            <a href="{{ route('freelancer.dashboard') }}" class="btn btn-back shadow-sm">
+                <i class="fa-solid fa-arrow-left me-2"></i> Kembali ke Dashboard
+            </a>
+        @endif
     </div>
 
     <!-- Header Title -->
     <div class="mb-4" data-aos="fade-up" data-aos-duration="800">
-        <h1 class="page-title">Profil Saya</h1>
-        <p class="page-subtitle">Kelola informasi data diri, keahlian, dan pantau performa Anda secara real-time.</p>
+        <h1 class="page-title">{{ isset($isViewOnly) && $isViewOnly ? 'Profil Freelancer' : 'Profil Saya' }}</h1>
+        <p class="page-subtitle">
+            {{ isset($isViewOnly) && $isViewOnly ? 'Detail informasi dan portofolio freelancer.' : 'Kelola informasi data diri, keahlian, dan pantau performa Anda secara real-time.' }}
+        </p>
     </div>
 
     <!-- MAIN PROFILE CARD -->
@@ -365,7 +375,7 @@ $progress = round(($isi / $total) * 100);
                         @if($profile->photo)
                             <img src="{{ asset('storage/'.$profile->photo) }}" class="profile-photo">
                         @else
-                            <img src="{{ asset('images/default-profile.png') }}" class="profile-photo" onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=0284c7&color=fff&size=140'">
+                            <img src="{{ asset('images/default-profile.png') }}" class="profile-photo" onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=0284c7&color=fff&size=140'">
                         @endif
                         <div class="status-badge" title="Aktif / Online"></div>
                     </div>
@@ -373,7 +383,7 @@ $progress = round(($isi / $total) * 100);
 
                 <!-- BIODATA -->
                 <div class="col-lg-7 text-center text-lg-start">
-                    <h2 class="profile-name">{{ Auth::user()->name }}</h2>
+                    <h2 class="profile-name">{{ $user->name }}</h2>
                     <div>
                         <span class="badge-freelancer"><i class="fa-solid fa-circle-check me-1"></i> Verified Freelancer</span>
                     </div>
@@ -384,23 +394,29 @@ $progress = round(($isi / $total) * 100);
                     </div>
                     <div class="profile-info justify-content-center justify-content-lg-start">
                         <i class="fa-solid fa-envelope"></i>
-                        <span>{{ Auth::user()->email }}</span>
+                        <span>{{ $user->email }}</span>
                     </div>
                     <div class="profile-info justify-content-center justify-content-lg-start">
                         <i class="fa-solid fa-phone"></i>
-                        <span>{{ Auth::user()->phone ?: 'Belum mengisi nomor HP' }}</span>
+                        <span>{{ $user->phone ?: 'Belum mengisi nomor HP' }}</span>
                     </div>
                     <div class="profile-info justify-content-center justify-content-lg-start">
                         <i class="fa-solid fa-calendar-days"></i>
-                        <span>Bergabung sejak {{ Auth::user()->created_at->translatedFormat('d F Y') }}</span>
+                        <span>Bergabung sejak {{ $user->created_at->translatedFormat('d F Y') }}</span>
                     </div>
                 </div>
 
-                <!-- TOMBOL EDIT -->
+                <!-- TOMBOL EDIT / VIEW MODE -->
                 <div class="col-lg-3 text-center text-lg-end mt-4 mt-lg-0">
-                    <a href="{{ route('freelancer.profile.edit') }}" class="btn btn-custom-primary">
-                        <i class="fa-solid fa-pen-to-square me-2"></i> Edit Profil
-                    </a>
+                    @if(isset($isViewOnly) && $isViewOnly)
+                        <span class="badge bg-light text-primary border border-primary px-3 py-2 rounded-pill shadow-sm" style="font-size: 13px;">
+                            <i class="fa-solid fa-eye me-1"></i> Mode Lihat Profil
+                        </span>
+                    @else
+                        <a href="{{ route('freelancer.profile.edit') }}" class="btn btn-custom-primary">
+                            <i class="fa-solid fa-pen-to-square me-2"></i> Edit Profil
+                        </a>
+                    @endif
                 </div>
             </div>
         </div>
@@ -449,15 +465,15 @@ $progress = round(($isi / $total) * 100);
                 <div class="row g-3">
                     <div class="col-md-6">
                         <span class="d-block text-muted small mb-1 fw-semibold">Nama Lengkap</span>
-                        <strong class="text-dark">{{ Auth::user()->name }}</strong>
+                        <strong class="text-dark">{{ $user->name }}</strong>
                     </div>
                     <div class="col-md-6">
                         <span class="d-block text-muted small mb-1 fw-semibold">Email Utama</span>
-                        <strong class="text-dark">{{ Auth::user()->email }}</strong>
+                        <strong class="text-dark">{{ $user->email }}</strong>
                     </div>
                     <div class="col-md-6">
                         <span class="d-block text-muted small mb-1 fw-semibold">Nomor HP / WhatsApp</span>
-                        <strong class="text-dark">{{ Auth::user()->phone ?: '-' }}</strong>
+                        <strong class="text-dark">{{ $user->phone ?: '-' }}</strong>
                     </div>
                     <div class="col-md-6">
                         <span class="d-block text-muted small mb-1 fw-semibold">Lokasi Domisili</span>
@@ -582,7 +598,8 @@ $progress = round(($isi / $total) * 100);
         </div>
     </div>
 
-    <!-- PROGRESS PROFIL -->
+    <!-- PROGRESS PROFIL (Hanya tampil untuk pemilik akun / freelancer sendiri) -->
+    @if(!($isViewOnly ?? false))
     <div class="row" data-aos="fade-up" data-aos-duration="1000">
         <div class="col-lg-12">
             <div class="content-card">
@@ -623,6 +640,7 @@ $progress = round(($isi / $total) * 100);
             </div>
         </div>
     </div>
+    @endif
 
 </div>
 

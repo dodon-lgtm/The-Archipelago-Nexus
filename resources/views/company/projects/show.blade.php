@@ -524,31 +524,24 @@
 
 
                 {{-- =================================================
-                    PENAWARAN FREELANCER
-                ================================================== --}}
+                        PENAWARAN FREELANCER
+                    ================================================== --}}
                 <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
-
 
                     {{-- HEADER --}}
                     <div class="px-6 py-5 border-b border-slate-100">
-
                         <div class="flex flex-col md:flex-row
                                     md:items-center
                                     md:justify-between
                                     gap-4">
-
                             <div>
-
                                 <h2 class="text-lg font-bold text-slate-800">
                                     Penawaran Freelancer
                                 </h2>
-
                                 <p class="text-xs text-slate-500 mt-1">
                                     Lihat dan pilih freelancer yang mengajukan penawaran untuk proyek ini.
                                 </p>
-
                             </div>
-
 
                             <div class="inline-flex items-center gap-2
                                         px-3 py-2
@@ -556,52 +549,35 @@
                                         text-blue-600
                                         rounded-lg
                                         text-xs font-semibold">
-
                                 <i class="fa-solid fa-users"></i>
-
                                 {{ $project->penawarans->count() }} Penawaran
-
                             </div>
-
                         </div>
-
                     </div>
-
-
 
                     {{-- ISI PENAWARAN --}}
                     <div class="p-6">
-
                         @if ($project->penawarans->isEmpty())
-
 
                             {{-- EMPTY STATE --}}
                             <div class="py-16 text-center">
-
                                 <div class="w-16 h-16 mx-auto mb-5
                                             bg-slate-100
                                             rounded-2xl
                                             flex items-center justify-center">
-
                                     <i class="fa-regular fa-file-lines
                                               text-2xl
                                               text-slate-400"></i>
-
                                 </div>
-
                                 <h3 class="text-base font-bold text-slate-700">
                                     Belum Ada Penawaran
                                 </h3>
-
                                 <p class="text-sm text-slate-400 mt-2">
                                     Penawaran dari freelancer akan muncul di sini.
                                 </p>
-
                             </div>
 
-
                         @else
-
 
                             {{-- CEK APAKAH SUDAH ADA YANG DITERIMA --}}
                             @php
@@ -610,18 +586,14 @@
                                 );
                             @endphp
 
-
                             <div class="space-y-4">
 
-
                                 @foreach ($project->penawarans as $penawaran)
-
                                     <div class="border border-slate-200
                                                 rounded-xl
                                                 p-5
                                                 hover:border-slate-300
                                                 transition">
-
 
                                         {{-- BAGIAN ATAS --}}
                                         <div class="flex flex-col lg:flex-row
@@ -629,43 +601,40 @@
                                                     lg:justify-between
                                                     gap-5">
 
-
-                                            {{-- FREELANCER --}}
+                                            {{-- FREELANCER (DENGAN LINK KE PROFIL) --}}
                                             <div class="flex items-center gap-4">
-
-                                                <div class="w-12 h-12
-                                                            rounded-full
-                                                            bg-blue-100
-                                                            text-blue-600
-                                                            flex items-center justify-center
-                                                            font-bold">
-
-                                                    {{ strtoupper(substr($penawaran->freelancer->name ?? 'F', 0, 1)) }}
-
-                                                </div>
-
+                                                @if($penawaran->freelancer && $penawaran->freelancer->foto)
+                                                    <a href="{{ route('company.freelancer.profile', $penawaran->freelancer->id) }}" class="block shrink-0">
+                                                        <img src="{{ asset('storage/' . $penawaran->freelancer->foto) }}" 
+                                                             alt="{{ $penawaran->freelancer->name }}" 
+                                                             class="w-12 h-12 rounded-full object-cover hover:opacity-90 transition">
+                                                    </a>
+                                                @else
+                                                    <a href="{{ $penawaran->freelancer ? route('company.freelancer.profile', $penawaran->freelancer->id) : '#' }}" 
+                                                       class="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold shrink-0 hover:bg-blue-200 transition">
+                                                        {{ strtoupper(substr($penawaran->freelancer->name ?? 'F', 0, 1)) }}
+                                                    </a>
+                                                @endif
 
                                                 <div>
-
                                                     <h3 class="font-bold text-slate-800">
-                                                        {{ $penawaran->freelancer->name ?? 'Tidak diketahui' }}
+                                                        @if($penawaran->freelancer)
+                                                            <a href="{{ route('company.freelancer.profile', $penawaran->freelancer->id) }}" class="hover:text-blue-600 transition">
+                                                                {{ $penawaran->freelancer->name }}
+                                                            </a>
+                                                        @else
+                                                            Tidak diketahui
+                                                        @endif
                                                     </h3>
-
                                                     <p class="text-xs text-slate-400 mt-1">
                                                         Freelancer
                                                     </p>
-
                                                 </div>
-
                                             </div>
-
-
 
                                             {{-- STATUS --}}
                                             <div>
-
                                                 @if ($penawaran->status === 'Menunggu')
-
                                                     <span class="inline-flex items-center gap-2
                                                                  px-3 py-1.5
                                                                  rounded-full
@@ -673,15 +642,10 @@
                                                                  text-amber-600
                                                                  border border-amber-100
                                                                  text-xs font-bold">
-
                                                         <span class="w-2 h-2 rounded-full bg-amber-500"></span>
-
                                                         Menunggu
-
                                                     </span>
-
                                                 @elseif ($penawaran->status === 'Diterima')
-
                                                     <span class="inline-flex items-center gap-2
                                                                  px-3 py-1.5
                                                                  rounded-full
@@ -689,15 +653,10 @@
                                                                  text-emerald-600
                                                                  border border-emerald-100
                                                                  text-xs font-bold">
-
                                                         <i class="fa-solid fa-check"></i>
-
                                                         Freelancer Terpilih
-
                                                     </span>
-
                                                 @else
-
                                                     <span class="inline-flex items-center gap-2
                                                                  px-3 py-1.5
                                                                  rounded-full
@@ -705,109 +664,66 @@
                                                                  text-red-600
                                                                  border border-red-100
                                                                  text-xs font-bold">
-
                                                         <i class="fa-solid fa-xmark"></i>
-
                                                         Ditolak
-
                                                     </span>
-
                                                 @endif
-
                                             </div>
-
                                         </div>
-
-
 
                                         {{-- DETAIL PENAWARAN --}}
                                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
-
-
                                             {{-- HARGA --}}
                                             <div class="bg-slate-50 rounded-lg p-4">
-
                                                 <p class="text-xs text-slate-400">
                                                     Harga Penawaran
                                                 </p>
-
                                                 <p class="text-base font-bold text-slate-800 mt-1">
-
                                                     Rp {{ number_format($penawaran->harga_penawaran, 0, ',', '.') }}
-
                                                 </p>
-
                                             </div>
-
 
                                             {{-- ESTIMASI --}}
                                             <div class="bg-slate-50 rounded-lg p-4">
-
                                                 <p class="text-xs text-slate-400">
                                                     Estimasi Pengerjaan
                                                 </p>
-
                                                 <p class="text-base font-bold text-slate-800 mt-1">
-
                                                     {{ $penawaran->estimasi_hari }} Hari
-
                                                 </p>
-
                                             </div>
-
 
                                             {{-- WAKTU --}}
                                             <div class="bg-slate-50 rounded-lg p-4">
-
                                                 <p class="text-xs text-slate-400">
                                                     Waktu Dipilih
                                                 </p>
-
                                                 <p class="text-sm font-bold text-slate-800 mt-1">
-
                                                     @if ($penawaran->selected_at)
-
                                                         {{ $penawaran->selected_at->format('d M Y H:i') }}
-
                                                     @else
-
                                                         Belum dipilih
-
                                                     @endif
-
                                                 </p>
-
                                             </div>
-
                                         </div>
-
-
 
                                         {{-- PESAN --}}
                                         @if($penawaran->pesan)
-
                                             <div class="mt-4">
-
                                                 <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
                                                     Pesan Freelancer
                                                 </p>
-
                                                 <div class="bg-slate-50
                                                             border border-slate-100
                                                             rounded-lg
                                                             p-4">
-
                                                     <p class="text-sm text-slate-600 leading-relaxed">
                                                         {{ $penawaran->pesan }}
                                                     </p>
-
                                                 </div>
-
                                             </div>
-
                                         @endif
-
-
 
                                         {{-- BAGIAN BAWAH --}}
                                         <div class="flex flex-col sm:flex-row
@@ -817,13 +733,9 @@
                                                     mt-5
                                                     pt-5
                                                     border-t border-slate-100">
-
-
                                             {{-- PROPOSAL --}}
                                             <div>
-
                                                 @if ($penawaran->proposal)
-
                                                     <a
                                                         href="{{ asset('storage/' . $penawaran->proposal) }}"
                                                         target="_blank"
@@ -837,38 +749,25 @@
                                                                hover:bg-blue-100
                                                                transition"
                                                     >
-
                                                         <i class="fa-regular fa-file-lines"></i>
-
                                                         Lihat Proposal
-
                                                     </a>
-
                                                 @else
-
                                                     <span class="text-xs text-slate-400">
                                                         Tidak ada file proposal
                                                     </span>
-
                                                 @endif
-
                                             </div>
-
-
 
                                             {{-- ACTION --}}
                                             <div>
-
                                                 @if ($penawaran->status === 'Menunggu' && !$hasAccepted)
-
                                                     <form
                                                         method="POST"
                                                         action="{{ route('company.projects.penawaran.select', [$project, $penawaran]) }}"
                                                         onsubmit="return confirm('Pilih freelancer ini? Penawaran lain akan otomatis ditolak.');"
                                                     >
-
                                                         @csrf
-
                                                         <button
                                                             type="submit"
                                                             class="inline-flex items-center gap-2
@@ -880,18 +779,11 @@
                                                                    hover:bg-emerald-600
                                                                    transition"
                                                         >
-
                                                             <i class="fa-solid fa-check"></i>
-
                                                             Pilih Freelancer
-
                                                         </button>
-
                                                     </form>
-
-
                                                 @elseif ($penawaran->status === 'Diterima')
-
                                                     <div class="flex items-center gap-2">
                                                         <span class="inline-flex items-center gap-2
                                                                      px-4 py-2.5
@@ -899,11 +791,8 @@
                                                                      text-emerald-600
                                                                      rounded-lg
                                                                      text-xs font-bold">
-
                                                             <i class="fa-solid fa-circle-check"></i>
-
                                                             Freelancer Terpilih
-
                                                         </span>
 
                                                         @if($project->workspace)
@@ -914,37 +803,24 @@
                                                             </a>
                                                         @endif
                                                     </div>
-
-
                                                 @else
-
                                                     <span class="text-xs text-slate-400">
                                                         Penawaran tidak tersedia
                                                     </span>
-
                                                 @endif
-
                                             </div>
-
                                         </div>
 
                                     </div>
-
                                 @endforeach
 
                             </div>
 
                         @endif
-
                     </div>
-
                 </div>
-
-
             </div>
-
         </main>
-
 
         {{-- =================================================
             FOOTER
