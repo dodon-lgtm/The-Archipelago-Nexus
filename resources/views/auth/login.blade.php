@@ -22,7 +22,7 @@
     </style>
 </head>
 
-<body class="bg-slate-100/80 text-slate-800 antialiased min-h-screen flex items-center justify-center p-3 md:p-6">
+<body class="antialiased min-h-screen flex items-center justify-center p-3 md:p-6 bg-cover bg-center bg-no-repeat bg-fixed" style="background-image: url('{{ asset('images/backgroundlogin.png') }}');">
 
     <!-- Container Utama -->
     <div class="max-w-6xl w-full bg-white rounded-3xl shadow-2xl shadow-slate-200/80 border border-slate-100 overflow-hidden grid grid-cols-1 lg:grid-cols-12">
@@ -32,7 +32,7 @@
 
             <!-- Background Gedung dengan Gradient Fade Overlay -->
             <div class="absolute inset-0 z-0 pointer-events-none">
-                <img src="{{ asset('images/gedung.jpg') }}" alt="Background Gedung" class="w-full h-full object-cover opacity-70">
+                <img src="{{ asset('images/gedung.jpg') }}" alt="Background Gedung" class="w-full h-full object-cover opacity-100">
                 <div class="absolute inset-0 bg-gradient-to-tr from-white via-white/80 to-transparent"></div>
             </div>
 

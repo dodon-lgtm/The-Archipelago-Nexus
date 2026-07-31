@@ -28,13 +28,11 @@
                 <div class="mb-4">
                     <p class="text-xs text-slate-500 font-semibold mb-1">Deskripsi Laporan</p>
                     <div class="bg-slate-50 rounded-xl p-4 text-sm text-slate-700 leading-relaxed">{{ $report->description }}</div>
-                </div>
 
                 @if($report->admin_note)
                     <div>
                         <p class="text-xs text-slate-500 font-semibold mb-1">Catatan Admin</p>
                         <div class="bg-cyan-50 rounded-xl p-4 text-sm text-cyan-700 leading-relaxed">{{ $report->admin_note }}</div>
-                    </div>
                 @endif
             </div>
 
@@ -67,16 +65,14 @@
                 <div class="flex items-center gap-3 mb-3">
                     <div class="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-lg font-bold">{{ strtoupper(substr($report->reporter->name ?? '?', 0, 1)) }}</div>
                     <div><p class="font-bold text-slate-800">{{ $report->reporter->name ?? '—' }}</p><p class="text-xs text-slate-500">{{ $report->reporter->email ?? '—' }}</p></div>
-                </div>
             </div>
 
-            @if($report->project)
+            @if($report->project && !$report->penawaran_id)
                 <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
                     <h3 class="font-bold text-slate-800 mb-3">Proyek Terkait</h3>
                     <div class="space-y-2 text-sm">
                         <div class="flex justify-between"><span class="text-slate-500">Nama</span><span class="font-semibold">{{ $report->project->project_name }}</span></div>
                         <div class="flex justify-between"><span class="text-slate-500">Company</span><span class="font-semibold">{{ $report->project->owner->name ?? '—' }}</span></div>
-                    </div>
                     <a href="{{ route('admin.projects.show', $report->project) }}" class="mt-3 inline-block text-xs text-cyan-600 hover:text-cyan-700 font-semibold">Lihat Detail →</a>
                 </div>
             @endif
@@ -87,9 +83,34 @@
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold">{{ strtoupper(substr($report->reportedUser->name ?? '?', 0, 1)) }}</div>
                         <div><p class="font-bold text-slate-800">{{ $report->reportedUser->name }}</p><p class="text-xs text-slate-500">{{ $report->reportedUser->email }}</p></div>
-                    </div>
                 </div>
             @endif
-        </div>
+
+            {{-- Aksi Admin --}}
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+                <h3 class="font-bold text-slate-800 mb-4">Aksi Admin</h3>
+
+                @if($report->penawaran_id)
+                    {{-- Laporan memiliki penawaran -> tombol Hapus Penawaran --}}
+                    <form method="POST" action="{{ route('admin.reports.destroy-penawaran', $report) }}" onsubmit="return confirm('Yakin ingin menghapus penawaran ini? Penawaran yang dihapus tidak dapat dikembalikan.')">
+                        @csrf
+                        <button type="submit" class="w-full px-4 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-xl text-sm font-semibold transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-trash-can"></i>
+                            Hapus Penawaran
+                        </button>
+                    </form>
+                @elseif($report->project_id)
+                    {{-- Laporan memiliki project (tanpa penawaran) -> tombol Hapus Project --}}
+                    <form method="POST" action="{{ route('admin.reports.destroy-project', $report) }}" onsubmit="return confirm('Yakin ingin menghapus project ini? Project yang dihapus tidak dapat dikembalikan.')">
+                        @csrf
+                        <button type="submit" class="w-full px-4 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-xl text-sm font-semibold transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-trash-can"></i>
+                            Hapus Project
+                        </button>
+                    </form>
+                @else
+                    <p class="text-sm text-slate-400 text-center py-2">Tidak ada aksi yang tersedia untuk laporan ini.</p>
+                @endif
+            </div>
     </div>
 @endsection
