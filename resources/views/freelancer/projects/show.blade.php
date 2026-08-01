@@ -26,6 +26,20 @@
         <i class="fa fa-arrow-left"></i> Kembali
     </a>
 
+    @if(session('error'))
+        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-6 flex items-center gap-3">
+            <i class="fa fa-circle-exclamation"></i>
+            <span>{{ session('error') }}</span>
+        </div>
+    @endif
+
+    @if(session('success'))
+        <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl mb-6 flex items-center gap-3">
+            <i class="fa fa-circle-check"></i>
+            <span>{{ session('success') }}</span>
+        </div>
+    @endif
+
     <div class="grid lg:grid-cols-3 gap-8">
 
         <!-- KIRI: Detail Utama -->
@@ -116,9 +130,15 @@
                 </div>
 
                 <div class="mt-8 space-y-3">
-                    <a href="{{ route('freelancer.penawaran.create', $project)}}" class="w-full block bg-cyan-600 hover:bg-cyan-700 text-white text-center py-3 rounded-xl font-bold">
-                        <i class="fa fa-paper-plane mr-2"></i> Kirim Penawaran
-                    </a>
+                    @if(!empty($hasOffered))
+                        <a href="{{ route('freelancer.lamaran') }}" class="w-full block bg-cyan-600 hover:bg-cyan-700 text-white text-center py-3 rounded-xl font-bold">
+                            <i class="fa fa-list mr-2"></i> Lihat Penawaran Saya
+                        </a>
+                    @else
+                        <a href="{{ route('freelancer.penawaran.create', $project)}}" class="w-full block bg-cyan-600 hover:bg-cyan-700 text-white text-center py-3 rounded-xl font-bold">
+                            <i class="fa fa-paper-plane mr-2"></i> Kirim Penawaran
+                        </a>
+                    @endif
 
                     @php
                         $isSaved = $project->savedByFreelancers()

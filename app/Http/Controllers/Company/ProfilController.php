@@ -78,7 +78,7 @@ class ProfilController extends Controller
             $profile->company_logo = $logo;
         }
 
-        $profile->company_name = $request->company_name;
+$profile->company_name = $request->company_name;
         $profile->industry     = $request->industry;
         $profile->description  = $request->description;
         $profile->website      = $request->website;
@@ -86,6 +86,11 @@ class ProfilController extends Controller
         $profile->phone        = $request->phone;
 
         $profile->save();
+
+        // Sync phone to User model so ProfileCompletionService can read it
+        if ($request->phone) {
+            Auth::user()->update(['phone' => $request->phone]);
+        }
 
         return redirect()
                 ->route('company.profile')

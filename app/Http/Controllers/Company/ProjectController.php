@@ -11,6 +11,7 @@ use App\Models\Workspace;
 use App\Models\ProgressHistory;
 use App\Models\Message;
 use App\Services\NotificationService;
+use App\Services\ProfileCompletionService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
@@ -36,6 +37,14 @@ class ProjectController extends Controller
 
     public function store(ProjectStoreRequest $request): RedirectResponse
     {
+        // Cek kelengkapan profil company
+        $completionService = app(ProfileCompletionService::class);
+        if (!$completionService->isComplete(auth()->user())) {
+            return redirect()
+                ->route('company.profile')
+                ->with('error', 'Profil Anda belum lengkap. Silakan lengkapi minimal 80% profil terlebih dahulu agar dapat membuat proyek.');
+        }
+
         try {
             $data = $request->validated();
 
@@ -101,6 +110,14 @@ class ProjectController extends Controller
     public function selectFreelancer(Project $project, Penawaran $penawaran): RedirectResponse
     {
         $this->authorizeCompanyProject($project);
+
+        // Cek kelengkapan profil company
+        $completionService = app(ProfileCompletionService::class);
+        if (!$completionService->isComplete(auth()->user())) {
+            return redirect()
+                ->route('company.profile')
+                ->with('error', 'Profil Anda belum lengkap. Silakan lengkapi minimal 80% profil terlebih dahulu agar dapat memilih freelancer.');
+        }
 
         // Pastikan penawaran milik project ini
         abort_unless((int) $penawaran->project_id === (int) $project->id, 403);

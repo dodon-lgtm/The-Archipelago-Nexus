@@ -7,23 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 class FreelancerProfile extends Model
 {
     protected $fillable = [
-
         'user_id',
-
-        'company_name',
-
-        'company_logo',
-
-        'industry',
-
-        'description',
-
-        'website',
-
+        'bio',
+        'photo',
+        'skills',
+        'experience',
+        'portfolio_link',
         'location',
-
-        'phone'
-
+        'cv',
+        'hourly_rate',
     ];
 
     public function user()

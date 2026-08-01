@@ -180,7 +180,7 @@
         margin-bottom: 15px;
     }
 
-    /* Modern Glassmorphism Stat Cards dengan Aksen Spesifik */
+    /* Modern Glassmorphism Stat Cards */
     .stat-card {
         background: var(--card-bg);
         backdrop-filter: blur(12px);
@@ -309,6 +309,21 @@
         transform: translateY(-2px);
         box-shadow: 0 10px 20px rgba(2, 132, 199, 0.35);
     }
+
+    /* Smooth Animated Progress Bar */
+    .progress {
+        height: 14px;
+        border-radius: 20px;
+        background-color: rgba(224, 242, 254, 0.8);
+        overflow: hidden;
+        padding: 2px;
+    }
+
+    .progress-bar {
+        border-radius: 20px;
+        background: var(--primary-gradient);
+        transition: width 1.5s cubic-bezier(0.1, 1, 0.1, 1);
+    }
 </style>
 </head>
 
@@ -335,10 +350,10 @@
             <div class="row align-items-center">
                 <!-- LOGO PERUSAHAAN -->
                 <div class="col-lg-2 text-center mb-4 mb-lg-0">
-                    @if($profile->company_logo)
-                        <img src="{{ asset('storage/'.$profile->company_logo) }}" class="company-logo">
+                    @if(isset($profile->company_logo) && $profile->company_logo)
+                        <img src="{{ asset('storage/'.$profile->company_logo) }}" class="company-logo" alt="Logo Perusahaan">
                     @else
-                        <img src="{{ asset('images/company.png') }}" class="company-logo" onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($profile->company_name ?? 'Company') }}&background=0284c7&color=fff&size=140'">
+                        <img src="{{ asset('images/company.png') }}" class="company-logo" alt="Logo Perusahaan" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($profile->company_name ?? 'Company') }}&background=0284c7&color=fff&size=140';">
                     @endif
                 </div>
 
@@ -379,9 +394,9 @@
                         <i class="bi bi-pencil-square me-2"></i> Edit Profil
                     </a>
                 </div>
-            </div>
-        </div>
-    </div>
+            </div> <!-- Close row -->
+        </div> <!-- Close profile-header -->
+    </div> <!-- Close profile-card -->
 
     <!-- KARTU STATISTIK SPESIFIK & MODERN -->
     <div class="row g-4 mb-4" data-aos="fade-up" data-aos-duration="900">
@@ -430,7 +445,7 @@
                 <div class="section-title">
                     <i class="bi bi-building"></i> Tentang Perusahaan
                 </div>
-                @if($profile->description)
+                @if(isset($profile->description) && $profile->description)
                     <p class="text-secondary lh-lg fs-6 mb-0">{{ $profile->description }}</p>
                 @else
                     <div class="alert alert-light border fst-italic text-muted mb-0">
@@ -481,9 +496,9 @@
                     <i class="bi bi-globe2"></i> Website & Atribut
                 </div>
 
-                @if($profile->website)
+                @if(isset($profile->website) && $profile->website)
                     <div class="mb-3">
-                        <a href="{{ $profile->website }}" target="_blank" class="btn btn-primary website-btn w-100 text-white text-center">
+                        <a href="{{ \Illuminate\Support\Str::startsWith($profile->website, ['http://', 'https://']) ? $profile->website : 'https://' . $profile->website }}" target="_blank" class="btn btn-primary website-btn w-100 text-white text-center">
                             <i class="bi bi-box-arrow-up-right me-2"></i> Kunjungi Website Resmi
                         </a>
                     </div>
@@ -501,7 +516,7 @@
                 <div class="row g-3">
                     <div class="col-6">
                         <span class="d-block text-muted small mb-1 fw-semibold">Bidang Usaha</span>
-                        @if($profile->industry)
+                        @if(isset($profile->industry) && $profile->industry)
                             <span class="badge bg-primary px-3 py-2 rounded-pill fw-semibold" style="background: var(--primary-gradient) !important;">
                                 {{ $profile->industry }}
                             </span>
@@ -513,6 +528,60 @@
                         <span class="d-block text-muted small mb-1 fw-semibold">Tanggal Bergabung</span>
                         <strong class="text-dark small"><i class="bi bi-calendar-event me-1 text-primary"></i> {{ Auth::user()->created_at->format('d M Y') }}</strong>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROGRESS KELENGKAPAN PROFIL -->
+    <div class="row mt-4" data-aos="fade-up" data-aos-duration="1000">
+        <div class="col-lg-12">
+            <div class="content-card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="section-title mb-0">
+                        <i class="bi bi-bar-chart-line"></i> Progress Kelengkapan Profil
+                    </h4>
+                    <h3 class="fw-extrabold mb-0" style="color: #0284c7 !important;">{{ profile_completion_percentage() }}%</h3>
+                </div>
+
+                <div class="progress mb-4 shadow-inner">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" style="width:{{ profile_completion_percentage() }}%"></div>
+                </div>
+
+                @php
+                    $missing = get_missing_profile_fields();
+                    $isComplete = is_profile_complete();
+                @endphp
+
+                @if($isComplete)
+                    <div class="alert alert-success border-0 shadow-sm rounded-4 mb-0">
+                        <i class="bi bi-check-circle-fill me-2"></i> Profil Anda sudah lengkap. Anda dapat menggunakan semua fitur aplikasi.
+                    </div>
+                @else
+                    <div class="alert alert-warning border-0 shadow-sm rounded-4 mb-3">
+                        <i class="bi bi-exclamation-circle-fill me-2"></i> Lengkapi minimal 80% profil untuk membuat proyek, memilih freelancer, dan fitur lainnya.
+                    </div>
+                @endif
+
+                <div class="row g-3 text-sm">
+                    @php
+                        $fields = [
+                            ['key' => 'name', 'label' => 'Nama Lengkap', 'check' => Auth::user()->name],
+                            ['key' => 'email', 'label' => 'Email', 'check' => Auth::user()->email],
+                            ['key' => 'phone', 'label' => 'Nomor Telepon', 'check' => Auth::user()->phone],
+                            ['key' => 'location', 'label' => 'Lokasi', 'check' => $profile->location ?? null],
+                            ['key' => 'company_name', 'label' => 'Nama Perusahaan', 'check' => $profile->company_name ?? null],
+                        ];
+                    @endphp
+                    @foreach($fields as $field)
+                        <div class="col-6 col-md-2">
+                            @if($field['check'])
+                                <span class="text-success fw-bold"><i class="bi bi-check-circle-fill me-1"></i> {{ $field['label'] }}</span>
+                            @else
+                                <span class="text-muted"><i class="bi bi-circle me-1"></i> {{ $field['label'] }}</span>
+                            @endif
+                        </div>
+                    @endforeach
                 </div>
             </div>
         </div>

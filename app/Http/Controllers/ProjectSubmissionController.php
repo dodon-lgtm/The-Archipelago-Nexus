@@ -9,6 +9,7 @@ use App\Models\ProjectSubmission;
 use App\Models\SubmissionFile;
 use App\Models\Penawaran;
 use App\Services\NotificationService;
+use App\Services\ProfileCompletionService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -48,6 +49,14 @@ class ProjectSubmissionController extends Controller
         // Hanya freelancer yang bisa upload
         if ((int) $workspace->freelancer_id !== (int) Auth::id()) {
             abort(403, 'Hanya freelancer yang dapat mengirim hasil pekerjaan.');
+        }
+
+        // Cek kelengkapan profil freelancer
+        $completionService = app(ProfileCompletionService::class);
+        if (!$completionService->isComplete(Auth::user())) {
+            return redirect()
+                ->route('freelancer.profile')
+                ->with('error', 'Profil Anda belum lengkap. Silakan lengkapi minimal 80% profil terlebih dahulu agar dapat mengirim hasil pekerjaan.');
         }
 
         // Jika sudah ada submission yang diterima, freelancer tidak boleh upload lagi
@@ -361,4 +370,3 @@ class ProjectSubmissionController extends Controller
             ->with('success', 'Permintaan revisi telah dikirim.');
     }
 }
-

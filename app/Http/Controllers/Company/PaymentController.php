@@ -8,6 +8,7 @@ use App\Models\Workspace;
 use App\Models\Message;
 use App\Models\User;
 use App\Services\NotificationService;
+use App\Services\ProfileCompletionService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -51,6 +52,14 @@ class PaymentController extends Controller
         // Hanya company yang bisa upload
         if ((int) $workspace->company_id !== (int) Auth::id()) {
             abort(403, 'Hanya perusahaan yang dapat mengupload bukti pembayaran.');
+        }
+
+        // Cek kelengkapan profil company
+        $completionService = app(ProfileCompletionService::class);
+        if (!$completionService->isComplete(Auth::user())) {
+            return redirect()
+                ->route('company.profile')
+                ->with('error', 'Profil Anda belum lengkap. Silakan lengkapi minimal 80% profil terlebih dahulu agar dapat mengupload bukti pembayaran.');
         }
 
         // Pastikan workspace dalam status Menunggu Pembayaran
@@ -114,7 +123,7 @@ class PaymentController extends Controller
             'type' => 'system',
         ]);
 
-// Notifikasi untuk semua admin (pembayaran perlu diverifikasi)
+        // Notifikasi untuk semua admin (pembayaran perlu diverifikasi)
         $admins = User::where('role', 'admin')->get();
         foreach ($admins as $admin) {
             NotificationService::sendTo(
@@ -135,4 +144,3 @@ class PaymentController extends Controller
             ->with('success', 'Bukti pembayaran berhasil dikirim. Menunggu verifikasi admin.');
     }
 }
-

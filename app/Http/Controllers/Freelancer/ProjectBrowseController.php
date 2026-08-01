@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Penawaran;
 use App\Models\Project;
 use App\Services\NotificationService;
+use App\Services\ProfileCompletionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
@@ -57,18 +58,52 @@ class ProjectBrowseController extends Controller
     ));
 }
 
-    public function show(Project $project): View
+public function show(Project $project): View
     {
         $project->load('category', 'owner');
 
-        return view('freelancer.projects.show', compact('project'));
+        $hasOffered = Penawaran::where('project_id', $project->id)
+            ->where('freelancer_id', Auth::id())
+            ->exists();
+
+        return view('freelancer.projects.show', compact('project', 'hasOffered'));
     }
     public function create(Project $project)
 {
+    // Cek apakah freelancer sudah pernah mengirim penawaran
+    $alreadyOffered = Penawaran::where('project_id', $project->id)
+        ->where('freelancer_id', Auth::id())
+        ->exists();
+
+    if ($alreadyOffered) {
+        return redirect()
+            ->route('freelancer.projects.show', $project)
+            ->with('error', 'Anda sudah pernah mengirim penawaran pada proyek ini.');
+    }
+
     return view('freelancer.penawaran.create', compact('project'));
 }
 public function store(Request $request, Project $project)
 {
+    // Cek apakah freelancer sudah pernah mengirim penawaran
+    $alreadyOffered = Penawaran::where('project_id', $project->id)
+        ->where('freelancer_id', Auth::id())
+        ->exists();
+
+    if ($alreadyOffered) {
+        return redirect()
+            ->route('freelancer.projects.show', $project)
+            ->with('error', 'Anda sudah pernah mengirim penawaran pada proyek ini.');
+    }
+
+    // Cek kelengkapan profil freelancer
+    $completionService = app(ProfileCompletionService::class);
+    if (!$completionService->isComplete(Auth::user())) {
+        return redirect()
+            ->route('freelancer.profile')
+            ->with('error', 'Profil Anda belum lengkap. Silakan lengkapi minimal 80% profil terlebih dahulu agar dapat mengirim penawaran.');
+    }
+
     $request->validate([
         'harga_penawaran' => 'required|numeric',
         'estimasi_hari'   => 'required|numeric',
@@ -109,4 +144,3 @@ NotificationService::sendTo(
     
 }
 }
-

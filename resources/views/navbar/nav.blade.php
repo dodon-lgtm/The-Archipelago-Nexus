@@ -7,28 +7,32 @@
         <nav class="hidden lg:flex items-center gap-6">
             @auth
                 {{-- ================= FREELANCER ================= --}}
-                @if(Auth::user()->role == 'freelancer')
-                        <a href="/freelancer/dashboard" class="text-lg font-black text-cyan-600">NEXUS</a>
+                @if (Auth::user()->role == 'freelancer')
+                    <a href="/freelancer/dashboard" class="text-lg font-black text-cyan-600">NEXUS</a>
 
                     {{-- <a href="{{ route('freelancer.dashboard') }}" class="text-sm font-semibold hover:text-cyan-600 transition">Home</a> --}}
-                
-                {{-- ================= COMPANY ================= --}}
+
+                    {{-- ================= COMPANY ================= --}}
                 @elseif(Auth::user()->role == 'company')
-                        <a href="/company/dashboard" class="text-lg font-black text-cyan-600">NEXUS</a>
+                    <a href="/company/dashboard" class="text-lg font-black text-cyan-600">NEXUS</a>
 
                     {{-- <a href="{{ route('company.dashboard') }}" class="text-sm font-semibold hover:text-cyan-600 transition">Dashboard</a>
                     <a href="{{ route('company.projects.create') }}" class="text-sm text-slate-600 hover:text-cyan-600 transition">Tambah Proyek</a>
                     <a href="{{ route('company.projects.index') }}" class="text-sm text-slate-600 hover:text-cyan-600 transition">Proyek Saya</a>
                  --}}
-                {{-- ================= ADMIN ================= --}}
+                    {{-- ================= ADMIN ================= --}}
                 @elseif(Auth::user()->role == 'admin')
-                    <a href="{{ route('admin.dashboard') }}" class="text-sm font-semibold hover:text-cyan-600 transition
+                    <a href="{{ route('admin.dashboard') }}"
+                        class="text-sm font-semibold hover:text-cyan-600 transition
                        {{ request()->routeIs('admin.dashboard') ? 'text-cyan-600' : '' }}">Dashboard</a>
-                    <a href="{{ route('admin.users.index') }}" class="text-sm text-slate-600 hover:text-cyan-600 transition
+                    <a href="{{ route('admin.users.index') }}"
+                        class="text-sm text-slate-600 hover:text-cyan-600 transition
                        {{ request()->routeIs('admin.users.*') ? 'text-cyan-600' : '' }}">Pengguna</a>
-                    <a href="{{ route('admin.projects.index') }}" class="text-sm text-slate-600 hover:text-cyan-600 transition
+                    <a href="{{ route('admin.projects.index') }}"
+                        class="text-sm text-slate-600 hover:text-cyan-600 transition
                        {{ request()->routeIs('admin.projects.*') ? 'text-cyan-600' : '' }}">Proyek</a>
-                    <a href="{{ route('admin.reports.index') }}" class="text-sm text-slate-600 hover:text-cyan-600 transition
+                    <a href="{{ route('admin.reports.index') }}"
+                        class="text-sm text-slate-600 hover:text-cyan-600 transition
                        {{ request()->routeIs('admin.reports.*') ? 'text-cyan-600' : '' }}">Laporan</a>
                 @endif
             @endauth
@@ -39,16 +43,20 @@
     <div class="flex items-center gap-4">
         <!-- NOTIF -->
         <div class="relative">
-            <button id="notificationButton" class="relative w-10 h-10 rounded-full border border-slate-200 hover:bg-slate-100 flex items-center justify-center">
+            <button id="notificationButton" aria-label="Notifikasi"
+                class="relative w-10 h-10 rounded-full border border-slate-200 hover:bg-slate-100 flex items-center justify-center">
                 <i class="fa-regular fa-bell text-slate-600"></i>
-                <span id="notificationBadge" class="absolute -top-1 -right-1 min-w-[18px] h-[18px] rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center px-1 hidden"></span>
+                <span id="notificationBadge"
+                    class="absolute -top-1 -right-1 min-w-[18px] h-[18px] rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center px-1"></span>
             </button>
 
             <!-- Dropdown Notifikasi -->
-            <div id="notificationDropdown" class="hidden absolute right-0 mt-3 w-[380px] bg-white rounded-2xl border shadow-xl overflow-hidden z-[100]">
+            <div id="notificationDropdown"
+                class="hidden absolute right-0 mt-3 w-[380px] bg-white rounded-2xl border shadow-xl overflow-hidden z-[100]">
                 <div class="p-4 border-b border-slate-100 flex items-center justify-between">
                     <h3 class="font-bold text-sm text-slate-800">Notifikasi</h3>
-                    <button id="markAllReadBtn" class="text-[11px] text-brand font-semibold hover:underline">Tandai semua sudah dibaca</button>
+                    <button id="markAllReadBtn" class="text-[11px] text-brand font-semibold hover:underline">Tandai
+                        semua sudah dibaca</button>
                 </div>
                 <div id="notificationList" class="max-h-[360px] overflow-y-auto">
                     <div class="p-6 text-center text-sm text-slate-400">
@@ -62,11 +70,14 @@
         <!-- USER -->
         <div class="relative">
             <button id="userButton" class="flex items-center gap-3 hover:bg-slate-100 rounded-xl px-2 py-2 transition">
-                <div class="w-10 h-10 rounded-full overflow-hidden bg-cyan-500 flex items-center justify-center text-white shrink-0">
-                    @if(Auth::user()->role == 'company' && Auth::user()->companyProfile && Auth::user()->companyProfile->company_logo)
-                        <img src="{{ asset('storage/' . Auth::user()->companyProfile->company_logo) }}" alt="Logo Perusahaan" class="w-full h-full object-cover">
+                <div
+                    class="w-10 h-10 rounded-full overflow-hidden bg-cyan-500 flex items-center justify-center text-white shrink-0">
+                    @if (Auth::user()->role == 'company' && Auth::user()->companyProfile && Auth::user()->companyProfile->company_logo)
+                        <img src="{{ asset('storage/' . Auth::user()->companyProfile->company_logo) }}"
+                            alt="Logo Perusahaan" class="w-full h-full object-cover">
                     @elseif(Auth::user()->profile && Auth::user()->profile->photo)
-                        <img src="{{ asset('storage/' . Auth::user()->profile->photo) }}" alt="Foto Profil" class="w-full h-full object-cover">
+                        <img src="{{ asset('storage/' . Auth::user()->profile->photo) }}" alt="Foto Profil"
+                            class="w-full h-full object-cover">
                     @else
                         <i class="fa-solid fa-user"></i>
                     @endif
@@ -79,37 +90,48 @@
             </button>
 
             <!-- Dropdown -->
-            <div id="userDropdown" class="hidden absolute right-0 mt-3 w-64 bg-white rounded-2xl border shadow-xl overflow-hidden z-[100]">
+            <div id="userDropdown"
+                class="hidden absolute right-0 mt-3 w-64 bg-white rounded-2xl border shadow-xl overflow-hidden z-[100]">
                 <div class="p-5 border-b">
                     <h2 class="font-bold">{{ Auth::user()->name }}</h2>
                     <p class="text-sm text-slate-500">{{ Auth::user()->email }}</p>
                 </div>
-                
-                @if(Auth::user()->role == 'freelancer')
-                    <a href="{{ route('freelancer.profile') }}" class="flex items-center gap-3 px-5 py-3 hover:bg-slate-50"><i class="fa-regular fa-user"></i> Profil</a>
+
+                @if (Auth::user()->role == 'freelancer')
+                    <a href="{{ route('freelancer.profile') }}"
+                        class="flex items-center gap-3 px-5 py-3 hover:bg-slate-50"><i class="fa-regular fa-user"></i>
+                        Profil</a>
                 @elseif(Auth::user()->role == 'company')
-                    <a href="{{ route('company.profile') }}" class="flex items-center gap-3 px-5 py-3 hover:bg-slate-50">
+                    <a href="{{ route('company.profile') }}"
+                        class="flex items-center gap-3 px-5 py-3 hover:bg-slate-50">
                         <i class="fa-regular fa-user"></i> Profil Perusahaan
                     </a>
                 @elseif(Auth::user()->role == 'admin')
-                    <a href="#" class="flex items-center gap-3 px-5 py-3 hover:bg-slate-50"><i class="fa-regular fa-user"></i> Profil Admin</a>
-                @endif
-                
-                @if(Auth::user()->role == 'freelancer')
-                    <a href="#" class="flex items-center gap-3 px-5 py-3 hover:bg-slate-50"><i class="fa-regular fa-file-lines"></i> Lamaran Saya</a>
-                @elseif(Auth::user()->role == 'company')
-                    <a href="{{ route('company.projects.create') }}" class="flex items-center gap-3 px-5 py-3 hover:bg-slate-50"><i class="fa-solid fa-plus"></i> Tambah Proyek</a>
-                @elseif(Auth::user()->role == 'admin')
-                    <a href="#" class="flex items-center gap-3 px-5 py-3 hover:bg-slate-50"><i class="fa-solid fa-chart-line"></i> Dashboard Admin</a>
+                    <a href="#" class="flex items-center gap-3 px-5 py-3 hover:bg-slate-50"><i
+                            class="fa-regular fa-user"></i> Profil Admin</a>
                 @endif
 
-                <a href="#" class="flex items-center gap-3 px-5 py-3 hover:bg-slate-50"><i class="fa-solid fa-gear"></i> Pengaturan</a>
-                
+                @if (Auth::user()->role == 'freelancer')
+                    <a href="#" class="flex items-center gap-3 px-5 py-3 hover:bg-slate-50"><i
+                            class="fa-regular fa-file-lines"></i> Lamaran Saya</a>
+                @elseif(Auth::user()->role == 'company')
+                    <a href="{{ route('company.projects.create') }}"
+                        class="flex items-center gap-3 px-5 py-3 hover:bg-slate-50"><i class="fa-solid fa-plus"></i>
+                        Tambah Proyek</a>
+                @elseif(Auth::user()->role == 'admin')
+                    <a href="#" class="flex items-center gap-3 px-5 py-3 hover:bg-slate-50"><i
+                            class="fa-solid fa-chart-line"></i> Dashboard Admin</a>
+                @endif
+
+                <a href="#" class="flex items-center gap-3 px-5 py-3 hover:bg-slate-50"><i
+                        class="fa-solid fa-gear"></i> Pengaturan</a>
+
                 <div class="border-t"></div>
-                
+
                 <form action="{{ url('/logout') }}" method="POST">
                     @csrf
-                    <button type="submit" class="w-full text-left px-5 py-3 flex items-center gap-3 text-red-600 hover:bg-red-50">
+                    <button type="submit"
+                        class="w-full text-left px-5 py-3 flex items-center gap-3 text-red-600 hover:bg-red-50">
                         <i class="fa-solid fa-right-from-bracket"></i> Logout
                     </button>
                 </form>
@@ -163,7 +185,7 @@
         });
 
         function fetchNotifications() {
-            fetch('{{ route("notifications.index") }}')
+            fetch('{{ route('notifications.index') }}')
                 .then(res => res.json())
                 .then(data => {
                     updateBadge(data.unread_count);
@@ -196,15 +218,17 @@
             notifications.forEach(notif => {
                 const isUnread = !notif.is_read;
                 const timeAgo = getTimeAgo(notif.created_at);
-const redirectUrl = notif.data?.redirect || '';
+                const redirectUrl = notif.data?.redirect || '';
                 // Tentukan icon berdasarkan type notifikasi
                 let iconClass = 'fa-solid fa-paper-plane';
                 let iconBg = 'bg-brand/10 text-brand';
                 if (notif.type) {
-                    if (notif.type.startsWith('offer.accepted') || notif.type.startsWith('payment.verified')) {
+                    if (notif.type.startsWith('offer.accepted') || notif.type.startsWith(
+                            'payment.verified')) {
                         iconClass = 'fa-solid fa-check-circle';
                         iconBg = 'bg-emerald-50 text-emerald-600';
-                    } else if (notif.type.startsWith('offer.rejected') || notif.type.startsWith('payment.rejected')) {
+                    } else if (notif.type.startsWith('offer.rejected') || notif.type.startsWith(
+                            'payment.rejected')) {
                         iconClass = 'fa-solid fa-times-circle';
                         iconBg = 'bg-red-50 text-red-600';
                     } else if (notif.type.startsWith('workspace.message')) {
@@ -252,28 +276,7 @@ const redirectUrl = notif.data?.redirect || '';
         }
 
         function markAsRead(id, redirectUrl) {
-            fetch('{{ url("/notifications") }}/' + id + '/read', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Content-Type': 'application/json',
-                }
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.redirect_url) {
-                    window.location.href = data.redirect_url;
-                } else if (redirectUrl) {
-                    window.location.href = redirectUrl;
-                }
-            })
-            .catch(err => console.error('Mark read error:', err));
-        }
-
-        if (markAllBtn) {
-            markAllBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                fetch('{{ route("notifications.mark-all-read") }}', {
+            fetch('{{ url('/notifications') }}/' + id + '/read', {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -282,12 +285,33 @@ const redirectUrl = notif.data?.redirect || '';
                 })
                 .then(res => res.json())
                 .then(data => {
-                    if (data.success) {
-                        updateBadge(0);
-                        fetchNotifications();
+                    if (data.redirect_url) {
+                        window.location.href = data.redirect_url;
+                    } else if (redirectUrl) {
+                        window.location.href = redirectUrl;
                     }
                 })
-                .catch(err => console.error('Mark all read error:', err));
+                .catch(err => console.error('Mark read error:', err));
+        }
+
+        if (markAllBtn) {
+            markAllBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                fetch('{{ route('notifications.mark-all-read') }}', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Content-Type': 'application/json',
+                        }
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            updateBadge(0);
+                            fetchNotifications();
+                        }
+                    })
+                    .catch(err => console.error('Mark all read error:', err));
             });
         }
 
@@ -307,13 +331,13 @@ const redirectUrl = notif.data?.redirect || '';
             return date.toLocaleDateString('id-ID');
         }
 
-        fetch('{{ route("notifications.index") }}')
+        fetch('{{ route('notifications.index') }}')
             .then(res => res.json())
             .then(data => updateBadge(data.unread_count))
             .catch(err => console.error('Notif init error:', err));
 
         setInterval(() => {
-            fetch('{{ route("notifications.index") }}')
+            fetch('{{ route('notifications.index') }}')
                 .then(res => res.json())
                 .then(data => updateBadge(data.unread_count))
                 .catch(() => {});

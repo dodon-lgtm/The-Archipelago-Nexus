@@ -49,7 +49,7 @@
                                     </h3>
 
                                     {{-- Company / Owner --}}
-                                    @if($item->project && $item->project->owner && $item->project->owner->name)
+                                    @if($item->project?->owner?->name)
                                         <p class="text-xs sm:text-sm text-slate-400 flex items-center gap-1.5 mb-2">
                                             <i class="fa-regular fa-building"></i>
                                             {{ $item->project->owner->name }}
@@ -57,7 +57,7 @@
                                     @endif
 
                                     {{-- Category --}}
-                                    @if($item->project && $item->project->category && $item->project->category->name)
+                                    @if($item->project?->category?->name)
                                         <span class="inline-block text-[11px] font-semibold text-cyan-600 bg-cyan-50 px-2.5 py-1 rounded-full mb-3">
                                             {{ $item->project->category->name }}
                                         </span>
@@ -78,7 +78,7 @@
                                     <div class="text-left sm:text-right">
                                         <p class="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Harga Penawaran</p>
                                         <p class="text-sm sm:text-base font-bold text-cyan-600">
-                                            Rp {{ number_format($item->harga_penawaran, 0, ',', '.') }}
+                                            Rp {{ number_format($item->harga_penawaran ?? 0, 0, ',', '.') }}
                                         </p>
                                     </div>
 
@@ -86,7 +86,7 @@
                                     <div class="text-left sm:text-right">
                                         <p class="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Estimasi</p>
                                         <p class="text-xs sm:text-sm font-semibold text-slate-600">
-                                            {{ $item->estimasi_hari }} Hari
+                                            {{ $item->estimasi_hari ?? '-' }} Hari
                                         </p>
                                     </div>
 
@@ -117,7 +117,7 @@
                                 {{-- Submission Date --}}
                                 <p class="text-xs text-slate-400 flex items-center gap-1.5">
                                     <i class="fa-regular fa-calendar"></i>
-                                    Diajukan {{ $item->created_at->isoFormat('D MMMM YYYY') }}
+                                    Diajukan {{ optional($item->created_at)->isoFormat('D MMMM YYYY') ?? '-' }}
                                 </p>
 
                                 {{-- Action Button --}}
@@ -129,9 +129,9 @@
                                             <i class="fa-solid fa-arrow-right text-[10px]"></i>
                                         </a>
                                     @endif
-                                    @if($item->status === 'Diterima' && $item->project && $item->project->workspace)
+                                    @if($item->status === 'Diterima' && $item->project?->workspace)
                                         <a href="{{ route('freelancer.workspaces.show', $item->project->workspace) }}"
-                                           class="inline-flex items-center gap-2 px-4 py-2 bg-brand hover:bg-blue-700 text-white text-xs font-semibold rounded-xl transition-colors duration-200">
+                                           class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-xl transition-colors duration-200">
                                             <i class="fa-solid fa-external-link-alt text-[10px]"></i>
                                             Buka Workspace
                                         </a>
@@ -176,4 +176,3 @@
 
 </body>
 </html>
-
