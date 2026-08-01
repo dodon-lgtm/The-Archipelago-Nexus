@@ -7,6 +7,7 @@ use App\Models\Report;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\DB;
 
 class ReportController extends Controller
 {
@@ -18,12 +19,10 @@ class ReportController extends Controller
             'reportedUser',
         ]);
 
-        // Filter by status
         if ($status = $request->input('status')) {
             $query->where('status', $status);
         }
 
-        // Search by subject, description, or reporter name
         if ($search = $request->input('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('subject', 'like', "%{$search}%")
@@ -66,5 +65,51 @@ class ReportController extends Controller
         return redirect()
             ->route('admin.reports.show', $report)
             ->with('success', 'Status laporan berhasil diperbarui.');
+    }
+
+    /**
+     * Hapus project yang terkait dengan laporan (Kasus 1 - Freelancer lapor Company).
+     */
+    public function destroyProject(Request $request, Report $report): RedirectResponse
+    {
+        $project = $report->project;
+
+        if (!$project) {
+            return redirect()
+                ->route('admin.reports.show', $report)
+                ->with('error', 'Data project sudah tidak tersedia.');
+        }
+
+        DB::transaction(function () use ($project, $report) {
+            $report->update(['project_id' => null]);
+            $project->delete();
+        });
+
+        return redirect()
+            ->route('admin.reports.show', $report)
+            ->with('success', 'Project berhasil dihapus.');
+    }
+
+    /**
+     * Hapus penawaran yang terkait dengan laporan (Kasus 2 - Company lapor Freelancer).
+     */
+    public function destroyPenawaran(Request $request, Report $report): RedirectResponse
+    {
+        $penawaran = $report->penawaran;
+
+        if (!$penawaran) {
+            return redirect()
+                ->route('admin.reports.show', $report)
+                ->with('error', 'Data penawaran sudah tidak tersedia.');
+        }
+
+        DB::transaction(function () use ($penawaran, $report) {
+            $report->update(['penawaran_id' => null]);
+            $penawaran->delete();
+        });
+
+        return redirect()
+            ->route('admin.reports.show', $report)
+            ->with('success', 'Penawaran berhasil dihapus.');
     }
 }

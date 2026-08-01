@@ -157,6 +157,7 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])->prefix('company')->nam
                 $q->where('user_id', $userId);
             })->where('status', 'Diterima')->count();
 
+        
             $totalSpending = \App\Models\Penawaran::whereHas('project', function ($q) use ($userId) {
                 $q->where('user_id', $userId);
             })->where('status', 'Diterima')->sum('harga_penawaran');
@@ -185,7 +186,7 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])->prefix('company')->nam
         Route::delete('/projects/{project}', [CompanyProjectController::class, 'destroy'])->name('projects.destroy');
         Route::get('/client/project/{project}/review', [ReviewController::class, 'create'])->name('client.review.create');
         Route::post('/client/project/{project}/review', [ReviewController::class, 'store'])->name('client.review.store');
-        
+
         // Select freelancer
         Route::post('/projects/{project}/penawaran/{penawaran}/select', [CompanyProjectController::class, 'selectFreelancer'])
             ->name('projects.penawaran.select');
@@ -199,18 +200,21 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])->prefix('company')->nam
             ->name('workspaces.message');
         Route::post('/workspaces/{workspace}/complete', [WorkspaceController::class, 'complete'])
             ->name('workspaces.complete');
+        // Profile Freelancer (Read-only untuk Company)
+        Route::get('/freelancer-profile/{id}', [FreelancerProfilController::class, 'profile'])->name('freelancer.profile');
 
-// Submissions
+
+        // Submissions
         Route::post('/workspaces/{workspace}/submissions/{submission}/accept', [ProjectSubmissionController::class, 'accept'])
             ->name('workspaces.submissions.accept');
         Route::post('/workspaces/{workspace}/submissions/{submission}/revision', [ProjectSubmissionController::class, 'requestRevision'])
             ->name('workspaces.submissions.revision');
 
         // Payment
-Route::post('/workspaces/{workspace}/payment/upload', [CompanyPaymentController::class, 'uploadProof'])
+        Route::post('/workspaces/{workspace}/payment/upload', [CompanyPaymentController::class, 'uploadProof'])
             ->name('payments.upload');
 
-// Profile
+        // Profile
         Route::get('/profile', [CompanyProfilController::class, 'profile'])
             ->name('profile');
         Route::get('/profile/edit', [CompanyProfilController::class, 'editProfile'])
@@ -263,6 +267,8 @@ Route::middleware(['auth', 'ensureAdmin'])->prefix('admin')->name('admin.')
         Route::get('/reports', [AdminReportController::class, 'index'])->name('reports.index');
         Route::get('/reports/{report}', [AdminReportController::class, 'show'])->name('reports.show');
         Route::post('/reports/{report}/update-status', [AdminReportController::class, 'updateStatus'])->name('reports.update-status');
+        Route::post('/reports/{report}/destroy-project', [AdminReportController::class, 'destroyProject'])->name('reports.destroy-project');
+        Route::post('/reports/{report}/destroy-penawaran', [AdminReportController::class, 'destroyPenawaran'])->name('reports.destroy-penawaran');
 
         // Company Account Requests
         Route::get('/company-account-requests', [CompanyAccountRequestAdminController::class, 'index'])
