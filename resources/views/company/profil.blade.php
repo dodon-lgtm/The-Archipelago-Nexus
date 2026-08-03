@@ -329,7 +329,43 @@
 
 <body>
 
+@php
+$missingFields = get_missing_profile_fields();
+@endphp
+
 <div class="container">
+
+    <!-- Flash Message -->
+    @if(session('error'))
+        <div class="alert alert-danger border-0 shadow-sm rounded-4 mb-4" role="alert" data-aos="fade-down" data-aos-duration="500">
+            <div class="d-flex align-items-start gap-2">
+                <i class="bi bi-exclamation-triangle-fill fs-5 mt-1"></i>
+                <div>
+                    <strong class="d-block mb-1">Perhatian</strong>
+                    <span class="d-block">{{ session('error') }}</span>
+                    @if(count($missingFields) > 0)
+                        <div class="mt-2 small">
+                            <span class="fw-bold d-block mb-1">Field wajib yang masih kosong:</span>
+                            <ul class="mb-0 ps-3">
+                                @foreach($missingFields as $field)
+                                    <li>{{ $field }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+    @endif
+
+    @if(session('success'))
+        <div class="alert alert-success border-0 shadow-sm rounded-4 mb-4" role="alert" data-aos="fade-down" data-aos-duration="500">
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-check-circle-fill fs-5"></i>
+                <span>{{ session('success') }}</span>
+            </div>
+        </div>
+    @endif
 
     <!-- Tombol Kembali ke Dashboard -->
     <div class="mb-4" data-aos="fade-down" data-aos-duration="600">

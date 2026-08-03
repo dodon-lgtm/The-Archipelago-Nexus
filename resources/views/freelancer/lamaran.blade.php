@@ -34,6 +34,21 @@
                 <p class="text-slate-500 mt-2 text-sm sm:text-base">Pantau semua lamaran proyek yang telah kamu kirim.</p>
             </div>
 
+            {{-- Flash Messages --}}
+            @if(session('success'))
+                <div class="mb-6 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl flex items-center gap-3">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>{{ session('success') }}</span>
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl flex items-center gap-3">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    <span>{{ session('error') }}</span>
+                </div>
+            @endif
+
             {{-- Daftar Lamaran --}}
             @if($lamaran->count() > 0)
                 <div class="space-y-4">
@@ -135,6 +150,18 @@
                                             <i class="fa-solid fa-external-link-alt text-[10px]"></i>
                                             Buka Workspace
                                         </a>
+                                    @endif
+                                    @if($item->status === 'Menunggu')
+                                        <form action="{{ route('freelancer.penawaran.destroy', $item) }}" method="POST"
+                                              onsubmit="return confirm('Batalkan Penawaran? Anda yakin ingin membatalkan penawaran ini? Setelah dibatalkan, Anda dapat mengirim penawaran baru pada proyek ini.');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                    class="inline-flex items-center gap-2 px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold rounded-xl transition-colors duration-200 border border-red-200">
+                                                <i class="fa-solid fa-ban text-[10px]"></i>
+                                                Batalkan Penawaran
+                                            </button>
+                                        </form>
                                     @endif
                                 </div>
                             </div>

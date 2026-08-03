@@ -77,7 +77,7 @@ class ProfileCompletionService
         if (empty($user->phone)) $missing[] = 'Nomor Telepon';
 
         if ($user->role === 'freelancer') {
-            $profile = $user->profile;
+            $profile = $user->freelanceProfile;
             if (!$profile || empty($profile->location)) $missing[] = 'Lokasi';
             if (!$profile || empty($profile->skills)) $missing[] = 'Skill/Keahlian';
         } elseif ($user->role === 'company') {
@@ -98,7 +98,7 @@ class ProfileCompletionService
      */
     private function calculateFreelancerProfile(User $user): int
     {
-        $profile = $user->profile;
+        $profile = $user->freelanceProfile;
         $percentage = 0;
 
         // Mandatory fields: each 16% (5 fields = 80%)

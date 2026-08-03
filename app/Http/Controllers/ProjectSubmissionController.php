@@ -59,11 +59,18 @@ class ProjectSubmissionController extends Controller
                 ->with('error', 'Profil Anda belum lengkap. Silakan lengkapi minimal 80% profil terlebih dahulu agar dapat mengirim hasil pekerjaan.');
         }
 
-        // Jika sudah ada submission yang diterima, freelancer tidak boleh upload lagi
+// Jika sudah ada submission yang diterima, freelancer tidak boleh upload lagi
         if ($workspace->submissions()->where('status', 'accepted')->exists()) {
             return redirect()
                 ->route('freelancer.workspaces.show', $workspace)
                 ->with('error', 'Hasil pekerjaan sudah diterima. Tidak dapat mengirim submission baru.');
+        }
+
+        // Jika masih ada submission yang pending (menunggu review), freelancer tidak boleh upload lagi
+        if ($workspace->submissions()->where('status', 'pending')->exists()) {
+            return redirect()
+                ->route('freelancer.workspaces.show', $workspace)
+                ->with('error', 'Menunggu perusahaan meninjau hasil pekerjaan Anda. Tidak dapat mengirim submission baru.');
         }
 
         // 1. Validasi title dulu

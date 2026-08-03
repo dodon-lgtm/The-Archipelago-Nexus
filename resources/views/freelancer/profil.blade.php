@@ -330,19 +330,44 @@
 <body>
 
 @php
-$total = 7;
-$isi = 0;
-if($profile->photo) $isi++;
-if($profile->bio) $isi++;
-if($profile->skills) $isi++;
-if($profile->experience) $isi++;
-if($profile->portfolio_link) $isi++;
-if($profile->cv) $isi++;
-if($profile->location) $isi++;
-$progress = round(($isi / $total) * 100);
+// Single source of truth: gunakan helper yang memanggil ProfileCompletionService
+$progress = profile_completion_percentage();
+$missingFields = get_missing_profile_fields();
 @endphp
 
 <div class="container">
+
+    <!-- Flash Message -->
+    @if(session('error'))
+        <div class="alert alert-danger border-0 shadow-sm rounded-4 mb-4" role="alert" data-aos="fade-down" data-aos-duration="500">
+            <div class="d-flex align-items-start gap-2">
+                <i class="fa-solid fa-triangle-exclamation fs-5 mt-1"></i>
+                <div>
+                    <strong class="d-block mb-1">Perhatian</strong>
+                    <span class="d-block">{{ session('error') }}</span>
+                    @if(count($missingFields) > 0)
+                        <div class="mt-2 small">
+                            <span class="fw-bold d-block mb-1">Field wajib yang masih kosong:</span>
+                            <ul class="mb-0 ps-3">
+                                @foreach($missingFields as $field)
+                                    <li>{{ $field }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+    @endif
+
+    @if(session('success'))
+        <div class="alert alert-success border-0 shadow-sm rounded-4 mb-4" role="alert" data-aos="fade-down" data-aos-duration="500">
+            <div class="d-flex align-items-center gap-2">
+                <i class="fa-solid fa-circle-check fs-5"></i>
+                <span>{{ session('success') }}</span>
+            </div>
+        </div>
+    @endif
 
     <!-- Tombol Back Dinamis -->
     <div class="mb-4" data-aos="fade-down" data-aos-duration="600">
@@ -616,25 +641,25 @@ $progress = round(($isi / $total) * 100);
 
                 <div class="row g-3 text-sm">
                     <div class="col-6 col-md-3">
-                        @if($profile->photo) <span class="text-success fw-bold"><i class="fa-solid fa-circle-check me-1"></i> Foto Profil</span> @else <span class="text-muted"><i class="fa-regular fa-circle me-1"></i> Foto Profil</span> @endif
+                        @if(Auth::user()->name) <span class="text-success fw-bold"><i class="fa-solid fa-circle-check me-1"></i> Nama Lengkap</span> @else <span class="text-muted"><i class="fa-regular fa-circle me-1"></i> Nama Lengkap</span> @endif
                     </div>
                     <div class="col-6 col-md-3">
-                        @if($profile->bio) <span class="text-success fw-bold"><i class="fa-solid fa-circle-check me-1"></i> Tentang Saya</span> @else <span class="text-muted"><i class="fa-regular fa-circle me-1"></i> Tentang Saya</span> @endif
+                        @if(Auth::user()->email) <span class="text-success fw-bold"><i class="fa-solid fa-circle-check me-1"></i> Email</span> @else <span class="text-muted"><i class="fa-regular fa-circle me-1"></i> Email</span> @endif
+                    </div>
+                    <div class="col-6 col-md-3">
+                        @if(Auth::user()->phone) <span class="text-success fw-bold"><i class="fa-solid fa-circle-check me-1"></i> Nomor Telepon</span> @else <span class="text-muted"><i class="fa-regular fa-circle me-1"></i> Nomor Telepon</span> @endif
+                    </div>
+                    <div class="col-6 col-md-3">
+                        @if($profile->location) <span class="text-success fw-bold"><i class="fa-solid fa-circle-check me-1"></i> Lokasi</span> @else <span class="text-muted"><i class="fa-regular fa-circle me-1"></i> Lokasi</span> @endif
                     </div>
                     <div class="col-6 col-md-3">
                         @if($profile->skills) <span class="text-success fw-bold"><i class="fa-solid fa-circle-check me-1"></i> Keahlian</span> @else <span class="text-muted"><i class="fa-regular fa-circle me-1"></i> Keahlian</span> @endif
                     </div>
                     <div class="col-6 col-md-3">
-                        @if($profile->experience) <span class="text-success fw-bold"><i class="fa-solid fa-circle-check me-1"></i> Pengalaman</span> @else <span class="text-muted"><i class="fa-regular fa-circle me-1"></i> Pengalaman</span> @endif
+                        @if($profile->photo) <span class="text-success fw-bold"><i class="fa-solid fa-circle-check me-1"></i> Foto Profil</span> @else <span class="text-muted"><i class="fa-regular fa-circle me-1"></i> Foto Profil</span> @endif
                     </div>
                     <div class="col-6 col-md-3">
-                        @if($profile->portfolio_link) <span class="text-success fw-bold"><i class="fa-solid fa-circle-check me-1"></i> Portofolio</span> @else <span class="text-muted"><i class="fa-regular fa-circle me-1"></i> Portofolio</span> @endif
-                    </div>
-                    <div class="col-6 col-md-3">
-                        @if($profile->cv) <span class="text-success fw-bold"><i class="fa-solid fa-circle-check me-1"></i> Dokumen CV</span> @else <span class="text-muted"><i class="fa-regular fa-circle me-1"></i> Dokumen CV</span> @endif
-                    </div>
-                    <div class="col-6 col-md-3">
-                        @if($profile->location) <span class="text-success fw-bold"><i class="fa-solid fa-circle-check me-1"></i> Lokasi</span> @else <span class="text-muted"><i class="fa-regular fa-circle me-1"></i> Lokasi</span> @endif
+                        @if($profile->bio) <span class="text-success fw-bold"><i class="fa-solid fa-circle-check me-1"></i> Tentang Saya</span> @else <span class="text-muted"><i class="fa-regular fa-circle me-1"></i> Tentang Saya</span> @endif
                     </div>
                 </div>
             </div>

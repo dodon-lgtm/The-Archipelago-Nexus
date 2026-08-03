@@ -75,8 +75,8 @@
                     @if (Auth::user()->role == 'company' && Auth::user()->companyProfile && Auth::user()->companyProfile->company_logo)
                         <img src="{{ asset('storage/' . Auth::user()->companyProfile->company_logo) }}"
                             alt="Logo Perusahaan" class="w-full h-full object-cover">
-                    @elseif(Auth::user()->profile && Auth::user()->profile->photo)
-                        <img src="{{ asset('storage/' . Auth::user()->profile->photo) }}" alt="Foto Profil"
+                    @elseif(Auth::user()->freelanceProfile && Auth::user()->freelanceProfile->photo)
+                        <img src="{{ asset('storage/' . Auth::user()->freelanceProfile->photo) }}" alt="Foto Profil"
                             class="w-full h-full object-cover">
                     @else
                         <i class="fa-solid fa-user"></i>

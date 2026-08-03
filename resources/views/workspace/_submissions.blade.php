@@ -176,17 +176,28 @@
             </div>
         @endif
 
-        @if (auth()->user()->role === 'freelancer')
-            @php $hasAccepted = $workspace->submissions->contains('status', 'accepted'); @endphp
-            @if (!$hasAccepted)
+@if (auth()->user()->role === 'freelancer')
+            @php
+                $hasAccepted = $workspace->submissions->contains('status', 'accepted');
+                $hasPending = $workspace->submissions->contains('status', 'pending');
+            @endphp
+            @if ($hasAccepted)
+                <div class="flex items-center gap-2 px-4 py-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-700 font-medium">
+                    <i class="fa-solid fa-check-circle"></i> Hasil pekerjaan telah diterima oleh perusahaan.
+                </div>
+            @elseif ($hasPending)
+                <button type="button" disabled
+                    class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-200 text-slate-400 rounded-xl text-sm font-semibold cursor-not-allowed">
+                    <i class="fa-solid fa-upload"></i> Upload Hasil Pekerjaan
+                </button>
+                <div class="flex items-center gap-2 px-4 py-2.5 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-700 font-medium">
+                    <i class="fa-solid fa-clock"></i> Menunggu perusahaan meninjau hasil pekerjaan Anda.
+                </div>
+            @else
                 <button type="button" onclick="document.getElementById('uploadModal').classList.remove('hidden')"
                     class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-brand text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition">
                     <i class="fa-solid fa-upload"></i> Upload Hasil Pekerjaan
                 </button>
-            @else
-                <div class="flex items-center gap-2 px-4 py-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-700 font-medium">
-                    <i class="fa-solid fa-check-circle"></i> Pekerjaan sudah diterima. Tidak dapat mengirim submission baru.
-                </div>
             @endif
         @endif
     </div>

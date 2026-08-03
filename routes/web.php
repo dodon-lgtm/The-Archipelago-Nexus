@@ -99,6 +99,10 @@ Route::middleware(['auth', 'ensureFreelancer'])->prefix('freelancer')->name('fre
         // Lamaran list
         Route::get('/lamaran', [ProjectOfferController::class, 'index'])->name('lamaran');
 
+        // Batalkan penawaran (hanya jika status masih Menunggu)
+        Route::delete('/penawaran/{penawaran}', [ProjectOfferController::class, 'destroy'])
+            ->name('penawaran.destroy');
+
         // Saved Projects
         Route::get('/simpan', [SavedProjectController::class, 'index'])->name('saved-projects.index');
         Route::post('/projects/{project}/simpan', [SavedProjectController::class, 'store'])
@@ -227,7 +231,7 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])->prefix('company')->nam
         Route::get('/reports/create', [CompanyReportController::class, 'create'])->name('reports.create');
         Route::post('/reports', [CompanyReportController::class, 'store'])->name('reports.store');
         Route::get('/reports/{report}', [CompanyReportController::class, 'show'])->name('reports.show');
-    });
+    }); 
 
 // ──────────────────────────────────────────────
 // ADMIN ROUTES (auth + ensureAdmin)
