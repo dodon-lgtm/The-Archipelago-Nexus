@@ -28,9 +28,19 @@
                         <i class="fa-regular fa-circle-check"></i> {{ session('success') }}
                     </div>
                 @endif
-                @if(session('error'))
+@if(session('error'))
                     <div class="mb-4 flex items-center gap-3 px-5 py-4 bg-red-50 border border-red-200 text-red-700 text-sm font-medium rounded-xl">
                         <i class="fa-regular fa-circle-xmark"></i> {{ session('error') }}
+                    </div>
+                @endif
+                @if($errors->any())
+                    <div class="mb-4 flex items-start gap-3 px-5 py-4 bg-red-50 border border-red-200 text-red-700 text-sm font-medium rounded-xl">
+                        <i class="fa-regular fa-circle-xmark mt-0.5"></i>
+                        <div>
+                            @foreach($errors->all() as $error)
+                                <p>{{ $error }}</p>
+                            @endforeach
+                        </div>
                     </div>
                 @endif
 
@@ -44,8 +54,19 @@
                             <p class="text-sm text-slate-500">Laporkan masalah, pengguna, atau proyek yang melanggar aturan</p>
                         </div>
 
-                    <form method="POST" action="{{ route('reports.store') }}" class="space-y-5">
+<form method="POST" action="{{ route('reports.store') }}" enctype="multipart/form-data" class="space-y-5">
                         @csrf
+
+<div>
+                            <label class="text-xs font-semibold text-slate-600 mb-1.5 block">Kategori Laporan <span class="text-red-500">*</span></label>
+                            <select name="category"
+                                class="w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-2.5 text-sm focus:border-red-400 focus:ring-2 focus:ring-red-100 outline-none @error('category') border-red-300 @enderror">
+                                @foreach(\App\Models\Report::categories() as $cat)
+                                    <option value="{{ $cat }}" @selected(old('category', 'umum') == $cat)>{{ \App\Models\Report::categoryLabel($cat) }}</option>
+                                @endforeach
+                            </select>
+                            @error('category') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                        </div>
 
                         <div>
                             <label class="text-xs font-semibold text-slate-600 mb-1.5 block">Subjek Laporan <span class="text-red-500">*</span></label>
@@ -63,19 +84,15 @@
                             @error('description') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                         </div>
 
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="text-xs font-semibold text-slate-600 mb-1.5 block">ID Pengguna Dilaporkan (opsional)</label>
-                                <input type="number" name="reported_user_id" value="{{ old('reported_user_id', request('reported_user_id')) }}"
-                                    class="w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-2.5 text-sm focus:border-red-400 focus:ring-2 focus:ring-red-100 outline-none"
-                                    placeholder="Kosongkan jika tidak ada">
-                            </div>
-                            <div>
-                                <label class="text-xs font-semibold text-slate-600 mb-1.5 block">ID Proyek Terkait (opsional)</label>
-                                <input type="number" name="project_id" value="{{ old('project_id', request('project_id')) }}"
-                                    class="w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-2.5 text-sm focus:border-red-400 focus:ring-2 focus:ring-red-100 outline-none"
-                                    placeholder="Kosongkan jika tidak ada">
-                            </div>
+{{-- Attachment / Bukti --}}
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600 mb-1.5 block">Lampiran / Bukti (opsional)</label>
+                            <input type="file" name="attachments[]" multiple accept=".jpg,.jpeg,.png,.pdf"
+                                class="w-full text-sm text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-red-50 file:text-red-600 hover:file:bg-red-100">
+                            <p class="text-[11px] text-slate-400 mt-1">Maks 5 file. Format: JPG, JPEG, PNG, atau PDF. Maks 5 MB per file.</p>
+                            @error('attachments') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                            @error('attachments.*') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                        </div>
 
                         <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-700 flex items-start gap-3">
                             <i class="fa-solid fa-shield-halved mt-0.5"></i>

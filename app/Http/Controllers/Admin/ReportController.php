@@ -3,24 +3,43 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\ReportUpdateStatusRequest;
 use App\Models\Report;
+use App\Services\ReportService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ReportController extends Controller
 {
+    protected $reportService;
+
+    public function __construct(ReportService $reportService)
+    {
+        $this->reportService = $reportService;
+    }
+
     public function index(Request $request): View
     {
-        $query = Report::with([
+$query = Report::with([
             'reporter',
             'project',
             'reportedUser',
+            'workspace',
         ]);
 
         if ($status = $request->input('status')) {
             $query->where('status', $status);
+        }
+
+if ($category = $request->input('category')) {
+            $query->where('category', $category);
+        }
+
+        if ($target = $request->input('target')) {
+            $query->where('target', $target);
         }
 
         if ($search = $request->input('search')) {
@@ -38,29 +57,29 @@ class ReportController extends Controller
         return view('admin.reports.index', compact('reports'));
     }
 
-    public function show(Report $report): View
+public function show(Report $report): View
     {
         $report->load([
             'reporter',
             'reportedUser',
             'project.owner',
             'penawaran.freelancer',
+            'workspace.project',
+            'handledBy',
+            'attachments',
         ]);
 
         return view('admin.reports.show', compact('report'));
     }
 
-    public function updateStatus(Request $request, Report $report): RedirectResponse
+    public function updateStatus(ReportUpdateStatusRequest $request, Report $report): RedirectResponse
     {
-        $validated = $request->validate([
-            'status' => 'required|in:diproses,selesai,ditolak',
-            'admin_note' => 'nullable|string|max:1000',
-        ]);
-
-        $report->update([
-            'status' => $validated['status'],
-            'admin_note' => $validated['admin_note'] ?? $report->admin_note,
-        ]);
+        $this->reportService->updateStatus(
+            $report,
+            $request->validated('status'),
+            $request->validated('admin_note'),
+            Auth::id()
+        );
 
         return redirect()
             ->route('admin.reports.show', $report)

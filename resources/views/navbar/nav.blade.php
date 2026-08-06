@@ -243,6 +243,9 @@
                     } else if (notif.type.startsWith('company_request')) {
                         iconClass = 'fa-solid fa-building';
                         iconBg = 'bg-cyan-50 text-cyan-600';
+                    } else if (notif.type === 'report.created') {
+                        iconClass = 'fa-solid fa-flag';
+                        iconBg = 'bg-red-50 text-red-600';
                     }
                 }
                 html += `

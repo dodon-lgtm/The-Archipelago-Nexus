@@ -293,7 +293,7 @@
                                     <p class="text-[10px] text-slate-400">{{ $workspace->project->project_name }}</p>
                                 </div>
                             </div>
-                            @php
+@php
                                 $chatStatusColors = [
                                     'Sedang Dikerjakan' => 'bg-blue-500',
                                     'Menunggu Revisi' => 'bg-amber-500',
@@ -302,11 +302,25 @@
                                     'Selesai' => 'bg-emerald-500',
                                 ];
                             @endphp
-                            <span class="flex items-center gap-1.5 text-[10px] text-slate-500">
-                                <span
-                                    class="w-2 h-2 rounded-full {{ $chatStatusColors[$workspace->status] ?? 'bg-slate-400' }}"></span>
-                                {{ $workspace->status }}
-                            </span>
+                            <div class="flex items-center gap-3">
+                                <span class="flex items-center gap-1.5 text-[10px] text-slate-500">
+                                    <span
+                                        class="w-2 h-2 rounded-full {{ $chatStatusColors[$workspace->status] ?? 'bg-slate-400' }}"></span>
+                                    {{ $workspace->status }}
+                                </span>
+                                {{-- Tombol Laporkan dari workspace (kontekstual) --}}
+                                @php
+                                    $reportedTarget = auth()->user()->role === 'company'
+                                        ? $workspace->freelancer
+                                        : $workspace->company;
+                                @endphp
+                                @if($reportedTarget && (int) $reportedTarget->id !== (int) auth()->id())
+                                    <a href="{{ route(auth()->user()->role === 'company' ? 'company.reports.create' : 'freelancer.reports.create', ['workspace_id' => $workspace->id, 'reported_user_id' => $reportedTarget->id]) }}"
+                                       class="inline-flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-semibold text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition">
+                                        <i class="fa-solid fa-flag"></i> Laporkan
+                                    </a>
+                                @endif
+                            </div>
                         </div>
 
                         {{-- Chat Body --}}
@@ -423,8 +437,25 @@
                                     </div>
                                 </div>
 
-                                {{-- Payment Upload Form (hanya jika status pending atau rejected) --}}
-                                @if(in_array($payment->status, ['pending', 'rejected']))
+{{-- Payment Gateway (hanya jika status pending) --}}
+                                @if($payment->status === 'pending')
+                                    <div class="flex flex-col gap-3">
+                                        <p class="text-xs text-slate-500 leading-relaxed">
+                                            Silakan lanjutkan ke <strong>Payment Gateway</strong> untuk melakukan pembayaran, kemudian upload bukti pembayaran pada halaman berikutnya.
+                                        </p>
+                                        <a href="{{ route('company.payments.gateway', $workspace) }}"
+                                           class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-brand text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition shadow-lg shadow-brand/20">
+                                            <i class="fa-solid fa-credit-card"></i> Bayar Sekarang
+                                        </a>
+                                        <p class="text-[10px] text-slate-400 text-center">
+                                            <i class="fa-solid fa-circle-info mr-1"></i>
+                                            <strong>Mode Simulasi</strong> &mdash; Pembayaran ini digunakan untuk demonstrasi aplikasi. Integrasi Midtrans, QRIS, Virtual Account, dan E-Wallet akan tersedia pada versi berikutnya.
+                                        </p>
+                                    </div>
+                                @endif
+
+                                {{-- Payment Upload Form (hanya jika status rejected / re-upload) --}}
+                                @if($payment->status === 'rejected')
                                     <form method="POST" action="{{ route('company.payments.upload', $workspace) }}" enctype="multipart/form-data" class="space-y-4">
                                         @csrf
 

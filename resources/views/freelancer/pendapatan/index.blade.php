@@ -24,12 +24,21 @@
         <main class="flex-1 overflow-y-auto p-8">
             <div class="max-w-7xl mx-auto space-y-6">
 
-                {{-- Header --}}
+{{-- Header --}}
                 <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div>
                         <h1 class="text-2xl font-extrabold text-slate-800">Pendapatan Saya</h1>
                         <p class="text-sm text-slate-500 mt-1">Riwayat pendapatan dari proyek yang telah dikerjakan.</p>
                     </div>
+
+                    {{-- Tombol Tarik Saldo (hanya jika total diterima > 0) --}}
+                    @if((float) $totalEarned > 0)
+                        <button type="button" onclick="document.getElementById('withdrawModal').classList.remove('hidden')"
+                            class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl text-sm font-semibold hover:shadow-lg hover:shadow-emerald-500/30 hover:-translate-y-0.5 active:translate-y-0 transition-all">
+                            <i class="fa-solid fa-money-bill-transfer"></i>
+                            Tarik Saldo
+                        </button>
+                    @endif
                 </div>
 
                 {{-- Stat Cards --}}
@@ -153,8 +162,90 @@
                     @endif
                 </div>
 
-            </div>
+</div>
         </main>
+    </div>
+</div>
+
+{{-- ============================================================
+     MODAL TARIK SALDO (Coming Soon)
+============================================================ --}}
+<div id="withdrawModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+    <div class="bg-white rounded-3xl shadow-2xl shadow-slate-900/10 w-full max-w-md overflow-hidden ring-1 ring-black/[.03]">
+
+        {{-- Gradient header --}}
+        <div class="relative px-6 py-7 bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500 overflow-hidden">
+            <div class="absolute inset-0" style="background-image: radial-gradient(rgba(255,255,255,.16) 1.5px, transparent 1.5px); background-size: 16px 16px;"></div>
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full"></div>
+            <div class="absolute -bottom-12 -left-8 w-28 h-28 bg-white/10 rounded-full"></div>
+            <div class="relative flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center ring-1 ring-white/30">
+                        <i class="fa-solid fa-money-bill-transfer text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-white text-base tracking-tight">🚧 Tarik Saldo</h3>
+                        <p class="text-[11px] text-white/75">Fitur penarikan saldo</p>
+                    </div>
+                </div>
+                <button type="button" onclick="document.getElementById('withdrawModal').classList.add('hidden')"
+                    class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 hover:rotate-90 flex items-center justify-center transition-all duration-300">
+                    <i class="fa-solid fa-xmark text-white text-sm"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="p-6 space-y-5 bg-gradient-to-b from-emerald-50/40 to-white">
+
+            {{-- Deskripsi --}}
+            <p class="text-sm text-slate-600 leading-relaxed">
+                Fitur penarikan saldo sedang dalam tahap pengembangan.
+                Pada versi berikutnya freelancer dapat mencairkan saldo langsung dari aplikasi.
+            </p>
+
+            {{-- Badge Coming Soon --}}
+            <div class="flex items-center gap-2">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-[11px] font-bold ring-1 ring-amber-200">
+                    <i class="fa-solid fa-hourglass-half text-[10px]"></i>
+                    Coming Soon
+                </span>
+            </div>
+
+            {{-- Roadmap --}}
+            <div class="bg-white border border-slate-200 rounded-2xl divide-y divide-slate-100 overflow-hidden">
+                <div class="px-4 py-3 flex items-center gap-3">
+                    <span class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-check text-xs"></i>
+                    </span>
+                    <p class="text-sm font-semibold text-slate-700">Transfer ke Rekening Bank</p>
+                </div>
+                <div class="px-4 py-3 flex items-center gap-3">
+                    <span class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-check text-xs"></i>
+                    </span>
+                    <p class="text-sm font-semibold text-slate-700">Transfer ke E-Wallet</p>
+                </div>
+                <div class="px-4 py-3 flex items-center gap-3">
+                    <span class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-check text-xs"></i>
+                    </span>
+                    <p class="text-sm font-semibold text-slate-700">Virtual Account</p>
+                </div>
+                <div class="px-4 py-3 flex items-center gap-3">
+                    <span class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-check text-xs"></i>
+                    </span>
+                    <p class="text-sm font-semibold text-slate-700">Riwayat Penarikan</p>
+                </div>
+            </div>
+
+            {{-- Tombol Mengerti --}}
+            <button type="button" onclick="document.getElementById('withdrawModal').classList.add('hidden')"
+                class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl text-sm font-semibold hover:shadow-lg hover:shadow-emerald-500/30 hover:-translate-y-0.5 active:translate-y-0 transition-all">
+                <i class="fa-solid fa-check"></i>
+                Mengerti
+            </button>
+        </div>
     </div>
 </div>
 

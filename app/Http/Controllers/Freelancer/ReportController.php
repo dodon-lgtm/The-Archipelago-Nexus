@@ -3,24 +3,38 @@
 namespace App\Http\Controllers\Freelancer;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ReportEvidenceRequest;
+use App\Http\Requests\ReportStoreRequest;
 use App\Models\Report;
 use App\Models\Project;
+use App\Models\Workspace;
+use App\Services\ReportService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 
 class ReportController extends Controller
 {
+    protected $reportService;
+
+    public function __construct(ReportService $reportService)
+    {
+        $this->reportService = $reportService;
+    }
+
     /**
      * Display a list of reports belonging to the authenticated freelancer.
      */
     public function index(): View
     {
-        $reports = Report::with([
+$reports = Report::with([
                 'reportedUser',
                 'project',
-                'penawaran'
+                'penawaran',
+                'workspace.project',
             ])
             ->where('reporter_id', Auth::id())
             ->latest()
@@ -32,13 +46,30 @@ class ReportController extends Controller
     /**
      * Show the form for creating a new report.
      */
-    public function create(Request $request): View
+public function create(Request $request): View
     {
         $project = null;
         $reportedUser = null;
+        $workspace = null;
 
-        // Jika berasal dari halaman detail proyek
-        if ($request->filled('project_id')) {
+        // Konteks dari workspace (Freelancer melaporkan Company di workspace).
+        if ($request->filled('workspace_id')) {
+            $workspace = Workspace::with(['project', 'company'])
+                ->findOrFail($request->workspace_id);
+
+            // Hanya freelancer yang menjadi bagian dari workspace ini.
+            if ((int) $workspace->freelancer_id !== (int) Auth::id()) {
+                abort(403, 'Anda tidak memiliki akses ke workspace ini.');
+            }
+
+            $project = $workspace->project;
+            $reportedUser = $workspace->company;
+
+            // Tidak boleh melaporkan diri sendiri.
+            if ($reportedUser && $reportedUser->id == Auth::id()) {
+                abort(403, 'Anda tidak dapat melaporkan diri sendiri.');
+            }
+        } elseif ($request->filled('project_id')) {
 
             $project = Project::with('owner')
                 ->findOrFail($request->project_id);
@@ -53,77 +84,38 @@ class ReportController extends Controller
 
         return view('freelancer.reports.create', compact(
             'project',
-            'reportedUser'
+            'reportedUser',
+            'workspace'
         ));
     }
 
     /**
      * Store report.
      */
-    public function store(Request $request): RedirectResponse
+public function store(ReportStoreRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'subject'          => 'required|string|max:255',
-            'description'      => 'required|string|max:5000',
-            'reported_user_id' => 'nullable|exists:users,id',
-            'project_id'       => 'nullable|exists:projects,id',
-            'penawaran_id'     => 'nullable|exists:penawarans,id',
-        ]);
+        $validated = $request->validated();
 
-        if ($request->filled('project_id')) {
-
-            $project = Project::with('owner')
-                ->find($request->project_id);
-
-            if (!$project) {
-                return back()
-                    ->withErrors([
-                        'project_id' => 'Proyek tidak ditemukan.'
-                    ])
-                    ->withInput();
-            }
-
-            $ownerId = optional($project->owner)->id;
-
-            if (
-                $request->filled('reported_user_id') &&
-                (int) $request->reported_user_id !== $ownerId
-            ) {
-                return back()
-                    ->withErrors([
-                        'reported_user_id' => 'Pengguna yang dilaporkan tidak sesuai dengan proyek.'
-                    ])
-                    ->withInput();
-            }
-
-            if ($project->user_id == Auth::id()) {
-                return back()
-                    ->withErrors([
-                        'project_id' => 'Anda tidak dapat melaporkan proyek Anda sendiri.'
-                    ])
-                    ->withInput();
-            }
+        // Semua validasi otorisasi relasi (project/workspace) ditangani
+        // oleh ReportService::store() -> authorizeStore().
+        try {
+            $this->reportService->store($validated);
+        } catch (ValidationException $e) {
+            // Laporan ditolak (mis. duplikat) -> tampilkan pesan yang jelas.
+            return Redirect::back()
+                ->withErrors($e->errors())
+                ->withInput();
         }
-
-        Report::create([
-            'reporter_id'      => Auth::id(),
-            'reported_user_id' => $validated['reported_user_id'] ?? null,
-            'project_id'       => $validated['project_id'] ?? null,
-            'penawaran_id'     => $validated['penawaran_id'] ?? null,
-            'subject'          => $validated['subject'],
-            'description'      => $validated['description'],
-            'status'           => 'menunggu',
-        ]);
 
         return redirect()
             ->route('freelancer.reports.index')
             ->with(
                 'success',
-                'Laporan berhasil dikirim. Admin akan segera meninjau laporan Anda.'
+                'Laporan berhasil dikirim. Terima kasih telah membantu menjaga kualitas platform. Tim Admin akan meninjau laporan Anda secepat mungkin.'
             );
     }
 
-    /**
+/**
      * Show report detail.
      */
     public function show(Report $report): View
@@ -137,8 +129,27 @@ class ReportController extends Controller
             'reportedUser',
             'project.owner',
             'penawaran.freelancer',
+            'attachments',
         ]);
 
         return view('freelancer.reports.show', compact('report'));
+    }
+
+    /**
+     * Unggah bukti tambahan untuk laporan berstatus 'menunggu-bukti'.
+     */
+    public function uploadEvidence(ReportEvidenceRequest $request, Report $report): RedirectResponse
+    {
+        try {
+            $this->reportService->uploadEvidence($report, $request->validated('attachments'));
+        } catch (ValidationException $e) {
+            return Redirect::back()
+                ->withErrors($e->errors())
+                ->withInput();
+        }
+
+        return redirect()
+            ->route('freelancer.reports.show', $report)
+            ->with('success', 'Bukti tambahan berhasil diunggah. Laporan Anda kini kembali ditinjau oleh Admin.');
     }
 }

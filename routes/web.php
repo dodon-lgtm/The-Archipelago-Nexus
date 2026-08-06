@@ -1,14 +1,16 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 // ─── GENERAL CONTROLLERS ─────────────────────────
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\WorkspaceController;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\ProjectSubmissionController; // Di-import dari branch incoming
+use App\Http\Controllers\ProjectSubmissionController;
+use App\Http\Controllers\review\ReviewController;
+use App\Http\Controllers\ReportController;
 
 // ─── ADMIN CONTROLLERS ───────────────────────────
 use App\Http\Controllers\Admin\CompanyAccountRequestAdminController;
@@ -30,17 +32,14 @@ use App\Http\Controllers\Company\ReportController as CompanyReportController;
 // ─── FREELANCER CONTROLLERS ──────────────────────
 use App\Http\Controllers\Freelancer\PendapatanController as FreelancerPendapatanController;
 use App\Http\Controllers\Freelancer\ReportController as FreelancerReportController;
-
-// ─── FREELANCER CONTROLLERS ──────────────────────
 use App\Http\Controllers\Freelancer\DashboardController as FreelancerDashboardController;
 use App\Http\Controllers\Freelancer\ProjectBrowseController;
 use App\Http\Controllers\Freelancer\ProjectProposalController;
 use App\Http\Controllers\Freelancer\SavedProjectController;
 use App\Http\Controllers\Freelancer\ProjectOfferController;
 use App\Http\Controllers\Freelancer\ProfilController as FreelancerProfilController;
-use App\Http\Controllers\review\ReviewController;
-use App\Http\Controllers\ReportController;
 
+// ─── AUTH / GUEST ────────────────────────────────
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
@@ -60,9 +59,9 @@ Route::get('/', function () {
 
     $categories = \App\Models\Category::orderBy('name')->get();
 
-    $totalProjects     = \App\Models\Project::count();
-    $totalFreelancers  = \App\Models\User::where('role', 'freelancer')->count();
-    $totalCompanies    = \App\Models\User::where('role', 'company')->count();
+    $totalProjects          = \App\Models\Project::count();
+    $totalFreelancers       = \App\Models\User::where('role', 'freelancer')->count();
+    $totalCompanies         = \App\Models\User::where('role', 'company')->count();
     $totalProjectsCompleted = \App\Models\Project::where('status', 'Closed')->count();
 
     return view('landingpage', compact(
@@ -79,7 +78,9 @@ Route::get('/', function () {
 // ──────────────────────────────────────────────
 // FREELANCER ROUTES (auth + ensureFreelancer)
 // ──────────────────────────────────────────────
-Route::middleware(['auth', 'ensureFreelancer'])->prefix('freelancer')->name('freelancer.')
+Route::middleware(['auth', 'ensureFreelancer'])
+    ->prefix('freelancer')
+    ->name('freelancer.')
     ->group(function () {
 
         // Dashboard
@@ -141,12 +142,16 @@ Route::middleware(['auth', 'ensureFreelancer'])->prefix('freelancer')->name('fre
         Route::get('/reports/create', [FreelancerReportController::class, 'create'])->name('reports.create');
         Route::post('/reports', [FreelancerReportController::class, 'store'])->name('reports.store');
         Route::get('/reports/{report}', [FreelancerReportController::class, 'show'])->name('reports.show');
+        Route::post('/reports/{report}/evidence', [FreelancerReportController::class, 'uploadEvidence'])
+            ->name('reports.evidence');
     });
 
 // ──────────────────────────────────────────────
 // COMPANY ROUTES (auth + ensureCompanyAdminOrAbort)
 // ──────────────────────────────────────────────
-Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])->prefix('company')->name('company.')
+Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])
+    ->prefix('company')
+    ->name('company.')
     ->group(function () {
 
         // Dashboard
@@ -161,7 +166,6 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])->prefix('company')->nam
                 $q->where('user_id', $userId);
             })->where('status', 'Diterima')->count();
 
-        
             $totalSpending = \App\Models\Penawaran::whereHas('project', function ($q) use ($userId) {
                 $q->where('user_id', $userId);
             })->where('status', 'Diterima')->sum('harga_penawaran');
@@ -204,9 +208,9 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])->prefix('company')->nam
             ->name('workspaces.message');
         Route::post('/workspaces/{workspace}/complete', [WorkspaceController::class, 'complete'])
             ->name('workspaces.complete');
+            
         // Profile Freelancer (Read-only untuk Company)
         Route::get('/freelancer-profile/{id}', [FreelancerProfilController::class, 'profile'])->name('freelancer.profile');
-
 
         // Submissions
         Route::post('/workspaces/{workspace}/submissions/{submission}/accept', [ProjectSubmissionController::class, 'accept'])
@@ -215,6 +219,10 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])->prefix('company')->nam
             ->name('workspaces.submissions.revision');
 
         // Payment
+        Route::get('/workspaces/{workspace}/payment/gateway', [CompanyPaymentController::class, 'showGateway'])
+            ->name('payments.gateway');
+        Route::get('/workspaces/{workspace}/payment/upload', [CompanyPaymentController::class, 'showUploadForm'])
+            ->name('payments.upload-form');
         Route::post('/workspaces/{workspace}/payment/upload', [CompanyPaymentController::class, 'uploadProof'])
             ->name('payments.upload');
 
@@ -231,12 +239,16 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])->prefix('company')->nam
         Route::get('/reports/create', [CompanyReportController::class, 'create'])->name('reports.create');
         Route::post('/reports', [CompanyReportController::class, 'store'])->name('reports.store');
         Route::get('/reports/{report}', [CompanyReportController::class, 'show'])->name('reports.show');
-    }); 
+        Route::post('/reports/{report}/evidence', [CompanyReportController::class, 'uploadEvidence'])
+            ->name('reports.evidence');
+    });
 
 // ──────────────────────────────────────────────
 // ADMIN ROUTES (auth + ensureAdmin)
 // ──────────────────────────────────────────────
-Route::middleware(['auth', 'ensureAdmin'])->prefix('admin')->name('admin.')
+Route::middleware(['auth', 'ensureAdmin'])
+    ->prefix('admin')
+    ->name('admin.')
     ->group(function () {
 
         // Dashboard
@@ -297,6 +309,7 @@ Route::middleware(['auth', 'ensureAdmin'])->prefix('admin')->name('admin.')
 Route::middleware('auth')->prefix('reports')->name('reports.')->group(function () {
     Route::get('/create', [ReportController::class, 'create'])->name('create');
     Route::post('/', [ReportController::class, 'store'])->name('store');
+    Route::post('/{report}/evidence', [ReportController::class, 'uploadEvidence'])->name('evidence');
 });
 
 // ──────────────────────────────────────────────

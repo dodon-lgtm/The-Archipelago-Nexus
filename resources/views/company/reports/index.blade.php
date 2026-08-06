@@ -89,25 +89,33 @@
                                             <h3 class="text-base sm:text-lg font-bold text-slate-900 truncate">
                                                 {{ $report->subject }}
                                             </h3>
-                                            <span class="text-xs px-2.5 py-1 rounded-full font-semibold shrink-0
+<span class="text-xs px-2.5 py-1 rounded-full font-semibold shrink-0
                                                 @if($report->status == 'menunggu') bg-amber-50 text-amber-600
-                                                @elseif($report->status == 'diproses') bg-blue-50 text-blue-600
+                                                @elseif($report->status == 'ditinjau') bg-blue-50 text-blue-600
+                                                @elseif($report->status == 'menunggu-bukti') bg-violet-50 text-violet-600
                                                 @elseif($report->status == 'selesai') bg-emerald-50 text-emerald-600
-                                                @else bg-red-50 text-red-600 @endif">{{ ucfirst($report->status) }}</span>
+                                                @else bg-red-50 text-red-600 @endif">{{ \App\Models\Report::statusLabel($report->status) }} <span class="ml-1 text-[10px] opacity-70">{{ \App\Models\Report::targetLabel($report->target) }}</span></span>
                                         </div>
 
                                         <p class="text-sm text-slate-500 leading-relaxed line-clamp-2 mb-2">
                                             {{ \Illuminate\Support\Str::limit($report->description, 150) }}
                                         </p>
 
-                                        <div class="flex flex-wrap items-center gap-2 text-xs text-slate-400">
+<div class="flex flex-wrap items-center gap-2 text-xs text-slate-400">
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-slate-100 text-slate-600 rounded-lg">
+                                                <i class="fa-solid fa-tag"></i> {{ \App\Models\Report::categoryLabel($report->category) }}
+                                            </span>
                                             <span><i class="fa-regular fa-calendar mr-1"></i>{{ $report->created_at->format('d M Y') }}</span>
                                             @if($report->reportedUser)
                                                 <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-orange-50 text-orange-600 rounded-lg">
                                                     <i class="fa-solid fa-user"></i> {{ $report->reportedUser->name }}
                                                 </span>
                                             @endif
-                                            @if($report->project)
+                                            @if($report->workspace)
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-cyan-50 text-cyan-600 rounded-lg">
+                                                    <i class="fa-solid fa-layer-group"></i> {{ \Illuminate\Support\Str::limit($report->workspace->project->project_name ?? 'Workspace', 30) }}
+                                                </span>
+                                            @elseif($report->project)
                                                 <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-50 text-blue-600 rounded-lg">
                                                     <i class="fa-solid fa-folder"></i> {{ \Illuminate\Support\Str::limit($report->project->project_name, 30) }}
                                                 </span>

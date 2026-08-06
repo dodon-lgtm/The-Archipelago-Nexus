@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="scroll-smooth">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,73 +9,109 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        html { scroll-behavior: smooth; }
-        .scroll-offset { scroll-margin-top: 80px; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .scroll-offset {
+            scroll-margin-top: 80px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased">
+
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-blue-600 selection:text-white">
 
     <!-- ============================================================ -->
     <!-- 1. NAVBAR -->
     <!-- ============================================================ -->
-    <header class="bg-white/90 backdrop-blur-md border-b border-slate-100 sticky top-0 z-50">
+    <header class="bg-white/80 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
             <!-- Brand -->
             <a href="{{ route('landing') }}" class="flex items-center gap-2.5 sm:gap-3 group">
-                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden ring-2 ring-cyan-100 group-hover:ring-cyan-300 transition-all">
-                    <img src="{{ asset('images/nexus.jpg') }}" alt="The Archipelago Nexus" class="w-full h-full object-cover">
+                <div
+                    class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl overflow-hidden ring-2 ring-blue-100 group-hover:ring-blue-400 transition-all shadow-xs">
+                    <img src="{{ asset('images/nexus.jpg') }}" alt="The Archipelago Nexus"
+                        class="w-full h-full object-cover">
                 </div>
-                <span class="font-bold text-sm sm:text-lg tracking-tight text-slate-900 group-hover:text-cyan-700 transition">
+                <span
+                    class="font-extrabold text-base sm:text-xl tracking-tight text-slate-900 group-hover:text-blue-600 transition">
                     The Archipelago Nexus
                 </span>
             </a>
 
             <!-- Mobile Menu Toggle -->
-            <button id="mobile-menu-btn" class="lg:hidden p-2 rounded-lg text-slate-600 hover:bg-slate-100 transition" aria-label="Toggle menu">
+            <button id="mobile-menu-btn"
+                class="lg:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100 transition focus:outline-hidden"
+                aria-label="Toggle menu">
                 <i class="fa-solid fa-bars text-xl"></i>
             </button>
 
             <!-- Desktop Navigation -->
             <nav class="hidden lg:flex items-center gap-1">
-                <a href="#home" class="nav-link px-3 py-2 text-sm font-medium text-slate-600 hover:text-cyan-700 hover:bg-cyan-50 rounded-lg transition">Beranda</a>
-                <a href="#categories" class="nav-link px-3 py-2 text-sm font-medium text-slate-600 hover:text-cyan-700 hover:bg-cyan-50 rounded-lg transition">Kategori</a>
-                <a href="#projects" class="nav-link px-3 py-2 text-sm font-medium text-slate-600 hover:text-cyan-700 hover:bg-cyan-50 rounded-lg transition">Proyek Terbaru</a>
-                <a href="#freelancer" class="nav-link px-3 py-2 text-sm font-medium text-slate-600 hover:text-cyan-700 hover:bg-cyan-50 rounded-lg transition">Freelancer</a>
-                <a href="#company" class="nav-link px-3 py-2 text-sm font-medium text-slate-600 hover:text-cyan-700 hover:bg-cyan-50 rounded-lg transition">Perusahaan</a>
+                <a href="#home"
+                    class="px-3.5 py-2 text-sm font-semibold text-slate-600 hover:text-blue-600 hover:bg-blue-50/80 rounded-xl transition">Beranda</a>
+                <a href="#categories"
+                    class="px-3.5 py-2 text-sm font-semibold text-slate-600 hover:text-blue-600 hover:bg-blue-50/80 rounded-xl transition">Kategori</a>
+                <a href="#projects"
+                    class="px-3.5 py-2 text-sm font-semibold text-slate-600 hover:text-blue-600 hover:bg-blue-50/80 rounded-xl transition">Proyek
+                    Terbaru</a>
+                <a href="#freelancer"
+                    class="px-3.5 py-2 text-sm font-semibold text-slate-600 hover:text-blue-600 hover:bg-blue-50/80 rounded-xl transition">Freelancer</a>
+                <a href="#company"
+                    class="px-3.5 py-2 text-sm font-semibold text-slate-600 hover:text-blue-600 hover:bg-blue-50/80 rounded-xl transition">Perusahaan</a>
             </nav>
 
             <!-- Desktop Auth -->
             <div class="hidden lg:flex items-center gap-3">
                 @auth
-                    <div class="flex items-center gap-2">
-                        <span class="text-sm text-slate-600">Halo,</span>
-                        <span class="text-sm font-semibold text-slate-900">{{ Auth::user()->name }}</span>
+                    <div class="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-xl border border-slate-200/60">
+                        <span class="text-xs text-slate-500 font-medium">Halo,</span>
+                        <span class="text-xs font-bold text-slate-900">{{ Auth::user()->name }}</span>
                     </div>
-                    @if(Auth::user()->role === 'freelancer')
-                        <a href="{{ route('freelancer.dashboard') }}" class="px-4 py-2 text-sm font-semibold text-white bg-cyan-600 hover:bg-cyan-700 rounded-xl transition shadow-sm">
+                    @if (Auth::user()->role === 'freelancer')
+                        <a href="{{ route('freelancer.dashboard') }}"
+                            class="px-4 py-2 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition shadow-sm shadow-blue-500/20">
                             <i class="fa-solid fa-gauge-high mr-1.5"></i>Dashboard
                         </a>
                     @elseif(Auth::user()->role === 'company')
-                        <a href="{{ route('company.dashboard') }}" class="px-4 py-2 text-sm font-semibold text-white bg-cyan-600 hover:bg-cyan-700 rounded-xl transition shadow-sm">
+                        <a href="{{ route('company.dashboard') }}"
+                            class="px-4 py-2 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition shadow-sm shadow-blue-500/20">
                             <i class="fa-solid fa-building mr-1.5"></i>Dashboard
                         </a>
                     @elseif(Auth::user()->role === 'admin')
-                        <a href="{{ route('admin.dashboard') }}" class="px-4 py-2 text-sm font-semibold text-white bg-cyan-600 hover:bg-cyan-700 rounded-xl transition shadow-sm">
+                        <a href="{{ route('admin.dashboard') }}"
+                            class="px-4 py-2 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition shadow-sm shadow-blue-500/20">
                             <i class="fa-solid fa-shield-halved mr-1.5"></i>Admin
                         </a>
                     @endif
                     <form method="POST" action="{{ route('logout') }}" class="inline">
                         @csrf
-                        <button type="submit" class="px-4 py-2 text-sm font-semibold text-slate-700 border border-slate-300 hover:bg-slate-100 rounded-xl transition">
+                        <button type="submit"
+                            class="px-4 py-2 text-sm font-semibold text-slate-700 border border-slate-300/80 hover:bg-slate-100/80 rounded-xl transition">
                             <i class="fa-solid fa-right-from-bracket mr-1.5"></i>Logout
                         </button>
                     </form>
                 @else
-                    <a href="{{ route('login') }}" class="px-5 py-2 text-sm font-semibold text-slate-700 hover:text-slate-950 border border-slate-300 rounded-xl hover:bg-slate-50 transition">
+                    <a href="{{ route('login') }}"
+                        class="px-5 py-2 text-sm font-semibold text-slate-700 hover:text-slate-900 border border-slate-300/80 rounded-xl hover:bg-slate-100/60 transition">
                         Masuk
                     </a>
-                    <a href="{{ route('register') }}" class="px-5 py-2 text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-xl transition shadow-sm">
+                    <a href="{{ route('register') }}"
+                        class="px-5 py-2 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition shadow-md shadow-blue-500/20">
                         Daftar
                     </a>
                 @endauth
@@ -82,123 +119,190 @@
         </div>
 
         <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden lg:hidden bg-white border-t border-slate-100 px-4 py-4 space-y-3">
-            @auth
-                <div class="flex items-center gap-2 pb-2 border-b border-slate-100">
-                    <div class="w-8 h-8 rounded-full bg-cyan-100 flex items-center justify-center text-cyan-700 font-bold text-sm">
-                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+        <div id="mobile-menu" class="hidden lg:hidden bg-white border-b border-slate-200 px-4 py-4 space-y-3">
+            <a href="#home"
+                class="block px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 rounded-lg">Beranda</a>
+            <a href="#categories"
+                class="block px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 rounded-lg">Kategori</a>
+            <a href="#projects"
+                class="block px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 rounded-lg">Proyek
+                Terbaru</a>
+            <a href="#freelancer"
+                class="block px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 rounded-lg">Freelancer</a>
+            <a href="#company"
+                class="block px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 rounded-lg">Perusahaan</a>
+
+            <div class="pt-3 border-t border-slate-100">
+                @auth
+                    <div class="flex items-center gap-2 pb-3">
+                        <div
+                            class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 font-bold flex items-center justify-center text-xs">
+                            {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                        </div>
+                        <span class="font-bold text-sm text-slate-900">{{ Auth::user()->name }}</span>
                     </div>
-                    <span class="font-semibold text-sm">{{ Auth::user()->name }}</span>
-                </div>
-                @if(Auth::user()->role === 'freelancer')
-                    <a href="{{ route('freelancer.dashboard') }}" class="block px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 rounded-lg">
-                        <i class="fa-solid fa-gauge-high mr-2 text-cyan-600"></i>Dashboard Freelancer
-                    </a>
-                @elseif(Auth::user()->role === 'company')
-                    <a href="{{ route('company.dashboard') }}" class="block px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 rounded-lg">
-                        <i class="fa-solid fa-building mr-2 text-cyan-600"></i>Dashboard Perusahaan
-                    </a>
-                @elseif(Auth::user()->role === 'admin')
-                    <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 rounded-lg">
-                        <i class="fa-solid fa-shield-halved mr-2 text-cyan-600"></i>Dashboard Admin
-                    </a>
-                @endif
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="w-full text-left px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg">
-                        <i class="fa-solid fa-right-from-bracket mr-2"></i>Logout
-                    </button>
-                </form>
-            @else
-                <a href="{{ route('login') }}" class="block px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 rounded-lg">
-                    <i class="fa-solid fa-arrow-right-to-bracket mr-2"></i>Masuk
-                </a>
-                <a href="{{ route('register') }}" class="block px-4 py-2 text-sm font-medium text-white bg-slate-900 hover:bg-slate-800 text-center rounded-lg">
-                    Daftar Sekarang
-                </a>
-            @endauth
+                    @if (Auth::user()->role === 'freelancer')
+                        <a href="{{ route('freelancer.dashboard') }}"
+                            class="block px-4 py-2.5 text-sm font-bold text-white bg-blue-600 rounded-xl text-center mb-2">
+                            <i class="fa-solid fa-gauge-high mr-1.5"></i>Dashboard Freelancer
+                        </a>
+                    @elseif(Auth::user()->role === 'company')
+                        <a href="{{ route('company.dashboard') }}"
+                            class="block px-4 py-2.5 text-sm font-bold text-white bg-blue-600 rounded-xl text-center mb-2">
+                            <i class="fa-solid fa-building mr-1.5"></i>Dashboard Perusahaan
+                        </a>
+                    @elseif(Auth::user()->role === 'admin')
+                        <a href="{{ route('admin.dashboard') }}"
+                            class="block px-4 py-2.5 text-sm font-bold text-white bg-blue-600 rounded-xl text-center mb-2">
+                            <i class="fa-solid fa-shield-halved mr-1.5"></i>Dashboard Admin
+                        </a>
+                    @endif
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit"
+                            class="w-full text-center px-4 py-2 text-sm font-semibold text-rose-600 hover:bg-rose-50 rounded-xl">
+                            <i class="fa-solid fa-right-from-bracket mr-2"></i>Logout
+                        </button>
+                    </form>
+                @else
+                    <div class="grid grid-cols-2 gap-2">
+                        <a href="{{ route('login') }}"
+                            class="block px-4 py-2.5 text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 text-center rounded-xl">
+                            Masuk
+                        </a>
+                        <a href="{{ route('register') }}"
+                            class="block px-4 py-2.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 text-center rounded-xl">
+                            Daftar
+                        </a>
+                    </div>
+                @endauth
+            </div>
         </div>
     </header>
 
     <!-- ============================================================ -->
     <!-- 2. HERO SECTION -->
     <!-- ============================================================ -->
-    <section id="home" class="relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-cyan-50">
+    <section id="home"
+        class="relative overflow-hidden bg-gradient-to-b from-blue-50/70 via-slate-50 to-slate-50 border-b border-slate-200/50">
         <div class="absolute inset-0 z-0 pointer-events-none">
-            <img src="{{ asset('images/gedung.jpg') }}" alt="Gedung" class="w-full h-full object-cover opacity-30 sm:opacity-40">
-            <div class="absolute inset-0 bg-gradient-to-r from-white/90 via-white/70 to-transparent"></div>
+            <img src="{{ asset('images/gedung.jpg') }}" alt="Gedung" class="w-full h-full object-cover opacity-10">
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-50 via-slate-50/80 to-transparent"></div>
         </div>
-        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-24">
-            <div class="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-                <!-- Left: Text -->
-                <div class="space-y-6 sm:space-y-8">
+
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 lg:py-28">
+            <div class="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+                <!-- Left Text -->
+                <div class="lg:col-span-7 space-y-6 sm:space-y-8">
                     <div>
-                        <span class="inline-block px-3 py-1 bg-cyan-100 text-cyan-700 text-xs font-bold rounded-full tracking-wide uppercase">
-                            Marketplace Freelance #1 di Indonesia
+                        <span
+                            class="inline-flex items-center gap-2 px-3.5 py-1.5 bg-blue-100/80 border border-blue-200 text-blue-700 text-xs font-bold rounded-full tracking-wide">
+                            <i class="fa-solid fa-sparkles text-blue-500"></i> Marketplace Freelance #1 di Indonesia
                         </span>
                     </div>
-                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 leading-tight">
-                        Temukan Talenta Terbaik.
-                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-teal-500">Wujudkan Proyek Hebat.</span>
+
+                    <h1
+                        class="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 leading-[1.15] tracking-tight">
+                        Temukan Talenta Terbaik.<br>
+                        <span
+                            class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-sky-500 to-indigo-600">Wujudkan
+                            Proyek Impian.</span>
                     </h1>
-                    <p class="text-base sm:text-lg text-slate-600 leading-relaxed max-w-xl">
-                        The Archipelago Nexus adalah platform <strong>marketplace freelance</strong> yang mempertemukan 
-                        <strong>freelancer</strong> berbakat dengan <strong>perusahaan</strong> untuk mengerjakan proyek digital 
-                        secara aman, transparan, dan profesional.
+
+                    <p class="text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl font-medium">
+                        The Archipelago Nexus mempertemukan <strong>freelancer berbakat</strong> dengan
+                        <strong>perusahaan terpercaya</strong> untuk menggarap proyek digital secara transparan,
+                        efisien, dan profesional.
                     </p>
-                    <div class="flex flex-wrap gap-3 sm:gap-4">
-                        <a href="{{ route('register') }}" 
-                           class="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition transform hover:-translate-y-0.5">
-                            <i class="fa-solid fa-magnifying-glass"></i>
+
+                    <div class="flex flex-wrap items-center gap-3 sm:gap-4">
+                        <a href="{{ route('register') }}"
+                            class="inline-flex items-center gap-2.5 px-7 py-3.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold rounded-2xl shadow-lg shadow-blue-500/25 hover:shadow-xl transition-all duration-200 hover:-translate-y-0.5">
+                            <i class="fa-solid fa-magnifying-glass text-xs"></i>
                             Cari Proyek
                         </a>
-                        <a href="{{ route('register') }}" 
-                           class="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-3.5 bg-white hover:bg-slate-50 text-slate-800 font-semibold rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition transform hover:-translate-y-0.5">
-                            <i class="fa-solid fa-plus-circle text-cyan-600"></i>
+                        <a href="{{ route('register') }}"
+                            class="inline-flex items-center gap-2.5 px-7 py-3.5 bg-white hover:bg-slate-100 text-slate-800 font-bold rounded-2xl border border-slate-200 shadow-xs hover:shadow-md transition-all duration-200 hover:-translate-y-0.5">
+                            <i class="fa-solid fa-plus-circle text-blue-600 text-xs"></i>
                             Publikasikan Proyek
                         </a>
                     </div>
-                    <div class="flex items-center gap-4 pt-2">
-                        <div class="flex -space-x-2">
-                            <div class="w-8 h-8 rounded-full bg-cyan-500 border-2 border-white flex items-center justify-center text-white text-xs font-bold">A</div>
-                            <div class="w-8 h-8 rounded-full bg-teal-500 border-2 border-white flex items-center justify-center text-white text-xs font-bold">B</div>
-                            <div class="w-8 h-8 rounded-full bg-blue-500 border-2 border-white flex items-center justify-center text-white text-xs font-bold">C</div>
-                            <div class="w-8 h-8 rounded-full bg-slate-400 border-2 border-white flex items-center justify-center text-white text-xs font-bold">+</div>
+
+                    <div class="flex items-center gap-4 pt-4 border-t border-slate-200/60">
+                        <div class="flex -space-x-2.5">
+                            <div
+                                class="w-9 h-9 rounded-full bg-blue-600 ring-2 ring-white flex items-center justify-center text-white text-xs font-bold shadow-xs">
+                                A</div>
+                            <div
+                                class="w-9 h-9 rounded-full bg-indigo-600 ring-2 ring-white flex items-center justify-center text-white text-xs font-bold shadow-xs">
+                                B</div>
+                            <div
+                                class="w-9 h-9 rounded-full bg-sky-500 ring-2 ring-white flex items-center justify-center text-white text-xs font-bold shadow-xs">
+                                C</div>
+                            <div
+                                class="w-9 h-9 rounded-full bg-slate-800 ring-2 ring-white flex items-center justify-center text-white text-xs font-bold shadow-xs">
+                                +</div>
                         </div>
-                        <p class="text-xs sm:text-sm text-slate-500">
-                            Dipercaya oleh <strong class="text-slate-800">100+</strong> perusahaan dan <strong class="text-slate-800">500+</strong> freelancer
+                        <p class="text-xs sm:text-sm text-slate-500 font-medium">
+                            Dipercaya oleh <strong class="text-slate-900 font-extrabold">100+</strong> Perusahaan &
+                            <strong class="text-slate-900 font-extrabold">500+</strong> Freelancer
                         </p>
                     </div>
                 </div>
-                <!-- Right: Hero Mockup -->
-                <div class="relative flex justify-center items-center h-[280px] sm:h-[360px] lg:h-[420px]">
-                    <div class="absolute right-2 sm:right-6 w-[220px] h-[220px] sm:w-[300px] sm:h-[300px] lg:w-[380px] lg:h-[380px] bg-gradient-to-br from-cyan-400 via-teal-400 to-emerald-400 rounded-full opacity-80 shadow-2xl blur-sm"></div>
-                    <div class="relative bg-white/95 backdrop-blur-md border border-slate-200/70 rounded-2xl shadow-2xl p-3 sm:p-4 w-full max-w-[260px] sm:max-w-[320px] lg:max-w-[360px] h-[220px] sm:h-[280px] lg:h-[320px] flex flex-col">
-                        <div class="flex gap-1.5 mb-2">
-                            <span class="w-2 h-2 sm:w-3 sm:h-3 bg-red-400 rounded-full"></span>
-                            <span class="w-2 h-2 sm:w-3 sm:h-3 bg-yellow-400 rounded-full"></span>
-                            <span class="w-2 h-2 sm:w-3 sm:h-3 bg-green-400 rounded-full"></span>
-                        </div>
-                        <div class="flex-1 rounded-xl overflow-hidden bg-gradient-to-t from-cyan-50 to-transparent relative">
-                            <img src="{{ asset('images/beranda.png') }}" alt="Freelancer" class="w-full h-full object-cover object-center">
-                        </div>
-                        <div class="absolute -bottom-3 -left-4 sm:-bottom-4 sm:-left-6 bg-white border border-slate-100 rounded-lg shadow-lg py-1 sm:py-1.5 px-2 sm:px-3 flex items-center gap-2">
-                            <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                            <span class="text-[8px] sm:text-[10px] font-bold text-slate-700">25+ Proyek Aktif</span>
-                        </div>
-                        <div class="absolute -top-2 -right-3 sm:-top-3 sm:-right-4 bg-white border border-slate-100 rounded-lg shadow-lg p-1.5 sm:p-2">
-                            <p class="text-[7px] sm:text-[8px] text-gray-400 font-medium">Rating</p>
-                            <div class="w-8 sm:w-10 h-1.5 bg-blue-100 rounded-full my-1 overflow-hidden">
-                                <div class="w-4/5 h-full bg-teal-500 rounded-full"></div>
+
+                <!-- Right Hero Card / Visual -->
+                <div class="lg:col-span-5 relative flex justify-center items-center">
+                    <div
+                        class="absolute w-72 h-72 sm:w-96 sm:h-96 bg-gradient-to-tr from-blue-400/30 to-indigo-400/30 rounded-full blur-3xl pointer-events-none">
+                    </div>
+
+                    <div
+                        class="relative bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-3xl shadow-2xl p-4 w-full max-w-sm sm:max-w-md flex flex-col gap-3">
+                        {{-- Window bar mockup --}}
+                        <div class="flex items-center justify-between pb-2 border-b border-slate-100 px-1">
+                            <div class="flex gap-1.5">
+                                <span class="w-2.5 h-2.5 bg-rose-400 rounded-full"></span>
+                                <span class="w-2.5 h-2.5 bg-amber-400 rounded-full"></span>
+                                <span class="w-2.5 h-2.5 bg-emerald-400 rounded-full"></span>
                             </div>
-                            <p class="text-[7px] sm:text-[8px] font-bold text-slate-700">4.8 / 5.0</p>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Nexus
+                                Hub</span>
                         </div>
-                    </div>
-                    <div class="absolute top-1/2 -right-3 sm:-right-5 w-8 h-8 sm:w-10 sm:h-10 bg-white border border-gray-100 rounded-full shadow-lg flex items-center justify-center text-emerald-500 text-base sm:text-lg">
-                        <i class="fa-solid fa-circle-check"></i>
-                    </div>
-                    <div class="absolute top-20 sm:top-24 left-2 sm:left-4 bg-white w-6 h-6 sm:w-7 sm:h-7 rounded-full shadow-md flex items-center justify-center text-xs sm:text-sm">
-                        &#128525;
+
+                        {{-- Hero Image --}}
+                        <div class="h-60 sm:h-72 rounded-2xl overflow-hidden relative group">
+                            <img src="{{ asset('images/beranda.png') }}" alt="Freelancer Workspace"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-transparent to-transparent">
+                            </div>
+                        </div>
+
+                        {{-- Floating Badge 1 --}}
+                        <div
+                            class="absolute -bottom-4 -left-4 sm:-bottom-5 sm:-left-6 bg-white/95 backdrop-blur-md border border-slate-200/80 rounded-2xl shadow-xl p-3 flex items-center gap-3">
+                            <div
+                                class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0 font-bold">
+                                <i class="fa-solid fa-circle-check text-lg"></i>
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-slate-400 font-bold uppercase">Status Platform</p>
+                                <p class="text-xs font-extrabold text-slate-900">25+ Proyek Aktif</p>
+                            </div>
+                        </div>
+
+                        {{-- Floating Badge 2 --}}
+                        <div
+                            class="absolute -top-3 -right-3 sm:-top-4 sm:-right-4 bg-white/95 backdrop-blur-md border border-slate-200/80 rounded-2xl shadow-xl p-3 flex items-center gap-3">
+                            <div
+                                class="w-10 h-10 rounded-xl bg-amber-100 text-amber-500 flex items-center justify-center shrink-0 font-bold">
+                                <i class="fa-solid fa-star text-lg"></i>
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-slate-400 font-bold uppercase">Kepuasan</p>
+                                <p class="text-xs font-extrabold text-slate-900">4.9 / 5.0 Rating</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -208,34 +312,46 @@
     <!-- ============================================================ -->
     <!-- 3. STATISTIK -->
     <!-- ============================================================ -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 sm:-mt-10 relative z-20">
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-            <div class="bg-white rounded-2xl shadow-lg border border-slate-100 p-4 sm:p-6 text-center hover:shadow-xl transition hover:-translate-y-1">
-                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-cyan-100 rounded-xl flex items-center justify-center mx-auto mb-2 sm:mb-3">
-                    <i class="fa-solid fa-briefcase text-cyan-600 text-lg sm:text-xl"></i>
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 sm:-mt-12 relative z-20">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            <div
+                class="bg-white rounded-2xl shadow-xl shadow-slate-200/60 border border-slate-200/80 p-5 sm:p-6 text-center hover:-translate-y-1 transition duration-300">
+                <div
+                    class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                    <i class="fa-solid fa-briefcase text-xl"></i>
                 </div>
-                <p class="text-xl sm:text-3xl font-extrabold text-slate-900">{{ number_format($totalProjects, 0, ',', '.') }}</p>
+                <p class="text-2xl sm:text-3xl font-extrabold text-slate-900">
+                    {{ number_format($totalProjects, 0, ',', '.') }}</p>
                 <p class="text-xs sm:text-sm text-slate-500 font-medium mt-1">Total Proyek</p>
             </div>
-            <div class="bg-white rounded-2xl shadow-lg border border-slate-100 p-4 sm:p-6 text-center hover:shadow-xl transition hover:-translate-y-1">
-                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-teal-100 rounded-xl flex items-center justify-center mx-auto mb-2 sm:mb-3">
-                    <i class="fa-solid fa-user-tie text-teal-600 text-lg sm:text-xl"></i>
+            <div
+                class="bg-white rounded-2xl shadow-xl shadow-slate-200/60 border border-slate-200/80 p-5 sm:p-6 text-center hover:-translate-y-1 transition duration-300">
+                <div
+                    class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                    <i class="fa-solid fa-user-tie text-xl"></i>
                 </div>
-                <p class="text-xl sm:text-3xl font-extrabold text-slate-900">{{ number_format($totalFreelancers, 0, ',', '.') }}</p>
-                <p class="text-xs sm:text-sm text-slate-500 font-medium mt-1">Freelancer</p>
+                <p class="text-2xl sm:text-3xl font-extrabold text-slate-900">
+                    {{ number_format($totalFreelancers, 0, ',', '.') }}</p>
+                <p class="text-xs sm:text-sm text-slate-500 font-medium mt-1">Freelancer Berbakat</p>
             </div>
-            <div class="bg-white rounded-2xl shadow-lg border border-slate-100 p-4 sm:p-6 text-center hover:shadow-xl transition hover:-translate-y-1">
-                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-2 sm:mb-3">
-                    <i class="fa-solid fa-building text-blue-600 text-lg sm:text-xl"></i>
+            <div
+                class="bg-white rounded-2xl shadow-xl shadow-slate-200/60 border border-slate-200/80 p-5 sm:p-6 text-center hover:-translate-y-1 transition duration-300">
+                <div
+                    class="w-12 h-12 bg-sky-50 text-sky-600 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                    <i class="fa-solid fa-building text-xl"></i>
                 </div>
-                <p class="text-xl sm:text-3xl font-extrabold text-slate-900">{{ number_format($totalCompanies, 0, ',', '.') }}</p>
-                <p class="text-xs sm:text-sm text-slate-500 font-medium mt-1">Perusahaan</p>
+                <p class="text-2xl sm:text-3xl font-extrabold text-slate-900">
+                    {{ number_format($totalCompanies, 0, ',', '.') }}</p>
+                <p class="text-xs sm:text-sm text-slate-500 font-medium mt-1">Perusahaan Terdaftar</p>
             </div>
-            <div class="bg-white rounded-2xl shadow-lg border border-slate-100 p-4 sm:p-6 text-center hover:shadow-xl transition hover:-translate-y-1">
-                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-100 rounded-xl flex items-center justify-center mx-auto mb-2 sm:mb-3">
-                    <i class="fa-solid fa-check-circle text-emerald-600 text-lg sm:text-xl"></i>
+            <div
+                class="bg-white rounded-2xl shadow-xl shadow-slate-200/60 border border-slate-200/80 p-5 sm:p-6 text-center hover:-translate-y-1 transition duration-300">
+                <div
+                    class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                    <i class="fa-solid fa-circle-check text-xl"></i>
                 </div>
-                <p class="text-xl sm:text-3xl font-extrabold text-slate-900">{{ number_format($totalProjectsCompleted, 0, ',', '.') }}</p>
+                <p class="text-2xl sm:text-3xl font-extrabold text-slate-900">
+                    {{ number_format($totalProjectsCompleted, 0, ',', '.') }}</p>
                 <p class="text-xs sm:text-sm text-slate-500 font-medium mt-1">Proyek Selesai</p>
             </div>
         </div>
@@ -244,106 +360,148 @@
     <!-- ============================================================ -->
     <!-- 4. KATEGORI -->
     <!-- ============================================================ -->
-    <section id="categories" class="scroll-offset max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-        <div class="text-center mb-8 sm:mb-12">
-            <span class="inline-block px-3 py-1 bg-cyan-100 text-cyan-700 text-xs font-bold rounded-full uppercase tracking-wide mb-3">Kategori</span>
-            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Jelajahi Kategori Proyek</h2>
-            <p class="text-slate-500 mt-2 max-w-lg mx-auto">Temukan proyek sesuai dengan keahlian dan minat Anda</p>
+    <section id="categories" class="scroll-offset max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+        <div class="text-center mb-10 sm:mb-14">
+            <span
+                class="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full uppercase tracking-wider mb-3">
+                Kategori
+            </span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Jelajahi Kategori Proyek</h2>
+            <p class="text-slate-500 mt-2 max-w-lg mx-auto text-sm sm:text-base">Temukan pekerjaan atau talenta
+                spesifik sesuai kebutuhan industri Anda</p>
         </div>
-        @if($categories->count() > 0)
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
-            @foreach($categories as $category)
-            <a href="{{ route('login') }}" class="group bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 text-center hover:border-cyan-300 hover:shadow-lg transition-all hover:-translate-y-1">
-                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-cyan-100 to-teal-100 rounded-xl flex items-center justify-center mx-auto mb-2 sm:mb-3 group-hover:from-cyan-500 group-hover:to-teal-500 transition-all">
-                    <i class="fa-solid fa-folder-open text-cyan-600 text-sm sm:text-base group-hover:text-white transition"></i>
-                </div>
-                <span class="text-xs sm:text-sm font-semibold text-slate-800 group-hover:text-cyan-700 transition line-clamp-1">{{ $category->name }}</span>
-            </a>
-            @endforeach
-        </div>
+
+        @if ($categories->count() > 0)
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                @foreach ($categories as $category)
+                    <a href="{{ route('login') }}"
+                        class="group bg-white border border-slate-200/80 rounded-2xl p-5 text-center hover:border-blue-300 hover:shadow-lg hover:shadow-blue-500/5 transition-all duration-200 hover:-translate-y-1 flex flex-col items-center">
+                        <div
+                            class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-3 group-hover:bg-blue-600 group-hover:text-white transition-all duration-200">
+                            <i class="fa-solid fa-folder-open text-lg"></i>
+                        </div>
+                        <span
+                            class="text-xs sm:text-sm font-bold text-slate-800 group-hover:text-blue-600 transition line-clamp-1">
+                            {{ $category->name }}
+                        </span>
+                    </a>
+                @endforeach
+            </div>
         @else
-        <div class="text-center py-8">
-            <p class="text-slate-400">Belum ada kategori tersedia.</p>
-        </div>
+            <div class="text-center py-12 bg-white rounded-3xl border border-slate-200/80">
+                <p class="text-slate-400 font-medium">Belum ada kategori tersedia saat ini.</p>
+            </div>
         @endif
     </section>
 
     <!-- ============================================================ -->
     <!-- 5. PROYEK TERBARU -->
     <!-- ============================================================ -->
-    <section id="projects" class="scroll-offset bg-white py-12 sm:py-16">
+    <section id="projects" class="scroll-offset bg-white py-16 sm:py-24 border-y border-slate-200/60">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-8 sm:mb-12">
-                <span class="inline-block px-3 py-1 bg-cyan-100 text-cyan-700 text-xs font-bold rounded-full uppercase tracking-wide mb-3">Proyek Terbaru</span>
-                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Proyek Terbaru dari Perusahaan</h2>
-                <p class="text-slate-500 mt-2 max-w-lg mx-auto">Temukan peluang proyek menarik dari berbagai perusahaan</p>
+            <div class="text-center mb-10 sm:mb-14">
+                <span
+                    class="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full uppercase tracking-wider mb-3">
+                    Proyek Terbaru
+                </span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Peluang Kerja Terbaru
+                </h2>
+                <p class="text-slate-500 mt-2 max-w-lg mx-auto text-sm sm:text-base">Gunakan keahlian Anda untuk
+                    memenangkan proyek freelance berkualitas</p>
             </div>
-            @if($recentProjects->count() > 0)
-            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                @foreach($recentProjects as $project)
-                <div class="group bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all hover:-translate-y-1">
-                    <!-- Project Image -->
-                    <div class="h-36 sm:h-44 overflow-hidden bg-slate-100 relative">
-                        @if($project->image)
-                            <img src="{{ asset('storage/' . $project->image) }}" alt="{{ $project->project_name }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-                        @else
-                            <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-cyan-50 to-teal-50">
-                                <i class="fa-solid fa-image text-4xl text-slate-300"></i>
+
+            @if ($recentProjects->count() > 0)
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                    @foreach ($recentProjects as $project)
+                        <div
+                            class="group bg-slate-50/50 hover:bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-xs hover:shadow-xl hover:border-blue-200 transition-all duration-300 hover:-translate-y-1.5 flex flex-col justify-between">
+                            <div>
+                                <!-- Image Header -->
+                                <div class="h-44 overflow-hidden bg-slate-100 relative">
+                                    @if ($project->image)
+                                        <img src="{{ asset('storage/' . $project->image) }}"
+                                            alt="{{ $project->project_name }}"
+                                            class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                                    @else
+                                        <div
+                                            class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-100 to-blue-50 text-slate-300">
+                                            <i class="fa-solid fa-image text-3xl mb-1"></i>
+                                            <span class="text-[10px] font-medium text-slate-400">Tidak ada
+                                                gambar</span>
+                                        </div>
+                                    @endif
+
+                                    <span
+                                        class="absolute top-3 right-3 px-3 py-1 text-[11px] font-bold rounded-full shadow-xs backdrop-blur-md
+                                        {{ $project->status === 'Open' ? 'bg-emerald-500/90 text-white' : 'bg-slate-700/80 text-white' }}">
+                                        {{ $project->status }}
+                                    </span>
+                                </div>
+
+                                <!-- Card Body -->
+                                <div class="p-6">
+                                    <span
+                                        class="inline-block text-[11px] font-bold text-blue-600 bg-blue-50 border border-blue-100 px-2.5 py-0.5 rounded-md mb-2">
+                                        {{ optional($project->category)->name ?? 'Umum' }}
+                                    </span>
+                                    <h3
+                                        class="font-bold text-base sm:text-lg text-slate-900 line-clamp-1 group-hover:text-blue-600 transition mb-2">
+                                        {{ $project->project_name }}
+                                    </h3>
+                                    <p class="text-xs sm:text-sm text-slate-500 line-clamp-2 leading-relaxed">
+                                        {{ Str::limit($project->project_description ?? 'Tidak ada deskripsi.', 90) }}
+                                    </p>
+
+                                    {{-- Owner Info --}}
+                                    <div class="flex items-center gap-2 mt-4 pt-4 border-t border-slate-100">
+                                        <div
+                                            class="w-6 h-6 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-[10px] font-bold">
+                                            <i class="fa-regular fa-building"></i>
+                                        </div>
+                                        <span
+                                            class="text-xs font-semibold text-slate-600 truncate">{{ optional($project->owner)->name ?? 'Perusahaan' }}</span>
+                                    </div>
+                                </div>
                             </div>
-                        @endif
-                        <div class="absolute top-2 right-2">
-                            <span class="px-2 py-1 text-[10px] font-bold rounded-lg
-                                {{ $project->status === 'Open' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500' }}">
-                                {{ $project->status }}
-                            </span>
-                        </div>
-                    </div>
-                    <!-- Project Info -->
-                    <div class="p-4 sm:p-5">
-                        <div class="flex items-center gap-2 mb-2">
-                            <span class="text-[10px] font-semibold text-cyan-600 bg-cyan-50 px-2 py-0.5 rounded-md">
-                                {{ optional($project->category)->name ?? 'Umum' }}
-                            </span>
-                        </div>
-                        <h3 class="font-bold text-sm sm:text-base text-slate-900 line-clamp-1 group-hover:text-cyan-700 transition">
-                            {{ $project->project_name }}
-                        </h3>
-                        <p class="text-xs text-slate-500 mt-1 line-clamp-2">
-                            {{ Str::limit($project->project_description ?? 'Tidak ada deskripsi.', 80) }}
-                        </p>
-                        <div class="flex items-center gap-2 mt-3">
-                            <div class="w-5 h-5 rounded-full bg-slate-300 flex items-center justify-center text-white text-[8px] font-bold">
-                                {{ strtoupper(substr(optional($project->owner)->name ?? '?', 0, 1)) }}
+
+                            <!-- Card Footer -->
+                            <div
+                                class="px-6 pb-6 pt-0 flex items-center justify-between border-t border-slate-100/80 mt-2">
+                                <div>
+                                    <p class="text-[10px] text-slate-400 font-bold uppercase">Budget</p>
+                                    <p class="text-base font-extrabold text-blue-600">
+                                        Rp {{ number_format($project->budget ?? 0, 0, ',', '.') }}
+                                    </p>
+                                </div>
+                                @if ($project->deadline)
+                                    <div class="text-right">
+                                        <p class="text-[10px] text-slate-400 font-bold uppercase">Deadline</p>
+                                        <span class="text-xs font-semibold text-slate-600">
+                                            <i
+                                                class="fa-regular fa-calendar text-slate-400 mr-1"></i>{{ \Carbon\Carbon::parse($project->deadline)->format('d M Y') }}
+                                        </span>
+                                    </div>
+                                @endif
                             </div>
-                            <span class="text-xs text-slate-600 font-medium">{{ optional($project->owner)->name ?? 'Perusahaan' }}</span>
                         </div>
-                        <div class="flex items-center justify-between mt-3 pt-3 border-t border-slate-100">
-                            <p class="text-sm sm:text-base font-extrabold text-cyan-700">
-                                Rp {{ number_format($project->budget ?? 0, 0, ',', '.') }}
-                            </p>
-                            @if($project->deadline)
-                                <span class="text-[10px] text-slate-400">
-                                    <i class="fa-regular fa-calendar mr-1"></i>{{ \Carbon\Carbon::parse($project->deadline)->format('d M Y') }}
-                                </span>
-                            @endif
-                        </div>
-                    </div>
+                    @endforeach
                 </div>
-                @endforeach
-            </div>
-            <div class="text-center mt-8 sm:mt-10">
-                <a href="{{ route('login') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-xl transition shadow-md hover:shadow-lg">
-                    Lihat Semua Proyek
-                    <i class="fa-solid fa-arrow-right text-sm"></i>
-                </a>
-            </div>
+
+                <div class="text-center mt-12">
+                    <a href="{{ route('login') }}"
+                        class="inline-flex items-center gap-2 px-8 py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-2xl shadow-md transition hover:shadow-lg">
+                        Lihat Semua Proyek
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </a>
+                </div>
             @else
-            <div class="text-center py-8">
-                <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <i class="fa-solid fa-briefcase text-2xl text-slate-400"></i>
+                <div class="text-center py-12">
+                    <div
+                        class="w-16 h-16 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                        <i class="fa-solid fa-briefcase text-2xl"></i>
+                    </div>
+                    <p class="text-slate-500 font-medium">Belum ada proyek terbaru saat ini.</p>
                 </div>
-                <p class="text-slate-500">Belum ada proyek terbaru.</p>
-            </div>
             @endif
         </div>
     </section>
@@ -351,68 +509,77 @@
     <!-- ============================================================ -->
     <!-- 6. UNTUK FREELANCER -->
     <!-- ============================================================ -->
-    <section id="freelancer" class="scroll-offset max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-        <div class="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
+    <section id="freelancer" class="scroll-offset max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
             <div class="space-y-6">
-                <span class="inline-block px-3 py-1 bg-teal-100 text-teal-700 text-xs font-bold rounded-full uppercase tracking-wide">Untuk Freelancer</span>
-                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight">
-                    Kembangkan Karir Freelance <span class="text-teal-600">Anda</span>
+                <span
+                    class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full uppercase tracking-wider">
+                    Untuk Freelancer
+                </span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 leading-tight tracking-tight">
+                    Kembangkan Karir Freelance <span class="text-emerald-600">Anda</span>
                 </h2>
-                <p class="text-slate-600 leading-relaxed">
-                    Bergabunglah dengan ribuan freelancer berbakat dan temukan proyek yang sesuai dengan keahlian Anda.
+                <p class="text-slate-600 leading-relaxed font-medium">
+                    Bergabunglah bersama ribuan talenta digital Indonesia dan mulailah menghasilkan pendapatan dari
+                    proyek-proyek menarik.
                 </p>
-                <div class="space-y-4">
-                    <div class="flex items-start gap-3">
-                        <div class="w-8 h-8 rounded-lg bg-teal-100 flex items-center justify-center shrink-0 mt-0.5">
-                            <i class="fa-solid fa-magnifying-glass text-teal-600 text-sm"></i>
+
+                <div class="grid sm:grid-cols-2 gap-4 pt-2">
+                    <div class="p-4 bg-white border border-slate-200/80 rounded-2xl shadow-xs">
+                        <div
+                            class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-2 font-bold">
+                            <i class="fa-solid fa-magnifying-glass text-xs"></i>
                         </div>
-                        <div>
-                            <h4 class="font-bold text-sm text-slate-900">Temukan Proyek Sesuai Skill</h4>
-                            <p class="text-xs text-slate-500">Jelajahi berbagai proyek dari perusahaan terpercaya</p>
-                        </div>
+                        <h4 class="font-bold text-sm text-slate-900">Temukan Proyek</h4>
+                        <p class="text-xs text-slate-500 mt-1">Akses ratusan proyek sesuai spesialisasi utama Anda.</p>
                     </div>
-                    <div class="flex items-start gap-3">
-                        <div class="w-8 h-8 rounded-lg bg-teal-100 flex items-center justify-center shrink-0 mt-0.5">
-                            <i class="fa-solid fa-paper-plane text-teal-600 text-sm"></i>
+                    <div class="p-4 bg-white border border-slate-200/80 rounded-2xl shadow-xs">
+                        <div
+                            class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-2 font-bold">
+                            <i class="fa-solid fa-paper-plane text-xs"></i>
                         </div>
-                        <div>
-                            <h4 class="font-bold text-sm text-slate-900">Ajukan Penawaran</h4>
-                            <p class="text-xs text-slate-500">Kirim proposal dan dapatkan proyek impian Anda</p>
-                        </div>
+                        <h4 class="font-bold text-sm text-slate-900">Kirim Penawaran</h4>
+                        <p class="text-xs text-slate-500 mt-1">Ajukan proposal menarik langsung ke perusahaan.</p>
                     </div>
-                    <div class="flex items-start gap-3">
-                        <div class="w-8 h-8 rounded-lg bg-teal-100 flex items-center justify-center shrink-0 mt-0.5">
-                            <i class="fa-solid fa-folder-open text-teal-600 text-sm"></i>
+                    <div class="p-4 bg-white border border-slate-200/80 rounded-2xl shadow-xs">
+                        <div
+                            class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-2 font-bold">
+                            <i class="fa-solid fa-shield-halved text-xs"></i>
                         </div>
-                        <div>
-                            <h4 class="font-bold text-sm text-slate-900">Bangun Portofolio</h4>
-                            <p class="text-xs text-slate-500">Kumpulkan pengalaman dan rating dari setiap proyek</p>
-                        </div>
+                        <h4 class="font-bold text-sm text-slate-900">Sistem Aman</h4>
+                        <p class="text-xs text-slate-500 mt-1">Pembayaran terjamin melalui alur proyek yang transparan.
+                        </p>
                     </div>
-                    <div class="flex items-start gap-3">
-                        <div class="w-8 h-8 rounded-lg bg-teal-100 flex items-center justify-center shrink-0 mt-0.5">
-                            <i class="fa-solid fa-coins text-teal-600 text-sm"></i>
+                    <div class="p-4 bg-white border border-slate-200/80 rounded-2xl shadow-xs">
+                        <div
+                            class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-2 font-bold">
+                            <i class="fa-solid fa-star text-xs"></i>
                         </div>
-                        <div>
-                            <h4 class="font-bold text-sm text-slate-900">Dapatkan Peluang Kerja</h4>
-                            <p class="text-xs text-slate-500">Dapatkan penghasilan dari project yang kamu selesaikan</p>
-                        </div>
+                        <h4 class="font-bold text-sm text-slate-900">Bangun Reputasi</h4>
+                        <p class="text-xs text-slate-500 mt-1">Dapatkan ulasan positif untuk meningkatkan tarif Anda.
+                        </p>
                     </div>
                 </div>
+
                 <div class="pt-2">
-                    <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl transition shadow-md hover:shadow-lg">
-                        <i class="fa-solid fa-user-plus"></i>
+                    <a href="{{ route('register') }}"
+                        class="inline-flex items-center gap-2 px-7 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl shadow-md shadow-emerald-500/20 transition hover:shadow-lg">
+                        <i class="fa-solid fa-user-plus text-xs"></i>
                         Daftar Sebagai Freelancer
                     </a>
                 </div>
             </div>
-            <div class="relative h-[300px] sm:h-[400px] rounded-2xl overflow-hidden shadow-xl">
-                <img src="{{ asset('images/beranda.png') }}" alt="Freelancer" class="w-full h-full object-cover">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-                <div class="absolute bottom-4 left-4 right-4">
-                    <div class="bg-white/90 backdrop-blur rounded-xl p-3 sm:p-4">
-                        <p class="text-xs sm:text-sm font-bold text-slate-900">"Platform ini membantu saya mendapatkan proyek pertama!"</p>
-                        <p class="text-[10px] sm:text-xs text-slate-500 mt-1">— Freelancer Aktif</p>
+
+            <div
+                class="relative h-[340px] sm:h-[420px] rounded-3xl overflow-hidden shadow-2xl border border-slate-200/60">
+                <img src="{{ asset('images/beranda.png') }}" alt="Freelancer Workspace"
+                    class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent"></div>
+                <div class="absolute bottom-6 left-6 right-6">
+                    <div class="bg-white/90 backdrop-blur-md rounded-2xl p-4 border border-white/20 shadow-lg">
+                        <p class="text-xs sm:text-sm font-bold text-slate-900">"Sistem kerja yang transparan memudahkan
+                            saya mendapat klien tetap!"</p>
+                        <p class="text-[11px] text-slate-500 font-semibold mt-1">— Freelancer Aktif Nexus</p>
                     </div>
                 </div>
             </div>
@@ -422,113 +589,139 @@
     <!-- ============================================================ -->
     <!-- 7. UNTUK PERUSAHAAN -->
     <!-- ============================================================ -->
-    <section id="company" class="scroll-offset bg-gradient-to-br from-slate-900 to-slate-800 py-12 sm:py-16">
+    <!-- ============================================================ -->
+    <!-- 7. UNTUK PERUSAHAAN -->
+    <!-- ============================================================ -->
+    <section id="company" class="scroll-offset bg-white py-16 sm:py-24 border-y border-slate-200/60">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
-                <div class="relative h-[300px] sm:h-[400px] rounded-2xl overflow-hidden shadow-xl order-2 lg:order-1">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+
+                {{-- Image Card --}}
+                <div
+                    class="relative h-[340px] sm:h-[420px] rounded-3xl overflow-hidden shadow-xl border border-slate-200/80 order-2 lg:order-1">
                     <img src="{{ asset('images/image.png') }}" alt="Perusahaan" class="w-full h-full object-cover">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-                    <div class="absolute bottom-4 left-4 right-4">
-                        <div class="bg-white/90 backdrop-blur rounded-xl p-3 sm:p-4">
-                            <p class="text-xs sm:text-sm font-bold text-slate-900">"Kualitas freelancer sangat memuaskan!"</p>
-                            <p class="text-[10px] sm:text-xs text-slate-500 mt-1">— Perusahaan Terdaftar</p>
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent">
+                    </div>
+
+                    <div class="absolute bottom-6 left-6 right-6">
+                        <div class="bg-white/95 backdrop-blur-md rounded-2xl p-4 border border-slate-200/80 shadow-lg">
+                            <p class="text-xs sm:text-sm font-bold text-slate-900">"Kualitas talenta di platform ini
+                                sangat memuaskan dan tepat waktu."</p>
+                            <p class="text-[11px] text-blue-600 font-semibold mt-1">— Partner Mitra Perusahaan</p>
                         </div>
                     </div>
                 </div>
-                <div class="space-y-6 text-white order-1 lg:order-2">
-                    <span class="inline-block px-3 py-1 bg-cyan-800 text-cyan-200 text-xs font-bold rounded-full uppercase tracking-wide">Untuk Perusahaan</span>
-                    <h2 class="text-2xl sm:text-3xl font-extrabold leading-tight">
-                        Temukan Talenta Terbaik <span class="text-cyan-400">Untuk Bisnis Anda</span>
+
+                {{-- Text Content --}}
+                <div class="space-y-6 order-1 lg:order-2">
+                    <span
+                        class="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full uppercase tracking-wider">
+                        Untuk Perusahaan
+                    </span>
+
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 leading-tight tracking-tight">
+                        Temukan Talenta Terbaik <span class="text-blue-600">Untuk Bisnis Anda</span>
                     </h2>
-                    <p class="text-slate-300 leading-relaxed">
-                        Publikasikan proyek Anda dan temukan freelancer berkualitas untuk mewujudkannya.
+
+                    <p class="text-slate-600 leading-relaxed font-medium">
+                        Selesaikan pekerjaan digital bisnis Anda lebih cepat dengan dukungan tim profesional independen
+                        yang terverifikasi.
                     </p>
-                    <div class="space-y-4">
-                        <div class="flex items-start gap-3">
-                            <div class="w-8 h-8 rounded-lg bg-cyan-800 flex items-center justify-center shrink-0 mt-0.5">
-                                <i class="fa-solid fa-plus-circle text-cyan-300 text-sm"></i>
+
+                    <div class="space-y-3 pt-2">
+                        <div
+                            class="flex items-center gap-3.5 p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 shadow-xs">
+                            <div
+                                class="w-9 h-9 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 font-bold">
+                                <i class="fa-solid fa-plus text-xs"></i>
                             </div>
                             <div>
-                                <h4 class="font-bold text-sm">Publikasikan Proyek</h4>
-                                <p class="text-xs text-slate-400">Buat proyek dan dapatkan penawaran dari freelancer</p>
+                                <h4 class="font-bold text-sm text-slate-900">Publikasikan Proyek Mudah</h4>
+                                <p class="text-xs text-slate-500 mt-0.5">Tentukan kriteria, budget, dan batas waktu
+                                    proyek Anda.</p>
                             </div>
                         </div>
-                        <div class="flex items-start gap-3">
-                            <div class="w-8 h-8 rounded-lg bg-cyan-800 flex items-center justify-center shrink-0 mt-0.5">
-                                <i class="fa-solid fa-search text-cyan-300 text-sm"></i>
+
+                        <div
+                            class="flex items-center gap-3.5 p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 shadow-xs">
+                            <div
+                                class="w-9 h-9 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 font-bold">
+                                <i class="fa-solid fa-layer-group text-xs"></i>
                             </div>
                             <div>
-                                <h4 class="font-bold text-sm">Temukan Freelancer</h4>
-                                <p class="text-xs text-slate-400">Cari talenta dengan skill yang Anda butuhkan</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-3">
-                            <div class="w-8 h-8 rounded-lg bg-cyan-800 flex items-center justify-center shrink-0 mt-0.5">
-                                <i class="fa-solid fa-gear text-cyan-300 text-sm"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-sm">Kelola Proyek</h4>
-                                <p class="text-xs text-slate-400">Pantau proses proyek melalui workspace terintegrasi</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-3">
-                            <div class="w-8 h-8 rounded-lg bg-cyan-800 flex items-center justify-center shrink-0 mt-0.5">
-                                <i class="fa-solid fa-star text-cyan-300 text-sm"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-sm">Pilih Talenta Terbaik</h4>
-                                <p class="text-xs text-slate-400">Review portofolio dan pilih freelancer ideal</p>
+                                <h4 class="font-bold text-sm text-slate-900">Workspace Terintegrasi</h4>
+                                <p class="text-xs text-slate-500 mt-0.5">Pantau kemajuan pekerjaan secara real-time di
+                                    satu tempat.</p>
                             </div>
                         </div>
                     </div>
+
                     <div class="pt-2">
-                        <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-cyan-600 hover:bg-cyan-500 text-white font-semibold rounded-xl transition shadow-md hover:shadow-lg">
-                            <i class="fa-solid fa-building"></i>
+                        <a href="{{ route('register') }}"
+                            class="inline-flex items-center gap-2 px-7 py-3.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold rounded-2xl shadow-md shadow-blue-500/20 transition-all duration-200">
+                            <i class="fa-solid fa-building text-xs"></i>
                             Daftar Sebagai Perusahaan
                         </a>
                     </div>
                 </div>
+
             </div>
         </div>
     </section>
-
     <!-- ============================================================ -->
     <!-- 8. CARA KERJA -->
     <!-- ============================================================ -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-        <div class="text-center mb-8 sm:mb-12">
-            <span class="inline-block px-3 py-1 bg-cyan-100 text-cyan-700 text-xs font-bold rounded-full uppercase tracking-wide mb-3">Cara Kerja</span>
-            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Bagaimana Cara Kerjanya?</h2>
-            <p class="text-slate-500 mt-2 max-w-lg mx-auto">Mulai perjalanan Anda hanya dalam 4 langkah mudah</p>
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+        <div class="text-center mb-12">
+            <span
+                class="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full uppercase tracking-wider mb-3">
+                Cara Kerja
+            </span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Bagaimana Cara Kerjanya?</h2>
+            <p class="text-slate-500 mt-2 max-w-lg mx-auto text-sm sm:text-base">Mulai kolaborasi Anda hanya dalam 4
+                langkah sederhana</p>
         </div>
-        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            <div class="relative bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 text-center hover:shadow-xl transition group">
-                <div class="w-12 h-12 sm:w-14 sm:h-14 bg-cyan-100 rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4 group-hover:bg-cyan-600 transition">
-                    <span class="text-xl sm:text-2xl font-extrabold text-cyan-700 group-hover:text-white transition">1</span>
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div
+                class="bg-white border border-slate-200/80 rounded-2xl p-6 text-center shadow-xs hover:shadow-xl transition duration-300">
+                <div
+                    class="w-12 h-12 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 font-extrabold text-lg">
+                    1
                 </div>
-                <h3 class="font-bold text-sm sm:text-base text-slate-900">Daftar Akun</h3>
-                <p class="text-xs sm:text-sm text-slate-500 mt-1">Buat akun sebagai Freelancer atau Perusahaan</p>
+                <h3 class="font-bold text-base text-slate-900">Daftar Akun</h3>
+                <p class="text-xs text-slate-500 mt-2 leading-relaxed">Buat profil Anda sebagai Freelancer atau
+                    Perusahaan secara gratis.</p>
             </div>
-            <div class="relative bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 text-center hover:shadow-xl transition group">
-                <div class="w-12 h-12 sm:w-14 sm:h-14 bg-teal-100 rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4 group-hover:bg-teal-600 transition">
-                    <span class="text-xl sm:text-2xl font-extrabold text-teal-700 group-hover:text-white transition">2</span>
+            <div
+                class="bg-white border border-slate-200/80 rounded-2xl p-6 text-center shadow-xs hover:shadow-xl transition duration-300">
+                <div
+                    class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 font-extrabold text-lg">
+                    2
                 </div>
-                <h3 class="font-bold text-sm sm:text-base text-slate-900">Temukan / Publikasikan</h3>
-                <p class="text-xs sm:text-sm text-slate-500 mt-1">Cari proyek atau publikasikan proyek Anda</p>
+                <h3 class="font-bold text-base text-slate-900">Temukan Proyek</h3>
+                <p class="text-xs text-slate-500 mt-2 leading-relaxed">Cari proyek menarik atau buka lowongan proyek
+                    baru.</p>
             </div>
-            <div class="relative bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 text-center hover:shadow-xl transition group">
-                <div class="w-12 h-12 sm:w-14 sm:h-14 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4 group-hover:bg-blue-600 transition">
-                    <span class="text-xl sm:text-2xl font-extrabold text-blue-700 group-hover:text-white transition">3</span>
+            <div
+                class="bg-white border border-slate-200/80 rounded-2xl p-6 text-center shadow-xs hover:shadow-xl transition duration-300">
+                <div
+                    class="w-12 h-12 bg-sky-100 text-sky-600 rounded-2xl flex items-center justify-center mx-auto mb-4 font-extrabold text-lg">
+                    3
                 </div>
-                <h3 class="font-bold text-sm sm:text-base text-slate-900">Bekerja Sama</h3>
-                <p class="text-xs sm:text-sm text-slate-500 mt-1">Pilih freelancer atau kirim penawaran terbaik</p>
+                <h3 class="font-bold text-base text-slate-900">Kolaborasi</h3>
+                <p class="text-xs text-slate-500 mt-2 leading-relaxed">Sepakati penawaran dan kerjakan proyek di ruang
+                    kerja khusus.</p>
             </div>
-            <div class="relative bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 text-center hover:shadow-xl transition group">
-                <div class="w-12 h-12 sm:w-14 sm:h-14 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4 group-hover:bg-emerald-600 transition">
-                    <span class="text-xl sm:text-2xl font-extrabold text-emerald-700 group-hover:text-white transition">4</span>
+            <div
+                class="bg-white border border-slate-200/80 rounded-2xl p-6 text-center shadow-xs hover:shadow-xl transition duration-300">
+                <div
+                    class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4 font-extrabold text-lg">
+                    4
                 </div>
-                <h3 class="font-bold text-sm sm:text-base text-slate-900">Selesaikan Proyek</h3>
-                <p class="text-xs sm:text-sm text-slate-500 mt-1">Selesaikan proyek dan berikan review</p>
+                <h3 class="font-bold text-base text-slate-900">Selesai & Review</h3>
+                <p class="text-xs text-slate-500 mt-2 leading-relaxed">Serahkan hasil pekerjaan dan berikan penilaian
+                    hasil kerja.</p>
             </div>
         </div>
     </section>
@@ -536,29 +729,24 @@
     <!-- ============================================================ -->
     <!-- 9. FINAL CTA -->
     <!-- ============================================================ -->
-    <section class="relative overflow-hidden py-16 sm:py-24">
-        <div class="absolute inset-0 bg-gradient-to-r from-cyan-600 via-teal-600 to-emerald-600"></div>
-        <div class="absolute inset-0 opacity-10">
-            <div class="absolute top-0 left-0 w-64 h-64 bg-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>
-            <div class="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full translate-x-1/3 translate-y-1/3"></div>
-        </div>
-        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 class="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-white leading-tight">
+    <section
+        class="relative overflow-hidden py-16 sm:py-20 my-8 mx-4 sm:mx-8 lg:mx-auto max-w-7xl rounded-3xl bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 text-white shadow-2xl shadow-blue-500/20">
+        <div class="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto">
+            <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight">
                 Siap Memulai Perjalanan Anda?
             </h2>
-            <p class="text-cyan-100 mt-4 max-w-xl mx-auto text-base sm:text-lg">
-                Bergabunglah dengan The Archipelago Nexus dan temukan peluang tak terbatas untuk berkembang.
+            <p class="text-blue-100 mt-4 text-sm sm:text-base leading-relaxed">
+                Bergabunglah bersama ribuan talenta digital dan perusahaan di platform The Archipelago Nexus sekarang
+                juga.
             </p>
-            <div class="flex flex-wrap justify-center gap-3 sm:gap-4 mt-8">
-                <a href="{{ route('register') }}" 
-                   class="inline-flex items-center gap-2 px-8 py-3.5 bg-white hover:bg-slate-100 text-slate-900 font-bold rounded-xl shadow-xl hover:shadow-2xl transition transform hover:-translate-y-0.5">
-                    <i class="fa-solid fa-user-plus"></i>
-                    Daftar Gratis
+            <div class="flex flex-wrap justify-center gap-4 mt-8">
+                <a href="{{ route('register') }}"
+                    class="px-8 py-3.5 bg-white text-blue-700 hover:bg-blue-50 font-extrabold rounded-2xl shadow-lg transition hover:-translate-y-0.5">
+                    Daftar Gratis Sekarang
                 </a>
-                <a href="{{ route('login') }}" 
-                   class="inline-flex items-center gap-2 px-8 py-3.5 bg-white/20 hover:bg-white/30 text-white font-semibold rounded-xl border border-white/40 transition transform hover:-translate-y-0.5">
-                    <i class="fa-solid fa-arrow-right-to-bracket"></i>
-                    Masuk
+                <a href="{{ route('login') }}"
+                    class="px-8 py-3.5 bg-blue-500/30 hover:bg-blue-500/40 text-white font-bold rounded-2xl border border-blue-400/30 transition hover:-translate-y-0.5">
+                    Masuk Akun
                 </a>
             </div>
         </div>
@@ -567,68 +755,73 @@
     <!-- ============================================================ -->
     <!-- 10. FOOTER -->
     <!-- ============================================================ -->
-    <footer class="bg-white border-t border-slate-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
-            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                <!-- Brand -->
-                <div class="sm:col-span-2 lg:col-span-1 space-y-3">
+    <footer class="bg-white border-t border-slate-200/80 pt-12 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+                <div class="space-y-4">
                     <div class="flex items-center gap-2.5">
-                        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden">
-                            <img src="{{ asset('images/nexus.jpg') }}" alt="Logo" class="w-full h-full object-cover">
+                        <div class="w-9 h-9 rounded-xl overflow-hidden ring-1 ring-slate-200">
+                            <img src="{{ asset('images/nexus.jpg') }}" alt="Logo"
+                                class="w-full h-full object-cover">
                         </div>
-                        <span class="font-bold text-sm sm:text-base text-slate-900">The Archipelago Nexus</span>
+                        <span class="font-extrabold text-base text-slate-900">The Archipelago Nexus</span>
                     </div>
-                    <p class="text-xs sm:text-sm text-slate-500 leading-relaxed max-w-xs">
-                        Platform marketplace freelance terpercaya yang menghubungkan talenta berbakat dengan perusahaan untuk mewujudkan proyek digital.
+                    <p class="text-xs text-slate-500 leading-relaxed">
+                        Platform marketplace freelance terpercaya yang menghubungkan talenta berbakat dengan perusahaan
+                        untuk mewujudkan proyek digital secara profesional.
                     </p>
-                    <div class="flex items-center gap-2">
-                        <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
-                        <span class="text-[10px] sm:text-xs text-slate-400">Online — 100+ aktif</span>
-                    </div>
                 </div>
-                <!-- Untuk Freelancer -->
-                <div class="space-y-3">
-                    <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Freelancer</h4>
-                    <div class="space-y-2">
-                        <a href="{{ route('register') }}" class="block text-xs sm:text-sm text-slate-500 hover:text-cyan-700 transition font-medium">Daftar Freelancer</a>
-                        <a href="{{ route('login') }}" class="block text-xs sm:text-sm text-slate-500 hover:text-cyan-700 transition font-medium">Cari Proyek</a>
-                        <a href="{{ route('register') }}" class="block text-xs sm:text-sm text-slate-500 hover:text-cyan-700 transition font-medium">Mulai Bekerja</a>
-                    </div>
+
+                <div>
+                    <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4">Freelancer</h4>
+                    <ul class="space-y-2.5 text-xs font-semibold text-slate-600">
+                        <li><a href="{{ route('register') }}" class="hover:text-blue-600 transition">Daftar
+                                Freelancer</a></li>
+                        <li><a href="{{ route('login') }}" class="hover:text-blue-600 transition">Cari Proyek</a>
+                        </li>
+                        <li><a href="{{ route('register') }}" class="hover:text-blue-600 transition">Mulai
+                                Bekerja</a></li>
+                    </ul>
                 </div>
-                <!-- Untuk Perusahaan -->
-                <div class="space-y-3">
-                    <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Perusahaan</h4>
-                    <div class="space-y-2">
-                        <a href="{{ route('register') }}" class="block text-xs sm:text-sm text-slate-500 hover:text-cyan-700 transition font-medium">Daftar Perusahaan</a>
-                        <a href="{{ route('login') }}" class="block text-xs sm:text-sm text-slate-500 hover:text-cyan-700 transition font-medium">Publikasikan Proyek</a>
-                        <a href="{{ route('login') }}" class="block text-xs sm:text-sm text-slate-500 hover:text-cyan-700 transition font-medium">Cari Talenta</a>
-                    </div>
+
+                <div>
+                    <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4">Perusahaan</h4>
+                    <ul class="space-y-2.5 text-xs font-semibold text-slate-600">
+                        <li><a href="{{ route('register') }}" class="hover:text-blue-600 transition">Daftar
+                                Perusahaan</a></li>
+                        <li><a href="{{ route('login') }}" class="hover:text-blue-600 transition">Publikasikan
+                                Proyek</a></li>
+                        <li><a href="{{ route('login') }}" class="hover:text-blue-600 transition">Cari Talenta</a>
+                        </li>
+                    </ul>
                 </div>
-                <!-- Dukungan -->
-                <div class="space-y-3">
-                    <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Dukungan</h4>
-                    <div class="space-y-2">
-                        <a href="{{ route('login') }}" class="block text-xs sm:text-sm text-slate-500 hover:text-cyan-700 transition font-medium">Pusat Bantuan</a>
-                        <a href="{{ route('login') }}" class="block text-xs sm:text-sm text-slate-500 hover:text-cyan-700 transition font-medium">Kebijakan Privasi</a>
-                        <a href="{{ route('login') }}" class="block text-xs sm:text-sm text-slate-500 hover:text-cyan-700 transition font-medium">Syarat & Ketentuan</a>
-                        <p class="text-xs sm:text-sm text-slate-400 font-medium flex items-center gap-1.5">
-                            <i class="fa-regular fa-envelope"></i> support@archipelagonexus.id
-                        </p>
-                    </div>
+
+                <div>
+                    <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4">Dukungan</h4>
+                    <ul class="space-y-2.5 text-xs font-semibold text-slate-600">
+                        <li><a href="{{ route('login') }}" class="hover:text-blue-600 transition">Pusat Bantuan</a>
+                        </li>
+                        <li><a href="{{ route('login') }}" class="hover:text-blue-600 transition">Kebijakan
+                                Privasi</a></li>
+                        <li class="pt-2 text-slate-400 font-normal">
+                            <i class="fa-regular fa-envelope mr-1.5"></i> support@archipelagonexus.id
+                        </li>
+                    </ul>
                 </div>
             </div>
-            <!-- Bottom -->
-            <div class="mt-8 sm:mt-10 pt-6 sm:pt-8 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs sm:text-sm text-slate-500">
-                <p>&copy; 2026 <strong class="text-slate-700">The Archipelago Nexus</strong>. Hak Cipta Dilindungi.</p>
+
+            <div
+                class="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-medium text-slate-500">
+                <p>&copy; 2026 The Archipelago Nexus. Hak Cipta Dilindungi.</p>
                 <div class="flex items-center gap-4">
-                    <a href="{{ route('login') }}" class="hover:text-cyan-700 transition font-medium">Kebijakan Privasi</a>
-                    <a href="{{ route('login') }}" class="hover:text-cyan-700 transition font-medium">Syarat & Ketentuan</a>
+                    <a href="{{ route('login') }}" class="hover:text-blue-600 transition">Privasi</a>
+                    <a href="{{ route('login') }}" class="hover:text-blue-600 transition">Ketentuan</a>
                 </div>
             </div>
         </div>
     </footer>
 
-    <!-- Mobile Menu Toggle Script -->
+    <!-- Mobile Menu Script -->
     <script>
         document.getElementById('mobile-menu-btn')?.addEventListener('click', function() {
             const menu = document.getElementById('mobile-menu');
@@ -636,4 +829,5 @@
         });
     </script>
 </body>
+
 </html>

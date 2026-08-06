@@ -16,6 +16,35 @@ use Illuminate\Support\Facades\Storage;
 
 class PaymentController extends Controller
 {
+/**
+     * Show the Payment Gateway simulation page.
+     */
+    public function showGateway(Workspace $workspace)
+    {
+        // Hanya company yang bisa akses
+        if ((int) $workspace->company_id !== (int) Auth::id()) {
+            abort(403, 'Hanya perusahaan yang dapat mengakses halaman ini.');
+        }
+
+        // Pastikan status workspace adalah Menunggu Pembayaran
+        if ($workspace->status !== 'Menunggu Pembayaran') {
+            return redirect()
+                ->route('company.workspaces.show', $workspace)
+                ->with('error', 'Workspace tidak dalam status Menunggu Pembayaran.');
+        }
+
+        $payment = $workspace->payment;
+
+        if (!$payment) {
+            return redirect()
+                ->route('company.workspaces.show', $workspace)
+                ->with('error', 'Data pembayaran tidak ditemukan.');
+        }
+
+        // Simulasi murni UI - tidak ada proses backend atau perubahan database.
+        return view('company.payments.gateway', compact('workspace', 'payment'));
+    }
+
     /**
      * Show the payment upload form (or redirect if not applicable).
      */

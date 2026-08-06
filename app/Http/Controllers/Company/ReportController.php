@@ -3,25 +3,38 @@
 namespace App\Http\Controllers\Company;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ReportEvidenceRequest;
+use App\Http\Requests\ReportStoreRequest;
 use App\Models\Report;
-use App\Models\Project;
 use App\Models\Penawaran;
+use App\Models\Workspace;
+use App\Services\ReportService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 
 class ReportController extends Controller
 {
+    protected $reportService;
+
+    public function __construct(ReportService $reportService)
+    {
+        $this->reportService = $reportService;
+    }
+
     /**
      * Menampilkan daftar laporan milik company.
      */
     public function index(): View
     {
-        $reports = Report::with([
+$reports = Report::with([
                 'reportedUser',
                 'project',
-                'penawaran'
+                'penawaran',
+                'workspace.project',
             ])
             ->where('reporter_id', Auth::id())
             ->latest()
@@ -33,13 +46,31 @@ class ReportController extends Controller
     /**
      * Form membuat laporan.
      */
-    public function create(Request $request): View
+public function create(Request $request): View
     {
         $penawaran = null;
         $project = null;
         $reportedUser = null;
+        $workspace = null;
 
-        if ($request->filled('penawaran_id')) {
+        // Konteks dari workspace (Company melaporkan Freelancer di workspace).
+        if ($request->filled('workspace_id')) {
+            $workspace = Workspace::with(['project', 'freelancer'])
+                ->findOrFail($request->workspace_id);
+
+            // Hanya company yang menjadi bagian dari workspace ini.
+            if ((int) $workspace->company_id !== (int) Auth::id()) {
+                abort(403, 'Anda tidak memiliki akses ke workspace ini.');
+            }
+
+            $project = $workspace->project;
+            $reportedUser = $workspace->freelancer;
+
+            // Tidak boleh melaporkan diri sendiri.
+            if ($reportedUser && $reportedUser->id == Auth::id()) {
+                abort(403, 'Anda tidak dapat melaporkan diri sendiri.');
+            }
+        } elseif ($request->filled('penawaran_id')) {
 
             $penawaran = Penawaran::with([
                 'freelancer',
@@ -63,93 +94,38 @@ class ReportController extends Controller
         return view('company.reports.create', compact(
             'penawaran',
             'project',
-            'reportedUser'
+            'reportedUser',
+            'workspace'
         ));
     }
 
     /**
      * Simpan laporan.
      */
-    public function store(Request $request): RedirectResponse
+public function store(ReportStoreRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'subject'          => 'required|string|max:255',
-            'description'      => 'required|string|max:5000',
-            'reported_user_id' => 'nullable|exists:users,id',
-            'project_id'       => 'nullable|exists:projects,id',
-            'penawaran_id'     => 'nullable|exists:penawarans,id',
-        ]);
+        $validated = $request->validated();
 
-        if ($request->filled('penawaran_id')) {
-
-            $penawaran = Penawaran::with([
-                'freelancer',
-                'project'
-            ])->find($request->penawaran_id);
-
-            if (!$penawaran) {
-                return back()
-                    ->withErrors([
-                        'penawaran_id' => 'Penawaran tidak ditemukan.'
-                    ])
-                    ->withInput();
-            }
-
-            // Pastikan penawaran milik company yang login
-            if ((int) $penawaran->project->user_id !== (int) Auth::id()) {
-                return back()
-                    ->withErrors([
-                        'penawaran_id' => 'Anda tidak memiliki akses ke penawaran ini.'
-                    ])
-                    ->withInput();
-            }
-
-            // Pastikan project sesuai
-            if (
-                $request->filled('project_id') &&
-                (int) $request->project_id !== (int) $penawaran->project_id
-            ) {
-                return back()
-                    ->withErrors([
-                        'project_id' => 'Proyek tidak sesuai dengan penawaran.'
-                    ])
-                    ->withInput();
-            }
-
-            // Pastikan freelancer yang dilaporkan benar
-            $freelancerId = optional($penawaran->freelancer)->id;
-
-            if (
-                $request->filled('reported_user_id') &&
-                (int) $request->reported_user_id !== $freelancerId
-            ) {
-                return back()
-                    ->withErrors([
-                        'reported_user_id' => 'Pengguna yang dilaporkan tidak sesuai dengan penawaran.'
-                    ])
-                    ->withInput();
-            }
+        // Semua validasi otorisasi relasi (project/penawaran/workspace) ditangani
+        // oleh ReportService::store() -> authorizeStore().
+        try {
+            $this->reportService->store($validated);
+        } catch (ValidationException $e) {
+            // Laporan ditolak (mis. duplikat) -> tampilkan pesan yang jelas.
+            return Redirect::back()
+                ->withErrors($e->errors())
+                ->withInput();
         }
-
-        Report::create([
-            'reporter_id'      => Auth::id(),
-            'reported_user_id' => $validated['reported_user_id'] ?? null,
-            'project_id'       => $validated['project_id'] ?? null,
-            'penawaran_id'     => $validated['penawaran_id'] ?? null,
-            'subject'          => $validated['subject'],
-            'description'      => $validated['description'],
-            'status'           => 'menunggu',
-        ]);
 
         return redirect()
             ->route('company.reports.index')
             ->with(
                 'success',
-                'Laporan berhasil dikirim. Admin akan segera meninjau laporan Anda.'
+                'Laporan berhasil dikirim. Terima kasih telah membantu menjaga kualitas platform. Tim Admin akan meninjau laporan Anda secepat mungkin.'
             );
     }
 
-    /**
+/**
      * Detail laporan.
      */
     public function show(Report $report): View
@@ -163,8 +139,27 @@ class ReportController extends Controller
             'reportedUser',
             'project.owner',
             'penawaran.freelancer',
+            'attachments',
         ]);
 
         return view('company.reports.show', compact('report'));
+    }
+
+    /**
+     * Unggah bukti tambahan untuk laporan berstatus 'menunggu-bukti'.
+     */
+    public function uploadEvidence(ReportEvidenceRequest $request, Report $report): RedirectResponse
+    {
+        try {
+            $this->reportService->uploadEvidence($report, $request->validated('attachments'));
+        } catch (ValidationException $e) {
+            return Redirect::back()
+                ->withErrors($e->errors())
+                ->withInput();
+        }
+
+        return redirect()
+            ->route('company.reports.show', $report)
+            ->with('success', 'Bukti tambahan berhasil diunggah. Laporan Anda kini kembali ditinjau oleh Admin.');
     }
 }

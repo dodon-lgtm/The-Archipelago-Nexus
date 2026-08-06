@@ -1,4 +1,4 @@
- a ,
+ 
  <!DOCTYPE html>
  <html lang="id">
 
@@ -237,10 +237,10 @@
                  <div class="flex items-center gap-4">
                      {{-- Notifications --}}
                      <div class="relative">
-                         <button id="notificationButton" aria-label="Notifikasi"
+                         <button id="adminNotificationButton" aria-label="Notifikasi"
                              class="relative w-10 h-10 rounded-full border border-slate-200 hover:bg-slate-100 flex items-center justify-center">
                              <i class="fa-regular fa-bell text-slate-600"></i>
-                             <span id="notificationBadge"
+                             <span id="adminNotificationBadge"
                                  class="absolute -top-1 -right-1 min-w-[18px] h-[18px] rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center px-1"></span>
                          </button>
 
@@ -464,10 +464,11 @@
                      'offer.accepted': 'fa-solid fa-check',
                      'offer.rejected': 'fa-solid fa-ban',
                      'workspace.message': 'fa-regular fa-comment-dots',
-                     'submission.uploaded': 'fa-solid fa-upload',
-                     'submission.accepted': 'fa-solid fa-check-double',
-                     'submission.revision_requested': 'fa-solid fa-pen',
-                 };
+                    'submission.uploaded': 'fa-solid fa-upload',
+                    'submission.accepted': 'fa-solid fa-check-double',
+                    'submission.revision_requested': 'fa-solid fa-pen',
+                    'report.created': 'fa-solid fa-flag',
+                };
                  return iconMap[type] || 'fa-regular fa-bell';
              }
 

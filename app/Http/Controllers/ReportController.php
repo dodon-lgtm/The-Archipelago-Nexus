@@ -2,23 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Report;
-use App\Models\User;
-use App\Services\NotificationService;
-use Illuminate\Http\Request;
+use App\Http\Requests\ReportEvidenceRequest;
+use App\Http\Requests\ReportStoreRequest;
+use App\Services\ReportService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Validation\ValidationException;
 
 class ReportController extends Controller
 {
-    protected $notificationService;
+    protected $reportService;
 
-    public function __construct(NotificationService $notificationService)
+    public function __construct(ReportService $reportService)
     {
-        $this->notificationService = $notificationService;
+        $this->reportService = $reportService;
     }
 
     /**
-     * Show the report creation form.
+     * Show the report creation form (General Report / Website).
      */
     public function create()
     {
@@ -28,39 +29,37 @@ class ReportController extends Controller
     /**
      * Store a newly created report.
      */
-    public function store(Request $request)
+    public function store(ReportStoreRequest $request)
     {
-        $validated = $request->validate([
-            'subject'          => 'required|string|max:255',
-            'description'      => 'required|string|max:5000',
-            'reported_user_id' => 'nullable|exists:users,id',
-            'project_id'       => 'nullable|exists:projects,id',
-        ]);
-
-        $report = Report::create([
-            'reporter_id'      => Auth::id(),
-            'reported_user_id' => $validated['reported_user_id'] ?? null,
-            'project_id'       => $validated['project_id'] ?? null,
-            'subject'          => $validated['subject'],
-            'description'      => $validated['description'],
-            'status'           => 'menunggu',
-        ]);
-
-        // Kirim notifikasi ke semua admin
-        $admins = User::where('role', 'admin')->get();
-        foreach ($admins as $admin) {
-            $this->notificationService->createNotification(
-                $admin->id,
-                'Laporan Baru: ' . $report->subject,
-                $report->description,
-                'company_request.created',
-                route('admin.reports.show', $report),
-                ['report_id' => $report->id]
-            );
+        try {
+            $this->reportService->store($request->validated());
+        } catch (ValidationException $e) {
+            // Laporan ditolak (mis. duplikat) -> tampilkan pesan yang jelas.
+            return Redirect::back()
+                ->withErrors($e->errors())
+                ->withInput();
         }
 
         return redirect()
             ->route(Auth::user()->role . '.dashboard')
-            ->with('success', 'Laporan berhasil dikirim. Kami akan memproses laporan Anda segera.');
+            ->with('success', 'Laporan berhasil dikirim. Terima kasih telah membantu menjaga kualitas platform. Tim Admin akan meninjau laporan Anda secepat mungkin.');
+    }
+
+    /**
+     * Unggah bukti tambahan untuk laporan berstatus 'menunggu-bukti'.
+     */
+    public function uploadEvidence(ReportEvidenceRequest $request, \App\Models\Report $report)
+    {
+        try {
+            $this->reportService->uploadEvidence($report, $request->validated('attachments'));
+        } catch (ValidationException $e) {
+            return Redirect::back()
+                ->withErrors($e->errors())
+                ->withInput();
+        }
+
+        return redirect()
+            ->route(Auth::user()->role . '.dashboard')
+            ->with('success', 'Bukti tambahan berhasil diunggah. Laporan Anda kini kembali ditinjau oleh Admin.');
     }
 }

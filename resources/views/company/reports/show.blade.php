@@ -64,16 +64,21 @@
                     <div class="lg:col-span-2 space-y-6">
                         {{-- Report Detail --}}
                         <div class="bg-white rounded-3xl border border-slate-200/80 shadow-sm p-6">
-                            <div class="flex items-start justify-between mb-4">
+<div class="flex items-start justify-between mb-4">
                                 <div>
                                     <h2 class="text-xl font-bold text-slate-800">{{ $report->subject }}</h2>
                                     <p class="text-sm text-slate-500 mt-1">Laporan #{{ $report->id }}</p>
+                                    <div class="flex items-center gap-2 mt-2 flex-wrap">
+                                        <span class="text-xs px-2.5 py-1 rounded-full font-semibold bg-slate-100 text-slate-600">{{ \App\Models\Report::categoryLabel($report->category) }}</span>
+                                        <span class="text-xs px-2.5 py-1 rounded-full font-semibold bg-brand/10 text-brand border border-brand/10">Target: {{ \App\Models\Report::targetLabel($report->target) }}</span>
+                                    </div>
                                 </div>
                                 <span class="text-xs px-3 py-1.5 rounded-full font-semibold
                                     @if($report->status == 'menunggu') bg-amber-50 text-amber-600
-                                    @elseif($report->status == 'diproses') bg-blue-50 text-blue-600
+                                    @elseif($report->status == 'ditinjau') bg-blue-50 text-blue-600
+                                    @elseif($report->status == 'menunggu-bukti') bg-violet-50 text-violet-600
                                     @elseif($report->status == 'selesai') bg-emerald-50 text-emerald-600
-                                    @else bg-red-50 text-red-600 @endif">{{ ucfirst($report->status) }}</span>
+                                    @else bg-red-50 text-red-600 @endif">{{ \App\Models\Report::statusLabel($report->status) }}</span>
                             </div>
 
                             {{-- Description --}}
@@ -92,6 +97,96 @@
                                 <div>
                                     <p class="text-xs text-slate-500 font-semibold mb-1">Catatan Admin</p>
                                     <div class="bg-slate-50 rounded-xl p-4 text-sm text-slate-400 italic">Belum ada catatan dari admin.</div>
+                                </div>
+                            @endif
+
+                            {{-- Lampiran / Bukti --}}
+                            @if($report->attachments->count() > 0)
+                                <div class="mt-4">
+                                    <p class="text-xs text-slate-500 font-semibold mb-2">Lampiran / Bukti ({{ $report->attachments->count() }})</p>
+                                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                        @foreach($report->attachments as $attachment)
+                                            <a href="{{ $attachment->file_url }}" target="_blank"
+                                               class="group rounded-xl border border-slate-200 overflow-hidden bg-slate-50 hover:border-brand transition">
+                                                @if($attachment->is_image)
+                                                    <img src="{{ $attachment->file_url }}" alt="{{ $attachment->file_name }}"
+                                                         class="w-full h-24 object-cover group-hover:scale-105 transition">
+                                                @else
+                                                    <div class="h-24 flex items-center justify-center bg-slate-100 text-brand">
+                                                        <i class="fa-solid fa-file-lines text-2xl"></i>
+                                                    </div>
+                                                @endif
+                                                <div class="p-2">
+                                                    <p class="text-[11px] font-semibold text-slate-700 truncate">{{ $attachment->file_name }}</p>
+                                                    <p class="text-[10px] text-slate-400">{{ $attachment->formatted_size }}</p>
+                                                </div>
+                                            </a>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+
+                            {{-- Form Unggah Bukti Tambahan --}}
+                            @if($report->status == 'menunggu-bukti')
+                                <div class="mt-4 bg-violet-50 border border-violet-200 rounded-xl p-4">
+                                    <p class="text-xs font-bold text-violet-700 mb-1 flex items-center gap-2"><i class="fa-solid fa-upload"></i> Unggah Bukti Tambahan</p>
+                                    <p class="text-xs text-violet-600 mb-3">Admin meminta bukti tambahan untuk laporan ini.</p>
+                                    <form method="POST" action="{{ route('company.reports.evidence', $report) }}" enctype="multipart/form-data" class="space-y-3">
+                                        @csrf
+                                        <input type="file" name="attachments[]" multiple accept=".jpg,.jpeg,.png,.pdf"
+                                               class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-violet-100 file:text-violet-700 hover:file:bg-violet-200">
+                                        @error('attachments') <p class="text-xs text-red-500">{{ $message }}</p> @enderror
+                                        @error('attachments.*') <p class="text-xs text-red-500">{{ $message }}</p> @enderror
+                                        <button type="submit" class="px-4 py-2 bg-violet-500 hover:bg-violet-600 text-white rounded-lg text-xs font-bold transition">
+                                            <i class="fa-solid fa-paper-plane mr-1"></i> Kirim Bukti
+                                        </button>
+                                    </form>
+                                </div>
+                            @endif
+
+{{-- Lampiran / Bukti --}}
+                            @if($report->attachments->count() > 0)
+                                <div class="mt-4 space-y-2">
+                                    <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Lampiran / Bukti ({{ $report->attachments->count() }})</h2>
+                                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                        @foreach($report->attachments as $attachment)
+                                            <a href="{{ $attachment->file_url }}" target="_blank"
+                                               class="group rounded-xl border border-slate-200 overflow-hidden bg-slate-50 hover:border-brand transition">
+                                                @if($attachment->is_image)
+                                                    <img src="{{ $attachment->file_url }}" alt="{{ $attachment->file_name }}"
+                                                         class="w-full h-24 object-cover group-hover:scale-105 transition">
+                                                @else
+                                                    <div class="h-24 flex items-center justify-center bg-slate-100 text-brand">
+                                                        <i class="fa-solid fa-file-lines text-2xl"></i>
+                                                    </div>
+                                                @endif
+                                                <div class="p-2">
+                                                    <p class="text-[11px] font-semibold text-slate-700 truncate">{{ $attachment->file_name }}</p>
+                                                    <p class="text-[10px] text-slate-400">{{ $attachment->formatted_size }}</p>
+                                                </div>
+                                            </a>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+
+                            {{-- Form Unggah Bukti Tambahan (menunggu-bukti) --}}
+                            @if($report->status == 'menunggu-bukti')
+                                <div class="mt-4 space-y-2 bg-violet-50 border border-violet-200 rounded-xl p-4">
+                                    <h2 class="text-xs font-bold uppercase tracking-wider text-violet-600 flex items-center gap-2">
+                                        <i class="fa-solid fa-upload"></i> Unggah Bukti Tambahan
+                                    </h2>
+                                    <p class="text-xs text-violet-700">Admin meminta bukti tambahan untuk laporan ini. Silakan unggah screenshot/bukti pendukung.</p>
+                                    <form method="POST" action="{{ route('company.reports.evidence', $report) }}" enctype="multipart/form-data" class="space-y-3 mt-2">
+                                        @csrf
+                                        <input type="file" name="attachments[]" multiple accept=".jpg,.jpeg,.png,.pdf"
+                                               class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-violet-100 file:text-violet-700 hover:file:bg-violet-200">
+                                        @error('attachments') <p class="text-xs text-red-500">{{ $message }}</p> @enderror
+                                        @error('attachments.*') <p class="text-xs text-red-500">{{ $message }}</p> @enderror
+                                        <button type="submit" class="px-4 py-2 bg-violet-500 hover:bg-violet-600 text-white rounded-lg text-xs font-bold transition">
+                                            <i class="fa-solid fa-paper-plane mr-1"></i> Kirim Bukti
+                                        </button>
+                                    </form>
                                 </div>
                             @endif
 
