@@ -4,8 +4,8 @@
 @section('breadcrumb', 'Pembayaran')
 
 @section('content')
-    <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-        <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
+    <div class="bg-white border border-blue-100 rounded-2xl shadow-sm overflow-hidden">
+        <div class="px-6 py-5 border-b border-blue-50 flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
                     <i class="fa-solid fa-credit-card"></i>
@@ -15,7 +15,7 @@
                     <p class="text-xs text-slate-500">Kelola verifikasi pembayaran proyek</p>
                 </div>
             </div>
-            <span class="text-xs px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 font-semibold">
+            <span class="text-xs px-3 py-1.5 rounded-full bg-blue-50 text-slate-600 font-semibold">
                 Total: {{ $payments->total() }}
             </span>
         </div>
@@ -37,7 +37,7 @@
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm">
                         <thead>
-                            <tr class="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-100">
+                            <tr class="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-blue-50">
                                 <th class="pb-3 pr-4">Invoice</th>
                                 <th class="pb-3 pr-4">Perusahaan</th>
                                 <th class="pb-3 pr-4">Freelancer</th>
@@ -50,7 +50,7 @@
                         </thead>
                         <tbody>
                             @foreach($payments as $payment)
-                                <tr class="border-b border-slate-50 hover:bg-slate-50/50 transition">
+                                <tr class="border-b border-slate-50 hover:bg-[#f6f9ff]/50 transition">
                                     <td class="py-3 pr-4">
                                         <span class="font-bold text-xs text-slate-700">{{ $payment->invoice_number }}</span>
                                     </td>
@@ -91,7 +91,7 @@
                 @endif
             @else
                 <div class="py-16 text-center">
-                    <div class="w-16 h-16 mx-auto mb-4 bg-slate-100 rounded-2xl flex items-center justify-center">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-blue-50 rounded-2xl flex items-center justify-center">
                         <i class="fa-solid fa-credit-card text-2xl text-slate-400"></i>
                     </div>
                     <h3 class="text-sm font-bold text-slate-600">Belum Ada Pembayaran</h3>
@@ -101,4 +101,3 @@
         </div>
     </div>
 @endsection
-

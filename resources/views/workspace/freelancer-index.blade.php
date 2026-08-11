@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workspace Saya - The Archipelago Nexus</title>
+    <title>Workspace Saya - ApexForge Labs</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -17,6 +17,86 @@
             }
         }
     </script>
+<style>
+
+/* ApexForge Labs — Unified UI System */
+:root{
+    --af-primary:#2563eb;
+    --af-primary-dark:#1d4ed8;
+    --af-primary-soft:#eff6ff;
+    --af-sky:#38bdf8;
+    --af-ink:#0f172a;
+    --af-muted:#64748b;
+    --af-border:#dbeafe;
+    --af-surface:#ffffff;
+    --af-page:#f6f9ff;
+}
+html{scroll-behavior:smooth}
+body{
+    font-family:'Plus Jakarta Sans',sans-serif;
+    background:
+        radial-gradient(circle at 10% -10%,rgba(56,189,248,.10),transparent 30%),
+        radial-gradient(circle at 100% 0%,rgba(37,99,235,.08),transparent 28%),
+        var(--af-page);
+}
+::selection{background:rgba(37,99,235,.18);color:#0f172a}
+::-webkit-scrollbar{width:7px;height:7px}
+::-webkit-scrollbar-track{background:rgba(241,245,249,.7)}
+::-webkit-scrollbar-thumb{background:rgba(37,99,235,.22);border-radius:999px}
+::-webkit-scrollbar-thumb:hover{background:rgba(37,99,235,.38)}
+
+input,select,textarea{
+    border-color:var(--af-border)!important;
+    background:rgba(255,255,255,.92);
+    transition:border-color .2s ease,box-shadow .2s ease,background .2s ease;
+}
+input:focus,select:focus,textarea:focus{
+    border-color:rgba(37,99,235,.55)!important;
+    box-shadow:0 0 0 4px rgba(37,99,235,.09)!important;
+    outline:none!important;
+}
+button,a,[role="button"]{transition:all .2s ease}
+button:focus-visible,a:focus-visible,[role="button"]:focus-visible{
+    outline:2px solid rgba(37,99,235,.55);
+    outline-offset:2px;
+}
+table{border-collapse:separate;border-spacing:0}
+thead th{
+    background:rgba(239,246,255,.72)!important;
+    color:#334155;
+    font-weight:700;
+}
+tbody tr{transition:background .18s ease}
+tbody tr:hover{background:rgba(239,246,255,.48)}
+[class*="bg-blue-600"]{
+    box-shadow:0 8px 22px -12px rgba(37,99,235,.72);
+}
+[class*="bg-blue-600"]:hover{
+    box-shadow:0 12px 28px -12px rgba(37,99,235,.78);
+    transform:translateY(-1px);
+}
+.glass-panel,.glass-card,.glass-surface{
+    background:rgba(255,255,255,.72);
+    border:1px solid rgba(219,234,254,.85);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    box-shadow:0 18px 50px -32px rgba(30,64,175,.32);
+}
+.apex-page-glow{
+    position:fixed;inset:auto -10rem -12rem auto;width:28rem;height:28rem;
+    background:rgba(56,189,248,.09);filter:blur(70px);border-radius:999px;
+    pointer-events:none;z-index:-1;
+}
+@media (max-width:767px){
+    main{padding-left:1rem!important;padding-right:1rem!important}
+    table{min-width:680px}
+    .overflow-x-auto{-webkit-overflow-scrolling:touch}
+}
+@media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+
+</style>
 </head>
 <body class="bg-surface text-slate-800 min-h-screen flex font-sans">
 
@@ -53,17 +133,24 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                         @foreach($workspaces as $ws)
                             @php
-                                $progress = $ws->latestProgress?->progress ?? 0;
-                                $stageColors = [
-                                    'Sedang Dikerjakan' => 'bg-blue-50 text-blue-600 border-blue-200',
-                                    'Menunggu Revisi' => 'bg-amber-50 text-amber-600 border-amber-200',
+                                $progress = $ws->currentProgress();
+$stageColors = [
+                                    'Sedang Dikerjakan' => 'bg-blue-100 text-blue-700 border-blue-200',
+                                    'Menunggu Review' => 'bg-amber-100 text-amber-700 border-amber-200',
+                                    'Menunggu Revisi' => 'bg-blue-50 text-blue-600 border-blue-200',
                                     'Menunggu Pembayaran' => 'bg-purple-50 text-purple-600 border-purple-200',
                                     'Menunggu Verifikasi Admin' => 'bg-orange-50 text-orange-600 border-orange-200',
                                     'Selesai' => 'bg-emerald-50 text-emerald-600 border-emerald-200',
                                 ];
-                                $wsStatusColor = $stageColors[$ws->status] ?? 'bg-slate-50 text-slate-600 border-slate-200';
+                                $wsStatusColor = $stageColors[$ws->status] ?? 'bg-[#f6f9ff] text-slate-600 border-blue-100';
                             @endphp
-                            <div class="bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition overflow-hidden">
+                            <div class="relative bg-white border border-blue-100 rounded-2xl shadow-sm hover:shadow-md transition overflow-hidden">
+                                {{-- Red dot jika ada notifikasi unread terkait workspace ini --}}
+                                @if (($unreadByWorkspace[$ws->id] ?? 0) > 0)
+                                    <span class="absolute top-3 right-3 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[10px] font-bold shadow-md z-10">
+                                        {{ $unreadByWorkspace[$ws->id] }}
+                                    </span>
+                                @endif
                                 <div class="p-5">
                                     <div class="flex items-start justify-between gap-3 mb-4">
                                         <div class="min-w-0 flex-1">
@@ -83,8 +170,8 @@
                                             <span class="text-slate-500">Progress</span>
                                             <span class="font-bold text-brand">{{ $progress }}%</span>
                                         </div>
-                                        <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                                            <div class="h-full rounded-full bg-gradient-to-r from-brand to-cyan-400 transition-all" style="width: {{ $progress }}%"></div>
+                                        <div class="w-full bg-blue-50 rounded-full h-2 overflow-hidden">
+                                            <div class="h-full rounded-full bg-gradient-to-r from-brand to-blue-400 transition-all" style="width: {{ $progress }}%"></div>
                                         </div>
                                     </div>
 
@@ -96,7 +183,7 @@
                                     @endif
                                 </div>
 
-                                <div class="px-5 py-3 bg-slate-50 border-t border-slate-100">
+                                <div class="px-5 py-3 bg-[#f6f9ff] border-t border-blue-50">
                                     <a href="{{ route('freelancer.workspaces.show', $ws) }}"
                                        class="block text-center text-sm font-semibold text-brand hover:text-white bg-brand/10 hover:bg-brand px-4 py-2 rounded-xl transition">
                                         <i class="fa-solid fa-external-link-alt mr-1"></i> Buka Workspace
@@ -111,8 +198,8 @@
                     @endif
                 @else
                     {{-- Empty State --}}
-                    <div class="bg-white border border-slate-200 rounded-2xl p-16 text-center">
-                        <div class="w-20 h-20 mx-auto mb-5 bg-slate-100 rounded-2xl flex items-center justify-center">
+                    <div class="bg-white border border-blue-100 rounded-2xl p-16 text-center">
+                        <div class="w-20 h-20 mx-auto mb-5 bg-blue-50 rounded-2xl flex items-center justify-center">
                             <i class="fa-solid fa-layer-group text-3xl text-slate-400"></i>
                         </div>
                         <h3 class="text-lg font-bold text-slate-700">Belum Ada Workspace</h3>

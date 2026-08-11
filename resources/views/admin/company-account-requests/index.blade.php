@@ -4,24 +4,24 @@
 @section('breadcrumb', 'Permintaan Akun Perusahaan')
 
 @section('content')
-    <div class="bg-white rounded-2xl border border-slate-200 p-4 mb-4 shadow-sm">
+    <div class="bg-white rounded-2xl border border-blue-100 p-4 mb-4 shadow-sm">
         <form method="GET" action="{{ url()->current() }}" class="flex flex-wrap gap-3 items-end">
             <div class="w-48">
                 <label class="text-xs font-semibold text-slate-600 mb-1 block">Filter Status</label>
-                <select class="w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-2.5 text-sm focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100 outline-none" name="status">
+                <select class="w-full rounded-xl border-blue-100 bg-[#f6f9ff] px-4 py-2.5 text-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none" name="status">
                     <option value="menunggu" @selected($status==='menunggu')>Menunggu</option>
                     <option value="disetujui" @selected($status==='disetujui')>Disetujui</option>
                     <option value="ditolak" @selected($status==='ditolak')>Ditolak</option>
                 </select>
             </div>
-            <button class="px-5 py-2.5 bg-cyan-500 hover:bg-cyan-600 text-white rounded-xl text-sm font-semibold transition" type="submit">Terapkan</button>
+            <button class="px-5 py-2.5 bg-blue-500 hover:bg-blue-600 text-white rounded-xl text-sm font-semibold transition" type="submit">Terapkan</button>
         </form>
     </div>
 
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+    <div class="bg-white rounded-2xl border border-blue-100 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
-                <thead class="bg-slate-50 border-b border-slate-200">
+                <thead class="bg-[#f6f9ff] border-b border-blue-100">
                     <tr>
                         <th class="text-left px-5 py-3 font-bold text-slate-600 text-xs uppercase">Nama Perusahaan</th>
                         <th class="text-left px-5 py-3 font-bold text-slate-600 text-xs uppercase">Contact Person</th>
@@ -34,7 +34,7 @@
                 </thead>
                 <tbody class="divide-y divide-slate-100">
                     @forelse($companyRequests as $r)
-                        <tr class="hover:bg-slate-50 transition">
+                        <tr class="hover:bg-[#f6f9ff] transition">
                             <td class="px-5 py-4 font-semibold text-slate-800">{{ $r->company_name }}</td>
                             <td class="px-5 py-4 text-slate-600">{{ $r->contact_person }}</td>
                             <td class="px-5 py-4">{{ $r->company_email }}</td>
@@ -51,7 +51,7 @@
                             <td class="px-5 py-4 text-center text-xs text-slate-500">{{ $r->created_at?->format('Y-m-d') }}</td>
                             <td class="px-5 py-4 text-right">
                                 <div class="flex items-center justify-end gap-2 flex-wrap">
-                                    <a class="px-3 py-1.5 text-xs font-semibold bg-cyan-50 text-cyan-600 hover:bg-cyan-100 rounded-lg transition" href="{{ route('admin.company-account-requests.show', $r) }}">Lihat Detail</a>
+                                    <a class="px-3 py-1.5 text-xs font-semibold bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg transition" href="{{ route('admin.company-account-requests.show', $r) }}">Lihat Detail</a>
 
                                     @if($r->request_status==='menunggu')
                                         <form method="POST" action="{{ route('admin.company-account-requests.approve', $r) }}" class="inline">
