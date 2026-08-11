@@ -1,3 +1,4 @@
+{{-- ApexForge Labs — Shared UI polish --}}
 <aside id="sidebar" class="w-64 bg-white/95 backdrop-blur-3xl border-r border-blue-100 flex flex-col h-screen sticky top-0 shrink-0 z-30 shadow-[10px_0_40px_-10px_rgba(59,130,246,0.08)]">
 
     {{-- DECORATIVE RIGHT EDGE GLOW --}}
@@ -17,7 +18,7 @@
             <div class="relative w-full h-full rounded-full overflow-hidden border-2 border-white shadow-sm">
                 <img
                     src="{{ asset('images/nexus.jpg') }}"
-                    alt="Nexus Logo"
+                    alt="ApexForge Labs Logo"
                     class="w-full h-full object-cover"
                 >
             </div>

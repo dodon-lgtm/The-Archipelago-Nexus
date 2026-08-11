@@ -51,12 +51,92 @@
             background: rgba(100, 116, 139, 0.6);
         }
     </style>
+<style>
+
+/* ApexForge Labs — Unified UI System */
+:root{
+    --af-primary:#2563eb;
+    --af-primary-dark:#1d4ed8;
+    --af-primary-soft:#eff6ff;
+    --af-sky:#38bdf8;
+    --af-ink:#0f172a;
+    --af-muted:#64748b;
+    --af-border:#dbeafe;
+    --af-surface:#ffffff;
+    --af-page:#f6f9ff;
+}
+html{scroll-behavior:smooth}
+body{
+    font-family:'Plus Jakarta Sans',sans-serif;
+    background:
+        radial-gradient(circle at 10% -10%,rgba(56,189,248,.10),transparent 30%),
+        radial-gradient(circle at 100% 0%,rgba(37,99,235,.08),transparent 28%),
+        var(--af-page);
+}
+::selection{background:rgba(37,99,235,.18);color:#0f172a}
+::-webkit-scrollbar{width:7px;height:7px}
+::-webkit-scrollbar-track{background:rgba(241,245,249,.7)}
+::-webkit-scrollbar-thumb{background:rgba(37,99,235,.22);border-radius:999px}
+::-webkit-scrollbar-thumb:hover{background:rgba(37,99,235,.38)}
+
+input,select,textarea{
+    border-color:var(--af-border)!important;
+    background:rgba(255,255,255,.92);
+    transition:border-color .2s ease,box-shadow .2s ease,background .2s ease;
+}
+input:focus,select:focus,textarea:focus{
+    border-color:rgba(37,99,235,.55)!important;
+    box-shadow:0 0 0 4px rgba(37,99,235,.09)!important;
+    outline:none!important;
+}
+button,a,[role="button"]{transition:all .2s ease}
+button:focus-visible,a:focus-visible,[role="button"]:focus-visible{
+    outline:2px solid rgba(37,99,235,.55);
+    outline-offset:2px;
+}
+table{border-collapse:separate;border-spacing:0}
+thead th{
+    background:rgba(239,246,255,.72)!important;
+    color:#334155;
+    font-weight:700;
+}
+tbody tr{transition:background .18s ease}
+tbody tr:hover{background:rgba(239,246,255,.48)}
+[class*="bg-blue-600"]{
+    box-shadow:0 8px 22px -12px rgba(37,99,235,.72);
+}
+[class*="bg-blue-600"]:hover{
+    box-shadow:0 12px 28px -12px rgba(37,99,235,.78);
+    transform:translateY(-1px);
+}
+.glass-panel,.glass-card,.glass-surface{
+    background:rgba(255,255,255,.72);
+    border:1px solid rgba(219,234,254,.85);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    box-shadow:0 18px 50px -32px rgba(30,64,175,.32);
+}
+.apex-page-glow{
+    position:fixed;inset:auto -10rem -12rem auto;width:28rem;height:28rem;
+    background:rgba(56,189,248,.09);filter:blur(70px);border-radius:999px;
+    pointer-events:none;z-index:-1;
+}
+@media (max-width:767px){
+    main{padding-left:1rem!important;padding-right:1rem!important}
+    table{min-width:680px}
+    .overflow-x-auto{-webkit-overflow-scrolling:touch}
+}
+@media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+
+</style>
 </head>
 
 <body class="antialiased min-h-screen flex items-center justify-center p-3 md:p-6 bg-cover bg-center bg-no-repeat bg-fixed" style="background-image: url('{{ asset('images/backgroundlogin.png') }}');">
 
     <!-- Container Utama -->
-    <div class="max-w-6xl w-full bg-white rounded-3xl shadow-2xl shadow-slate-200/80 border border-slate-100 overflow-hidden grid grid-cols-1 lg:grid-cols-12" data-aos="zoom-in" data-aos-duration="800">
+    <div class="max-w-6xl w-full bg-white rounded-3xl shadow-2xl shadow-slate-200/80 border border-blue-50 overflow-hidden grid grid-cols-1 lg:grid-cols-12" data-aos="zoom-in" data-aos-duration="800">
 
         <!-- ================= SISI KIRI ================= -->
         <div class="lg:col-span-7 p-6 md:p-10 flex flex-col justify-between space-y-6 relative overflow-hidden bg-white">
@@ -73,7 +153,7 @@
                 <!-- Header Brand -->
                 <div class="flex items-center gap-3">
                     <div class="w-9 h-9 bg-slate-900 text-white rounded-xl flex items-center justify-center font-bold text-xs shadow-md shadow-slate-900/20 overflow-hidden ring-2 ring-slate-900/10">
-                        <img src="{{ asset('images/nexus.jpg') }}" alt="Logo Nexus" class="w-7 h-7 rounded-full object-cover">
+                        <img src="{{ asset('images/nexus.jpg') }}" alt="ApexForge Labs Logo" class="w-7 h-7 rounded-full object-cover">
                     </div>
                     <span class="font-extrabold text-base tracking-tight text-slate-900">
                         ApexForge Labs
@@ -108,7 +188,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
 
                     <!-- Fitur 1 -->
-                    <div class="bg-white/70 backdrop-blur-md border border-slate-200/60 p-3 rounded-2xl flex items-start gap-2.5 shadow-sm hover:border-blue-200 transition-colors">
+                    <div class="bg-white/70 backdrop-blur-md border border-blue-100/60 p-3 rounded-2xl flex items-start gap-2.5 shadow-sm hover:border-blue-200 transition-colors">
                         <div class="w-7 h-7 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-xs shrink-0">
                             <i class="fa-solid fa-user-shield"></i>
                         </div>
@@ -119,7 +199,7 @@
                     </div>
 
                     <!-- Fitur 2 -->
-                    <div class="bg-white/70 backdrop-blur-md border border-slate-200/60 p-3 rounded-2xl flex items-start gap-2.5 shadow-sm hover:border-emerald-200 transition-colors">
+                    <div class="bg-white/70 backdrop-blur-md border border-blue-100/60 p-3 rounded-2xl flex items-start gap-2.5 shadow-sm hover:border-emerald-200 transition-colors">
                         <div class="w-7 h-7 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center text-xs shrink-0">
                             <i class="fa-solid fa-wallet"></i>
                         </div>
@@ -130,7 +210,7 @@
                     </div>
 
                     <!-- Fitur 3 -->
-                    <div class="bg-white/70 backdrop-blur-md border border-slate-200/60 p-3 rounded-2xl flex items-start gap-2.5 shadow-sm hover:border-amber-200 transition-colors">
+                    <div class="bg-white/70 backdrop-blur-md border border-blue-100/60 p-3 rounded-2xl flex items-start gap-2.5 shadow-sm hover:border-amber-200 transition-colors">
                         <div class="w-7 h-7 bg-amber-50 text-amber-600 rounded-lg flex items-center justify-center text-xs shrink-0">
                             <i class="fa-solid fa-business-time"></i>
                         </div>
@@ -156,7 +236,7 @@
             <div class="text-center space-y-2 relative z-10">
                 <div class="w-14 h-14 bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl mx-auto flex items-center justify-center shadow-inner overflow-hidden">
                     <div class="w-9 h-9 bg-gradient-to-br from-slate-800 to-black rounded-xl shadow-md flex items-center justify-center overflow-hidden ring-1 ring-white/10">
-                        <img src="{{ asset('images/nexus.jpg') }}" alt="Logo Nexus" class="w-6 h-6 rounded-full object-cover">
+                        <img src="{{ asset('images/nexus.jpg') }}" alt="ApexForge Labs Logo" class="w-6 h-6 rounded-full object-cover">
                     </div>
                 </div>
 

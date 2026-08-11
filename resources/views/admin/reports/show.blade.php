@@ -5,21 +5,21 @@
 
 @section('content')
     <div class="mb-4">
-        <a href="{{ route('admin.reports.index') }}" class="text-sm text-cyan-600 hover:text-cyan-700 font-semibold inline-flex items-center gap-1">
+        <a href="{{ route('admin.reports.index') }}" class="text-sm text-blue-600 hover:text-blue-700 font-semibold inline-flex items-center gap-1">
             <i class="fa-solid fa-arrow-left"></i> Kembali
         </a>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div class="lg:col-span-2 space-y-6">
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+            <div class="bg-white rounded-2xl border border-blue-100 shadow-sm p-6">
                 <div class="flex items-start justify-between mb-4">
 <div>
                         <h2 class="text-xl font-bold text-slate-800">{{ $report->subject }}</h2>
                         <p class="text-sm text-slate-500 mt-1">Laporan #{{ $report->id }} oleh {{ $report->reporter->name ?? '—' }}</p>
                         <div class="flex items-center gap-2 mt-2 flex-wrap">
-                            <span class="text-xs px-2.5 py-1 rounded-full font-semibold bg-slate-100 text-slate-600">{{ \App\Models\Report::categoryLabel($report->category) }}</span>
-                            <span class="text-xs px-2.5 py-1 rounded-full font-semibold bg-cyan-50 text-cyan-700 border border-cyan-100">
+                            <span class="text-xs px-2.5 py-1 rounded-full font-semibold bg-blue-50 text-slate-600">{{ \App\Models\Report::categoryLabel($report->category) }}</span>
+                            <span class="text-xs px-2.5 py-1 rounded-full font-semibold bg-blue-50 text-blue-700 border border-blue-100">
                                 Target: {{ \App\Models\Report::targetLabel($report->target) }}
                             </span>
                         </div>
@@ -34,25 +34,25 @@
 
                 <div class="mb-4">
                     <p class="text-xs text-slate-500 font-semibold mb-1">Deskripsi Laporan</p>
-                    <div class="bg-slate-50 rounded-xl p-4 text-sm text-slate-700 leading-relaxed">{{ $report->description }}</div>
+                    <div class="bg-[#f6f9ff] rounded-xl p-4 text-sm text-slate-700 leading-relaxed">{{ $report->description }}</div>
                 </div>
 
                 @if($report->admin_note)
                     <div>
                         <p class="text-xs text-slate-500 font-semibold mb-1">Catatan Admin</p>
-                        <div class="bg-cyan-50 rounded-xl p-4 text-sm text-cyan-700 leading-relaxed">{{ $report->admin_note }}</div>
+                        <div class="bg-blue-50 rounded-xl p-4 text-sm text-blue-700 leading-relaxed">{{ $report->admin_note }}</div>
                     </div>
                 @endif
             </div>
 
 @if($report->status !== 'selesai' && $report->status !== 'ditolak')
-                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                <div class="bg-white rounded-2xl border border-blue-100 shadow-sm p-6">
                     <h2 class="font-bold text-slate-800 mb-4">Update Status Laporan</h2>
                     <form method="POST" action="{{ route('admin.reports.update-status', $report) }}">
                         @csrf
                         <div class="mb-4">
                             <label class="text-xs font-semibold text-slate-600 mb-1 block">Status</label>
-                            <select name="status" class="w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-2.5 text-sm focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100 outline-none">
+                            <select name="status" class="w-full rounded-xl border-blue-100 bg-[#f6f9ff] px-4 py-2.5 text-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none">
                                 <option value="ditinjau" @selected($report->status == 'ditinjau')>Sedang Ditinjau</option>
                                 <option value="menunggu-bukti" @selected($report->status == 'menunggu-bukti')>Menunggu Bukti Tambahan</option>
                                 <option value="selesai" @selected($report->status == 'selesai')>Selesai / Ditutup</option>
@@ -62,20 +62,20 @@
                         </div>
                         <div class="mb-4">
                             <label class="text-xs font-semibold text-slate-600 mb-1 block">Catatan Admin (opsional)</label>
-                            <textarea name="admin_note" rows="3" class="w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-2.5 text-sm focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100 outline-none" placeholder="Tambahkan catatan...">{{ old('admin_note', $report->admin_note) }}</textarea>
+                            <textarea name="admin_note" rows="3" class="w-full rounded-xl border-blue-100 bg-[#f6f9ff] px-4 py-2.5 text-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none" placeholder="Tambahkan catatan...">{{ old('admin_note', $report->admin_note) }}</textarea>
                         </div>
-                        <button type="submit" class="px-6 py-2.5 bg-cyan-500 hover:bg-cyan-600 text-white rounded-xl text-sm font-semibold transition"><i class="fa-solid fa-check mr-1"></i> Update Status</button>
+                        <button type="submit" class="px-6 py-2.5 bg-blue-500 hover:bg-blue-600 text-white rounded-xl text-sm font-semibold transition"><i class="fa-solid fa-check mr-1"></i> Update Status</button>
                     </form>
                 </div>
             @endif
 
 {{-- Lampiran / Bukti --}}
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+            <div class="bg-white rounded-2xl border border-blue-100 shadow-sm p-6">
                 <h2 class="font-bold text-slate-800 mb-4">Lampiran / Bukti ({{ $report->attachments->count() }})</h2>
                 @if($report->attachments->count() > 0)
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                         @foreach($report->attachments as $attachment)
-                            <div class="group relative rounded-xl border border-slate-200 overflow-hidden bg-slate-50 hover:border-cyan-300 transition">
+                            <div class="group relative rounded-xl border border-blue-100 overflow-hidden bg-[#f6f9ff] hover:border-blue-300 transition">
                                 @if($attachment->is_image)
                                     {{-- Thumbnail - klik untuk preview gambar --}}
                                     <a href="{{ $attachment->file_url }}" target="_blank" title="{{ $attachment->file_name }}">
@@ -88,7 +88,7 @@
                                     </div>
                                 @else
                                     {{-- PDF / File - icon + Buka/Download --}}
-                                    <div class="h-24 flex items-center justify-center bg-slate-100 text-cyan-500">
+                                    <div class="h-24 flex items-center justify-center bg-blue-50 text-blue-500">
                                         <i class="fa-solid fa-file-pdf text-3xl"></i>
                                     </div>
                                     <div class="p-2">
@@ -96,11 +96,11 @@
                                         <p class="text-[10px] text-slate-400">{{ $attachment->formatted_size }}</p>
                                         <div class="flex gap-2 mt-2">
                                             <a href="{{ $attachment->file_url }}" target="_blank"
-                                               class="flex-1 text-center px-2 py-1.5 rounded-lg bg-cyan-50 text-cyan-600 hover:bg-cyan-100 text-[10px] font-bold transition">
+                                               class="flex-1 text-center px-2 py-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 text-[10px] font-bold transition">
                                                 <i class="fa-solid fa-eye mr-1"></i> Buka
                                             </a>
                                             <a href="{{ $attachment->file_url }}" download
-                                               class="flex-1 text-center px-2 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 text-[10px] font-bold transition">
+                                               class="flex-1 text-center px-2 py-1.5 rounded-lg bg-blue-50 text-slate-600 hover:bg-slate-200 text-[10px] font-bold transition">
                                                 <i class="fa-solid fa-download mr-1"></i> Download
                                             </a>
                                         </div>
@@ -116,7 +116,7 @@
         </div>
 
         <div class="space-y-6">
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+            <div class="bg-white rounded-2xl border border-blue-100 shadow-sm p-5">
                 <h3 class="font-bold text-slate-800 mb-3">Pelapor</h3>
                 <div class="flex items-center gap-3">
                     <div class="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-lg font-bold">{{ strtoupper(substr($report->reporter->name ?? '?', 0, 1)) }}</div>
@@ -125,18 +125,18 @@
             </div>
 
             @if($report->project && !$report->penawaran_id)
-                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+                <div class="bg-white rounded-2xl border border-blue-100 shadow-sm p-5">
                     <h3 class="font-bold text-slate-800 mb-3">Proyek Terkait</h3>
                     <div class="space-y-2 text-sm">
                         <div class="flex justify-between"><span class="text-slate-500">Nama</span><span class="font-semibold">{{ $report->project->project_name }}</span></div>
                         <div class="flex justify-between"><span class="text-slate-500">Company</span><span class="font-semibold">{{ $report->project->owner->name ?? '—' }}</span></div>
                     </div>
-                    <a href="{{ route('admin.projects.show', $report->project) }}" class="mt-3 inline-block text-xs text-cyan-600 hover:text-cyan-700 font-semibold">Lihat Detail →</a>
+                    <a href="{{ route('admin.projects.show', $report->project) }}" class="mt-3 inline-block text-xs text-blue-600 hover:text-blue-700 font-semibold">Lihat Detail →</a>
                 </div>
             @endif
 
 @if($report->reportedUser)
-                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+                <div class="bg-white rounded-2xl border border-blue-100 shadow-sm p-5">
                     <h3 class="font-bold text-slate-800 mb-3">User Dilaporkan</h3>
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold">{{ strtoupper(substr($report->reportedUser->name ?? '?', 0, 1)) }}</div>
@@ -145,15 +145,15 @@
                             <p class="text-xs text-slate-500">{{ $report->reportedUser->email }}</p>
                             <span class="mt-1 inline-block text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full
                                 @if($report->reportedUser->role == 'company') bg-blue-50 text-blue-600
-                                @elseif($report->reportedUser->role == 'freelancer') bg-cyan-50 text-cyan-600
-                                @else bg-slate-100 text-slate-600 @endif">{{ ucfirst($report->reportedUser->role ?? '—') }}</span>
+                                @elseif($report->reportedUser->role == 'freelancer') bg-blue-50 text-blue-600
+                                @else bg-blue-50 text-slate-600 @endif">{{ ucfirst($report->reportedUser->role ?? '—') }}</span>
                         </div>
                     </div>
                 </div>
             @endif
 
             @if($report->workspace)
-                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+                <div class="bg-white rounded-2xl border border-blue-100 shadow-sm p-5">
                     <h3 class="font-bold text-slate-800 mb-3">Workspace Terkait</h3>
                     <div class="space-y-2 text-sm">
                         <div class="flex justify-between">
@@ -169,7 +169,7 @@
             @endif
 
             {{-- Penanganan Laporan (V2) --}}
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+            <div class="bg-white rounded-2xl border border-blue-100 shadow-sm p-5">
                 <h3 class="font-bold text-slate-800 mb-3">Penanganan</h3>
                 <div class="space-y-2 text-sm">
                     <div class="flex justify-between">
@@ -186,7 +186,7 @@
             </div>
 
             {{-- Aksi Admin --}}
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+            <div class="bg-white rounded-2xl border border-blue-100 shadow-sm p-5">
                 <h3 class="font-bold text-slate-800 mb-4">Aksi Admin</h3>
 
                 @if($report->penawaran_id)

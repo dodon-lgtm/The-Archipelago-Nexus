@@ -1,3 +1,4 @@
+{{-- ApexForge Labs — Shared UI polish --}}
 <header class="h-16 bg-white/90 backdrop-blur-3xl border-b border-blue-100 px-6 flex items-center justify-between sticky top-0 z-40 shadow-[0_10px_30px_-15px_rgba(59,130,246,0.1)]">
 
     <!-- ================= LEFT ================= -->

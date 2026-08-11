@@ -1,3 +1,4 @@
+{{-- ApexForge Labs — Shared UI polish --}}
 <footer class="w-full bg-white border-t border-blue-50 relative overflow-hidden">
     
     {{-- Futuristic Ambient Lighting on Footer --}}

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id" class="h-full bg-slate-50">
+<html lang="id" class="h-full bg-[#f6f9ff]">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,15 +15,95 @@
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
     </style>
+<style>
+
+/* ApexForge Labs — Unified UI System */
+:root{
+    --af-primary:#2563eb;
+    --af-primary-dark:#1d4ed8;
+    --af-primary-soft:#eff6ff;
+    --af-sky:#38bdf8;
+    --af-ink:#0f172a;
+    --af-muted:#64748b;
+    --af-border:#dbeafe;
+    --af-surface:#ffffff;
+    --af-page:#f6f9ff;
+}
+html{scroll-behavior:smooth}
+body{
+    font-family:'Plus Jakarta Sans',sans-serif;
+    background:
+        radial-gradient(circle at 10% -10%,rgba(56,189,248,.10),transparent 30%),
+        radial-gradient(circle at 100% 0%,rgba(37,99,235,.08),transparent 28%),
+        var(--af-page);
+}
+::selection{background:rgba(37,99,235,.18);color:#0f172a}
+::-webkit-scrollbar{width:7px;height:7px}
+::-webkit-scrollbar-track{background:rgba(241,245,249,.7)}
+::-webkit-scrollbar-thumb{background:rgba(37,99,235,.22);border-radius:999px}
+::-webkit-scrollbar-thumb:hover{background:rgba(37,99,235,.38)}
+
+input,select,textarea{
+    border-color:var(--af-border)!important;
+    background:rgba(255,255,255,.92);
+    transition:border-color .2s ease,box-shadow .2s ease,background .2s ease;
+}
+input:focus,select:focus,textarea:focus{
+    border-color:rgba(37,99,235,.55)!important;
+    box-shadow:0 0 0 4px rgba(37,99,235,.09)!important;
+    outline:none!important;
+}
+button,a,[role="button"]{transition:all .2s ease}
+button:focus-visible,a:focus-visible,[role="button"]:focus-visible{
+    outline:2px solid rgba(37,99,235,.55);
+    outline-offset:2px;
+}
+table{border-collapse:separate;border-spacing:0}
+thead th{
+    background:rgba(239,246,255,.72)!important;
+    color:#334155;
+    font-weight:700;
+}
+tbody tr{transition:background .18s ease}
+tbody tr:hover{background:rgba(239,246,255,.48)}
+[class*="bg-blue-600"]{
+    box-shadow:0 8px 22px -12px rgba(37,99,235,.72);
+}
+[class*="bg-blue-600"]:hover{
+    box-shadow:0 12px 28px -12px rgba(37,99,235,.78);
+    transform:translateY(-1px);
+}
+.glass-panel,.glass-card,.glass-surface{
+    background:rgba(255,255,255,.72);
+    border:1px solid rgba(219,234,254,.85);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    box-shadow:0 18px 50px -32px rgba(30,64,175,.32);
+}
+.apex-page-glow{
+    position:fixed;inset:auto -10rem -12rem auto;width:28rem;height:28rem;
+    background:rgba(56,189,248,.09);filter:blur(70px);border-radius:999px;
+    pointer-events:none;z-index:-1;
+}
+@media (max-width:767px){
+    main{padding-left:1rem!important;padding-right:1rem!important}
+    table{min-width:680px}
+    .overflow-x-auto{-webkit-overflow-scrolling:touch}
+}
+@media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+
+</style>
 </head>
 
-<body class="h-full bg-slate-50 text-slate-800 antialiased selection:bg-blue-600 selection:text-white flex">
+<body class="h-full bg-[#f6f9ff] text-slate-800 antialiased selection:bg-blue-600 selection:text-white flex">
 
     @include('navbar.navigasi')
 
     <div class="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
 
-        <div class="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200/80 shadow-xs">
+        <div class="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-blue-100/80 shadow-xs">
             @include('navbar.nav')
         </div>
 
@@ -61,10 +141,10 @@
 
                     <!-- LEFT SIDE: Project Main Details -->
                     <div class="lg:col-span-2 space-y-6">
-                        <div class="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-6 sm:p-8">
+                        <div class="bg-white rounded-3xl border border-blue-100/80 shadow-xs p-6 sm:p-8">
 
                             <!-- Cover Image -->
-                            <div class="relative h-64 sm:h-80 w-full overflow-hidden rounded-2xl bg-slate-100 border border-slate-200/60">
+                            <div class="relative h-64 sm:h-80 w-full overflow-hidden rounded-2xl bg-blue-50 border border-blue-100/60">
                                 @if($project->image)
                                     <img src="{{ asset('storage/'.$project->image) }}"
                                          class="w-full h-full object-cover" alt="{{ $project->project_name }}">
@@ -94,14 +174,14 @@
                             </h1>
 
                             <!-- Description -->
-                            <div class="mt-8 pt-6 border-t border-slate-100">
+                            <div class="mt-8 pt-6 border-t border-blue-50">
                                 <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Deskripsi Proyek</h3>
                                 <p class="text-slate-600 text-sm sm:text-base leading-relaxed whitespace-pre-line">{{ $project->project_description }}</p>
                             </div>
 
                             <!-- Required Skills -->
                             @if($project->skills)
-                                <div class="mt-8 pt-6 border-t border-slate-100">
+                                <div class="mt-8 pt-6 border-t border-blue-50">
                                     <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Keahlian Yang Dibutuhkan</h3>
                                     <div class="flex flex-wrap gap-2">
                                         @foreach(explode(',', $project->skills) as $skill)
@@ -115,10 +195,10 @@
                             @endif
 
                             <!-- Attachment Section -->
-                            <div class="mt-8 pt-6 border-t border-slate-100">
+                            <div class="mt-8 pt-6 border-t border-blue-50">
                                 <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Lampiran Proyek</h3>
                                 @if($project->attachment)
-                                    <div class="border border-slate-200/80 rounded-2xl p-4 flex items-center justify-between bg-slate-50/60 hover:bg-slate-50 transition">
+                                    <div class="border border-blue-100/80 rounded-2xl p-4 flex items-center justify-between bg-[#f6f9ff]/60 hover:bg-[#f6f9ff] transition">
                                         <div class="flex items-center gap-3.5 min-w-0">
                                             <div class="w-11 h-11 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center shrink-0 font-bold">
                                                 <i class="fa-solid fa-file-pdf text-xl"></i>
@@ -134,7 +214,7 @@
                                         </a>
                                     </div>
                                 @else
-                                    <div class="border border-dashed border-slate-200 rounded-2xl p-5 text-center text-slate-400 text-xs font-medium">
+                                    <div class="border border-dashed border-blue-100 rounded-2xl p-5 text-center text-slate-400 text-xs font-medium">
                                         <i class="fa-regular fa-folder-open text-base mb-1 block text-slate-300"></i>
                                         Tidak ada berkas lampiran untuk proyek ini.
                                     </div>
@@ -146,7 +226,7 @@
 
                     <!-- RIGHT SIDE: Project Meta & Actions Sidebar -->
                     <div class="space-y-6">
-                        <div class="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-6 sticky top-24">
+                        <div class="bg-white rounded-3xl border border-blue-100/80 shadow-xs p-6 sticky top-24">
                             <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-5">Ringkasan Informasi</h2>
                             
                             <div class="space-y-4 text-sm">
@@ -158,7 +238,7 @@
 
                                 <!-- Meta List -->
                                 <div class="space-y-3 pt-2">
-                                    <div class="flex items-center justify-between py-2 border-b border-slate-100">
+                                    <div class="flex items-center justify-between py-2 border-b border-blue-50">
                                         <span class="text-slate-500 font-medium text-xs flex items-center gap-2">
                                             <i class="fa-regular fa-calendar text-slate-400"></i> Tenggat Waktu
                                         </span>
@@ -167,7 +247,7 @@
                                         </span>
                                     </div>
 
-                                    <div class="flex items-center justify-between py-2 border-b border-slate-100">
+                                    <div class="flex items-center justify-between py-2 border-b border-blue-50">
                                         <span class="text-slate-500 font-medium text-xs flex items-center gap-2">
                                             <i class="fa-solid fa-signal text-slate-400"></i> Status Proyek
                                         </span>
@@ -188,7 +268,7 @@
                             </div>
 
 <!-- Actions Group -->
-                            <div class="mt-8 space-y-3 pt-4 border-t border-slate-100">
+                            <div class="mt-8 space-y-3 pt-4 border-t border-blue-50">
                                 @if(!empty($hasOffered))
                                     <a href="{{ route('freelancer.lamaran') }}" 
                                        class="w-full inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-center py-3 rounded-2xl font-bold text-xs shadow-xs shadow-blue-500/20 transition">
@@ -200,7 +280,7 @@
                                         <i class="fa-solid fa-paper-plane"></i> Kirim Penawaran Baru
                                     </a>
                                 @else
-                                    <div class="w-full inline-flex items-center justify-center gap-2 border border-slate-200 bg-slate-50 text-slate-500 text-center py-3 rounded-2xl font-bold text-xs transition">
+                                    <div class="w-full inline-flex items-center justify-center gap-2 border border-blue-100 bg-[#f6f9ff] text-slate-500 text-center py-3 rounded-2xl font-bold text-xs transition">
                                         <i class="fa-solid fa-lock"></i> Proyek Sudah Ditutup
                                     </div>
                                 @endif
@@ -222,7 +302,7 @@
                                 @else
                                     <form action="{{ route('freelancer.saved-projects.store', $project) }}" method="POST" class="w-full">
                                         @csrf
-                                        <button type="submit" class="w-full inline-flex items-center justify-center gap-2 border border-slate-200/80 bg-white text-slate-700 py-3 rounded-2xl hover:bg-slate-50 font-semibold text-xs transition">
+                                        <button type="submit" class="w-full inline-flex items-center justify-center gap-2 border border-blue-100/80 bg-white text-slate-700 py-3 rounded-2xl hover:bg-[#f6f9ff] font-semibold text-xs transition">
                                             <i class="fa-regular fa-bookmark"></i> Simpan Ke Bookmark
                                         </button>
                                     </form>
@@ -237,7 +317,7 @@
                                 {{-- Report Company Button (setiap Freelancer yang boleh melihat halaman proyek) --}}
                                 @if($project->owner && (int) $project->owner->id !== (int) auth()->id())
                                     <a href="{{ route('freelancer.reports.create', ['reported_user_id' => $project->owner->id]) }}"
-                                       class="w-full inline-flex items-center justify-center gap-2 border border-slate-200/80 bg-white text-slate-600 hover:bg-slate-50 text-center py-3 rounded-2xl font-semibold text-xs transition">
+                                       class="w-full inline-flex items-center justify-center gap-2 border border-blue-100/80 bg-white text-slate-600 hover:bg-[#f6f9ff] text-center py-3 rounded-2xl font-semibold text-xs transition">
                                         <i class="fa-solid fa-building-shield"></i> Laporkan Company
                                     </a>
                                 @endif

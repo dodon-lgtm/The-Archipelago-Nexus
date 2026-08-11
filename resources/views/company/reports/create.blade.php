@@ -32,6 +32,86 @@
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
     </style>
+<style>
+
+/* ApexForge Labs — Unified UI System */
+:root{
+    --af-primary:#2563eb;
+    --af-primary-dark:#1d4ed8;
+    --af-primary-soft:#eff6ff;
+    --af-sky:#38bdf8;
+    --af-ink:#0f172a;
+    --af-muted:#64748b;
+    --af-border:#dbeafe;
+    --af-surface:#ffffff;
+    --af-page:#f6f9ff;
+}
+html{scroll-behavior:smooth}
+body{
+    font-family:'Plus Jakarta Sans',sans-serif;
+    background:
+        radial-gradient(circle at 10% -10%,rgba(56,189,248,.10),transparent 30%),
+        radial-gradient(circle at 100% 0%,rgba(37,99,235,.08),transparent 28%),
+        var(--af-page);
+}
+::selection{background:rgba(37,99,235,.18);color:#0f172a}
+::-webkit-scrollbar{width:7px;height:7px}
+::-webkit-scrollbar-track{background:rgba(241,245,249,.7)}
+::-webkit-scrollbar-thumb{background:rgba(37,99,235,.22);border-radius:999px}
+::-webkit-scrollbar-thumb:hover{background:rgba(37,99,235,.38)}
+
+input,select,textarea{
+    border-color:var(--af-border)!important;
+    background:rgba(255,255,255,.92);
+    transition:border-color .2s ease,box-shadow .2s ease,background .2s ease;
+}
+input:focus,select:focus,textarea:focus{
+    border-color:rgba(37,99,235,.55)!important;
+    box-shadow:0 0 0 4px rgba(37,99,235,.09)!important;
+    outline:none!important;
+}
+button,a,[role="button"]{transition:all .2s ease}
+button:focus-visible,a:focus-visible,[role="button"]:focus-visible{
+    outline:2px solid rgba(37,99,235,.55);
+    outline-offset:2px;
+}
+table{border-collapse:separate;border-spacing:0}
+thead th{
+    background:rgba(239,246,255,.72)!important;
+    color:#334155;
+    font-weight:700;
+}
+tbody tr{transition:background .18s ease}
+tbody tr:hover{background:rgba(239,246,255,.48)}
+[class*="bg-blue-600"]{
+    box-shadow:0 8px 22px -12px rgba(37,99,235,.72);
+}
+[class*="bg-blue-600"]:hover{
+    box-shadow:0 12px 28px -12px rgba(37,99,235,.78);
+    transform:translateY(-1px);
+}
+.glass-panel,.glass-card,.glass-surface{
+    background:rgba(255,255,255,.72);
+    border:1px solid rgba(219,234,254,.85);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    box-shadow:0 18px 50px -32px rgba(30,64,175,.32);
+}
+.apex-page-glow{
+    position:fixed;inset:auto -10rem -12rem auto;width:28rem;height:28rem;
+    background:rgba(56,189,248,.09);filter:blur(70px);border-radius:999px;
+    pointer-events:none;z-index:-1;
+}
+@media (max-width:767px){
+    main{padding-left:1rem!important;padding-right:1rem!important}
+    table{min-width:680px}
+    .overflow-x-auto{-webkit-overflow-scrolling:touch}
+}
+@media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+
+</style>
 </head>
 <body class="bg-surface text-slate-800 min-h-screen flex font-sans antialiased">
 
@@ -75,7 +155,7 @@
                 </div>
 
                 {{-- Form Card --}}
-                <div class="bg-white rounded-3xl border border-slate-200/80 shadow-sm p-6">
+                <div class="bg-white rounded-3xl border border-blue-100/80 shadow-sm p-6">
                     <div class="flex items-center gap-3 mb-6">
                         <div class="w-12 h-12 rounded-xl bg-red-50 text-red-500 flex items-center justify-center text-xl">
                             <i class="fa-solid fa-flag"></i>
@@ -105,13 +185,13 @@
 
                         {{-- Context Info: Workspace (if reporting from workspace) --}}
                         @if($workspace)
-                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
+                            <div class="bg-[#f6f9ff] border border-blue-100 rounded-xl p-4 space-y-3">
                                 <div class="flex items-center gap-2 text-slate-500 text-xs font-semibold uppercase tracking-wider">
                                     <i class="fa-solid fa-layer-group"></i>
                                     <span>Workspace yang Dilaporkan</span>
                                 </div>
                                 @if($reportedUser)
-                                <div class="flex items-center gap-3 pb-3 border-b border-slate-200/60">
+                                <div class="flex items-center gap-3 pb-3 border-b border-blue-100/60">
                                     <div class="w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold">
                                         {{ strtoupper(substr($reportedUser->name ?? '?', 0, 1)) }}
                                     </div>
@@ -135,13 +215,13 @@
                             </div>
                         @elseif($penawaran)
                             {{-- Context Info: Penawaran & Freelancer Details (if reporting from penawaran) --}}
-                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
+                            <div class="bg-[#f6f9ff] border border-blue-100 rounded-xl p-4 space-y-3">
                                 <div class="flex items-center gap-2 text-slate-500 text-xs font-semibold uppercase tracking-wider">
                                     <i class="fa-solid fa-flag"></i>
                                     <span>Detail yang Dilaporkan</span>
                                 </div>
                                 @if($reportedUser)
-                                <div class="flex items-center gap-3 pb-3 border-b border-slate-200/60">
+                                <div class="flex items-center gap-3 pb-3 border-b border-blue-100/60">
                                     <div class="w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold">
                                         {{ strtoupper(substr($reportedUser->name ?? '?', 0, 1)) }}
                                     </div>
@@ -170,7 +250,7 @@
                             </div>
                         @elseif($reportedUser)
                             {{-- Context Info: Freelancer yang Dilaporkan (Company melaporkan Freelancer) --}}
-                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
+                            <div class="bg-[#f6f9ff] border border-blue-100 rounded-xl p-4 space-y-3">
                                 <div class="flex items-center gap-2 text-slate-500 text-xs font-semibold uppercase tracking-wider">
                                     <i class="fa-solid fa-user-tie"></i>
                                     <span>Freelancer yang Dilaporkan</span>
@@ -198,7 +278,7 @@
                         <div>
                             <label class="text-xs font-semibold text-slate-600 mb-1.5 block">Kategori Laporan <span class="text-red-500">*</span></label>
                             <select name="category"
-                                class="w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-2.5 text-sm focus:border-brand focus:ring-2 focus:ring-brand/10 outline-none @error('category') border-red-300 @enderror">
+                                class="w-full rounded-xl border-blue-100 bg-[#f6f9ff] px-4 py-2.5 text-sm focus:border-brand focus:ring-2 focus:ring-brand/10 outline-none @error('category') border-red-300 @enderror">
                                 @foreach($targetCategories as $cat)
                                     <option value="{{ $cat }}" @selected(old('category') == $cat)>{{ \App\Models\Report::categoryLabel($cat) }}</option>
                                 @endforeach
@@ -210,7 +290,7 @@
                         <div>
                             <label class="text-xs font-semibold text-slate-600 mb-1.5 block">Subjek Laporan <span class="text-red-500">*</span></label>
                             <input type="text" name="subject" value="{{ old('subject') }}"
-                                class="w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-2.5 text-sm focus:border-brand focus:ring-2 focus:ring-brand/10 outline-none @error('subject') border-red-300 @enderror"
+                                class="w-full rounded-xl border-blue-100 bg-[#f6f9ff] px-4 py-2.5 text-sm focus:border-brand focus:ring-2 focus:ring-brand/10 outline-none @error('subject') border-red-300 @enderror"
                                 placeholder="Contoh: Freelancer tidak profesional, Proyek tidak sesuai, dll.">
                             @error('subject') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                         </div>
@@ -219,7 +299,7 @@
                         <div>
                             <label class="text-xs font-semibold text-slate-600 mb-1.5 block">Deskripsi <span class="text-red-500">*</span></label>
                             <textarea name="description" rows="5"
-                                class="w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-2.5 text-sm focus:border-brand focus:ring-2 focus:ring-brand/10 outline-none @error('description') border-red-300 @enderror"
+                                class="w-full rounded-xl border-blue-100 bg-[#f6f9ff] px-4 py-2.5 text-sm focus:border-brand focus:ring-2 focus:ring-brand/10 outline-none @error('description') border-red-300 @enderror"
                                 placeholder="Jelaskan secara detail masalah yang Anda temui...">{{ old('description') }}</textarea>
                             @error('description') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                         </div>
@@ -245,7 +325,7 @@
                             <button type="submit" class="px-6 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-xl text-sm font-bold transition flex items-center gap-2 shadow-sm shadow-red-500/20">
                                 <i class="fa-solid fa-paper-plane"></i> Kirim Laporan
                             </button>
-                            <a href="{{ route('company.reports.index') }}" class="px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-sm font-semibold transition">
+                            <a href="{{ route('company.reports.index') }}" class="px-6 py-2.5 bg-blue-50 hover:bg-slate-200 text-slate-600 rounded-xl text-sm font-semibold transition">
                                 Batal
                             </a>
                         </div>

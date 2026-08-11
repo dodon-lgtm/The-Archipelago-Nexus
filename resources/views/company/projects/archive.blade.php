@@ -4,257 +4,330 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arsip Proyek | ApexForge Labs</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif']
+                    },
+                    colors: {
+                        brand: {
+                            DEFAULT: '#2563EB',
+                            dark: '#1D4ED8',
+                            light: '#EFF6FF',
+                        },
+                        surface: '#F8FAFC'
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
+        /* ---- Entrance animations ---- */
         @keyframes fadeInUp {
-            from { opacity: 0.001; transform: translateY(16px); }
+            from { opacity: 0; transform: translateY(20px); }
             to   { opacity: 1; transform: translateY(0); }
         }
-        .reveal-item {
-            opacity: 0.001;
-            animation: fadeInUp 0.5s ease-out forwards;
+        .reveal { opacity: 0; animation: fadeInUp .7s cubic-bezier(.16,1,.3,1) forwards; }
+        .reveal-1 { animation-delay: .05s; }
+        .reveal-2 { animation-delay: .1s; }
+        .reveal-3 { animation-delay: .15s; }
+
+        /* ---- Modern Mesh / Gradient Animation ---- */
+        @keyframes meshGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
-        .bg-dot-pattern {
-            background-image: radial-gradient(rgba(255,255,255,0.25) 1.5px, transparent 1.5px);
-            background-size: 22px 22px;
+        .animate-mesh {
+            background-size: 200% 200%;
+            animation: meshGradient 12s ease infinite;
         }
-        .project-card {
-            background: #ffffff;
-            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+
+        /* ---- Floating Ambient Blobs ---- */
+        @keyframes floatBlob {
+            0%, 100% { transform: translate(0px, 0px) scale(1); }
+            50% { transform: translate(15px, -20px) scale(1.05); }
         }
-        .project-card:hover {
-            border-color: #3b82f6;
-            transform: translateY(-3px);
-            box-shadow: 0 14px 28px -10px rgba(37, 99, 235, 0.25);
+        .blob { animation: floatBlob 9s ease-in-out infinite; }
+
+        /* ---- Interactive Rows ---- */
+        .modern-row {
+            transition: all .3s cubic-bezier(.16,1,.3,1);
         }
+        .modern-row:hover {
+            transform: translateY(-2px);
+            background-color: #ffffff;
+            box-shadow: 0 10px 30px -10px rgba(37, 99, 235, 0.08);
+            border-color: rgba(37, 99, 235, 0.25);
+        }
+
+        /* ---- Shimmer Button Effect ---- */
+        .btn-shimmer {
+            position: relative;
+            overflow: hidden;
+            isolation: isolate;
+        }
+        .btn-shimmer::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 60%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,.3), transparent);
+            transform: skewX(-20deg);
+            transition: left .7s ease;
+        }
+        .btn-shimmer:hover::after {
+            left: 150%;
+        }
+
+        /* Scrollbar Halus */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-800 antialiased selection:bg-blue-600 selection:text-white">
 
-    <div class="min-h-screen flex">
-        @include('navbar.navigasi')
+<body class="bg-surface text-slate-800 min-h-screen flex font-sans antialiased selection:bg-brand selection:text-white">
 
-        <div class="flex-1 min-w-0 flex flex-col justify-between">
-            <div>
-                @include('navbar.nav')
+    {{-- SIDEBAR --}}
+    @include('navbar.navigasi')
 
-                <main class="px-4 sm:px-6 lg:px-10 py-8">
-                    <div class="max-w-6xl mx-auto space-y-6">
+    {{-- AREA KANAN (MAIN CONTENT) --}}
+    <div class="flex-1 flex flex-col min-h-screen w-full overflow-hidden">
 
-                        {{-- HEADER BANNER --}}
-                        <section class="relative rounded-3xl overflow-hidden shadow-xl shadow-blue-900/20">
-                            <div class="absolute inset-0 bg-blue-600"></div>
-                            <div class="absolute inset-0 bg-gradient-to-br from-blue-600 via-blue-600 to-indigo-700"></div>
-                            <div class="absolute inset-0 bg-dot-pattern opacity-60"></div>
+        @include('navbar.nav')
 
-                            <div class="relative flex flex-col sm:flex-row sm:items-center justify-between gap-6 p-6 sm:p-8">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-14 h-14 rounded-2xl bg-white/20 border border-white/30 text-white flex items-center justify-center shadow-lg shrink-0">
-                                        <i class="fa-solid fa-box-archive text-2xl"></i>
-                                    </div>
-                                    <div>
-                                        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
-                                            Arsip Proyek
-                                        </h1>
-                                        <p class="text-sm text-blue-50 font-medium mt-1">
-                                            Proyek yang diarsipkan atau dinonaktifkan — histori pekerjaan tetap tersimpan.
-                                        </p>
-                                    </div>
-                                </div>
+        <main class="flex-1 w-full overflow-y-auto p-4 sm:p-6 lg:p-8">
+            <div class="w-full mx-auto space-y-6">
 
-                                <a href="{{ route('company.projects.index') }}"
-                                   class="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-white hover:bg-blue-50 text-blue-700 font-bold text-sm shadow-lg shadow-blue-950/20 transition-colors duration-200 active:scale-95">
-                                    <i class="fa-solid fa-folder-open text-xs"></i>
-                                    <span>Proyek Aktif</span>
-                                </a>
+                {{-- HERO BANNER HEADER --}}
+                <div class="reveal reveal-1 relative overflow-hidden rounded-3xl shadow-xl shadow-blue-600/10 border border-blue-500/20 w-full">
+                    <div class="absolute inset-0 animate-mesh bg-gradient-to-r from-blue-700 via-brand to-blue-600"></div>
+                    
+                    {{-- Ambient Decorative Blobs --}}
+                    <div class="blob absolute -top-20 -right-20 w-72 h-72 bg-white/10 rounded-full blur-2xl"></div>
+                    <div class="blob absolute -bottom-24 -left-20 w-80 h-80 bg-blue-400/20 rounded-full blur-2xl" style="animation-delay: 2s;"></div>
+                    
+                    {{-- Dot Pattern Overlay --}}
+                    <div class="absolute inset-0 opacity-[0.07]" style="background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 20px 20px;"></div>
+
+                    <div class="relative p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+                        <div class="space-y-2">
+                            <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-3.5 py-1.5 rounded-full text-white text-xs font-semibold ring-1 ring-white/20 shadow-inner">
+                                <i class="fa-solid fa-box-archive text-xs text-blue-200"></i>
+                                Histori Pekerjaan
                             </div>
-                        </section>
-
-                        {{-- SUCCESS / ERROR MESSAGE --}}
-                        @if (session('success'))
-                            <div class="flex items-center gap-3.5 px-5 py-4 rounded-2xl bg-emerald-50 border border-emerald-200 shadow-sm">
-                                <div class="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center text-white shrink-0 shadow-sm">
-                                    <i class="fa-solid fa-check text-sm"></i>
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <p class="text-sm font-bold text-emerald-900">Berhasil!</p>
-                                    <p class="text-xs sm:text-sm text-emerald-700 font-medium truncate">{{ session('success') }}</p>
-                                </div>
-                                <button onclick="this.parentElement.remove()" class="ml-auto shrink-0 w-8 h-8 rounded-xl flex items-center justify-center text-emerald-500 hover:bg-emerald-100 transition-colors">
-                                    <i class="fa-solid fa-xmark text-sm"></i>
-                                </button>
-                            </div>
-                        @endif
-
-                        @if (session('error'))
-                            <div class="flex items-center gap-3.5 px-5 py-4 rounded-2xl bg-red-50 border border-red-200 shadow-sm">
-                                <div class="w-10 h-10 rounded-xl bg-red-500 flex items-center justify-center text-white shrink-0 shadow-sm">
-                                    <i class="fa-solid fa-xmark text-sm"></i>
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <p class="text-sm font-bold text-red-900">Gagal!</p>
-                                    <p class="text-xs sm:text-sm text-red-700 font-medium truncate">{{ session('error') }}</p>
-                                </div>
-                                <button onclick="this.parentElement.remove()" class="ml-auto shrink-0 w-8 h-8 rounded-xl flex items-center justify-center text-red-500 hover:bg-red-100 transition-colors">
-                                    <i class="fa-solid fa-xmark text-sm"></i>
-                                </button>
-                            </div>
-                        @endif
-
-                        {{-- LIST ARSIP --}}
-                        <div class="space-y-4">
-                            @forelse ($archivedProjects as $project)
-                                @php
-                                    $workspace = $project->workspace;
-                                    $workStatus = $workspace?->status;
-                                    $isCompleted = $project->isCompleted();
-                                    $isInactive = $project->isInactive();
-                                @endphp
-
-                                <div class="reveal-item project-card group flex flex-col md:flex-row md:items-center justify-between gap-4 rounded-2xl p-5 sm:p-6 border-2 border-slate-200 shadow-sm relative overflow-hidden"
-                                     style="animation-delay: {{ min($loop->index * 60, 300) }}ms;">
-
-                                    {{-- Aksen kiri sesuai status --}}
-                                    <div class="absolute left-0 top-0 bottom-0 w-1.5 {{ $isCompleted ? 'bg-emerald-500' : ($isInactive ? 'bg-amber-500' : 'bg-indigo-400') }}"></div>
-
-                                    <div class="flex items-start gap-4 min-w-0 flex-1 pl-2">
-                                        <div class="w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/30 group-hover:scale-105 transition-transform duration-300">
-                                            <i class="fa-solid fa-box-archive text-lg"></i>
-                                        </div>
-
-                                        <div class="min-w-0 flex-1">
-                                            <div class="flex flex-wrap items-center gap-2">
-                                                <h3 class="text-base sm:text-lg font-bold text-slate-900 group-hover:text-blue-700 transition-colors truncate">
-                                                    {{ $project->project_name }}
-                                                </h3>
-                                                @if($project->category)
-                                                    <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold">
-                                                        {{ $project->category->name }}
-                                                    </span>
-                                                @endif
-                                            </div>
-
-                                            @if($project->project_description)
-                                                <p class="mt-1 text-xs sm:text-sm text-slate-500 line-clamp-1 leading-relaxed">
-                                                    {{ $project->project_description }}
-                                                </p>
-                                            @endif
-
-                                            <div class="mt-3 flex flex-wrap items-center gap-2 text-xs font-bold">
-                                                @if($project->budget)
-                                                    <span class="inline-flex items-center gap-1.5 text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1.5 rounded-lg">
-                                                        <i class="fa-solid fa-wallet text-emerald-600 text-[11px]"></i>
-                                                        Rp{{ number_format($project->budget, 0, ',', '.') }}
-                                                    </span>
-                                                @endif
-                                                @if($project->deadline)
-                                                    <span class="inline-flex items-center gap-1.5 text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-1.5 rounded-lg">
-                                                        <i class="fa-regular fa-calendar text-[11px]"></i>
-                                                        {{ \Carbon\Carbon::parse($project->deadline)->format('d M Y') }}
-                                                    </span>
-                                                @endif
-                                                @if($project->penawarans)
-                                                    <span class="inline-flex items-center gap-1.5 text-blue-700 bg-blue-50 border border-blue-200 px-2.5 py-1.5 rounded-lg">
-                                                        <i class="fa-solid fa-handshake text-[11px]"></i>
-                                                        {{ $project->penawarans->count() }} Penawaran
-                                                    </span>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {{-- STATUS & ACTION --}}
-                                    <div class="flex flex-col items-start md:items-end gap-3 pt-3 md:pt-0 border-t md:border-t-0 border-slate-100 pl-2 md:pl-0">
-                                        <div class="flex flex-wrap items-center gap-2">
-                                            {{-- Status Pekerjaan (Workspace) --}}
-                                            @if($workspace)
-                                                @php
-                                                    $workBadge = match($workStatus) {
-                                                        'Selesai' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
-                                                        'Menunggu Review' => 'bg-sky-50 text-sky-700 border-sky-200',
-                                                        'Menunggu Revisi' => 'bg-amber-50 text-amber-700 border-amber-200',
-                                                        'Menunggu Pembayaran' => 'bg-indigo-50 text-indigo-700 border-indigo-200',
-                                                        'Menunggu Verifikasi Admin' => 'bg-purple-50 text-purple-700 border-purple-200',
-                                                        default => 'bg-blue-50 text-blue-700 border-blue-200',
-                                                    };
-                                                @endphp
-                                                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl border {{ $workBadge }}">
-                                                    <i class="fa-solid {{ $isCompleted ? 'fa-circle-check' : 'fa-circle-half-stroke' }} text-[11px]"></i>
-                                                    {{ $workStatus }}
-                                                </span>
-                                            @endif
-
-                                            {{-- Status Arsip --}}
-                                            @if($isInactive)
-                                                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl border bg-amber-50 text-amber-700 border-amber-200">
-                                                    <i class="fa-solid fa-pause text-[11px]"></i> Nonaktif
-                                                </span>
-                                            @else
-                                                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl border bg-indigo-50 text-indigo-700 border-indigo-200">
-                                                    <i class="fa-solid fa-box-archive text-[11px]"></i> Arsip
-                                                </span>
-                                            @endif
-                                        </div>
-
-                                        <div class="flex items-center gap-2">
-                                            <a href="{{ route('company.projects.show', $project) }}"
-                                               class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-50 border border-blue-100 text-blue-700 text-xs font-bold hover:bg-blue-100 transition-colors">
-                                                <i class="fa-solid fa-eye text-[11px]"></i> Detail
-                                            </a>
-
-                                            @if(!$isCompleted)
-                                                <form method="POST" action="{{ route('company.projects.activate', $project) }}" class="inline">
-                                                    @csrf
-                                                    <button type="submit"
-                                                            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-700 text-xs font-bold hover:bg-emerald-100 transition-colors">
-                                                        <i class="fa-solid fa-rotate-left text-[11px]"></i> Aktifkan Kembali
-                                                    </button>
-                                                </form>
-                                            @else
-                                                <span class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 text-xs font-bold cursor-not-allowed">
-                                                    <i class="fa-solid fa-lock text-[11px]"></i> Selesai
-                                                </span>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </div>
-                            @empty
-                                <div class="relative bg-white border border-dashed border-blue-200 rounded-3xl p-12 sm:p-16 text-center shadow-sm overflow-hidden">
-                                    <div class="relative">
-                                        <div class="w-16 h-16 mx-auto rounded-2xl bg-indigo-600 text-white flex items-center justify-center text-2xl shadow-lg shadow-indigo-500/25 mb-4">
-                                            <i class="fa-solid fa-box-archive"></i>
-                                        </div>
-                                        <h3 class="text-lg font-bold text-slate-900">Belum Ada Proyek Diarsipkan</h3>
-                                        <p class="text-sm text-slate-500 max-w-sm mx-auto mt-1 mb-6">
-                                            Proyek yang Anda arsipkan atau nonaktifkan akan muncul di sini sebagai histori.
-                                        </p>
-                                        <a href="{{ route('company.projects.index') }}"
-                                           class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-600 text-white text-sm font-bold shadow-lg shadow-blue-600/25 hover:bg-blue-700 transition-colors">
-                                            <i class="fa-solid fa-arrow-left text-xs"></i> Kembali ke Proyek Aktif
-                                        </a>
-                                    </div>
-                                </div>
-                            @endforelse
+                            <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                                Arsip Proyek
+                            </h1>
+                            <p class="text-blue-100/90 text-sm max-w-xl font-medium leading-relaxed">
+                                Proyek yang diarsipkan atau dinonaktifkan — histori pekerjaan tetap tersimpan rapi.
+                            </p>
                         </div>
 
-                        {{-- PAGINATION --}}
-                        @if ($archivedProjects->hasPages())
-                            <div class="pt-4 flex justify-center">
-                                <div class="bg-white border border-slate-200 rounded-2xl shadow-sm px-4 py-2">
-                                    {{ $archivedProjects->links() }}
+                        <div class="flex flex-wrap items-center gap-3 shrink-0">
+                            <a href="{{ route('company.projects.index') }}" class="btn-shimmer inline-flex items-center gap-2 bg-white text-brand hover:bg-[#f6f9ff] px-5 py-3 rounded-2xl text-sm font-bold shadow-lg shadow-black/5 transition">
+                                <i class="fa-solid fa-folder-open text-xs"></i>
+                                <span>Proyek Aktif</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- SESSION SUCCESS / ERROR NOTIFICATIONS --}}
+                @if (session('success'))
+                    <div class="reveal reveal-1 flex items-center justify-between gap-3 px-5 py-4 bg-emerald-50/80 backdrop-blur-md border border-emerald-200/60 text-emerald-800 text-sm font-medium rounded-2xl shadow-sm">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-8 h-8 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-sm shadow-emerald-500/30">
+                                <i class="fa-solid fa-check text-xs"></i>
+                            </div>
+                            <span class="truncate">{{ session('success') }}</span>
+                        </div>
+                        <button onclick="this.parentElement.remove()" class="text-emerald-500 hover:text-emerald-700 p-1">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                @endif
+
+                @if (session('error'))
+                    <div class="reveal reveal-1 flex items-center justify-between gap-3 px-5 py-4 bg-rose-50/80 backdrop-blur-md border border-rose-200/60 text-rose-800 text-sm font-medium rounded-2xl shadow-sm">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-8 h-8 rounded-xl bg-rose-500 text-white flex items-center justify-center shrink-0 shadow-sm shadow-rose-500/30">
+                                <i class="fa-solid fa-xmark text-xs"></i>
+                            </div>
+                            <span class="truncate">{{ session('error') }}</span>
+                        </div>
+                        <button onclick="this.parentElement.remove()" class="text-rose-500 hover:text-rose-700 p-1">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                @endif
+
+                {{-- SUB HEADER --}}
+                <div class="reveal reveal-2 flex items-center justify-between">
+                    <div>
+                        <h2 class="text-lg font-extrabold text-slate-900 tracking-tight">Daftar Arsip</h2>
+                        <p class="text-xs text-slate-400 font-medium">Koleksi proyek nonaktif dan yang telah selesai dilakukan</p>
+                    </div>
+                </div>
+
+                {{-- ARCHIVED PROJECTS LIST --}}
+                <div class="reveal reveal-3 space-y-3">
+                    @forelse ($archivedProjects as $project)
+                        @php
+                            $workspace = $project->workspace;
+                            $workStatus = $workspace?->status;
+                            $isCompleted = $project->isCompleted();
+                            $isInactive = $project->isInactive();
+                        @endphp
+                        
+                        <div class="modern-row block bg-white border border-blue-100/80 rounded-2xl p-5 shadow-sm relative overflow-hidden group">
+                            
+                            {{-- Left Accent Bar Based on Status --}}
+                            <div class="absolute left-0 top-0 bottom-0 w-1.5 {{ $isCompleted ? 'bg-emerald-500' : ($isInactive ? 'bg-amber-500' : 'bg-indigo-400') }}"></div>
+
+                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pl-2">
+                                {{-- Left Info --}}
+                                <div class="flex items-start gap-4 min-w-0 flex-1">
+                                    <div class="w-12 h-12 rounded-2xl bg-blue-50 text-brand border border-blue-100 flex items-center justify-center shrink-0 text-lg shadow-inner group-hover:bg-brand group-hover:text-white transition-colors duration-300">
+                                        <i class="fa-solid fa-box-archive"></i>
+                                    </div>
+
+                                    <div class="min-w-0 flex-1">
+                                        <div class="flex flex-wrap items-center gap-2">
+                                            <h3 class="text-base font-bold text-slate-800 group-hover:text-brand transition-colors truncate">
+                                                {{ $project->project_name }}
+                                            </h3>
+                                            @if($project->category)
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-md bg-blue-50 border border-blue-100 text-brand text-[11px] font-bold">
+                                                    {{ $project->category->name }}
+                                                </span>
+                                            @endif
+                                        </div>
+
+                                        @if($project->project_description)
+                                            <p class="mt-1 text-xs text-slate-500 line-clamp-1 leading-relaxed">
+                                                {{ $project->project_description }}
+                                            </p>
+                                        @endif
+
+                                        <div class="mt-3 flex flex-wrap items-center gap-2 text-xs font-semibold">
+                                            @if($project->budget)
+                                                <span class="inline-flex items-center gap-1.5 text-emerald-700 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-lg">
+                                                    <i class="fa-solid fa-wallet text-emerald-600 text-[10px]"></i>
+                                                    Rp {{ number_format($project->budget, 0, ',', '.') }}
+                                                </span>
+                                            @endif
+                                            @if($project->deadline)
+                                                <span class="inline-flex items-center gap-1.5 text-amber-700 bg-amber-50 border border-amber-100 px-2.5 py-1 rounded-lg">
+                                                    <i class="fa-regular fa-calendar text-[10px]"></i>
+                                                    {{ \Carbon\Carbon::parse($project->deadline)->format('d M Y') }}
+                                                </span>
+                                            @endif
+                                            @if($project->penawarans)
+                                                <span class="inline-flex items-center gap-1.5 text-blue-700 bg-blue-50 border border-blue-100 px-2.5 py-1 rounded-lg">
+                                                    <i class="fa-solid fa-handshake text-[10px]"></i>
+                                                    {{ $project->penawarans->count() }} Penawaran
+                                                </span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Status Badges & Actions --}}
+                                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between md:justify-end gap-3 pt-3 md:pt-0 border-t md:border-t-0 border-slate-100">
+                                    <div class="flex flex-wrap items-center gap-1.5">
+                                        @if($workspace)
+                                            @php
+                                                $workBadge = match($workStatus) {
+                                                    'Selesai' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                                                    'Menunggu Review' => 'bg-sky-50 text-sky-700 border-sky-200',
+                                                    'Menunggu Revisi' => 'bg-amber-50 text-amber-700 border-amber-200',
+                                                    'Menunggu Pembayaran' => 'bg-indigo-50 text-indigo-700 border-indigo-200',
+                                                    'Menunggu Verifikasi Admin' => 'bg-purple-50 text-purple-700 border-purple-200',
+                                                    default => 'bg-blue-50 text-blue-700 border-blue-200',
+                                                };
+                                            @endphp
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-xl border {{ $workBadge }}">
+                                                <i class="fa-solid {{ $isCompleted ? 'fa-circle-check' : 'fa-circle-half-stroke' }} text-[10px]"></i>
+                                                {{ $workStatus }}
+                                            </span>
+                                        @endif
+
+                                        @if($isInactive)
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-xl border bg-amber-50 text-amber-700 border-amber-200">
+                                                <i class="fa-solid fa-pause text-[10px]"></i> Nonaktif
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-xl border bg-indigo-50 text-indigo-700 border-indigo-200">
+                                                <i class="fa-solid fa-box-archive text-[10px]"></i> Arsip
+                                            </span>
+                                        @endif
+                                    </div>
+
+                                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                                        <a href="{{ route('company.projects.show', $project) }}"
+                                           class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition">
+                                            <i class="fa-solid fa-eye text-[10px]"></i> Detail
+                                        </a>
+
+                                        @if(!$isCompleted)
+                                            <form method="POST" action="{{ route('company.projects.activate', $project) }}" class="inline">
+                                                @csrf
+                                                <button type="submit"
+                                                        class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 text-xs font-bold transition">
+                                                    <i class="fa-solid fa-rotate-left text-[10px]"></i> Aktifkan
+                                                </button>
+                                            </form>
+                                        @else
+                                            <span class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-400 text-xs font-bold cursor-not-allowed">
+                                                <i class="fa-solid fa-lock text-[10px]"></i> Selesai
+                                            </span>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
-                        @endif
+                        </div>
+                    @empty
+                        <div class="bg-white border border-blue-100/80 rounded-3xl p-12 text-center shadow-sm">
+                            <div class="w-14 h-14 mx-auto mb-3 bg-blue-50 text-slate-400 rounded-2xl flex items-center justify-center text-xl shadow-inner">
+                                <i class="fa-solid fa-box-archive"></i>
+                            </div>
+                            <h3 class="text-sm font-bold text-slate-700">Belum ada proyek diarsipkan</h3>
+                            <p class="text-xs text-slate-400 mt-1 max-w-xs mx-auto">Proyek yang Anda nonaktifkan atau selesaikan akan tersimpan otomatis di sini.</p>
+                            <a href="{{ route('company.projects.index') }}" class="btn-shimmer inline-flex items-center gap-2 mt-4 px-4 py-2.5 bg-brand text-white rounded-xl text-xs font-bold shadow-md shadow-brand/20">
+                                <i class="fa-solid fa-arrow-left text-[10px]"></i> Kembali ke Proyek Aktif
+                            </a>
+                        </div>
+                    @endforelse
+                </div>
 
+                {{-- PAGINATION --}}
+                @if ($archivedProjects->hasPages())
+                    <div class="pt-4 flex justify-center">
+                        <div class="bg-white border border-blue-100/80 rounded-2xl shadow-sm px-4 py-2">
+                            {{ $archivedProjects->links() }}
+                        </div>
                     </div>
-                </main>
-            </div>
+                @endif
 
-            <div class="px-4 sm:px-6 lg:px-10 mt-12">
-                @include('navbar.footer')
             </div>
-        </div>
+        </main>
+
+        {{-- FOOTER --}}
+        @include('navbar.footer')
+
     </div>
+
 </body>
 </html>

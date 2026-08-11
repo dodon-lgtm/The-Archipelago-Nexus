@@ -32,6 +32,86 @@
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
     </style>
+<style>
+
+/* ApexForge Labs — Unified UI System */
+:root{
+    --af-primary:#2563eb;
+    --af-primary-dark:#1d4ed8;
+    --af-primary-soft:#eff6ff;
+    --af-sky:#38bdf8;
+    --af-ink:#0f172a;
+    --af-muted:#64748b;
+    --af-border:#dbeafe;
+    --af-surface:#ffffff;
+    --af-page:#f6f9ff;
+}
+html{scroll-behavior:smooth}
+body{
+    font-family:'Plus Jakarta Sans',sans-serif;
+    background:
+        radial-gradient(circle at 10% -10%,rgba(56,189,248,.10),transparent 30%),
+        radial-gradient(circle at 100% 0%,rgba(37,99,235,.08),transparent 28%),
+        var(--af-page);
+}
+::selection{background:rgba(37,99,235,.18);color:#0f172a}
+::-webkit-scrollbar{width:7px;height:7px}
+::-webkit-scrollbar-track{background:rgba(241,245,249,.7)}
+::-webkit-scrollbar-thumb{background:rgba(37,99,235,.22);border-radius:999px}
+::-webkit-scrollbar-thumb:hover{background:rgba(37,99,235,.38)}
+
+input,select,textarea{
+    border-color:var(--af-border)!important;
+    background:rgba(255,255,255,.92);
+    transition:border-color .2s ease,box-shadow .2s ease,background .2s ease;
+}
+input:focus,select:focus,textarea:focus{
+    border-color:rgba(37,99,235,.55)!important;
+    box-shadow:0 0 0 4px rgba(37,99,235,.09)!important;
+    outline:none!important;
+}
+button,a,[role="button"]{transition:all .2s ease}
+button:focus-visible,a:focus-visible,[role="button"]:focus-visible{
+    outline:2px solid rgba(37,99,235,.55);
+    outline-offset:2px;
+}
+table{border-collapse:separate;border-spacing:0}
+thead th{
+    background:rgba(239,246,255,.72)!important;
+    color:#334155;
+    font-weight:700;
+}
+tbody tr{transition:background .18s ease}
+tbody tr:hover{background:rgba(239,246,255,.48)}
+[class*="bg-blue-600"]{
+    box-shadow:0 8px 22px -12px rgba(37,99,235,.72);
+}
+[class*="bg-blue-600"]:hover{
+    box-shadow:0 12px 28px -12px rgba(37,99,235,.78);
+    transform:translateY(-1px);
+}
+.glass-panel,.glass-card,.glass-surface{
+    background:rgba(255,255,255,.72);
+    border:1px solid rgba(219,234,254,.85);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    box-shadow:0 18px 50px -32px rgba(30,64,175,.32);
+}
+.apex-page-glow{
+    position:fixed;inset:auto -10rem -12rem auto;width:28rem;height:28rem;
+    background:rgba(56,189,248,.09);filter:blur(70px);border-radius:999px;
+    pointer-events:none;z-index:-1;
+}
+@media (max-width:767px){
+    main{padding-left:1rem!important;padding-right:1rem!important}
+    table{min-width:680px}
+    .overflow-x-auto{-webkit-overflow-scrolling:touch}
+}
+@media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+
+</style>
 </head>
 <body class="bg-surface text-slate-800 min-h-screen flex font-sans antialiased">
 
@@ -63,13 +143,13 @@
                     {{-- Main Content --}}
                     <div class="lg:col-span-2 space-y-6">
                         {{-- Report Detail --}}
-                        <div class="bg-white rounded-3xl border border-slate-200/80 shadow-sm p-6">
+                        <div class="bg-white rounded-3xl border border-blue-100/80 shadow-sm p-6">
 <div class="flex items-start justify-between mb-4">
                                 <div>
                                     <h2 class="text-xl font-bold text-slate-800">{{ $report->subject }}</h2>
                                     <p class="text-sm text-slate-500 mt-1">Laporan #{{ $report->id }}</p>
                                     <div class="flex items-center gap-2 mt-2 flex-wrap">
-                                        <span class="text-xs px-2.5 py-1 rounded-full font-semibold bg-slate-100 text-slate-600">{{ \App\Models\Report::categoryLabel($report->category) }}</span>
+                                        <span class="text-xs px-2.5 py-1 rounded-full font-semibold bg-blue-50 text-slate-600">{{ \App\Models\Report::categoryLabel($report->category) }}</span>
                                         <span class="text-xs px-2.5 py-1 rounded-full font-semibold bg-brand/10 text-brand border border-brand/10">Target: {{ \App\Models\Report::targetLabel($report->target) }}</span>
                                     </div>
                                 </div>
@@ -84,7 +164,7 @@
                             {{-- Description --}}
                             <div class="mb-4">
                                 <p class="text-xs text-slate-500 font-semibold mb-1">Deskripsi Laporan</p>
-                                <div class="bg-slate-50 rounded-xl p-4 text-sm text-slate-700 leading-relaxed">{{ $report->description }}</div>
+                                <div class="bg-[#f6f9ff] rounded-xl p-4 text-sm text-slate-700 leading-relaxed">{{ $report->description }}</div>
                             </div>
 
                             {{-- Admin Note --}}
@@ -96,7 +176,7 @@
                             @else
                                 <div>
                                     <p class="text-xs text-slate-500 font-semibold mb-1">Catatan Admin</p>
-                                    <div class="bg-slate-50 rounded-xl p-4 text-sm text-slate-400 italic">Belum ada catatan dari admin.</div>
+                                    <div class="bg-[#f6f9ff] rounded-xl p-4 text-sm text-slate-400 italic">Belum ada catatan dari admin.</div>
                                 </div>
                             @endif
 
@@ -106,7 +186,7 @@
                                     <p class="text-xs text-slate-500 font-semibold mb-2">Lampiran / Bukti ({{ $report->attachments->count() }})</p>
                                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                                         @foreach($report->attachments as $attachment)
-                                            <div class="group rounded-xl border border-slate-200 overflow-hidden bg-slate-50 hover:border-brand transition">
+                                            <div class="group rounded-xl border border-blue-100 overflow-hidden bg-[#f6f9ff] hover:border-brand transition">
                                                 @if($attachment->is_image)
                                                     {{-- Thumbnail - klik untuk preview gambar --}}
                                                     <a href="{{ $attachment->file_url }}" target="_blank" title="{{ $attachment->file_name }}">
@@ -119,7 +199,7 @@
                                                     </div>
                                                 @else
                                                     {{-- PDF / File - icon + Buka/Download --}}
-                                                    <div class="h-24 flex items-center justify-center bg-slate-100 text-brand">
+                                                    <div class="h-24 flex items-center justify-center bg-blue-50 text-brand">
                                                         <i class="fa-solid fa-file-pdf text-3xl"></i>
                                                     </div>
                                                     <div class="p-2">
@@ -131,7 +211,7 @@
                                                                 <i class="fa-solid fa-eye mr-1"></i> Buka
                                                             </a>
                                                             <a href="{{ $attachment->file_url }}" download
-                                                               class="flex-1 text-center px-2 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 text-[10px] font-bold transition">
+                                                               class="flex-1 text-center px-2 py-1.5 rounded-lg bg-blue-50 text-slate-600 hover:bg-slate-200 text-[10px] font-bold transition">
                                                                 <i class="fa-solid fa-download mr-1"></i> Download
                                                             </a>
                                                         </div>
@@ -162,7 +242,7 @@
                             @endif
 
                             {{-- Date --}}
-                            <div class="mt-4 pt-4 border-t border-slate-100">
+                            <div class="mt-4 pt-4 border-t border-blue-50">
                                 <p class="text-xs text-slate-400">
                                     <i class="fa-regular fa-calendar mr-1"></i>
                                     Dibuat pada {{ $report->created_at->format('d M Y H:i') }}
@@ -174,7 +254,7 @@
                     {{-- Sidebar --}}
                     <div class="space-y-6">
                         {{-- Reporter Info --}}
-                        <div class="bg-white rounded-3xl border border-slate-200/80 shadow-sm p-5">
+                        <div class="bg-white rounded-3xl border border-blue-100/80 shadow-sm p-5">
                             <h3 class="font-bold text-slate-800 mb-3">Pelapor</h3>
                             <div class="flex items-center gap-3">
                                 <div class="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-lg font-bold">
@@ -189,7 +269,7 @@
 
                         {{-- Project Info --}}
                         @if($report->project)
-                            <div class="bg-white rounded-3xl border border-slate-200/80 shadow-sm p-5">
+                            <div class="bg-white rounded-3xl border border-blue-100/80 shadow-sm p-5">
                                 <h3 class="font-bold text-slate-800 mb-3">Proyek Terkait</h3>
                                 <div class="space-y-2 text-sm">
                                     <div class="flex justify-between">
@@ -208,7 +288,7 @@
 
                         {{-- Reported User --}}
                         @if($report->reportedUser)
-                            <div class="bg-white rounded-3xl border border-slate-200/80 shadow-sm p-5">
+                            <div class="bg-white rounded-3xl border border-blue-100/80 shadow-sm p-5">
                                 <h3 class="font-bold text-slate-800 mb-3">User Dilaporkan</h3>
                                 <div class="flex items-center gap-3">
                                     <div class="w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold">
@@ -224,7 +304,7 @@
 
                         {{-- Penawaran Info --}}
                         @if($report->penawaran)
-                            <div class="bg-white rounded-3xl border border-slate-200/80 shadow-sm p-5">
+                            <div class="bg-white rounded-3xl border border-blue-100/80 shadow-sm p-5">
                                 <h3 class="font-bold text-slate-800 mb-3">Penawaran Terkait</h3>
                                 <div class="space-y-2 text-sm">
                                     <div class="flex justify-between">

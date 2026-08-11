@@ -37,44 +37,123 @@
      </style>
 
      @stack('styles')
- </head>
+ <style>
 
- <body class="bg-slate-50 text-slate-800 antialiased">
+/* ApexForge Labs — Unified UI System */
+:root{
+    --af-primary:#2563eb;
+    --af-primary-dark:#1d4ed8;
+    --af-primary-soft:#eff6ff;
+    --af-sky:#38bdf8;
+    --af-ink:#0f172a;
+    --af-muted:#64748b;
+    --af-border:#dbeafe;
+    --af-surface:#ffffff;
+    --af-page:#f6f9ff;
+}
+html{scroll-behavior:smooth}
+body{
+    font-family:'Plus Jakarta Sans',sans-serif;
+    background:
+        radial-gradient(circle at 10% -10%,rgba(56,189,248,.10),transparent 30%),
+        radial-gradient(circle at 100% 0%,rgba(37,99,235,.08),transparent 28%),
+        var(--af-page);
+}
+::selection{background:rgba(37,99,235,.18);color:#0f172a}
+::-webkit-scrollbar{width:7px;height:7px}
+::-webkit-scrollbar-track{background:rgba(241,245,249,.7)}
+::-webkit-scrollbar-thumb{background:rgba(37,99,235,.22);border-radius:999px}
+::-webkit-scrollbar-thumb:hover{background:rgba(37,99,235,.38)}
 
-     <div class="min-h-screen bg-slate-50 flex">
+input,select,textarea{
+    border-color:var(--af-border)!important;
+    background:rgba(255,255,255,.92);
+    transition:border-color .2s ease,box-shadow .2s ease,background .2s ease;
+}
+input:focus,select:focus,textarea:focus{
+    border-color:rgba(37,99,235,.55)!important;
+    box-shadow:0 0 0 4px rgba(37,99,235,.09)!important;
+    outline:none!important;
+}
+button,a,[role="button"]{transition:all .2s ease}
+button:focus-visible,a:focus-visible,[role="button"]:focus-visible{
+    outline:2px solid rgba(37,99,235,.55);
+    outline-offset:2px;
+}
+table{border-collapse:separate;border-spacing:0}
+thead th{
+    background:rgba(239,246,255,.72)!important;
+    color:#334155;
+    font-weight:700;
+}
+tbody tr{transition:background .18s ease}
+tbody tr:hover{background:rgba(239,246,255,.48)}
+[class*="bg-blue-600"]{
+    box-shadow:0 8px 22px -12px rgba(37,99,235,.72);
+}
+[class*="bg-blue-600"]:hover{
+    box-shadow:0 12px 28px -12px rgba(37,99,235,.78);
+    transform:translateY(-1px);
+}
+.glass-panel,.glass-card,.glass-surface{
+    background:rgba(255,255,255,.72);
+    border:1px solid rgba(219,234,254,.85);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    box-shadow:0 18px 50px -32px rgba(30,64,175,.32);
+}
+.apex-page-glow{
+    position:fixed;inset:auto -10rem -12rem auto;width:28rem;height:28rem;
+    background:rgba(56,189,248,.09);filter:blur(70px);border-radius:999px;
+    pointer-events:none;z-index:-1;
+}
+@media (max-width:767px){
+    main{padding-left:1rem!important;padding-right:1rem!important}
+    table{min-width:680px}
+    .overflow-x-auto{-webkit-overflow-scrolling:touch}
+}
+@media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+
+</style>
+</head>
+
+ <body class="bg-[#f6f9ff] text-slate-800 antialiased">
+
+     <div class="min-h-screen bg-[#f6f9ff] flex">
 
          {{-- =============== SIDEBAR =============== --}}
          <aside id="sidebar"
-             class="w-64 bg-white border-r border-slate-200 flex flex-col h-screen sticky top-0 shrink-0 z-30">
+             class="w-64 bg-white border-r border-blue-100 flex flex-col h-screen sticky top-0 shrink-0 z-30">
 
              {{-- Logo --}}
              <div
-                 class="sidebar-logo-wrapper p-6 flex items-center gap-3 border-b border-slate-100 shrink-0 transition-all duration-300">
+                 class="sidebar-logo-wrapper p-6 flex items-center gap-3 border-b border-blue-50 shrink-0 transition-all duration-300">
 
                  {{-- Mobile hamburger --}}
                  <button id="mobileSidebarToggle"
-                     class="sidebar-hamburger-mobile w-10 h-10 rounded-xl hover:bg-slate-100 flex items-center justify-center shrink-0 transition mr-1">
+                     class="sidebar-hamburger-mobile w-10 h-10 rounded-xl hover:bg-blue-50 flex items-center justify-center shrink-0 transition mr-1">
                      <i class="fa-solid fa-bars text-slate-600 text-lg"></i>
                  </button>
 
                  <div class="w-10 h-10 rounded-full overflow-hidden shrink-0">
-                     <img src="{{ asset('images/nexus.jpg') }}" alt="Nexus Logo" class="w-full h-full object-cover">
+                     <img src="{{ asset('images/nexus.jpg') }}" alt="ApexForge Labs Logo" class="w-full h-full object-cover">
                  </div>
                  <div class="sidebar-logo-text transition-all duration-300 overflow-hidden">
-                     <h2 class="font-extrabold text-sm leading-tight text-slate-800 whitespace-nowrap">The
-                         ApexForge<br>Labs</h2>
+                     <h2 class="font-extrabold text-sm leading-tight text-slate-800 whitespace-nowrap">ApexForge<br><span class="text-blue-600">Labs</span></h2>
                  </div>
 
                  {{-- Desktop toggle button --}}
                  <button id="sidebarToggle"
-                     class="sidebar-toggle-desktop w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center shrink-0 ml-auto transition">
+                     class="sidebar-toggle-desktop w-8 h-8 rounded-lg hover:bg-blue-50 flex items-center justify-center shrink-0 ml-auto transition">
                      <i
                          class="sidebar-toggle-icon fa-solid fa-chevron-left text-slate-400 text-sm transition-transform duration-300"></i>
                  </button>
 
                  {{-- Collapsed toggle --}}
                  <button id="sidebarToggleCollapsed"
-                     class="sidebar-toggle-collapsed w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center shrink-0 mx-auto transition">
+                     class="sidebar-toggle-collapsed w-8 h-8 rounded-lg hover:bg-blue-50 flex items-center justify-center shrink-0 mx-auto transition">
                      <i class="sidebar-toggle-icon fa-solid fa-chevron-right text-slate-400 text-sm"></i>
                  </button>
              </div>
@@ -86,8 +165,8 @@
                  <a href="{{ route('admin.dashboard') }}"
                      class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all
                    {{ request()->routeIs('admin.dashboard')
-                       ? 'bg-cyan-50 text-cyan-700 font-bold shadow-sm border border-cyan-100'
-                       : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800' }}"
+                       ? 'bg-blue-50 text-blue-700 font-bold shadow-sm border border-blue-100'
+                       : 'text-slate-600 hover:bg-blue-50 hover:text-slate-800' }}"
                      data-tooltip="Dashboard">
                      <i class="fa-solid fa-chart-line w-5 text-center"></i>
                      <span class="text-sm">Dashboard</span>
@@ -97,8 +176,8 @@
                  <a href="{{ route('admin.users.index') }}"
                      class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all
                    {{ request()->routeIs('admin.users.*')
-                       ? 'bg-cyan-50 text-cyan-700 font-bold shadow-sm border border-cyan-100'
-                       : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800' }}"
+                       ? 'bg-blue-50 text-blue-700 font-bold shadow-sm border border-blue-100'
+                       : 'text-slate-600 hover:bg-blue-50 hover:text-slate-800' }}"
                      data-tooltip="Pengguna">
                      <i class="fa-solid fa-users w-5 text-center"></i>
                      <span class="text-sm">Pengguna</span>
@@ -108,8 +187,8 @@
                  <a href="{{ route('admin.company-account-requests.index') }}"
                      class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all
                    {{ request()->routeIs('admin.company-account-requests.*')
-                       ? 'bg-cyan-50 text-cyan-700 font-bold shadow-sm border border-cyan-100'
-                       : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800' }}"
+                       ? 'bg-blue-50 text-blue-700 font-bold shadow-sm border border-blue-100'
+                       : 'text-slate-600 hover:bg-blue-50 hover:text-slate-800' }}"
                      data-tooltip="Permintaan Akun Perusahaan">
                      <i class="fa-solid fa-building w-5 text-center"></i>
                      <span class="text-sm">Permintaan Akun Perusahaan</span>
@@ -119,8 +198,8 @@
                  <a href="{{ route('admin.categories.index') }}"
                      class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all
                    {{ request()->routeIs('admin.categories.*')
-                       ? 'bg-cyan-50 text-cyan-700 font-bold shadow-sm border border-cyan-100'
-                       : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800' }}"
+                       ? 'bg-blue-50 text-blue-700 font-bold shadow-sm border border-blue-100'
+                       : 'text-slate-600 hover:bg-blue-50 hover:text-slate-800' }}"
                      data-tooltip="Kategori">
                      <i class="fa-solid fa-tags w-5 text-center"></i>
                      <span class="text-sm">Kategori</span>
@@ -130,8 +209,8 @@
                  <a href="{{ route('admin.projects.index') }}"
                      class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all
                    {{ request()->routeIs('admin.projects.*')
-                       ? 'bg-cyan-50 text-cyan-700 font-bold shadow-sm border border-cyan-100'
-                       : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800' }}"
+                       ? 'bg-blue-50 text-blue-700 font-bold shadow-sm border border-blue-100'
+                       : 'text-slate-600 hover:bg-blue-50 hover:text-slate-800' }}"
                      data-tooltip="Proyek">
                      <i class="fa-solid fa-folder-open w-5 text-center"></i>
                      <span class="text-sm">Proyek</span>
@@ -141,8 +220,8 @@
                  <a href="{{ route('admin.penawarans.index') }}"
                      class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all
                    {{ request()->routeIs('admin.penawarans.*')
-                       ? 'bg-cyan-50 text-cyan-700 font-bold shadow-sm border border-cyan-100'
-                       : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800' }}"
+                       ? 'bg-blue-50 text-blue-700 font-bold shadow-sm border border-blue-100'
+                       : 'text-slate-600 hover:bg-blue-50 hover:text-slate-800' }}"
                      data-tooltip="Penawaran">
                      <i class="fa-solid fa-file-invoice w-5 text-center"></i>
                      <span class="text-sm">Penawaran</span>
@@ -152,8 +231,8 @@
                  <a href="{{ route('admin.hasil-pekerjaan.index') }}"
                      class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all
                    {{ request()->routeIs('admin.hasil-pekerjaan.*')
-                       ? 'bg-cyan-50 text-cyan-700 font-bold shadow-sm border border-cyan-100'
-                       : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800' }}"
+                       ? 'bg-blue-50 text-blue-700 font-bold shadow-sm border border-blue-100'
+                       : 'text-slate-600 hover:bg-blue-50 hover:text-slate-800' }}"
                      data-tooltip="Hasil Pekerjaan">
                      <i class="fa-solid fa-layer-group w-5 text-center"></i>
                      <span class="text-sm">Hasil Pekerjaan</span>
@@ -163,8 +242,8 @@
                  <a href="{{ route('admin.payments.index') }}"
                      class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all
                    {{ request()->routeIs('admin.payments.*')
-                       ? 'bg-cyan-50 text-cyan-700 font-bold shadow-sm border border-cyan-100'
-                       : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800' }}"
+                       ? 'bg-blue-50 text-blue-700 font-bold shadow-sm border border-blue-100'
+                       : 'text-slate-600 hover:bg-blue-50 hover:text-slate-800' }}"
                      data-tooltip="Pembayaran">
                      <i class="fa-solid fa-credit-card w-5 text-center"></i>
                      <span class="text-sm">Pembayaran</span>
@@ -174,19 +253,19 @@
                  <a href="{{ route('admin.reports.index') }}"
                      class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all
                    {{ request()->routeIs('admin.reports.*')
-                       ? 'bg-cyan-50 text-cyan-700 font-bold shadow-sm border border-cyan-100'
-                       : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800' }}"
+                       ? 'bg-blue-50 text-blue-700 font-bold shadow-sm border border-blue-100'
+                       : 'text-slate-600 hover:bg-blue-50 hover:text-slate-800' }}"
                      data-tooltip="Laporan">
                      <i class="fa-solid fa-flag w-5 text-center"></i>
                      <span class="text-sm">Laporan</span>
                  </a>
 
                  {{-- Separator --}}
-                 <div class="pt-4 mt-4 border-t border-slate-100"></div>
+                 <div class="pt-4 mt-4 border-t border-blue-50"></div>
 
                  {{-- Back to Home --}}
                  <a href="{{ url('/') }}"
-                     class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-slate-500 hover:bg-slate-100 hover:text-slate-700"
+                     class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-slate-500 hover:bg-blue-50 hover:text-slate-700"
                      data-tooltip="Kembali ke Website">
                      <i class="fa-solid fa-globe w-5 text-center"></i>
                      <span class="text-sm">Kembali ke Website</span>
@@ -195,9 +274,9 @@
              </nav>
 
              {{-- Sidebar Footer --}}
-             <div class="p-4 shrink-0 border-t border-slate-100 sidebar-footer-wrapper">
+             <div class="p-4 shrink-0 border-t border-blue-50 sidebar-footer-wrapper">
                  <div
-                     class="sidebar-footer-card rounded-2xl bg-gradient-to-r from-cyan-500 to-teal-500 p-4 text-white overflow-hidden transition-all duration-300">
+                     class="sidebar-footer-card rounded-2xl bg-gradient-to-r from-blue-500 to-teal-500 p-4 text-white overflow-hidden transition-all duration-300">
                      <h3 class="font-bold text-sm whitespace-nowrap">ApexForge Labs</h3>
                      <p class="text-xs mt-1 opacity-90 whitespace-nowrap">Admin Panel</p>
                      <div class="mt-3 text-[10px] opacity-80 whitespace-nowrap">© 2026</div>
@@ -205,7 +284,7 @@
                  {{-- Collapsed footer minimal --}}
                  <div class="sidebar-footer-mini hidden">
                      <div
-                         class="w-8 h-8 rounded-lg bg-gradient-to-r from-cyan-500 to-teal-500 flex items-center justify-center mx-auto">
+                         class="w-8 h-8 rounded-lg bg-gradient-to-r from-blue-500 to-teal-500 flex items-center justify-center mx-auto">
                          <i class="fa-solid fa-globe text-white text-xs"></i>
                      </div>
                  </div>
@@ -222,12 +301,12 @@
 
              {{-- Top Navbar --}}
              <header
-                 class="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between sticky top-0 z-20">
+                 class="h-16 bg-white border-b border-blue-100 px-6 flex items-center justify-between sticky top-0 z-20">
                  {{-- Left: Title + Breadcrumb --}}
                  <div>
                      <h1 class="text-lg font-extrabold text-slate-800">@yield('title', 'Admin Panel')</h1>
                      <nav class="flex items-center gap-1 text-xs text-slate-400 mt-0.5">
-                         <a href="{{ route('admin.dashboard') }}" class="hover:text-cyan-600 transition">Admin</a>
+                         <a href="{{ route('admin.dashboard') }}" class="hover:text-blue-600 transition">Admin</a>
                          <i class="fa-solid fa-chevron-right text-[9px] mx-1"></i>
                          <span class="text-slate-600 font-medium">@yield('breadcrumb', 'Dashboard')</span>
                      </nav>
@@ -238,7 +317,7 @@
                      {{-- Notifications --}}
                      <div class="relative">
                          <button id="adminNotificationButton" aria-label="Notifikasi"
-                             class="relative w-10 h-10 rounded-full border border-slate-200 hover:bg-slate-100 flex items-center justify-center">
+                             class="relative w-10 h-10 rounded-full border border-blue-100 hover:bg-blue-50 flex items-center justify-center">
                              <i class="fa-regular fa-bell text-slate-600"></i>
                              <span id="adminNotificationBadge"
                                  class="absolute -top-1 -right-1 min-w-[18px] h-[18px] rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center px-1"></span>
@@ -246,11 +325,11 @@
 
                          {{-- Dropdown Notifikasi Admin --}}
                          <div id="adminNotificationDropdown"
-                             class="hidden absolute right-0 mt-3 w-[380px] bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden z-[100]">
-                             <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+                             class="hidden absolute right-0 mt-3 w-[380px] bg-white rounded-2xl border border-blue-100 shadow-xl overflow-hidden z-[100]">
+                             <div class="p-4 border-b border-blue-50 flex items-center justify-between">
                                  <h3 class="font-bold text-sm text-slate-800">Notifikasi</h3>
                                  <button id="adminMarkAllReadBtn"
-                                     class="text-[11px] text-cyan-600 font-semibold hover:underline">Tandai semua sudah
+                                     class="text-[11px] text-blue-600 font-semibold hover:underline">Tandai semua sudah
                                      dibaca</button>
                              </div>
                              <div id="adminNotificationList" class="max-h-[360px] overflow-y-auto">
@@ -265,15 +344,15 @@
                      {{-- Profile Dropdown --}}
                      <div class="relative" x-data="{ open: false }">
                          <button onclick="toggleProfileDropdown()"
-                             class="flex items-center gap-3 hover:bg-slate-50 rounded-xl px-3 py-2 transition border border-transparent hover:border-slate-100">
+                             class="flex items-center gap-3 hover:bg-[#f6f9ff] rounded-xl px-3 py-2 transition border border-transparent hover:border-blue-50">
                              <div
-                                 class="w-9 h-9 rounded-full bg-gradient-to-br from-cyan-400 to-teal-500 flex items-center justify-center text-white text-sm font-bold shadow-sm">
+                                 class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-400 to-teal-500 flex items-center justify-center text-white text-sm font-bold shadow-sm">
                                  {{ strtoupper(substr(auth()->user()->name ?? 'A', 0, 1)) }}
                              </div>
                              <div class="text-left hidden sm:block">
                                  <p class="text-sm font-bold text-slate-800 leading-tight">
                                      {{ auth()->user()->name ?? 'Admin' }}</p>
-                                 <p class="text-[10px] text-cyan-600 font-semibold uppercase tracking-wider">
+                                 <p class="text-[10px] text-blue-600 font-semibold uppercase tracking-wider">
                                      Administrator</p>
                              </div>
                              <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
@@ -281,16 +360,16 @@
 
                          {{-- Dropdown --}}
                          <div id="profileDropdown"
-                             class="hidden absolute right-0 mt-2 w-56 bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden z-50">
-                             <div class="p-4 border-b border-slate-100">
+                             class="hidden absolute right-0 mt-2 w-56 bg-white rounded-2xl border border-blue-100 shadow-xl overflow-hidden z-50">
+                             <div class="p-4 border-b border-blue-50">
                                  <p class="font-bold text-sm text-slate-800">{{ auth()->user()->name ?? 'Admin' }}</p>
                                  <p class="text-xs text-slate-500">{{ auth()->user()->email ?? '' }}</p>
                              </div>
                              <a href="{{ route('admin.dashboard') }}"
-                                 class="flex items-center gap-3 px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 transition">
-                                 <i class="fa-solid fa-chart-line w-4 text-cyan-500"></i> Dashboard
+                                 class="flex items-center gap-3 px-4 py-3 text-sm text-slate-600 hover:bg-[#f6f9ff] transition">
+                                 <i class="fa-solid fa-chart-line w-4 text-blue-500"></i> Dashboard
                              </a>
-                             <div class="border-t border-slate-100"></div>
+                             <div class="border-t border-blue-50"></div>
                              <form action="{{ route('logout') }}" method="POST">
                                  @csrf
                                  <button type="submit"
@@ -424,7 +503,7 @@
                      const icon = getNotifIcon(notif.type);
 
                      html += `
-                        <div class="notification-item p-4 border-b border-slate-50 cursor-pointer hover:bg-slate-50 transition ${isUnread ? 'bg-blue-50/40' : ''}" data-url="${redirectUrl}">
+                        <div class="notification-item p-4 border-b border-slate-50 cursor-pointer hover:bg-[#f6f9ff] transition ${isUnread ? 'bg-blue-50/40' : ''}" data-url="${redirectUrl}">
                             <div class="flex items-start gap-3">
                                 <div class="w-8 h-8 rounded-full bg-brand/10 text-brand flex items-center justify-center shrink-0 text-sm">
                                     <i class="${icon}"></i>
@@ -432,7 +511,7 @@
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-center gap-2">
                                         <h4 class="text-xs font-bold text-slate-800 ${isUnread ? '' : 'text-slate-500'}">${notif.title}</h4>
-                                        ${isUnread ? '<span class="w-1.5 h-1.5 rounded-full bg-cyan-500 shrink-0"></span>' : ''}
+                                        ${isUnread ? '<span class="w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0"></span>' : ''}
                                     </div>
                                     <p class="text-[11px] text-slate-500 mt-0.5 line-clamp-2">${notif.message}</p>
                                     <p class="text-[10px] text-slate-400 mt-1">${timeAgo}</p>

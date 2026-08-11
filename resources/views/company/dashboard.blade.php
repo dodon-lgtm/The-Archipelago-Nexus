@@ -123,6 +123,86 @@
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
+<style>
+
+/* ApexForge Labs — Unified UI System */
+:root{
+    --af-primary:#2563eb;
+    --af-primary-dark:#1d4ed8;
+    --af-primary-soft:#eff6ff;
+    --af-sky:#38bdf8;
+    --af-ink:#0f172a;
+    --af-muted:#64748b;
+    --af-border:#dbeafe;
+    --af-surface:#ffffff;
+    --af-page:#f6f9ff;
+}
+html{scroll-behavior:smooth}
+body{
+    font-family:'Plus Jakarta Sans',sans-serif;
+    background:
+        radial-gradient(circle at 10% -10%,rgba(56,189,248,.10),transparent 30%),
+        radial-gradient(circle at 100% 0%,rgba(37,99,235,.08),transparent 28%),
+        var(--af-page);
+}
+::selection{background:rgba(37,99,235,.18);color:#0f172a}
+::-webkit-scrollbar{width:7px;height:7px}
+::-webkit-scrollbar-track{background:rgba(241,245,249,.7)}
+::-webkit-scrollbar-thumb{background:rgba(37,99,235,.22);border-radius:999px}
+::-webkit-scrollbar-thumb:hover{background:rgba(37,99,235,.38)}
+
+input,select,textarea{
+    border-color:var(--af-border)!important;
+    background:rgba(255,255,255,.92);
+    transition:border-color .2s ease,box-shadow .2s ease,background .2s ease;
+}
+input:focus,select:focus,textarea:focus{
+    border-color:rgba(37,99,235,.55)!important;
+    box-shadow:0 0 0 4px rgba(37,99,235,.09)!important;
+    outline:none!important;
+}
+button,a,[role="button"]{transition:all .2s ease}
+button:focus-visible,a:focus-visible,[role="button"]:focus-visible{
+    outline:2px solid rgba(37,99,235,.55);
+    outline-offset:2px;
+}
+table{border-collapse:separate;border-spacing:0}
+thead th{
+    background:rgba(239,246,255,.72)!important;
+    color:#334155;
+    font-weight:700;
+}
+tbody tr{transition:background .18s ease}
+tbody tr:hover{background:rgba(239,246,255,.48)}
+[class*="bg-blue-600"]{
+    box-shadow:0 8px 22px -12px rgba(37,99,235,.72);
+}
+[class*="bg-blue-600"]:hover{
+    box-shadow:0 12px 28px -12px rgba(37,99,235,.78);
+    transform:translateY(-1px);
+}
+.glass-panel,.glass-card,.glass-surface{
+    background:rgba(255,255,255,.72);
+    border:1px solid rgba(219,234,254,.85);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    box-shadow:0 18px 50px -32px rgba(30,64,175,.32);
+}
+.apex-page-glow{
+    position:fixed;inset:auto -10rem -12rem auto;width:28rem;height:28rem;
+    background:rgba(56,189,248,.09);filter:blur(70px);border-radius:999px;
+    pointer-events:none;z-index:-1;
+}
+@media (max-width:767px){
+    main{padding-left:1rem!important;padding-right:1rem!important}
+    table{min-width:680px}
+    .overflow-x-auto{-webkit-overflow-scrolling:touch}
+}
+@media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+
+</style>
 </head>
 
 <body class="bg-surface text-slate-800 min-h-screen flex font-sans antialiased selection:bg-brand selection:text-white">
@@ -152,11 +232,11 @@
 
                 {{-- WELCOME / HERO BANNER --}}
                 <div class="reveal reveal-1 relative overflow-hidden rounded-3xl shadow-xl shadow-blue-600/10 border border-blue-500/20 w-full">
-                    <div class="absolute inset-0 animate-mesh bg-gradient-to-r from-blue-700 via-brand to-cyan-600"></div>
+                    <div class="absolute inset-0 animate-mesh bg-gradient-to-r from-blue-700 via-brand to-blue-600"></div>
                     
                     {{-- Ambient Decorative Blobs --}}
                     <div class="blob absolute -top-20 -right-20 w-72 h-72 bg-white/10 rounded-full blur-2xl"></div>
-                    <div class="blob absolute -bottom-24 -left-20 w-80 h-80 bg-cyan-400/20 rounded-full blur-2xl" style="animation-delay: 2s;"></div>
+                    <div class="blob absolute -bottom-24 -left-20 w-80 h-80 bg-blue-400/20 rounded-full blur-2xl" style="animation-delay: 2s;"></div>
                     
                     {{-- Subtle Dot Pattern Overlay --}}
                     <div class="absolute inset-0 opacity-[0.07]" style="background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 20px 20px;"></div>
@@ -176,7 +256,7 @@
                         </div>
 
                         <a href="{{ route('company.projects.create') }}"
-                           class="btn-shimmer inline-flex items-center justify-center gap-2.5 bg-white text-brand px-6 py-3.5 rounded-2xl text-sm font-bold shadow-lg shadow-black/5 hover:bg-slate-50 hover:scale-[1.02] active:scale-[0.98] transition-all shrink-0">
+                           class="btn-shimmer inline-flex items-center justify-center gap-2.5 bg-white text-brand px-6 py-3.5 rounded-2xl text-sm font-bold shadow-lg shadow-black/5 hover:bg-[#f6f9ff] hover:scale-[1.02] active:scale-[0.98] transition-all shrink-0">
                             <i class="fa-solid fa-plus text-xs"></i>
                             <span>Buat Proyek Baru</span>
                         </a>
@@ -188,7 +268,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 w-full">
 
                     {{-- TOTAL PROYEK --}}
-                    <div class="reveal reveal-2 stat-card bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-6 shadow-sm relative overflow-hidden">
+                    <div class="reveal reveal-2 stat-card bg-white border border-blue-100/80 rounded-2xl p-5 sm:p-6 shadow-sm relative overflow-hidden">
                         <div class="flex items-center justify-between">
                             <div class="space-y-1">
                                 <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Proyek</p>
@@ -204,7 +284,7 @@
                     </div>
 
                     {{-- PROYEK AKTIF --}}
-                    <div class="reveal reveal-3 stat-card bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-6 shadow-sm relative overflow-hidden">
+                    <div class="reveal reveal-3 stat-card bg-white border border-blue-100/80 rounded-2xl p-5 sm:p-6 shadow-sm relative overflow-hidden">
                         <div class="flex items-center justify-between">
                             <div class="space-y-1">
                                 <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Proyek Aktif</p>
@@ -220,7 +300,7 @@
                     </div>
 
                     {{-- FREELANCER BEKERJA --}}
-                    <div class="reveal reveal-4 stat-card bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-6 shadow-sm relative overflow-hidden">
+                    <div class="reveal reveal-4 stat-card bg-white border border-blue-100/80 rounded-2xl p-5 sm:p-6 shadow-sm relative overflow-hidden">
                         <div class="flex items-center justify-between">
                             <div class="space-y-1">
                                 <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Freelancer Aktif</p>
@@ -236,7 +316,7 @@
                     </div>
 
                     {{-- TOTAL PENGELUARAN --}}
-                    <div class="reveal reveal-5 stat-card bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-6 shadow-sm relative overflow-hidden">
+                    <div class="reveal reveal-5 stat-card bg-white border border-blue-100/80 rounded-2xl p-5 sm:p-6 shadow-sm relative overflow-hidden">
                         <div class="flex items-center justify-between">
                             <div class="space-y-1">
                                 <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Pengeluaran</p>
@@ -258,7 +338,7 @@
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
 
                     {{-- KARTU PROYEK ANDA --}}
-                    <div class="reveal reveal-6 bg-white border border-slate-200/80 rounded-3xl p-5 sm:p-6 lg:p-7 shadow-sm flex flex-col justify-between w-full">
+                    <div class="reveal reveal-6 bg-white border border-blue-100/80 rounded-3xl p-5 sm:p-6 lg:p-7 shadow-sm flex flex-col justify-between w-full">
                         <div>
                             <div class="flex items-center justify-between mb-6">
                                 <div class="flex items-center gap-3">
@@ -277,7 +357,7 @@
                             @if($recentProjects->count() > 0)
                                 <div class="space-y-3">
                                     @foreach($recentProjects as $project)
-                                    <div class="modern-row flex items-center justify-between p-4 bg-slate-50/70 rounded-2xl border border-slate-100">
+                                    <div class="modern-row flex items-center justify-between p-4 bg-[#f6f9ff]/70 rounded-2xl border border-blue-50">
                                         <div class="min-w-0 flex-1 pr-4">
                                             <h4 class="text-sm font-bold text-slate-800 truncate">
                                                 <a href="{{ route('company.projects.show', $project) }}" class="hover:text-brand transition">
@@ -296,7 +376,7 @@
                                         <span class="inline-flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full shrink-0
                                             @if($project->status == 'Open') bg-emerald-50 text-emerald-600 border border-emerald-200/60
                                             @elseif($project->status == 'Closed') bg-rose-50 text-rose-600 border border-rose-200/60
-                                            @else bg-slate-100 text-slate-600 border border-slate-200 @endif
+                                            @else bg-blue-50 text-slate-600 border border-blue-100 @endif
                                         ">
                                             @if($project->status == 'Open')
                                                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
@@ -308,7 +388,7 @@
                                 </div>
                             @else
                                 <div class="py-12 text-center">
-                                    <div class="w-14 h-14 mx-auto mb-3 bg-slate-100 text-slate-400 rounded-2xl flex items-center justify-center text-xl shadow-inner">
+                                    <div class="w-14 h-14 mx-auto mb-3 bg-blue-50 text-slate-400 rounded-2xl flex items-center justify-center text-xl shadow-inner">
                                         <i class="fa-regular fa-folder-open"></i>
                                     </div>
                                     <h3 class="text-sm font-bold text-slate-700">Belum ada proyek</h3>
@@ -323,7 +403,7 @@
 
 
                     {{-- KARTU PROPOSAL MASUK --}}
-                    <div class="reveal reveal-7 bg-white border border-slate-200/85 rounded-3xl p-5 sm:p-6 lg:p-7 shadow-sm flex flex-col justify-between w-full">
+                    <div class="reveal reveal-7 bg-white border border-blue-100/85 rounded-3xl p-5 sm:p-6 lg:p-7 shadow-sm flex flex-col justify-between w-full">
                         <div>
                             <div class="flex items-center justify-between mb-6">
                                 <div class="flex items-center gap-3">
@@ -342,7 +422,7 @@
                             @if($incomingProposals->count() > 0)
                                 <div class="space-y-3">
                                     @foreach($incomingProposals as $proposal)
-                                    <div class="modern-row flex items-center justify-between p-4 bg-slate-50/70 rounded-2xl border border-slate-100">
+                                    <div class="modern-row flex items-center justify-between p-4 bg-[#f6f9ff]/70 rounded-2xl border border-blue-50">
                                         <div class="min-w-0 flex-1 pr-4">
                                             <h4 class="text-sm font-bold text-slate-800 truncate">
                                                 {{ $proposal->freelancer->name ?? 'Freelancer' }}
@@ -365,7 +445,7 @@
                                 </div>
                             @else
                                 <div class="py-12 text-center">
-                                    <div class="w-14 h-14 mx-auto mb-3 bg-slate-100 text-slate-400 rounded-2xl flex items-center justify-center text-xl shadow-inner">
+                                    <div class="w-14 h-14 mx-auto mb-3 bg-blue-50 text-slate-400 rounded-2xl flex items-center justify-center text-xl shadow-inner">
                                         <i class="fa-regular fa-envelope"></i>
                                     </div>
                                     <h3 class="text-sm font-bold text-slate-700">Belum ada proposal</h3>

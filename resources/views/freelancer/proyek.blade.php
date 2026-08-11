@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id" class="h-full bg-slate-50">
+<html lang="id" class="h-full bg-[#f6f9ff]">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,8 +10,88 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
     </style>
+<style>
+
+/* ApexForge Labs — Unified UI System */
+:root{
+    --af-primary:#2563eb;
+    --af-primary-dark:#1d4ed8;
+    --af-primary-soft:#eff6ff;
+    --af-sky:#38bdf8;
+    --af-ink:#0f172a;
+    --af-muted:#64748b;
+    --af-border:#dbeafe;
+    --af-surface:#ffffff;
+    --af-page:#f6f9ff;
+}
+html{scroll-behavior:smooth}
+body{
+    font-family:'Plus Jakarta Sans',sans-serif;
+    background:
+        radial-gradient(circle at 10% -10%,rgba(56,189,248,.10),transparent 30%),
+        radial-gradient(circle at 100% 0%,rgba(37,99,235,.08),transparent 28%),
+        var(--af-page);
+}
+::selection{background:rgba(37,99,235,.18);color:#0f172a}
+::-webkit-scrollbar{width:7px;height:7px}
+::-webkit-scrollbar-track{background:rgba(241,245,249,.7)}
+::-webkit-scrollbar-thumb{background:rgba(37,99,235,.22);border-radius:999px}
+::-webkit-scrollbar-thumb:hover{background:rgba(37,99,235,.38)}
+
+input,select,textarea{
+    border-color:var(--af-border)!important;
+    background:rgba(255,255,255,.92);
+    transition:border-color .2s ease,box-shadow .2s ease,background .2s ease;
+}
+input:focus,select:focus,textarea:focus{
+    border-color:rgba(37,99,235,.55)!important;
+    box-shadow:0 0 0 4px rgba(37,99,235,.09)!important;
+    outline:none!important;
+}
+button,a,[role="button"]{transition:all .2s ease}
+button:focus-visible,a:focus-visible,[role="button"]:focus-visible{
+    outline:2px solid rgba(37,99,235,.55);
+    outline-offset:2px;
+}
+table{border-collapse:separate;border-spacing:0}
+thead th{
+    background:rgba(239,246,255,.72)!important;
+    color:#334155;
+    font-weight:700;
+}
+tbody tr{transition:background .18s ease}
+tbody tr:hover{background:rgba(239,246,255,.48)}
+[class*="bg-blue-600"]{
+    box-shadow:0 8px 22px -12px rgba(37,99,235,.72);
+}
+[class*="bg-blue-600"]:hover{
+    box-shadow:0 12px 28px -12px rgba(37,99,235,.78);
+    transform:translateY(-1px);
+}
+.glass-panel,.glass-card,.glass-surface{
+    background:rgba(255,255,255,.72);
+    border:1px solid rgba(219,234,254,.85);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    box-shadow:0 18px 50px -32px rgba(30,64,175,.32);
+}
+.apex-page-glow{
+    position:fixed;inset:auto -10rem -12rem auto;width:28rem;height:28rem;
+    background:rgba(56,189,248,.09);filter:blur(70px);border-radius:999px;
+    pointer-events:none;z-index:-1;
+}
+@media (max-width:767px){
+    main{padding-left:1rem!important;padding-right:1rem!important}
+    table{min-width:680px}
+    .overflow-x-auto{-webkit-overflow-scrolling:touch}
+}
+@media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+
+</style>
 </head>
-<body class="h-full bg-slate-50 text-slate-800 antialiased selection:bg-blue-500 selection:text-white">
+<body class="h-full bg-[#f6f9ff] text-slate-800 antialiased selection:bg-blue-500 selection:text-white">
 
 <div class="flex h-screen overflow-hidden">
 
@@ -19,7 +99,7 @@
 
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
 
-        <div class="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200/80 shadow-xs">
+        <div class="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-blue-100/80 shadow-xs">
             @include('navbar.nav')
         </div>
 
@@ -48,11 +128,11 @@
                 @if($projects->count() > 0)
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                         @foreach($projects as $project)
-                            <div class="group bg-white rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-blue-200 hover:-translate-y-1.5 transition-all duration-300 ease-out overflow-hidden flex flex-col justify-between">
+                            <div class="group bg-white rounded-2xl border border-blue-100/80 shadow-sm hover:shadow-xl hover:border-blue-200 hover:-translate-y-1.5 transition-all duration-300 ease-out overflow-hidden flex flex-col justify-between">
                                 
                                 <div>
                                     {{-- Image Header --}}
-                                    <div class="relative h-48 overflow-hidden bg-slate-100">
+                                    <div class="relative h-48 overflow-hidden bg-blue-50">
                                         @if($project->image)
                                             <img src="{{ asset('storage/'.$project->image) }}" 
                                                  alt="{{ $project->project_name }}"
@@ -95,7 +175,7 @@
                                         {{-- Company / Owner --}}
                                         @if($project->owner && $project->owner->name)
                                             <p class="text-xs font-medium text-slate-500 flex items-center gap-2 mb-3">
-                                                <span class="w-5 h-5 rounded-md bg-slate-100 flex items-center justify-center text-slate-500">
+                                                <span class="w-5 h-5 rounded-md bg-blue-50 flex items-center justify-center text-slate-500">
                                                     <i class="fa-regular fa-building text-[10px]"></i>
                                                 </span>
                                                 {{ $project->owner->name }}
@@ -114,14 +194,14 @@
                                 {{-- Footer Card Section --}}
                                 <div class="px-6 pb-6 pt-0">
                                     {{-- Budget & Deadline --}}
-                                    <div class="flex items-center justify-between border-t border-slate-100 pt-4 mb-4">
+                                    <div class="flex items-center justify-between border-t border-blue-50 pt-4 mb-4">
                                         <div>
                                             <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Budget</p>
                                             <p class="text-base font-extrabold text-blue-600">Rp {{ number_format($project->budget, 0, ',', '.') }}</p>
                                         </div>
                                         <div class="text-right">
                                             <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Deadline</p>
-                                            <p class="text-xs font-bold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-md mt-0.5">
+                                            <p class="text-xs font-bold text-slate-700 bg-blue-50 px-2.5 py-1 rounded-md mt-0.5">
                                                 <i class="fa-regular fa-calendar-alt mr-1 text-slate-400"></i>
                                                 {{ \Carbon\Carbon::parse($project->deadline)->isoFormat('D MMM YYYY') }}
                                             </p>
@@ -148,7 +228,7 @@
 
                 @else
                     {{-- Empty State --}}
-                    <div class="bg-white rounded-3xl border border-slate-200/80 p-12 text-center max-w-lg mx-auto my-8 shadow-xs">
+                    <div class="bg-white rounded-3xl border border-blue-100/80 p-12 text-center max-w-lg mx-auto my-8 shadow-xs">
                         <div class="w-20 h-20 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-6 shadow-inner">
                             <i class="fa-solid fa-briefcase text-3xl"></i>
                         </div>
