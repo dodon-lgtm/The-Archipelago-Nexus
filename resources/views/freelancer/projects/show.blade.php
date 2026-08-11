@@ -1,178 +1,340 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="h-full bg-[#f6f9ff]">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $project->project_name }}</title>
+    <title>{{ $project->project_name }} - ApexForge Labs</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-        body{ font-family:'Plus Jakarta Sans',sans-serif; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
     </style>
+<style>
+
+/* ApexForge Labs — Unified UI System */
+:root{
+    --af-primary:#2563eb;
+    --af-primary-dark:#1d4ed8;
+    --af-primary-soft:#eff6ff;
+    --af-sky:#38bdf8;
+    --af-ink:#0f172a;
+    --af-muted:#64748b;
+    --af-border:#dbeafe;
+    --af-surface:#ffffff;
+    --af-page:#f6f9ff;
+}
+html{scroll-behavior:smooth}
+body{
+    font-family:'Plus Jakarta Sans',sans-serif;
+    background:
+        radial-gradient(circle at 10% -10%,rgba(56,189,248,.10),transparent 30%),
+        radial-gradient(circle at 100% 0%,rgba(37,99,235,.08),transparent 28%),
+        var(--af-page);
+}
+::selection{background:rgba(37,99,235,.18);color:#0f172a}
+::-webkit-scrollbar{width:7px;height:7px}
+::-webkit-scrollbar-track{background:rgba(241,245,249,.7)}
+::-webkit-scrollbar-thumb{background:rgba(37,99,235,.22);border-radius:999px}
+::-webkit-scrollbar-thumb:hover{background:rgba(37,99,235,.38)}
+
+input,select,textarea{
+    border-color:var(--af-border)!important;
+    background:rgba(255,255,255,.92);
+    transition:border-color .2s ease,box-shadow .2s ease,background .2s ease;
+}
+input:focus,select:focus,textarea:focus{
+    border-color:rgba(37,99,235,.55)!important;
+    box-shadow:0 0 0 4px rgba(37,99,235,.09)!important;
+    outline:none!important;
+}
+button,a,[role="button"]{transition:all .2s ease}
+button:focus-visible,a:focus-visible,[role="button"]:focus-visible{
+    outline:2px solid rgba(37,99,235,.55);
+    outline-offset:2px;
+}
+table{border-collapse:separate;border-spacing:0}
+thead th{
+    background:rgba(239,246,255,.72)!important;
+    color:#334155;
+    font-weight:700;
+}
+tbody tr{transition:background .18s ease}
+tbody tr:hover{background:rgba(239,246,255,.48)}
+[class*="bg-blue-600"]{
+    box-shadow:0 8px 22px -12px rgba(37,99,235,.72);
+}
+[class*="bg-blue-600"]:hover{
+    box-shadow:0 12px 28px -12px rgba(37,99,235,.78);
+    transform:translateY(-1px);
+}
+.glass-panel,.glass-card,.glass-surface{
+    background:rgba(255,255,255,.72);
+    border:1px solid rgba(219,234,254,.85);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    box-shadow:0 18px 50px -32px rgba(30,64,175,.32);
+}
+.apex-page-glow{
+    position:fixed;inset:auto -10rem -12rem auto;width:28rem;height:28rem;
+    background:rgba(56,189,248,.09);filter:blur(70px);border-radius:999px;
+    pointer-events:none;z-index:-1;
+}
+@media (max-width:767px){
+    main{padding-left:1rem!important;padding-right:1rem!important}
+    table{min-width:680px}
+    .overflow-x-auto{-webkit-overflow-scrolling:touch}
+}
+@media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+
+</style>
 </head>
 
-@include('navbar.nav')
+<body class="h-full bg-[#f6f9ff] text-slate-800 antialiased selection:bg-blue-600 selection:text-white flex">
 
-<body class="bg-slate-100">
+    @include('navbar.navigasi')
 
-<div class="max-w-7xl mx-auto py-10 px-6">
+    <div class="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
 
-    <!-- Tombol Kembali -->
-    <a href="{{ route('freelancer.dashboard') }}"
-        class="inline-flex items-center gap-2 text-cyan-600 hover:text-cyan-700 font-semibold mb-6">
-        <i class="fa fa-arrow-left"></i> Kembali
-    </a>
-
-    @if(session('error'))
-        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-6 flex items-center gap-3">
-            <i class="fa fa-circle-exclamation"></i>
-            <span>{{ session('error') }}</span>
-        </div>
-    @endif
-
-    @if(session('success'))
-        <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl mb-6 flex items-center gap-3">
-            <i class="fa fa-circle-check"></i>
-            <span>{{ session('success') }}</span>
-        </div>
-    @endif
-
-    <div class="grid lg:grid-cols-3 gap-8">
-
-        <!-- KIRI: Detail Utama -->
-        <div class="lg:col-span-2">
-            <div class="bg-white rounded-2xl shadow p-6">
-
-                <!-- Pemanggilan Gambar dari Storage -->
-                <img src="{{ $project->image ? asset('storage/'.$project->image) : asset('images/no-image.png') }}"
-                     class="w-full h-80 object-cover rounded-xl" alt="Project Image">
-
-                <h1 class="text-3xl font-bold mt-6">{{ $project->project_name }}</h1>
-
-                <div class="flex flex-wrap gap-3 mt-4">
-                    <span class="bg-cyan-100 text-cyan-700 px-3 py-1 rounded-full text-sm">
-                        {{ $project->category->name ?? '-' }}
-                    </span>
-                    <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
-                        {{ ucfirst($project->status) }}
-                    </span>
-                </div>
-
-                <div class="mt-8">
-                    <h3 class="font-bold text-xl mb-3">Deskripsi Proyek</h3>
-                    <p class="text-slate-600 leading-8">{{ $project->project_description }}</p>
-                </div>
-
-                @if($project->skills)
-                <div class="mt-8">
-                    <h3 class="font-bold mb-3">Skill yang Dibutuhkan</h3>
-                    <div class="flex flex-wrap gap-2">
-                      @foreach(explode(',', $project->skills) as $skill)
-    <span class="bg-slate-100 px-3 py-2 rounded-lg text-sm">
-        {{ trim($skill) }}
-    </span>
-@endforeach
-                    </div>
-                </div>
-                @endif
-
-                <!-- Lampiran -->
-                <div class="mt-8">
-                    <h3 class="font-bold text-xl mb-3">Lampiran Proyek</h3>
-                    @if($project->attachment)
-                        <div class="border rounded-xl p-4 flex items-center justify-between bg-slate-50">
-                            <div class="flex items-center gap-3">
-                                <div class="w-12 h-12 rounded-lg bg-red-100 flex items-center justify-center">
-                                    <i class="fa-solid fa-file-pdf text-red-600 text-xl"></i>
-                                </div>y
-                                <div>
-                                    <p class="font-semibold text-sm truncate max-w-[200px]">{{ $project->attachment }}</p>
-                                    <p class="text-xs text-slate-500">Lampiran proyek perusahaan</p>
-                                </div>
-                            </div>
-                            <a href="{{ asset('storage/'.$project->attachment) }}" target="_blank"
-                                class="bg-cyan-600 hover:bg-cyan-700 text-white px-4 py-2 rounded-lg text-sm">Download</a>
-                        </div>
-                    @else
-                        <div class="border rounded-xl p-4 text-slate-500">Tidak ada lampiran.</div>
-                    @endif
-                </div>
-            </div>
+        <div class="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-blue-100/80 shadow-xs">
+            @include('navbar.nav')
         </div>
 
-        <!-- KANAN: Sidebar Informasi -->
-        <div>
-            <div class="bg-white rounded-2xl shadow p-6 sticky top-6">
-                <h2 class="font-bold text-xl mb-6">Informasi Proyek</h2>
-                <div class="space-y-5">
-                    <div>
-                        <p class="text-sm text-slate-500">Budget</p>
-                        <h3 class="text-2xl font-bold text-cyan-600">Rp {{ number_format($project->budget, 0, ',', '.') }}</h3>
-                    </div>
-                    <hr>
-                    <div>
-                        <p class="text-sm text-slate-500">Deadline</p>
-                        <h3 class="font-semibold">{{ \Carbon\Carbon::parse($project->deadline)->format('d M Y') }}</h3>
-                    </div>
-                    <hr>
-                    <div>
-                        <p class="text-sm text-slate-500">Status</p>
-                        <h3 class="font-semibold">{{ ucfirst($project->status) }}</h3>
-                    </div>
-                    <hr>
-                    <div>
-                        <p class="text-sm text-slate-500">Perusahaan</p>
-                        <h3 class="font-semibold">{{ $project->owner->name ?? 'Tidak diketahui' }}</h3>
-                    </div>
-                </div>
+        <main class="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="max-w-7xl mx-auto">
 
-                <div class="mt-8 space-y-3">
-                    @if(!empty($hasOffered))
-                        <a href="{{ route('freelancer.lamaran') }}" class="w-full block bg-cyan-600 hover:bg-cyan-700 text-white text-center py-3 rounded-xl font-bold">
-                            <i class="fa fa-list mr-2"></i> Lihat Penawaran Saya
-                        </a>
-                    @else
-                        <a href="{{ route('freelancer.penawaran.create', $project)}}" class="w-full block bg-cyan-600 hover:bg-cyan-700 text-white text-center py-3 rounded-xl font-bold">
-                            <i class="fa fa-paper-plane mr-2"></i> Kirim Penawaran
-                        </a>
-                    @endif
-
-                    @php
-                        $isSaved = $project->savedByFreelancers()
-                            ->where('freelancer_id', auth()->id())
-                            ->exists();
-                    @endphp
-
-                    @if($isSaved)
-                        <form action="{{ route('freelancer.saved-projects.destroy', $project) }}" method="POST" class="w-full">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="w-full border border-blue-300 bg-blue-50 text-blue-700 py-3 rounded-xl hover:bg-blue-100 font-semibold">
-                                <i class="fa fa-bookmark mr-2"></i> Tersimpan
-                            </button>
-                        </form>
-                    @else
-                        <form action="{{ route('freelancer.saved-projects.store', $project) }}" method="POST" class="w-full">
-                            @csrf
-                            <button type="submit" class="w-full border border-slate-300 py-3 rounded-xl hover:bg-slate-100">
-                                <i class="fa fa-bookmark mr-2"></i> Simpan Proyek
-                            </button>
-                        </form>
-                    @endif
-
-                    {{-- Tombol Laporkan Proyek --}}
-                    <a href="{{ route('freelancer.reports.create', ['project_id' => $project->id]) }}"
-                       class="w-full block border border-red-200 bg-red-50 text-red-600 hover:bg-red-100 text-center py-3 rounded-xl font-semibold transition">
-                        <i class="fa-solid fa-flag mr-2"></i> Laporkan Proyek
+                <!-- Navigation Back -->
+                <div class="mb-6">
+                    <a href="{{ route('freelancer.dashboard') }}"
+                       class="inline-flex items-center gap-2 text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100/80 px-3.5 py-2 rounded-xl transition border border-blue-100">
+                        <i class="fa-solid fa-arrow-left text-[10px]"></i> Kembali ke Dashboard
                     </a>
                 </div>
+
+                {{-- Flash Notifications --}}
+                @if(session('error'))
+                    <div class="bg-rose-50/90 border border-rose-200 text-rose-800 px-5 py-4 rounded-2xl mb-6 flex items-center gap-3 shadow-xs">
+                        <span class="w-8 h-8 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-circle-exclamation text-sm"></i>
+                        </span>
+                        <span class="text-sm font-semibold">{{ session('error') }}</span>
+                    </div>
+                @endif
+
+                @if(session('success'))
+                    <div class="bg-emerald-50/90 border border-emerald-200 text-emerald-800 px-5 py-4 rounded-2xl mb-6 flex items-center gap-3 shadow-xs">
+                        <span class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-circle-check text-sm"></i>
+                        </span>
+                        <span class="text-sm font-semibold">{{ session('success') }}</span>
+                    </div>
+                @endif
+
+                <div class="grid lg:grid-cols-3 gap-8">
+
+                    <!-- LEFT SIDE: Project Main Details -->
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="bg-white rounded-3xl border border-blue-100/80 shadow-xs p-6 sm:p-8">
+
+                            <!-- Cover Image -->
+                            <div class="relative h-64 sm:h-80 w-full overflow-hidden rounded-2xl bg-blue-50 border border-blue-100/60">
+                                @if($project->image)
+                                    <img src="{{ asset('storage/'.$project->image) }}"
+                                         class="w-full h-full object-cover" alt="{{ $project->project_name }}">
+                                @else
+                                    <div class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50/60 text-slate-300">
+                                        <i class="fa-solid fa-image text-5xl mb-2 text-slate-300"></i>
+                                        <span class="text-xs font-semibold text-slate-400">Tidak ada gambar proyek</span>
+                                    </div>
+                                @endif
+
+                                <!-- Category & Status Overlay Badges -->
+                                <div class="absolute top-4 left-4 flex flex-wrap gap-2">
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/90 backdrop-blur-md text-blue-700 font-bold text-xs rounded-full shadow-xs border border-white/40">
+                                        <i class="fa-solid fa-folder-open text-blue-500 text-[10px]"></i>
+                                        {{ $project->category->name ?? '-' }}
+                                    </span>
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/90 backdrop-blur-md text-white font-bold text-xs rounded-full shadow-xs border border-emerald-400/30">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
+                                        {{ ucfirst($project->status) }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Title -->
+                            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-6 tracking-tight leading-snug">
+                                {{ $project->project_name }}
+                            </h1>
+
+                            <!-- Description -->
+                            <div class="mt-8 pt-6 border-t border-blue-50">
+                                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Deskripsi Proyek</h3>
+                                <p class="text-slate-600 text-sm sm:text-base leading-relaxed whitespace-pre-line">{{ $project->project_description }}</p>
+                            </div>
+
+                            <!-- Required Skills -->
+                            @if($project->skills)
+                                <div class="mt-8 pt-6 border-t border-blue-50">
+                                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Keahlian Yang Dibutuhkan</h3>
+                                    <div class="flex flex-wrap gap-2">
+                                        @foreach(explode(',', $project->skills) as $skill)
+                                            <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-blue-50/80 border border-blue-100 text-blue-700 text-xs font-semibold rounded-xl">
+                                                <i class="fa-solid fa-code text-[10px] text-blue-400"></i>
+                                                {{ trim($skill) }}
+                                            </span>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+
+                            <!-- Attachment Section -->
+                            <div class="mt-8 pt-6 border-t border-blue-50">
+                                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Lampiran Proyek</h3>
+                                @if($project->attachment)
+                                    <div class="border border-blue-100/80 rounded-2xl p-4 flex items-center justify-between bg-[#f6f9ff]/60 hover:bg-[#f6f9ff] transition">
+                                        <div class="flex items-center gap-3.5 min-w-0">
+                                            <div class="w-11 h-11 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center shrink-0 font-bold">
+                                                <i class="fa-solid fa-file-pdf text-xl"></i>
+                                            </div>
+                                            <div class="min-w-0">
+                                                <p class="font-bold text-sm text-slate-800 truncate">{{ $project->attachment }}</p>
+                                                <p class="text-xs text-slate-400">Dokumen pendukung dari perusahaan</p>
+                                            </div>
+                                        </div>
+                                        <a href="{{ asset('storage/'.$project->attachment) }}" target="_blank"
+                                           class="shrink-0 inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition shadow-xs">
+                                            <i class="fa-solid fa-download text-[10px]"></i> Unduh
+                                        </a>
+                                    </div>
+                                @else
+                                    <div class="border border-dashed border-blue-100 rounded-2xl p-5 text-center text-slate-400 text-xs font-medium">
+                                        <i class="fa-regular fa-folder-open text-base mb-1 block text-slate-300"></i>
+                                        Tidak ada berkas lampiran untuk proyek ini.
+                                    </div>
+                                @endif
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- RIGHT SIDE: Project Meta & Actions Sidebar -->
+                    <div class="space-y-6">
+                        <div class="bg-white rounded-3xl border border-blue-100/80 shadow-xs p-6 sticky top-24">
+                            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-5">Ringkasan Informasi</h2>
+                            
+                            <div class="space-y-4 text-sm">
+                                <!-- Budget -->
+                                <div class="bg-blue-50/60 border border-blue-100/80 rounded-2xl p-4">
+                                    <p class="text-xs text-blue-600/80 font-bold uppercase tracking-wider mb-1">Anggaran Proyek</p>
+                                    <h3 class="text-2xl font-extrabold text-blue-600">Rp {{ number_format($project->budget, 0, ',', '.') }}</h3>
+                                </div>
+
+                                <!-- Meta List -->
+                                <div class="space-y-3 pt-2">
+                                    <div class="flex items-center justify-between py-2 border-b border-blue-50">
+                                        <span class="text-slate-500 font-medium text-xs flex items-center gap-2">
+                                            <i class="fa-regular fa-calendar text-slate-400"></i> Tenggat Waktu
+                                        </span>
+                                        <span class="font-bold text-slate-800 text-xs">
+                                            {{ \Carbon\Carbon::parse($project->deadline)->format('d M Y') }}
+                                        </span>
+                                    </div>
+
+                                    <div class="flex items-center justify-between py-2 border-b border-blue-50">
+                                        <span class="text-slate-500 font-medium text-xs flex items-center gap-2">
+                                            <i class="fa-solid fa-signal text-slate-400"></i> Status Proyek
+                                        </span>
+                                        <span class="font-bold text-emerald-600 text-xs bg-emerald-50 px-2.5 py-0.5 rounded-md border border-emerald-100">
+                                            {{ ucfirst($project->status) }}
+                                        </span>
+                                    </div>
+
+                                    <div class="flex items-center justify-between py-2">
+                                        <span class="text-slate-500 font-medium text-xs flex items-center gap-2">
+                                            <i class="fa-regular fa-building text-slate-400"></i> Klien / Perusahaan
+                                        </span>
+                                        <span class="font-bold text-slate-800 text-xs truncate max-w-[140px]">
+                                            {{ $project->owner->name ?? 'Tidak diketahui' }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+<!-- Actions Group -->
+                            <div class="mt-8 space-y-3 pt-4 border-t border-blue-50">
+                                @if(!empty($hasOffered))
+                                    <a href="{{ route('freelancer.lamaran') }}" 
+                                       class="w-full inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-center py-3 rounded-2xl font-bold text-xs shadow-xs shadow-blue-500/20 transition">
+                                        <i class="fa-solid fa-list-check"></i> Lihat Penawaran Saya
+                                    </a>
+                                @elseif(!empty($acceptsOffers))
+                                    <a href="{{ route('freelancer.penawaran.create', $project)}}" 
+                                       class="w-full inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-center py-3 rounded-2xl font-bold text-xs shadow-xs shadow-blue-500/20 transition">
+                                        <i class="fa-solid fa-paper-plane"></i> Kirim Penawaran Baru
+                                    </a>
+                                @else
+                                    <div class="w-full inline-flex items-center justify-center gap-2 border border-blue-100 bg-[#f6f9ff] text-slate-500 text-center py-3 rounded-2xl font-bold text-xs transition">
+                                        <i class="fa-solid fa-lock"></i> Proyek Sudah Ditutup
+                                    </div>
+                                @endif
+
+                                @php
+                                    $isSaved = $project->savedByFreelancers()
+                                        ->where('freelancer_id', auth()->id())
+                                        ->exists();
+                                @endphp
+
+                                @if($isSaved)
+                                    <form action="{{ route('freelancer.saved-projects.destroy', $project) }}" method="POST" class="w-full">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="w-full inline-flex items-center justify-center gap-2 border border-blue-200 bg-blue-50/80 text-blue-700 py-3 rounded-2xl hover:bg-blue-100 font-bold text-xs transition">
+                                            <i class="fa-solid fa-bookmark text-blue-600"></i> Tersimpan Dalam Bookmark
+                                        </button>
+                                    </form>
+                                @else
+                                    <form action="{{ route('freelancer.saved-projects.store', $project) }}" method="POST" class="w-full">
+                                        @csrf
+                                        <button type="submit" class="w-full inline-flex items-center justify-center gap-2 border border-blue-100/80 bg-white text-slate-700 py-3 rounded-2xl hover:bg-[#f6f9ff] font-semibold text-xs transition">
+                                            <i class="fa-regular fa-bookmark"></i> Simpan Ke Bookmark
+                                        </button>
+                                    </form>
+                                @endif
+
+{{-- Report Project Button --}}
+                                <a href="{{ route('freelancer.reports.create', ['project_id' => $project->id]) }}"
+                                   class="w-full inline-flex items-center justify-center gap-2 border border-rose-200/80 bg-rose-50/50 text-rose-600 hover:bg-rose-100/80 text-center py-3 rounded-2xl font-semibold text-xs transition">
+                                    <i class="fa-solid fa-flag"></i> Laporkan Masalah Proyek
+                                </a>
+
+                                {{-- Report Company Button (setiap Freelancer yang boleh melihat halaman proyek) --}}
+                                @if($project->owner && (int) $project->owner->id !== (int) auth()->id())
+                                    <a href="{{ route('freelancer.reports.create', ['reported_user_id' => $project->owner->id]) }}"
+                                       class="w-full inline-flex items-center justify-center gap-2 border border-blue-100/80 bg-white text-slate-600 hover:bg-[#f6f9ff] text-center py-3 rounded-2xl font-semibold text-xs transition">
+                                        <i class="fa-solid fa-building-shield"></i> Laporkan Company
+                                    </a>
+                                @endif
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="mt-16">
+                    @include('navbar.footer')
+                </div>
+
             </div>
-        </div>
+        </main>
     </div>
-</div>
 
 </body>
 </html>

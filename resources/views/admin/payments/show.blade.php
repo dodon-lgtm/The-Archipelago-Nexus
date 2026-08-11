@@ -26,8 +26,8 @@
         @endif
 
         {{-- Card: Invoice Info --}}
-        <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-            <div class="px-6 py-5 border-b border-slate-100">
+        <div class="bg-white border border-blue-100 rounded-2xl shadow-sm overflow-hidden">
+            <div class="px-6 py-5 border-b border-blue-50">
                 <div class="flex items-center justify-between">
                     <h2 class="font-bold text-slate-800">Informasi Pembayaran</h2>
                     <span class="text-[10px] font-bold px-2.5 py-1 rounded-full border {{ $payment->status_color }}">
@@ -81,12 +81,12 @@
 
         {{-- Card: Bukti Pembayaran --}}
         @if($payment->payment_proof)
-            <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-                <div class="px-6 py-5 border-b border-slate-100">
+            <div class="bg-white border border-blue-100 rounded-2xl shadow-sm overflow-hidden">
+                <div class="px-6 py-5 border-b border-blue-50">
                     <h2 class="font-bold text-slate-800">Bukti Pembayaran</h2>
                 </div>
                 <div class="p-6">
-                    <div class="bg-slate-50 rounded-xl p-4">
+                    <div class="bg-[#f6f9ff] rounded-xl p-4">
                         @php
                             $ext = strtolower(pathinfo($payment->payment_proof, PATHINFO_EXTENSION));
                         @endphp
@@ -120,8 +120,8 @@
 
         {{-- Card: Catatan --}}
         @if($payment->company_note)
-            <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-                <div class="px-6 py-5 border-b border-slate-100">
+            <div class="bg-white border border-blue-100 rounded-2xl shadow-sm overflow-hidden">
+                <div class="px-6 py-5 border-b border-blue-50">
                     <h2 class="font-bold text-slate-800">Catatan Perusahaan</h2>
                 </div>
                 <div class="p-6">
@@ -131,8 +131,8 @@
         @endif
 
         @if($payment->admin_note)
-            <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-                <div class="px-6 py-5 border-b border-slate-100">
+            <div class="bg-white border border-blue-100 rounded-2xl shadow-sm overflow-hidden">
+                <div class="px-6 py-5 border-b border-blue-50">
                     <h2 class="font-bold text-slate-800">Catatan Admin</h2>
                 </div>
                 <div class="p-6">
@@ -143,8 +143,8 @@
 
         {{-- Actions --}}
         @if($payment->status === 'waiting_verification')
-            <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-                <div class="px-6 py-5 border-b border-slate-100">
+            <div class="bg-white border border-blue-100 rounded-2xl shadow-sm overflow-hidden">
+                <div class="px-6 py-5 border-b border-blue-50">
                     <h2 class="font-bold text-slate-800">Aksi Verifikasi</h2>
                 </div>
                 <div class="p-6">
@@ -178,10 +178,10 @@
             {{-- Modal Reject --}}
             <div id="rejectModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
                 <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
-                    <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
+                    <div class="px-6 py-5 border-b border-blue-50 flex items-center justify-between">
                         <h3 class="font-bold text-slate-800">Tolak Pembayaran</h3>
                         <button type="button" onclick="document.getElementById('rejectModal').classList.add('hidden')"
-                                class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center hover:bg-slate-200 transition">
+                                class="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center hover:bg-slate-200 transition">
                             <i class="fa-solid fa-xmark text-slate-500"></i>
                         </button>
                     </div>
@@ -195,7 +195,7 @@
                             <label class="block text-xs font-semibold text-slate-600 mb-1.5">Alasan Penolakan (opsional)</label>
                             <textarea name="admin_note" rows="4" maxlength="2000"
                                       placeholder="Jelaskan alasan penolakan..."
-                                      class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/30 resize-none"></textarea>
+                                      class="w-full px-4 py-2.5 bg-[#f6f9ff] border border-blue-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/30 resize-none"></textarea>
                         </div>
                         <button type="submit"
                                 class="w-full py-2.5 bg-red-500 text-white rounded-xl text-sm font-semibold hover:bg-red-600 transition flex items-center justify-center gap-2">
@@ -208,8 +208,8 @@
 
         {{-- Info jika sudah diverifikasi --}}
         @if($payment->status === 'paid' && $payment->verifier)
-            <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-                <div class="px-6 py-5 border-b border-slate-100">
+            <div class="bg-white border border-blue-100 rounded-2xl shadow-sm overflow-hidden">
+                <div class="px-6 py-5 border-b border-blue-50">
                     <h2 class="font-bold text-slate-800">Informasi Verifikasi</h2>
                 </div>
                 <div class="p-6">
@@ -227,8 +227,8 @@
         @endif
 
         @if($payment->status === 'rejected' && $payment->verifier)
-            <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-                <div class="px-6 py-5 border-b border-slate-100">
+            <div class="bg-white border border-blue-100 rounded-2xl shadow-sm overflow-hidden">
+                <div class="px-6 py-5 border-b border-blue-50">
                     <h2 class="font-bold text-slate-800">Informasi Penolakan</h2>
                 </div>
                 <div class="p-6">
@@ -248,10 +248,9 @@
         {{-- Button Kembali --}}
         <div class="flex justify-center">
             <a href="{{ route('admin.payments.index') }}"
-               class="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">
+               class="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-blue-100 rounded-xl text-sm font-semibold text-slate-600 hover:bg-[#f6f9ff] transition">
                 <i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Pembayaran
             </a>
         </div>
     </div>
 @endsection
-
