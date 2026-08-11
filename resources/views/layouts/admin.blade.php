@@ -5,7 +5,7 @@
  <head>
      <meta charset="UTF-8">
      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <title>@yield('title', 'Admin Panel') - The Archipelago Nexus</title>
+     <title>@yield('title', 'Admin Panel') - ApexForge Labs</title>
 
      {{-- Tailwind CSS --}}
      <script src="https://cdn.tailwindcss.com"></script>
@@ -62,7 +62,7 @@
                  </div>
                  <div class="sidebar-logo-text transition-all duration-300 overflow-hidden">
                      <h2 class="font-extrabold text-sm leading-tight text-slate-800 whitespace-nowrap">The
-                         Archipelago<br>Nexus</h2>
+                         ApexForge<br>Labs</h2>
                  </div>
 
                  {{-- Desktop toggle button --}}
@@ -198,7 +198,7 @@
              <div class="p-4 shrink-0 border-t border-slate-100 sidebar-footer-wrapper">
                  <div
                      class="sidebar-footer-card rounded-2xl bg-gradient-to-r from-cyan-500 to-teal-500 p-4 text-white overflow-hidden transition-all duration-300">
-                     <h3 class="font-bold text-sm whitespace-nowrap">The Archipelago Nexus</h3>
+                     <h3 class="font-bold text-sm whitespace-nowrap">ApexForge Labs</h3>
                      <p class="text-xs mt-1 opacity-90 whitespace-nowrap">Admin Panel</p>
                      <div class="mt-3 text-[10px] opacity-80 whitespace-nowrap">© 2026</div>
                  </div>

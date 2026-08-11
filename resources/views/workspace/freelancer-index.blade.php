@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workspace Saya - The Archipelago Nexus</title>
+    <title>Workspace Saya - ApexForge Labs</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -53,17 +53,24 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                         @foreach($workspaces as $ws)
                             @php
-                                $progress = $ws->latestProgress?->progress ?? 0;
-                                $stageColors = [
-                                    'Sedang Dikerjakan' => 'bg-blue-50 text-blue-600 border-blue-200',
-                                    'Menunggu Revisi' => 'bg-amber-50 text-amber-600 border-amber-200',
+                                $progress = $ws->currentProgress();
+$stageColors = [
+                                    'Sedang Dikerjakan' => 'bg-blue-100 text-blue-700 border-blue-200',
+                                    'Menunggu Review' => 'bg-amber-100 text-amber-700 border-amber-200',
+                                    'Menunggu Revisi' => 'bg-blue-50 text-blue-600 border-blue-200',
                                     'Menunggu Pembayaran' => 'bg-purple-50 text-purple-600 border-purple-200',
                                     'Menunggu Verifikasi Admin' => 'bg-orange-50 text-orange-600 border-orange-200',
                                     'Selesai' => 'bg-emerald-50 text-emerald-600 border-emerald-200',
                                 ];
                                 $wsStatusColor = $stageColors[$ws->status] ?? 'bg-slate-50 text-slate-600 border-slate-200';
                             @endphp
-                            <div class="bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition overflow-hidden">
+                            <div class="relative bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition overflow-hidden">
+                                {{-- Red dot jika ada notifikasi unread terkait workspace ini --}}
+                                @if (($unreadByWorkspace[$ws->id] ?? 0) > 0)
+                                    <span class="absolute top-3 right-3 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[10px] font-bold shadow-md z-10">
+                                        {{ $unreadByWorkspace[$ws->id] }}
+                                    </span>
+                                @endif
                                 <div class="p-5">
                                     <div class="flex items-start justify-between gap-3 mb-4">
                                         <div class="min-w-0 flex-1">

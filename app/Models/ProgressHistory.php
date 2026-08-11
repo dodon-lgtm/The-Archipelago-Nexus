@@ -10,6 +10,7 @@ class ProgressHistory extends Model
     protected $fillable = [
         'workspace_id',
         'stage',
+        'stage_order',
         'progress',
         'description',
         'updated_by',

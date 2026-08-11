@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pendapatan - The Archipelago Nexus</title>
+    <title>Pendapatan - ApexForge Labs</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -16,7 +16,7 @@
 <div class="flex h-screen overflow-hidden">
     @include('navbar.navigasi')
 
-    <div class="flex-1 flex flex-col overflow-hidden">
+    <div class="flex-1 flex flex-col overflow-hidden">a
         <div class="sticky top-0 z-40 bg-white border-b">
             @include('navbar.nav')
         </div>

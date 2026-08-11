@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar Proyek | The Archipelago Nexus</title>
+    <title>Daftar Proyek | ApexForge Labs</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
@@ -101,6 +101,10 @@
                                             </div>
                                         </div>
                                     @endif
+<a href="{{ route('company.projects.archive') }}" class="inline-flex items-center gap-2 px-4 py-3 rounded-2xl bg-white/15 hover:bg-white/25 border border-white/30 text-white font-bold text-sm shadow-lg shadow-blue-950/20 transition-colors duration-200 active:scale-95">
+                                        <i class="fa-solid fa-box-archive text-xs"></i>
+                                        <span>Arsip</span>
+                                    </a>
                                     <a href="{{ route('company.projects.create') }}" class="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-white hover:bg-blue-50 text-blue-700 font-bold text-sm shadow-lg shadow-blue-950/20 transition-colors duration-200 active:scale-95">
                                         <i class="fa-solid fa-plus text-xs"></i>
                                         <span>Buat Proyek</span>
@@ -213,12 +217,41 @@
                                         </div>
                                     </div>
 
-                                    {{-- Right Status & Action --}}
-                                    <div class="flex items-center justify-between md:justify-end gap-3 pt-3 md:pt-0 border-t md:border-t-0 border-slate-100 pl-2 md:pl-0">
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl border {{ $isOpen ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-600 border-slate-200' }}">
-                                            <span class="w-2 h-2 rounded-full {{ $isOpen ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400' }}"></span>
-                                            {{ $status }}
-                                        </span>
+{{-- Right Status & Action --}}
+                                    <div class="flex flex-col items-start md:items-end gap-2 pt-3 md:pt-0 border-t md:border-t-0 border-slate-100 pl-2 md:pl-0">
+                                        <div class="flex flex-wrap items-center gap-1.5 justify-end">
+                                            {{-- Status buka/tutup penawaran (projects.status) --}}
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl border {{ $isOpen ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-600 border-slate-200' }}">
+                                                <span class="w-2 h-2 rounded-full {{ $isOpen ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400' }}"></span>
+                                                {{ $status }}
+                                            </span>
+
+                                            {{-- Status pekerjaan (Workspace) — info tambahan, tidak mengganti projects.status --}}
+                                            @php
+                                                $workStatus = $project->workspace?->status;
+                                                $workBadge = match($workStatus) {
+                                                    'Selesai' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                                                    'Menunggu Review' => 'bg-sky-50 text-sky-700 border-sky-200',
+                                                    'Menunggu Revisi' => 'bg-amber-50 text-amber-700 border-amber-200',
+                                                    'Menunggu Pembayaran' => 'bg-indigo-50 text-indigo-700 border-indigo-200',
+                                                    'Menunggu Verifikasi Admin' => 'bg-purple-50 text-purple-700 border-purple-200',
+                                                    'Sedang Dikerjakan' => 'bg-blue-50 text-blue-700 border-blue-200',
+                                                    default => null,
+                                                };
+                                            @endphp
+
+                                            @if($workStatus)
+                                                <span class="inline-flex items-center gap-1 text-xs font-bold rounded-xl border px-2.5 py-1.5 {{ $workBadge }}">
+                                                    <i class="fa-solid fa-circle-half-stroke text-[10px] {{ $workStatus === 'Selesai' ? 'fa-circle-check' : '' }}"></i>
+                                                    {{ $workStatus }}
+                                                </span>
+                                            @elseif($isOpen)
+                                                <span class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-bold rounded-xl border bg-slate-50 text-slate-500 border-slate-200">
+                                                    <i class="fa-regular fa-clock text-[10px]"></i>
+                                                    Menunggu Freelancer
+                                                </span>
+                                            @endif
+                                        </div>
 
                                         <div class="w-9 h-9 shrink-0 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white group-hover:border-transparent group-hover:translate-x-1 transition-all duration-300">
                                             <i class="fa-solid fa-arrow-right text-xs"></i>

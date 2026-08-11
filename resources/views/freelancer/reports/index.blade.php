@@ -7,7 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan Saya - The Archipelago Nexus</title>
+    <title>Laporan Saya - ApexForge Labs</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -68,7 +68,7 @@
                         </div>
 
                         <div class="shrink-0">
-                            <a href="{{ route('freelancer.reports.create') }}"
+                            <a href="{{ route('reports.create') }}"
                                class="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white text-sm font-bold rounded-2xl transition-all duration-200 shadow-lg shadow-blue-600/30 hover:shadow-blue-500/40 hover:-translate-y-0.5">
                                 <i class="fa-solid fa-plus text-xs"></i>
                                 Buat Laporan Baru

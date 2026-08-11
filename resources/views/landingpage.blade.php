@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Archipelago Nexus — Marketplace Freelance Indonesia</title>
+    <title>ApexForge Labs — Marketplace Freelance Indonesia</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
@@ -31,31 +31,111 @@
             border-radius: 9999px;
         }
     </style>
+<style>
+
+/* ApexForge Labs — Unified UI System */
+:root{
+    --af-primary:#2563eb;
+    --af-primary-dark:#1d4ed8;
+    --af-primary-soft:#eff6ff;
+    --af-sky:#38bdf8;
+    --af-ink:#0f172a;
+    --af-muted:#64748b;
+    --af-border:#dbeafe;
+    --af-surface:#ffffff;
+    --af-page:#f6f9ff;
+}
+html{scroll-behavior:smooth}
+body{
+    font-family:'Plus Jakarta Sans',sans-serif;
+    background:
+        radial-gradient(circle at 10% -10%,rgba(56,189,248,.10),transparent 30%),
+        radial-gradient(circle at 100% 0%,rgba(37,99,235,.08),transparent 28%),
+        var(--af-page);
+}
+::selection{background:rgba(37,99,235,.18);color:#0f172a}
+::-webkit-scrollbar{width:7px;height:7px}
+::-webkit-scrollbar-track{background:rgba(241,245,249,.7)}
+::-webkit-scrollbar-thumb{background:rgba(37,99,235,.22);border-radius:999px}
+::-webkit-scrollbar-thumb:hover{background:rgba(37,99,235,.38)}
+
+input,select,textarea{
+    border-color:var(--af-border)!important;
+    background:rgba(255,255,255,.92);
+    transition:border-color .2s ease,box-shadow .2s ease,background .2s ease;
+}
+input:focus,select:focus,textarea:focus{
+    border-color:rgba(37,99,235,.55)!important;
+    box-shadow:0 0 0 4px rgba(37,99,235,.09)!important;
+    outline:none!important;
+}
+button,a,[role="button"]{transition:all .2s ease}
+button:focus-visible,a:focus-visible,[role="button"]:focus-visible{
+    outline:2px solid rgba(37,99,235,.55);
+    outline-offset:2px;
+}
+table{border-collapse:separate;border-spacing:0}
+thead th{
+    background:rgba(239,246,255,.72)!important;
+    color:#334155;
+    font-weight:700;
+}
+tbody tr{transition:background .18s ease}
+tbody tr:hover{background:rgba(239,246,255,.48)}
+[class*="bg-blue-600"]{
+    box-shadow:0 8px 22px -12px rgba(37,99,235,.72);
+}
+[class*="bg-blue-600"]:hover{
+    box-shadow:0 12px 28px -12px rgba(37,99,235,.78);
+    transform:translateY(-1px);
+}
+.glass-panel,.glass-card,.glass-surface{
+    background:rgba(255,255,255,.72);
+    border:1px solid rgba(219,234,254,.85);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    box-shadow:0 18px 50px -32px rgba(30,64,175,.32);
+}
+.apex-page-glow{
+    position:fixed;inset:auto -10rem -12rem auto;width:28rem;height:28rem;
+    background:rgba(56,189,248,.09);filter:blur(70px);border-radius:999px;
+    pointer-events:none;z-index:-1;
+}
+@media (max-width:767px){
+    main{padding-left:1rem!important;padding-right:1rem!important}
+    table{min-width:680px}
+    .overflow-x-auto{-webkit-overflow-scrolling:touch}
+}
+@media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+
+</style>
 </head>
 
-<body class="bg-slate-50 text-slate-800 antialiased selection:bg-blue-600 selection:text-white">
+<body class="bg-[#f6f9ff] text-slate-800 antialiased selection:bg-blue-600 selection:text-white">
 
     <!-- ============================================================ -->
     <!-- 1. NAVBAR -->
     <!-- ============================================================ -->
-    <header class="bg-white/80 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-50">
+    <header class="bg-white/80 backdrop-blur-md border-b border-blue-100/80 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
             <!-- Brand -->
             <a href="{{ route('landing') }}" class="flex items-center gap-2.5 sm:gap-3 group">
                 <div
                     class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl overflow-hidden ring-2 ring-blue-100 group-hover:ring-blue-400 transition-all shadow-xs">
-                    <img src="{{ asset('images/nexus.jpg') }}" alt="The Archipelago Nexus"
+                    <img src="{{ asset('images/nexus.jpg') }}" alt="ApexForge Labs"
                         class="w-full h-full object-cover">
                 </div>
                 <span
                     class="font-extrabold text-base sm:text-xl tracking-tight text-slate-900 group-hover:text-blue-600 transition">
-                    The Archipelago Nexus
+                    ApexForge Labs
                 </span>
             </a>
 
             <!-- Mobile Menu Toggle -->
             <button id="mobile-menu-btn"
-                class="lg:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100 transition focus:outline-hidden"
+                class="lg:hidden p-2 rounded-xl text-slate-600 hover:bg-blue-50 transition focus:outline-hidden"
                 aria-label="Toggle menu">
                 <i class="fa-solid fa-bars text-xl"></i>
             </button>
@@ -78,7 +158,7 @@
             <!-- Desktop Auth -->
             <div class="hidden lg:flex items-center gap-3">
                 @auth
-                    <div class="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-xl border border-slate-200/60">
+                    <div class="flex items-center gap-2 px-3 py-1.5 bg-blue-50 rounded-xl border border-blue-100/60">
                         <span class="text-xs text-slate-500 font-medium">Halo,</span>
                         <span class="text-xs font-bold text-slate-900">{{ Auth::user()->name }}</span>
                     </div>
@@ -101,13 +181,13 @@
                     <form method="POST" action="{{ route('logout') }}" class="inline">
                         @csrf
                         <button type="submit"
-                            class="px-4 py-2 text-sm font-semibold text-slate-700 border border-slate-300/80 hover:bg-slate-100/80 rounded-xl transition">
+                            class="px-4 py-2 text-sm font-semibold text-slate-700 border border-blue-100/80 hover:bg-blue-50/80 rounded-xl transition">
                             <i class="fa-solid fa-right-from-bracket mr-1.5"></i>Logout
                         </button>
                     </form>
                 @else
                     <a href="{{ route('login') }}"
-                        class="px-5 py-2 text-sm font-semibold text-slate-700 hover:text-slate-900 border border-slate-300/80 rounded-xl hover:bg-slate-100/60 transition">
+                        class="px-5 py-2 text-sm font-semibold text-slate-700 hover:text-slate-900 border border-blue-100/80 rounded-xl hover:bg-blue-50/60 transition">
                         Masuk
                     </a>
                     <a href="{{ route('register') }}"
@@ -119,20 +199,20 @@
         </div>
 
         <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden lg:hidden bg-white border-b border-slate-200 px-4 py-4 space-y-3">
+        <div id="mobile-menu" class="hidden lg:hidden bg-white border-b border-blue-100 px-4 py-4 space-y-3">
             <a href="#home"
-                class="block px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 rounded-lg">Beranda</a>
+                class="block px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-[#f6f9ff] rounded-lg">Beranda</a>
             <a href="#categories"
-                class="block px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 rounded-lg">Kategori</a>
+                class="block px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-[#f6f9ff] rounded-lg">Kategori</a>
             <a href="#projects"
-                class="block px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 rounded-lg">Proyek
+                class="block px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-[#f6f9ff] rounded-lg">Proyek
                 Terbaru</a>
             <a href="#freelancer"
-                class="block px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 rounded-lg">Freelancer</a>
+                class="block px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-[#f6f9ff] rounded-lg">Freelancer</a>
             <a href="#company"
-                class="block px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 rounded-lg">Perusahaan</a>
+                class="block px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-[#f6f9ff] rounded-lg">Perusahaan</a>
 
-            <div class="pt-3 border-t border-slate-100">
+            <div class="pt-3 border-t border-blue-50">
                 @auth
                     <div class="flex items-center gap-2 pb-3">
                         <div
@@ -167,7 +247,7 @@
                 @else
                     <div class="grid grid-cols-2 gap-2">
                         <a href="{{ route('login') }}"
-                            class="block px-4 py-2.5 text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 text-center rounded-xl">
+                            class="block px-4 py-2.5 text-sm font-semibold text-slate-700 bg-blue-50 hover:bg-slate-200 text-center rounded-xl">
                             Masuk
                         </a>
                         <a href="{{ route('register') }}"
@@ -184,7 +264,7 @@
     <!-- 2. HERO SECTION -->
     <!-- ============================================================ -->
     <section id="home"
-        class="relative overflow-hidden bg-gradient-to-b from-blue-50/70 via-slate-50 to-slate-50 border-b border-slate-200/50">
+        class="relative overflow-hidden bg-gradient-to-b from-blue-50/70 via-slate-50 to-slate-50 border-b border-blue-100/50">
         <div class="absolute inset-0 z-0 pointer-events-none">
             <img src="{{ asset('images/gedung.jpg') }}" alt="Gedung" class="w-full h-full object-cover opacity-10">
             <div class="absolute inset-0 bg-gradient-to-t from-slate-50 via-slate-50/80 to-transparent"></div>
@@ -210,7 +290,7 @@
                     </h1>
 
                     <p class="text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl font-medium">
-                        The Archipelago Nexus mempertemukan <strong>freelancer berbakat</strong> dengan
+                        ApexForge Labs mempertemukan <strong>freelancer berbakat</strong> dengan
                         <strong>perusahaan terpercaya</strong> untuk menggarap proyek digital secara transparan,
                         efisien, dan profesional.
                     </p>
@@ -222,13 +302,13 @@
                             Cari Proyek
                         </a>
                         <a href="{{ route('register') }}"
-                            class="inline-flex items-center gap-2.5 px-7 py-3.5 bg-white hover:bg-slate-100 text-slate-800 font-bold rounded-2xl border border-slate-200 shadow-xs hover:shadow-md transition-all duration-200 hover:-translate-y-0.5">
+                            class="inline-flex items-center gap-2.5 px-7 py-3.5 bg-white hover:bg-blue-50 text-slate-800 font-bold rounded-2xl border border-blue-100 shadow-xs hover:shadow-md transition-all duration-200 hover:-translate-y-0.5">
                             <i class="fa-solid fa-plus-circle text-blue-600 text-xs"></i>
                             Publikasikan Proyek
                         </a>
                     </div>
 
-                    <div class="flex items-center gap-4 pt-4 border-t border-slate-200/60">
+                    <div class="flex items-center gap-4 pt-4 border-t border-blue-100/60">
                         <div class="flex -space-x-2.5">
                             <div
                                 class="w-9 h-9 rounded-full bg-blue-600 ring-2 ring-white flex items-center justify-center text-white text-xs font-bold shadow-xs">
@@ -257,15 +337,15 @@
                     </div>
 
                     <div
-                        class="relative bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-3xl shadow-2xl p-4 w-full max-w-sm sm:max-w-md flex flex-col gap-3">
+                        class="relative bg-white/90 backdrop-blur-md border border-blue-100/80 rounded-3xl shadow-2xl p-4 w-full max-w-sm sm:max-w-md flex flex-col gap-3">
                         {{-- Window bar mockup --}}
-                        <div class="flex items-center justify-between pb-2 border-b border-slate-100 px-1">
+                        <div class="flex items-center justify-between pb-2 border-b border-blue-50 px-1">
                             <div class="flex gap-1.5">
                                 <span class="w-2.5 h-2.5 bg-rose-400 rounded-full"></span>
                                 <span class="w-2.5 h-2.5 bg-amber-400 rounded-full"></span>
                                 <span class="w-2.5 h-2.5 bg-emerald-400 rounded-full"></span>
                             </div>
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Nexus
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Labs
                                 Hub</span>
                         </div>
 
@@ -280,7 +360,7 @@
 
                         {{-- Floating Badge 1 --}}
                         <div
-                            class="absolute -bottom-4 -left-4 sm:-bottom-5 sm:-left-6 bg-white/95 backdrop-blur-md border border-slate-200/80 rounded-2xl shadow-xl p-3 flex items-center gap-3">
+                            class="absolute -bottom-4 -left-4 sm:-bottom-5 sm:-left-6 bg-white/95 backdrop-blur-md border border-blue-100/80 rounded-2xl shadow-xl p-3 flex items-center gap-3">
                             <div
                                 class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0 font-bold">
                                 <i class="fa-solid fa-circle-check text-lg"></i>
@@ -293,7 +373,7 @@
 
                         {{-- Floating Badge 2 --}}
                         <div
-                            class="absolute -top-3 -right-3 sm:-top-4 sm:-right-4 bg-white/95 backdrop-blur-md border border-slate-200/80 rounded-2xl shadow-xl p-3 flex items-center gap-3">
+                            class="absolute -top-3 -right-3 sm:-top-4 sm:-right-4 bg-white/95 backdrop-blur-md border border-blue-100/80 rounded-2xl shadow-xl p-3 flex items-center gap-3">
                             <div
                                 class="w-10 h-10 rounded-xl bg-amber-100 text-amber-500 flex items-center justify-center shrink-0 font-bold">
                                 <i class="fa-solid fa-star text-lg"></i>
@@ -315,7 +395,7 @@
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 sm:-mt-12 relative z-20">
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             <div
-                class="bg-white rounded-2xl shadow-xl shadow-slate-200/60 border border-slate-200/80 p-5 sm:p-6 text-center hover:-translate-y-1 transition duration-300">
+                class="bg-white rounded-2xl shadow-xl shadow-slate-200/60 border border-blue-100/80 p-5 sm:p-6 text-center hover:-translate-y-1 transition duration-300">
                 <div
                     class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-3">
                     <i class="fa-solid fa-briefcase text-xl"></i>
@@ -325,7 +405,7 @@
                 <p class="text-xs sm:text-sm text-slate-500 font-medium mt-1">Total Proyek</p>
             </div>
             <div
-                class="bg-white rounded-2xl shadow-xl shadow-slate-200/60 border border-slate-200/80 p-5 sm:p-6 text-center hover:-translate-y-1 transition duration-300">
+                class="bg-white rounded-2xl shadow-xl shadow-slate-200/60 border border-blue-100/80 p-5 sm:p-6 text-center hover:-translate-y-1 transition duration-300">
                 <div
                     class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-3">
                     <i class="fa-solid fa-user-tie text-xl"></i>
@@ -335,7 +415,7 @@
                 <p class="text-xs sm:text-sm text-slate-500 font-medium mt-1">Freelancer Berbakat</p>
             </div>
             <div
-                class="bg-white rounded-2xl shadow-xl shadow-slate-200/60 border border-slate-200/80 p-5 sm:p-6 text-center hover:-translate-y-1 transition duration-300">
+                class="bg-white rounded-2xl shadow-xl shadow-slate-200/60 border border-blue-100/80 p-5 sm:p-6 text-center hover:-translate-y-1 transition duration-300">
                 <div
                     class="w-12 h-12 bg-sky-50 text-sky-600 rounded-2xl flex items-center justify-center mx-auto mb-3">
                     <i class="fa-solid fa-building text-xl"></i>
@@ -345,7 +425,7 @@
                 <p class="text-xs sm:text-sm text-slate-500 font-medium mt-1">Perusahaan Terdaftar</p>
             </div>
             <div
-                class="bg-white rounded-2xl shadow-xl shadow-slate-200/60 border border-slate-200/80 p-5 sm:p-6 text-center hover:-translate-y-1 transition duration-300">
+                class="bg-white rounded-2xl shadow-xl shadow-slate-200/60 border border-blue-100/80 p-5 sm:p-6 text-center hover:-translate-y-1 transition duration-300">
                 <div
                     class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-3">
                     <i class="fa-solid fa-circle-check text-xl"></i>
@@ -375,7 +455,7 @@
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
                 @foreach ($categories as $category)
                     <a href="{{ route('login') }}"
-                        class="group bg-white border border-slate-200/80 rounded-2xl p-5 text-center hover:border-blue-300 hover:shadow-lg hover:shadow-blue-500/5 transition-all duration-200 hover:-translate-y-1 flex flex-col items-center">
+                        class="group bg-white border border-blue-100/80 rounded-2xl p-5 text-center hover:border-blue-300 hover:shadow-lg hover:shadow-blue-500/5 transition-all duration-200 hover:-translate-y-1 flex flex-col items-center">
                         <div
                             class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-3 group-hover:bg-blue-600 group-hover:text-white transition-all duration-200">
                             <i class="fa-solid fa-folder-open text-lg"></i>
@@ -388,7 +468,7 @@
                 @endforeach
             </div>
         @else
-            <div class="text-center py-12 bg-white rounded-3xl border border-slate-200/80">
+            <div class="text-center py-12 bg-white rounded-3xl border border-blue-100/80">
                 <p class="text-slate-400 font-medium">Belum ada kategori tersedia saat ini.</p>
             </div>
         @endif
@@ -397,7 +477,7 @@
     <!-- ============================================================ -->
     <!-- 5. PROYEK TERBARU -->
     <!-- ============================================================ -->
-    <section id="projects" class="scroll-offset bg-white py-16 sm:py-24 border-y border-slate-200/60">
+    <section id="projects" class="scroll-offset bg-white py-16 sm:py-24 border-y border-blue-100/60">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-10 sm:mb-14">
                 <span
@@ -414,10 +494,10 @@
                 <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                     @foreach ($recentProjects as $project)
                         <div
-                            class="group bg-slate-50/50 hover:bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-xs hover:shadow-xl hover:border-blue-200 transition-all duration-300 hover:-translate-y-1.5 flex flex-col justify-between">
+                            class="group bg-[#f6f9ff]/50 hover:bg-white border border-blue-100/80 rounded-2xl overflow-hidden shadow-xs hover:shadow-xl hover:border-blue-200 transition-all duration-300 hover:-translate-y-1.5 flex flex-col justify-between">
                             <div>
                                 <!-- Image Header -->
-                                <div class="h-44 overflow-hidden bg-slate-100 relative">
+                                <div class="h-44 overflow-hidden bg-blue-50 relative">
                                     @if ($project->image)
                                         <img src="{{ asset('storage/' . $project->image) }}"
                                             alt="{{ $project->project_name }}"
@@ -453,7 +533,7 @@
                                     </p>
 
                                     {{-- Owner Info --}}
-                                    <div class="flex items-center gap-2 mt-4 pt-4 border-t border-slate-100">
+                                    <div class="flex items-center gap-2 mt-4 pt-4 border-t border-blue-50">
                                         <div
                                             class="w-6 h-6 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-[10px] font-bold">
                                             <i class="fa-regular fa-building"></i>
@@ -466,7 +546,7 @@
 
                             <!-- Card Footer -->
                             <div
-                                class="px-6 pb-6 pt-0 flex items-center justify-between border-t border-slate-100/80 mt-2">
+                                class="px-6 pb-6 pt-0 flex items-center justify-between border-t border-blue-50/80 mt-2">
                                 <div>
                                     <p class="text-[10px] text-slate-400 font-bold uppercase">Budget</p>
                                     <p class="text-base font-extrabold text-blue-600">
@@ -525,7 +605,7 @@
                 </p>
 
                 <div class="grid sm:grid-cols-2 gap-4 pt-2">
-                    <div class="p-4 bg-white border border-slate-200/80 rounded-2xl shadow-xs">
+                    <div class="p-4 bg-white border border-blue-100/80 rounded-2xl shadow-xs">
                         <div
                             class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-2 font-bold">
                             <i class="fa-solid fa-magnifying-glass text-xs"></i>
@@ -533,7 +613,7 @@
                         <h4 class="font-bold text-sm text-slate-900">Temukan Proyek</h4>
                         <p class="text-xs text-slate-500 mt-1">Akses ratusan proyek sesuai spesialisasi utama Anda.</p>
                     </div>
-                    <div class="p-4 bg-white border border-slate-200/80 rounded-2xl shadow-xs">
+                    <div class="p-4 bg-white border border-blue-100/80 rounded-2xl shadow-xs">
                         <div
                             class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-2 font-bold">
                             <i class="fa-solid fa-paper-plane text-xs"></i>
@@ -541,7 +621,7 @@
                         <h4 class="font-bold text-sm text-slate-900">Kirim Penawaran</h4>
                         <p class="text-xs text-slate-500 mt-1">Ajukan proposal menarik langsung ke perusahaan.</p>
                     </div>
-                    <div class="p-4 bg-white border border-slate-200/80 rounded-2xl shadow-xs">
+                    <div class="p-4 bg-white border border-blue-100/80 rounded-2xl shadow-xs">
                         <div
                             class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-2 font-bold">
                             <i class="fa-solid fa-shield-halved text-xs"></i>
@@ -550,7 +630,7 @@
                         <p class="text-xs text-slate-500 mt-1">Pembayaran terjamin melalui alur proyek yang transparan.
                         </p>
                     </div>
-                    <div class="p-4 bg-white border border-slate-200/80 rounded-2xl shadow-xs">
+                    <div class="p-4 bg-white border border-blue-100/80 rounded-2xl shadow-xs">
                         <div
                             class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-2 font-bold">
                             <i class="fa-solid fa-star text-xs"></i>
@@ -571,7 +651,7 @@
             </div>
 
             <div
-                class="relative h-[340px] sm:h-[420px] rounded-3xl overflow-hidden shadow-2xl border border-slate-200/60">
+                class="relative h-[340px] sm:h-[420px] rounded-3xl overflow-hidden shadow-2xl border border-blue-100/60">
                 <img src="{{ asset('images/beranda.png') }}" alt="Freelancer Workspace"
                     class="w-full h-full object-cover">
                 <div class="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent"></div>
@@ -579,7 +659,7 @@
                     <div class="bg-white/90 backdrop-blur-md rounded-2xl p-4 border border-white/20 shadow-lg">
                         <p class="text-xs sm:text-sm font-bold text-slate-900">"Sistem kerja yang transparan memudahkan
                             saya mendapat klien tetap!"</p>
-                        <p class="text-[11px] text-slate-500 font-semibold mt-1">— Freelancer Aktif Nexus</p>
+                        <p class="text-[11px] text-slate-500 font-semibold mt-1">— Freelancer Aktif Labs</p>
                     </div>
                 </div>
             </div>
@@ -592,19 +672,19 @@
     <!-- ============================================================ -->
     <!-- 7. UNTUK PERUSAHAAN -->
     <!-- ============================================================ -->
-    <section id="company" class="scroll-offset bg-white py-16 sm:py-24 border-y border-slate-200/60">
+    <section id="company" class="scroll-offset bg-white py-16 sm:py-24 border-y border-blue-100/60">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid lg:grid-cols-2 gap-12 items-center">
 
                 {{-- Image Card --}}
                 <div
-                    class="relative h-[340px] sm:h-[420px] rounded-3xl overflow-hidden shadow-xl border border-slate-200/80 order-2 lg:order-1">
+                    class="relative h-[340px] sm:h-[420px] rounded-3xl overflow-hidden shadow-xl border border-blue-100/80 order-2 lg:order-1">
                     <img src="{{ asset('images/image.png') }}" alt="Perusahaan" class="w-full h-full object-cover">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent">
                     </div>
 
                     <div class="absolute bottom-6 left-6 right-6">
-                        <div class="bg-white/95 backdrop-blur-md rounded-2xl p-4 border border-slate-200/80 shadow-lg">
+                        <div class="bg-white/95 backdrop-blur-md rounded-2xl p-4 border border-blue-100/80 shadow-lg">
                             <p class="text-xs sm:text-sm font-bold text-slate-900">"Kualitas talenta di platform ini
                                 sangat memuaskan dan tepat waktu."</p>
                             <p class="text-[11px] text-blue-600 font-semibold mt-1">— Partner Mitra Perusahaan</p>
@@ -630,7 +710,7 @@
 
                     <div class="space-y-3 pt-2">
                         <div
-                            class="flex items-center gap-3.5 p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 shadow-xs">
+                            class="flex items-center gap-3.5 p-3.5 rounded-2xl bg-[#f6f9ff] border border-blue-100/80 shadow-xs">
                             <div
                                 class="w-9 h-9 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 font-bold">
                                 <i class="fa-solid fa-plus text-xs"></i>
@@ -643,7 +723,7 @@
                         </div>
 
                         <div
-                            class="flex items-center gap-3.5 p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 shadow-xs">
+                            class="flex items-center gap-3.5 p-3.5 rounded-2xl bg-[#f6f9ff] border border-blue-100/80 shadow-xs">
                             <div
                                 class="w-9 h-9 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 font-bold">
                                 <i class="fa-solid fa-layer-group text-xs"></i>
@@ -684,7 +764,7 @@
 
         <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div
-                class="bg-white border border-slate-200/80 rounded-2xl p-6 text-center shadow-xs hover:shadow-xl transition duration-300">
+                class="bg-white border border-blue-100/80 rounded-2xl p-6 text-center shadow-xs hover:shadow-xl transition duration-300">
                 <div
                     class="w-12 h-12 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 font-extrabold text-lg">
                     1
@@ -694,7 +774,7 @@
                     Perusahaan secara gratis.</p>
             </div>
             <div
-                class="bg-white border border-slate-200/80 rounded-2xl p-6 text-center shadow-xs hover:shadow-xl transition duration-300">
+                class="bg-white border border-blue-100/80 rounded-2xl p-6 text-center shadow-xs hover:shadow-xl transition duration-300">
                 <div
                     class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 font-extrabold text-lg">
                     2
@@ -704,7 +784,7 @@
                     baru.</p>
             </div>
             <div
-                class="bg-white border border-slate-200/80 rounded-2xl p-6 text-center shadow-xs hover:shadow-xl transition duration-300">
+                class="bg-white border border-blue-100/80 rounded-2xl p-6 text-center shadow-xs hover:shadow-xl transition duration-300">
                 <div
                     class="w-12 h-12 bg-sky-100 text-sky-600 rounded-2xl flex items-center justify-center mx-auto mb-4 font-extrabold text-lg">
                     3
@@ -714,7 +794,7 @@
                     kerja khusus.</p>
             </div>
             <div
-                class="bg-white border border-slate-200/80 rounded-2xl p-6 text-center shadow-xs hover:shadow-xl transition duration-300">
+                class="bg-white border border-blue-100/80 rounded-2xl p-6 text-center shadow-xs hover:shadow-xl transition duration-300">
                 <div
                     class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4 font-extrabold text-lg">
                     4
@@ -736,7 +816,7 @@
                 Siap Memulai Perjalanan Anda?
             </h2>
             <p class="text-blue-100 mt-4 text-sm sm:text-base leading-relaxed">
-                Bergabunglah bersama ribuan talenta digital dan perusahaan di platform The Archipelago Nexus sekarang
+                Bergabunglah bersama ribuan talenta digital dan perusahaan di platform ApexForge Labs sekarang
                 juga.
             </p>
             <div class="flex flex-wrap justify-center gap-4 mt-8">
@@ -755,7 +835,7 @@
     <!-- ============================================================ -->
     <!-- 10. FOOTER -->
     <!-- ============================================================ -->
-    <footer class="bg-white border-t border-slate-200/80 pt-12 pb-8">
+    <footer class="bg-white border-t border-blue-100/80 pt-12 pb-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
                 <div class="space-y-4">
@@ -764,7 +844,7 @@
                             <img src="{{ asset('images/nexus.jpg') }}" alt="Logo"
                                 class="w-full h-full object-cover">
                         </div>
-                        <span class="font-extrabold text-base text-slate-900">The Archipelago Nexus</span>
+                        <span class="font-extrabold text-base text-slate-900">ApexForge Labs</span>
                     </div>
                     <p class="text-xs text-slate-500 leading-relaxed">
                         Platform marketplace freelance terpercaya yang menghubungkan talenta berbakat dengan perusahaan
@@ -804,15 +884,15 @@
                         <li><a href="{{ route('login') }}" class="hover:text-blue-600 transition">Kebijakan
                                 Privasi</a></li>
                         <li class="pt-2 text-slate-400 font-normal">
-                            <i class="fa-regular fa-envelope mr-1.5"></i> support@archipelagonexus.id
+                            <i class="fa-regular fa-envelope mr-1.5"></i> support@apexforgelabs.id
                         </li>
                     </ul>
                 </div>
             </div>
 
             <div
-                class="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-medium text-slate-500">
-                <p>&copy; 2026 The Archipelago Nexus. Hak Cipta Dilindungi.</p>
+                class="pt-6 border-t border-blue-50 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-medium text-slate-500">
+                <p>&copy; 2026 ApexForge Labs. Hak Cipta Dilindungi.</p>
                 <div class="flex items-center gap-4">
                     <a href="{{ route('login') }}" class="hover:text-blue-600 transition">Privasi</a>
                     <a href="{{ route('login') }}" class="hover:text-blue-600 transition">Ketentuan</a>
@@ -831,3 +911,4 @@
 </body>
 
 </html>
+

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ config('app.name', 'The Archipelago Nexus') }}</title>
+    <title>{{ config('app.name', 'ApexForge Labs') }}</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f7f7f7; color: #111; }
         .container { max-width: 980px; margin: 0 auto; padding: 24px 16px; }
@@ -33,7 +33,7 @@
 <body>
 <div class="container">
     <div class="card" style="text-align: left;">
-        <h1>The Archipelago Nexus</h1>
+        <h1>ApexForge Labs</h1>
         <p>
             Platform pengelolaan proyek untuk perusahaan dan individu.
         </p>

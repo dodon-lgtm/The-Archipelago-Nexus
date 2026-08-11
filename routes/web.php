@@ -52,6 +52,7 @@ Route::post('/register', [RegisterController::class, 'register']);
 // ──────────────────────────────────────────────
 Route::get('/', function () {
     $recentProjects = \App\Models\Project::with(['category', 'owner'])
+        ->where('archive_status', 'active')
         ->where('status', 'Open')
         ->latest()
         ->take(6)
@@ -59,10 +60,12 @@ Route::get('/', function () {
 
     $categories = \App\Models\Category::orderBy('name')->get();
 
-    $totalProjects          = \App\Models\Project::count();
+$totalProjects          = \App\Models\Project::count();
     $totalFreelancers       = \App\Models\User::where('role', 'freelancer')->count();
     $totalCompanies         = \App\Models\User::where('role', 'company')->count();
-    $totalProjectsCompleted = \App\Models\Project::where('status', 'Closed')->count();
+    // Proyek Selesai dihitung dari Workspace.status = 'Selesai', BUKAN dari Project.status = 'Closed'.
+    // Project yang hanya 'ditutup' (Closed) TIDAK dihitung sebagai proyek selesai.
+    $totalProjectsCompleted = \App\Models\Workspace::where('status', 'Selesai')->count();
 
     return view('landingpage', compact(
         'recentProjects',
@@ -184,13 +187,18 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])
             ));
         })->name('dashboard');
 
-        // Projects CRUD
+// Projects CRUD
         Route::get('/projects', [CompanyProjectController::class, 'index'])->name('projects.index');
+        Route::get('/projects/archive', [CompanyProjectController::class, 'archiveIndex'])->name('projects.archive');
         Route::get('/projects/create', [CompanyProjectController::class, 'create'])->name('projects.create');
         Route::post('/projects', [CompanyProjectController::class, 'store'])->name('projects.store');
         Route::get('/projects/{project}', [CompanyProjectController::class, 'show'])->name('projects.show');
         Route::get('/projects/{project}/edit', [CompanyProjectController::class, 'edit'])->name('projects.edit');
         Route::put('/projects/{project}', [CompanyProjectController::class, 'update'])->name('projects.update');
+        Route::post('/projects/{project}/close', [CompanyProjectController::class, 'close'])->name('projects.close');
+        Route::post('/projects/{project}/archive', [CompanyProjectController::class, 'archive'])->name('projects.archive-project');
+        Route::post('/projects/{project}/activate', [CompanyProjectController::class, 'activate'])->name('projects.activate');
+        Route::post('/projects/{project}/deactivate', [CompanyProjectController::class, 'deactivate'])->name('projects.deactivate');
         Route::delete('/projects/{project}', [CompanyProjectController::class, 'destroy'])->name('projects.destroy');
         Route::get('/client/project/{project}/review', [ReviewController::class, 'create'])->name('client.review.create');
         Route::post('/client/project/{project}/review', [ReviewController::class, 'store'])->name('client.review.store');
@@ -206,8 +214,7 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])
             ->name('workspaces.show');
         Route::post('/workspaces/{workspace}/message', [WorkspaceController::class, 'sendMessage'])
             ->name('workspaces.message');
-        Route::post('/workspaces/{workspace}/complete', [WorkspaceController::class, 'complete'])
-            ->name('workspaces.complete');
+            
             
         // Profile Freelancer (Read-only untuk Company)
         Route::get('/freelancer-profile/{id}', [FreelancerProfilController::class, 'profile'])->name('freelancer.profile');

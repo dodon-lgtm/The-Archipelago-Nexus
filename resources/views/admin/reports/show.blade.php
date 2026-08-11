@@ -69,27 +69,44 @@
                 </div>
             @endif
 
-            {{-- Lampiran / Bukti --}}
+{{-- Lampiran / Bukti --}}
             <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
                 <h2 class="font-bold text-slate-800 mb-4">Lampiran / Bukti ({{ $report->attachments->count() }})</h2>
                 @if($report->attachments->count() > 0)
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                         @foreach($report->attachments as $attachment)
-                            <a href="{{ $attachment->file_url }}" target="_blank"
-                               class="group relative rounded-xl border border-slate-200 overflow-hidden bg-slate-50 hover:border-cyan-300 transition">
+                            <div class="group relative rounded-xl border border-slate-200 overflow-hidden bg-slate-50 hover:border-cyan-300 transition">
                                 @if($attachment->is_image)
-                                    <img src="{{ $attachment->file_url }}" alt="{{ $attachment->file_name }}"
-                                         class="w-full h-24 object-cover group-hover:scale-105 transition">
+                                    {{-- Thumbnail - klik untuk preview gambar --}}
+                                    <a href="{{ $attachment->file_url }}" target="_blank" title="{{ $attachment->file_name }}">
+                                        <img src="{{ $attachment->file_url }}" alt="{{ $attachment->file_name }}"
+                                             class="w-full h-24 object-cover group-hover:scale-105 transition">
+                                    </a>
+                                    <div class="p-2">
+                                        <p class="text-[11px] font-semibold text-slate-700 truncate">🖼 {{ $attachment->file_name }}</p>
+                                        <p class="text-[10px] text-slate-400">{{ $attachment->formatted_size }}</p>
+                                    </div>
                                 @else
+                                    {{-- PDF / File - icon + Buka/Download --}}
                                     <div class="h-24 flex items-center justify-center bg-slate-100 text-cyan-500">
-                                        <i class="fa-solid fa-file-lines text-2xl"></i>
+                                        <i class="fa-solid fa-file-pdf text-3xl"></i>
+                                    </div>
+                                    <div class="p-2">
+                                        <p class="text-[11px] font-semibold text-slate-700 truncate">📄 {{ $attachment->file_name }}</p>
+                                        <p class="text-[10px] text-slate-400">{{ $attachment->formatted_size }}</p>
+                                        <div class="flex gap-2 mt-2">
+                                            <a href="{{ $attachment->file_url }}" target="_blank"
+                                               class="flex-1 text-center px-2 py-1.5 rounded-lg bg-cyan-50 text-cyan-600 hover:bg-cyan-100 text-[10px] font-bold transition">
+                                                <i class="fa-solid fa-eye mr-1"></i> Buka
+                                            </a>
+                                            <a href="{{ $attachment->file_url }}" download
+                                               class="flex-1 text-center px-2 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 text-[10px] font-bold transition">
+                                                <i class="fa-solid fa-download mr-1"></i> Download
+                                            </a>
+                                        </div>
                                     </div>
                                 @endif
-                                <div class="p-2">
-                                    <p class="text-[11px] font-semibold text-slate-700 truncate">{{ $attachment->file_name }}</p>
-                                    <p class="text-[10px] text-slate-400">{{ $attachment->formatted_size }}</p>
-                                </div>
-                            </a>
+                            </div>
                         @endforeach
                     </div>
                 @else

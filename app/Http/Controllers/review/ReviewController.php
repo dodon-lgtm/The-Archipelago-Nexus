@@ -11,16 +11,23 @@ use Illuminate\Http\Request;
 
 class ReviewController extends Controller
 {
-    public function create($projectId)
+public function create($projectId)
     {
-        $project = Project::with('freelancer.freelancerProfile')->findOrFail($projectId);
+        $project = Project::with(['workspace.freelancer', 'workspace.freelancer.freelancerProfile'])->findOrFail($projectId);
 
-        // Pastikan hanya client pemilik project yang bisa memberi review
-        if ($project->client_id != Auth::id()) {
+        // Pastikan hanya company pemilik project (user_id) yang bisa memberi review
+        if ((int) $project->user_id !== (int) Auth::id()) {
             abort(403, 'Unauthorized action.');
         }
 
-        return view('company.review_create', compact('project'));
+        // Resolusi freelancer melalui relasi project -> workspace -> freelancer
+        $freelancer = optional($project->workspace)->freelancer;
+
+        if (!$freelancer) {
+            return back()->with('error', 'Freelancer tidak ditemukan pada workspace proyek ini.');
+        }
+
+        return view('company.review_create', compact('project', 'freelancer'));
     }
 
     // Menyimpan ulasan ke database

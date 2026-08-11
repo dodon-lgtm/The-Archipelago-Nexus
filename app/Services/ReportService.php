@@ -106,6 +106,7 @@ class ReportService
         $workspaceId = $data['workspace_id'] ?? null;
         $penawaranId = $data['penawaran_id'] ?? null;
         $projectId   = $data['project_id'] ?? null;
+        $reportedId  = $data['reported_user_id'] ?? null;
 
         if ($workspaceId) {
             $workspace = Workspace::findOrFail($workspaceId);
@@ -122,6 +123,36 @@ class ReportService
 
         if ($projectId) {
             return Report::TARGET_PROJECT;
+        }
+
+// Pelaporan user murni (tanpa workspace/penawaran/project).
+        // Target ditentukan dari ROLE user yang dilaporkan (backend source of truth).
+        // Hanya relasi lintas-role yang valid:
+        //   - Company -> freelancer  = TARGET_FREELANCER
+        //   - Freelancer -> company  = TARGET_COMPANY
+        // Kombinasi lain (freelancer->freelancer, company->company) ditolak.
+        if ($reportedId) {
+            $reportedUser = User::find($reportedId);
+            if (!$reportedUser) {
+                throw ValidationException::withMessages([
+                    'reported_user_id' => 'Pengguna yang dilaporkan tidak ditemukan.',
+                ]);
+            }
+
+            $reporterRole = Auth::user()->role;
+
+            if ($reporterRole === 'freelancer' && $reportedUser->role === 'company') {
+                return Report::TARGET_COMPANY;
+            }
+
+            if ($reporterRole === 'company' && $reportedUser->role === 'freelancer') {
+                return Report::TARGET_FREELANCER;
+            }
+
+            // Kombinasi role lain tidak valid untuk pelaporan user murni.
+            throw ValidationException::withMessages([
+                'reported_user_id' => 'Anda tidak dapat melaporkan pengguna ini melalui alur laporan ini.',
+            ]);
         }
 
         return Report::TARGET_WEBSITE;
@@ -163,6 +194,47 @@ class ReportService
             throw ValidationException::withMessages([
                 'reported_user_id' => 'Laporan website/sistem tidak boleh menargetkan pengguna tertentu.',
             ]);
+        }
+
+        // 3b. Pelaporan user murni (company -> freelancer, freelancer -> company).
+        // Tanpa workspace/penawaran/project. Backend menghitung target dari ROLE
+        // user yang dilaporkan dan memvalidasi kembali terhadap database agar
+        // manipulasi URL / reported_user_id tidak bisa menembus aturan.
+        if ($reportedId && !$workspaceId && !$penawaranId && !$projectId) {
+            $reportedUser = User::find($reportedId);
+            if (!$reportedUser) {
+                throw ValidationException::withMessages([
+                    'reported_user_id' => 'Pengguna yang dilaporkan tidak ditemukan.',
+                ]);
+            }
+
+            // Anti self-report sudah dicek di langkah 2.
+
+            // Target harus cocok dengan role user yang dilaporkan.
+            $expectedTarget = $reportedUser->role === 'company'
+                ? Report::TARGET_COMPANY
+                : Report::TARGET_FREELANCER;
+            if ($target !== $expectedTarget) {
+                throw ValidationException::withMessages([
+                    'reported_user_id' => 'Target laporan tidak sesuai dengan pengguna yang dilaporkan.',
+                ]);
+            }
+
+            // Company hanya boleh melaporkan freelancer.
+            if (Auth::user()->role === 'company' && $reportedUser->role !== 'freelancer') {
+                throw ValidationException::withMessages([
+                    'reported_user_id' => 'Anda hanya dapat melaporkan freelancer.',
+                ]);
+            }
+
+            // Freelancer hanya boleh melaporkan company.
+            if (Auth::user()->role === 'freelancer' && $reportedUser->role !== 'company') {
+                throw ValidationException::withMessages([
+                    'reported_user_id' => 'Anda hanya dapat melaporkan perusahaan.',
+                ]);
+            }
+
+            return;
         }
 
         // 4. Validasi konteks workspace (didahulukan).
@@ -240,7 +312,7 @@ class ReportService
         }
     }
 
-    /**
+/**
      * Anti-spam: cegah laporan duplikat untuk target yang sama.
      *
      * Kunci duplikat (reporter + target):
@@ -283,10 +355,14 @@ switch ($target) {
                 }
                 break;
 
-            case Report::TARGET_WEBSITE:
+case Report::TARGET_WEBSITE:
             default:
-                $subject = trim((string) ($data['subject'] ?? ''));
-                $query->whereRaw('LOWER(TRIM(subject)) = ?', [mb_strtolower($subject)]);
+                // General / Website report: ONE active Website report per reporter.
+                // Kunci duplikat = reporter_id + target=website (status aktif).
+                // Mengganti category/subject/description/attachment TIDAK boleh
+                // menembus anti-spam. Setelah status selesai/ditolak, laporan
+                // baru diizinkan (karena query hanya memfilter status ACTIVE).
+                $query->where('target', Report::TARGET_WEBSITE);
                 break;
         }
 

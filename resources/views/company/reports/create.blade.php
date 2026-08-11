@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buat Laporan - The Archipelago Nexus</title>
+    <title>Buat Laporan - ApexForge Labs</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -94,10 +94,13 @@
                             <input type="hidden" name="workspace_id" value="{{ $workspace->id }}">
                             <input type="hidden" name="project_id" value="{{ $project ? $project->id : '' }}">
                             <input type="hidden" name="reported_user_id" value="{{ $reportedUser ? $reportedUser->id : '' }}">
-                        @elseif($penawaran)
+@elseif($penawaran)
                             <input type="hidden" name="penawaran_id" value="{{ $penawaran->id }}">
                             <input type="hidden" name="project_id" value="{{ $project ? $project->id : '' }}">
                             <input type="hidden" name="reported_user_id" value="{{ $reportedUser ? $reportedUser->id : '' }}">
+                        @elseif($reportedUser)
+                            {{-- Konteks murni: Company melaporkan Freelancer --}}
+                            <input type="hidden" name="reported_user_id" value="{{ $reportedUser->id }}">
                         @endif
 
                         {{-- Context Info: Workspace (if reporting from workspace) --}}
@@ -159,21 +162,45 @@
                                     </div>
                                 </div>
                                 @endif
-                                @if($penawaran->harga_penawaran)
+@if($penawaran->harga_penawaran)
                                 <div class="text-xs text-slate-500 bg-white rounded-lg px-3 py-2">
                                     Penawaran: Rp {{ number_format($penawaran->harga_penawaran, 0, ',', '.') }} | Estimasi: {{ $penawaran->estimasi_hari }} hari
                                 </div>
                                 @endif
                             </div>
+                        @elseif($reportedUser)
+                            {{-- Context Info: Freelancer yang Dilaporkan (Company melaporkan Freelancer) --}}
+                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
+                                <div class="flex items-center gap-2 text-slate-500 text-xs font-semibold uppercase tracking-wider">
+                                    <i class="fa-solid fa-user-tie"></i>
+                                    <span>Freelancer yang Dilaporkan</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold">
+                                        {{ strtoupper(substr($reportedUser->name ?? '?', 0, 1)) }}
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-slate-800">{{ $reportedUser->name }}</p>
+                                        <p class="text-xs text-slate-500">{{ $reportedUser->email }}</p>
+                                    </div>
+                                </div>
+                            </div>
                         @endif
 
-{{-- Category --}}
+                        {{-- Category --}}
+                        @php
+                            // Frontend hanya mengikuti target. Backend tetap source of truth.
+                            $reportTarget = ($workspace || $penawaran || $reportedUser)
+                                ? \App\Models\Report::TARGET_FREELANCER
+                                : \App\Models\Report::TARGET_WEBSITE;
+                            $targetCategories = \App\Models\Report::categoriesForTarget($reportTarget);
+                        @endphp
                         <div>
                             <label class="text-xs font-semibold text-slate-600 mb-1.5 block">Kategori Laporan <span class="text-red-500">*</span></label>
                             <select name="category"
                                 class="w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-2.5 text-sm focus:border-brand focus:ring-2 focus:ring-brand/10 outline-none @error('category') border-red-300 @enderror">
-                                @foreach(\App\Models\Report::categories() as $cat)
-                                    <option value="{{ $cat }}" @selected(old('category', 'umum') == $cat)>{{ \App\Models\Report::categoryLabel($cat) }}</option>
+                                @foreach($targetCategories as $cat)
+                                    <option value="{{ $cat }}" @selected(old('category') == $cat)>{{ \App\Models\Report::categoryLabel($cat) }}</option>
                                 @endforeach
                             </select>
                             @error('category') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror

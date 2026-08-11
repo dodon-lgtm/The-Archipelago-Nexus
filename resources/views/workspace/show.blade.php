@@ -6,43 +6,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Workspace - {{ $workspace->project->project_name }}</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif']
-                    },
-                    colors: {
-                        brand: '#2563EB',
-                        surface: '#F8FAFC'
-                    }
-                }
-            }
-        }
-    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @keyframes fadeInBackdrop {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
+        
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
 
-        @keyframes modalPop {
-            from { opacity: 0; transform: scale(.92) translateY(12px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
-        }
+        /* High-Tech Scrollbar (Blue/White Theme) */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.2); border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(59, 130, 246, 0.5); }
 
-        .modal-backdrop { animation: fadeInBackdrop .25s ease-out; }
-        .modal-panel { animation: modalPop .35s cubic-bezier(.34, 1.56, .64, 1); }
+        /* Animations */
+        @keyframes fadeInBackdrop { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes modalPop { from { opacity: 0; transform: scale(.92) translateY(12px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        
+        .modal-backdrop { animation: fadeInBackdrop .25s ease-out forwards; }
+        .modal-panel { animation: modalPop .35s cubic-bezier(.34, 1.56, .64, 1) forwards; }
 
-        @keyframes iconPulse {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,.45); }
-            50% { box-shadow: 0 0 0 9px rgba(255,255,255,0); }
+        @keyframes iconPulseBlue {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.45); }
+            50% { box-shadow: 0 0 0 9px rgba(255, 255, 255, 0); }
         }
-        .icon-badge { animation: iconPulse 2.4s ease-in-out infinite; }
+        .icon-badge { animation: iconPulseBlue 2.4s ease-in-out infinite; }
 
         @keyframes starPop {
             0% { transform: scale(1) rotate(0); }
@@ -57,83 +45,99 @@
         }
         .deco-star {
             position: absolute;
-            color: rgba(255,255,255,.35);
+            color: rgba(255, 255, 255, 0.25);
             animation: floatSlow 3.5s ease-in-out infinite;
         }
 
+        /* Pure Blue Styling */
         .modal-header-pattern {
             background-image: radial-gradient(rgba(255,255,255,.16) 1.5px, transparent 1.5px);
             background-size: 16px 16px;
         }
 
+        .hologram-grid-blue {
+            background-image: 
+                linear-gradient(to right, rgba(59, 130, 246, 0.04) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(59, 130, 246, 0.04) 1px, transparent 1px);
+            background-size: 32px 32px;
+        }
+
         .star-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1.85rem;
-            color: #cbd5e1;
-            filter: drop-shadow(0 0 0 rgba(251,191,36,0));
+            background: none; border: none; cursor: pointer;
+            font-size: 1.85rem; color: #dbeafe; /* blue-100 */
+            filter: drop-shadow(0 0 0 rgba(59, 130, 246, 0));
             transition: transform .18s ease, color .18s ease, filter .18s ease;
         }
         .star-btn:hover { transform: scale(1.18); }
         .star-btn.active {
-            color: #fbbf24;
+            color: #3b82f6; /* blue-500 */
             transform: scale(1.05);
-            filter: drop-shadow(0 2px 6px rgba(251,191,36,.55));
+            filter: drop-shadow(0 2px 8px rgba(59, 130, 246, 0.6));
         }
 
         .btn-shimmer { position: relative; overflow: hidden; isolation: isolate; }
         .btn-shimmer::after {
-            content: '';
-            position: absolute;
-            top: 0; left: -75%;
+            content: ''; position: absolute; top: 0; left: -75%;
             width: 50%; height: 100%;
             background: linear-gradient(120deg, transparent, rgba(255,255,255,.4), transparent);
-            transform: skewX(-20deg);
-            transition: left .65s ease;
+            transform: skewX(-20deg); transition: left .65s ease;
         }
         .btn-shimmer:hover::after { left: 125%; }
 
-        .field-shell:focus-within {
-            box-shadow: 0 0 0 4px rgba(37,99,235,.12);
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(59, 130, 246, 0.1);
+            box-shadow: 0 10px 30px -15px rgba(59, 130, 246, 0.1);
         }
+        
+        .chat-scroll::-webkit-scrollbar { width: 4px; }
+        .chat-scroll::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.15); border-radius: 9999px; }
     </style>
 </head>
 
-<body class="bg-surface text-slate-800 min-h-screen flex font-sans">
+<body class="bg-white text-blue-950 min-h-screen flex antialiased relative font-sans">
+    
+    {{-- Ambient Background Glows --}}
+    <div class="fixed inset-0 pointer-events-none hologram-grid-blue z-0"></div>
+    <div class="fixed top-[-20%] left-[-10%] w-[50rem] h-[50rem] bg-gradient-to-br from-blue-100/40 to-transparent rounded-full blur-[100px] pointer-events-none z-0"></div>
 
     @include('navbar.navigasi')
 
-    <div class="flex-1 min-w-0 flex flex-col min-h-screen">
+    <div class="flex-1 min-w-0 flex flex-col min-h-screen relative z-10">
         @include('navbar.nav')
 
         <main class="flex-1 min-w-0 overflow-y-auto">
-            <div class="max-w-7xl mx-auto px-6 py-8">
+            <div class="max-w-7xl mx-auto px-6 py-10">
 
                 {{-- Breadcrumb --}}
-                <div class="flex items-center gap-2 text-sm text-slate-400 mb-6">
+                <div class="flex items-center gap-3 text-xs font-bold text-blue-300 uppercase tracking-widest mb-8">
                     @if (auth()->user()->role === 'company')
-                        <a href="{{ route('company.workspaces.index') }}"
-                            class="hover:text-brand transition">Workspace</a>
+                        <a href="{{ route('company.workspaces.index') }}" class="hover:text-blue-600 transition">Workspace</a>
                     @else
-                        <a href="{{ route('freelancer.workspaces.index') }}"
-                            class="hover:text-brand transition">Workspace Saya</a>
+                        <a href="{{ route('freelancer.workspaces.index') }}" class="hover:text-blue-600 transition">Workspace Saya</a>
                     @endif
-                    <i class="fa-solid fa-chevron-right text-[10px]"></i>
-                    <span class="text-slate-600 font-medium">{{ $workspace->project->project_name }}</span>
+                    <i class="fa-solid fa-chevron-right text-[9px] text-blue-200"></i>
+                    <span class="text-blue-600 font-medium">{{ $workspace->project->project_name }}</span>
                 </div>
 
+                {{-- Pure Blue System Alerts --}}
                 @if (session('success'))
-                    <div
-                        class="mb-6 flex items-center gap-3 px-4 py-3 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl text-sm font-medium">
-                        <i class="fa-solid fa-check-circle"></i> {{ session('success') }}
+                    <div class="mb-8 overflow-hidden relative bg-blue-50 border border-blue-200 p-4 rounded-2xl flex items-start gap-4">
+                        <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(59,130,246,0.4)]">
+                            <i class="fa-solid fa-check text-white text-sm"></i>
+                        </div>
+                        <div class="pt-1.5 font-bold text-blue-900 text-sm">{{ session('success') }}</div>
                     </div>
                 @endif
 
                 @if (session('error'))
-                    <div
-                        class="mb-6 flex items-center gap-3 px-4 py-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-sm font-medium">
-                        <i class="fa-solid fa-xmark-circle"></i> {{ session('error') }}
+                    <div class="mb-8 overflow-hidden relative bg-white border-2 border-blue-600 p-4 rounded-2xl shadow-[0_0_20px_rgba(59,130,246,0.15)] flex items-start gap-4">
+                        <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 border border-blue-200 flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-xmark text-sm"></i>
+                        </div>
+                        <div class="pt-1.5 font-bold text-blue-950 text-sm">{{ session('error') }}</div>
                     </div>
                 @endif
 
@@ -144,44 +148,37 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
                         {{-- Card: Info Project --}}
-                        <div
-                            class="md:col-span-1 bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-                            <div class="px-5 py-4 border-b border-slate-100">
-                                <h2 class="font-bold text-sm text-slate-800">{{ $workspace->project->project_name }}
-                                </h2>
+                        <div class="md:col-span-1 glass-card rounded-3xl overflow-hidden">
+                            <div class="px-6 py-5 border-b border-blue-50/50 bg-gradient-to-b from-blue-50/50 to-transparent">
+                                <h2 class="font-black text-sm text-blue-950 tracking-tight">{{ $workspace->project->project_name }}</h2>
                             </div>
-                            <div class="p-5 space-y-3 text-sm">
-                                <div class="flex items-center gap-3">
-                                    <div
-                                        class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-                                        <i class="fa-solid fa-building text-xs"></i>
+                            <div class="p-6 space-y-5">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center shrink-0">
+                                        <i class="fa-regular fa-building text-sm"></i>
                                     </div>
                                     <div>
-                                        <p class="text-[10px] text-slate-400">Perusahaan</p>
-                                        <p class="text-xs font-semibold text-slate-700">{{ $workspace->company->name }}
-                                        </p>
+                                        <p class="text-[9px] font-black tracking-widest uppercase text-blue-400 mb-0.5">Perusahaan</p>
+                                        <p class="text-xs font-bold text-blue-900">{{ $workspace->company->name }}</p>
                                     </div>
                                 </div>
-                                <div class="flex items-center gap-3">
-                                    <div
-                                        class="w-8 h-8 rounded-lg bg-cyan-50 text-cyan-600 flex items-center justify-center shrink-0">
-                                        <i class="fa-solid fa-user-tie text-xs"></i>
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center shrink-0">
+                                        <i class="fa-regular fa-user text-sm"></i>
                                     </div>
                                     <div>
-                                        <p class="text-[10px] text-slate-400">Freelancer</p>
-                                        <p class="text-xs font-semibold text-slate-700">
-                                            {{ $workspace->freelancer->name }}</p>
+                                        <p class="text-[9px] font-black tracking-widest uppercase text-blue-400 mb-0.5">Freelancer</p>
+                                        <p class="text-xs font-bold text-blue-900">{{ $workspace->freelancer->name }}</p>
                                     </div>
                                 </div>
                                 @if ($workspace->project->deadline)
-                                    <div class="flex items-center gap-3">
-                                        <div
-                                            class="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center shrink-0">
-                                            <i class="fa-regular fa-calendar text-xs"></i>
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center shrink-0">
+                                            <i class="fa-regular fa-calendar-days text-sm"></i>
                                         </div>
                                         <div>
-                                            <p class="text-[10px] text-slate-400">Deadline</p>
-                                            <p class="text-xs font-semibold text-slate-700">
+                                            <p class="text-[9px] font-black tracking-widest uppercase text-blue-400 mb-0.5">Deadline</p>
+                                            <p class="text-xs font-bold text-blue-900">
                                                 {{ \Carbon\Carbon::parse($workspace->project->deadline)->format('d M Y') }}
                                             </p>
                                         </div>
@@ -191,80 +188,83 @@
                         </div>
 
                         {{-- Card: Progress Bar --}}
-                        <div
-                            class="md:col-span-1 bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden flex flex-col justify-between">
+                        <div class="md:col-span-1 glass-card rounded-3xl overflow-hidden flex flex-col justify-between">
                             <div>
-                                <div class="px-5 py-4 border-b border-slate-100">
-                                    <h2 class="font-bold text-sm text-slate-800">Progress Pengerjaan</h2>
+                                <div class="px-6 py-5 border-b border-blue-50/50 bg-gradient-to-b from-blue-50/50 to-transparent">
+                                    <h2 class="font-black text-sm text-blue-950 tracking-tight">Progress Pengerjaan</h2>
                                 </div>
-                                <div class="p-5">
-                                    <div class="text-center mb-3">
-                                        <span class="text-3xl font-extrabold text-brand">{{ $progressValue }}%</span>
-                                        @if ($workspace->latestProgress)
-                                            <p class="text-xs text-slate-400 mt-1">{{ $workspace->latestProgress->stage }}
-                                            </p>
+                                <div class="p-6">
+                                    <div class="text-center mb-5">
+                                        <span class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-blue-400 tracking-tighter">{{ $progressValue }}%</span>
+                                        @if ($activeStage)
+                                            <p class="text-xs font-bold text-blue-500 mt-2">{{ $activeStage }}</p>
+                                        @endif
+                                        @if ($totalStages > 0)
+                                            <p class="text-[9px] font-bold uppercase tracking-widest text-blue-300 mt-1">Tahap {{ $activeStageOrder }} dari {{ $totalStages }}</p>
                                         @endif
                                     </div>
-                                    <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
-                                        <div class="h-full rounded-full bg-gradient-to-r from-brand to-cyan-400 transition-all duration-700"
-                                            style="width: {{ $progressValue }}%"></div>
+                                    <div class="w-full bg-blue-50 border border-blue-100 rounded-full h-3 overflow-hidden shadow-inner">
+                                        <div class="h-full rounded-full bg-gradient-to-r from-blue-600 to-blue-400 transition-all duration-700 shadow-[0_0_10px_rgba(59,130,246,0.5)] relative overflow-hidden"
+                                            style="width: {{ $progressValue }}%">
+                                            <div class="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.2)_50%,transparent_75%,transparent_100%)] bg-[length:20px_20px] animate-[slide_1s_linear_infinite]"></div>    
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             @if (auth()->user()->role === 'freelancer')
-                                <div class="mt-20 px-5">
+                                <div class="px-6 pb-6 mt-6">
                                     <button type="button"
                                         onclick="document.getElementById('progressModal').classList.remove('hidden')"
-                                        class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-brand text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition">
-                                        <i class="fa-solid fa-chart-line"></i>
-                                        Update Progress
+                                        class="btn-shimmer w-full flex items-center justify-center gap-2 px-4 py-3.5 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition shadow-[0_5px_15px_rgba(37,99,235,0.3)]">
+                                        <i class="fa-solid fa-chart-line"></i> Update Progress
                                     </button>
                                 </div>
                             @endif
                         </div>
 
                         {{-- Card: Stage --}}
-                        <div
-                            class="md:col-span-1 bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-                            <div class="px-5 py-4 border-b border-slate-100">
-                                <h2 class="font-bold text-sm text-slate-800">Tahap Pengerjaan</h2>
+                        <div class="md:col-span-1 glass-card rounded-3xl overflow-hidden flex flex-col h-full">
+                            <div class="px-6 py-5 border-b border-blue-50/50 bg-gradient-to-b from-blue-50/50 to-transparent">
+                                <h2 class="font-black text-sm text-blue-950 tracking-tight">Tahap Pengerjaan</h2>
                             </div>
-                            <div class="p-5">
-                                <div class="grid grid-cols-2 gap-2">
-                                    @foreach ($allStages as $index => $stage)
+                            <div class="p-6 flex-1 overflow-y-auto custom-sidebar-scroll max-h-[300px]">
+                                <div class="grid grid-cols-1 gap-3">
+                                    @foreach ($stages as $index => $stage)
                                         @php
-                                            $isCompleted = $index < $activeStageIndex;
-                                            $isActive = $index === $activeStageIndex;
+                                            $isCompleted = $index + 1 < $activeStageOrder;
+                                            $isActive = $index + 1 === $activeStageOrder;
+                                            
+                                            // PURE BLUE LOGIC
                                             if ($isCompleted) {
                                                 $icon = 'fa-solid fa-check-circle';
-                                                $color = 'text-emerald-500';
-                                                $bg = 'bg-emerald-50';
+                                                $color = 'text-blue-500';
+                                                $bg = 'bg-blue-50/80 border-blue-200';
                                                 $label = 'Selesai';
-                                                $labelColor = 'text-emerald-600 bg-emerald-100';
+                                                $labelColor = 'text-blue-600 bg-white border border-blue-200';
                                             } elseif ($isActive) {
-                                                $icon = 'fa-solid fa-play-circle';
-                                                $color = 'text-brand';
-                                                $bg = 'bg-blue-50';
+                                                $icon = 'fa-solid fa-play-circle animate-pulse';
+                                                $color = 'text-white';
+                                                $bg = 'bg-blue-600 border-blue-500 shadow-[0_5px_15px_rgba(37,99,235,0.3)]';
                                                 $label = 'Aktif';
-                                                $labelColor = 'text-white bg-brand';
+                                                $labelColor = 'text-blue-600 bg-white';
                                             } else {
                                                 $icon = 'fa-regular fa-circle';
-                                                $color = 'text-slate-300';
-                                                $bg = 'bg-slate-50';
+                                                $color = 'text-blue-200';
+                                                $bg = 'bg-transparent border-blue-50/50 opacity-60';
                                                 $label = '';
                                                 $labelColor = '';
                                             }
                                         @endphp
-                                        <div
-                                            class="{{ $bg }} border border-slate-100 rounded-xl p-2 flex items-center gap-2 {{ $isActive ? 'ring-2 ring-brand/20' : '' }}">
-                                            <i class="{{ $icon }} {{ $color }} text-sm"></i>
-                                            <div class="min-w-0">
-                                                <p
-                                                    class="text-[10px] font-semibold {{ $isCompleted ? 'text-emerald-700' : ($isActive ? 'text-brand' : 'text-slate-400') }} truncate">
-                                                    {{ $stage }}</p>
+                                        <div class="border rounded-xl p-3 flex items-center gap-3 transition-all duration-300 {{ $bg }}">
+                                            <div class="w-6 flex justify-center shrink-0">
+                                                <i class="{{ $icon }} {{ $color }} text-sm"></i>
+                                            </div>
+                                            <div class="min-w-0 flex-1 flex items-center justify-between">
+                                                <p class="text-xs font-bold truncate {{ $isActive ? 'text-white' : 'text-blue-900' }}">
+                                                    {{ $stage }}
+                                                </p>
                                                 @if ($label)
-                                                    <span
-                                                        class="text-[8px] font-bold px-1.5 py-0.5 rounded-full {{ $labelColor }}">{{ $label }}</span>
+                                                    <span class="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md {{ $labelColor }} ml-2 shrink-0">{{ $label }}</span>
                                                 @endif
                                             </div>
                                         </div>
@@ -276,47 +276,46 @@
                     </div>
 
                     {{-- ROW 2: CHAT --}}
-                    <div
-                        class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden flex flex-col h-[450px]">
+                    <div class="glass-card rounded-3xl overflow-hidden flex flex-col h-[500px]">
                         {{-- Chat Header --}}
-                        <div
-                            class="px-5 py-4 border-b border-slate-100 bg-white flex items-center justify-between shrink-0">
-                            <div class="flex items-center gap-3">
-                                <div
-                                    class="w-10 h-10 rounded-full bg-brand/10 text-brand flex items-center justify-center font-bold text-sm">
+                        <div class="px-6 py-4 border-b border-blue-50/50 bg-gradient-to-b from-blue-50/80 to-transparent flex items-center justify-between shrink-0">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-[1rem] bg-gradient-to-br from-blue-500 to-blue-700 text-white flex items-center justify-center font-black text-lg shadow-[0_4px_10px_rgba(59,130,246,0.3)]">
                                     {{ strtoupper(substr(auth()->user()->role === 'company' ? $workspace->freelancer->name : $workspace->company->name, 0, 1)) }}
                                 </div>
                                 <div>
-                                    <h3 class="font-bold text-sm text-slate-800">
+                                    <h3 class="font-black text-sm text-blue-950 tracking-tight">
                                         {{ auth()->user()->role === 'company' ? $workspace->freelancer->name : $workspace->company->name }}
                                     </h3>
-                                    <p class="text-[10px] text-slate-400">{{ $workspace->project->project_name }}</p>
+                                    <p class="text-[10px] font-bold text-blue-400 uppercase tracking-widest mt-0.5">{{ $workspace->project->project_name }}</p>
                                 </div>
                             </div>
-@php
-                                $chatStatusColors = [
-                                    'Sedang Dikerjakan' => 'bg-blue-500',
-                                    'Menunggu Revisi' => 'bg-amber-500',
-                                    'Menunggu Pembayaran' => 'bg-purple-500',
-                                    'Menunggu Verifikasi Admin' => 'bg-orange-500',
-                                    'Selesai' => 'bg-emerald-500',
+
+                            @php
+                                // Pure Blue Status Indicators using ORIGINAL labels
+$chatStatusMap = [
+                                    'Sedang Dikerjakan' => ['label' => 'Sedang Dikerjakan', 'dot' => 'bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.8)]', 'box' => 'bg-blue-50 border-blue-100 text-blue-600'],
+                                    'Menunggu Review' => ['label' => 'Menunggu Review', 'dot' => 'bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.8)]', 'box' => 'bg-amber-50 border-amber-200 text-amber-700'],
+                                    'Menunggu Revisi' => ['label' => 'Menunggu Revisi', 'dot' => 'bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)]', 'box' => 'bg-white border-blue-200 text-blue-700'],
+                                    'Menunggu Pembayaran' => ['label' => 'Menunggu Pembayaran', 'dot' => 'bg-blue-700 shadow-[0_0_8px_rgba(29,78,216,0.8)]', 'box' => 'bg-blue-50 border-blue-200 text-blue-800'],
+                                    'Menunggu Verifikasi Admin' => ['label' => 'Menunggu Verifikasi Admin', 'dot' => 'bg-blue-300 shadow-[0_0_8px_rgba(147,197,253,0.8)]', 'box' => 'bg-white border-blue-100 text-blue-500'],
+                                    'Selesai' => ['label' => 'Selesai', 'dot' => 'bg-white', 'box' => 'bg-blue-600 border-blue-600 text-white shadow-md'],
                                 ];
+                                $statusStyle = $chatStatusMap[$workspace->status] ?? ['label' => $workspace->status, 'dot' => 'bg-blue-300', 'box' => 'bg-white text-blue-400 border-blue-100'];
                             @endphp
-                            <div class="flex items-center gap-3">
-                                <span class="flex items-center gap-1.5 text-[10px] text-slate-500">
-                                    <span
-                                        class="w-2 h-2 rounded-full {{ $chatStatusColors[$workspace->status] ?? 'bg-slate-400' }}"></span>
-                                    {{ $workspace->status }}
+
+                            <div class="flex items-center gap-4">
+                                <span class="flex items-center gap-2 px-3 py-1.5 rounded-lg border text-[10px] font-black uppercase tracking-wider {{ $statusStyle['box'] }}">
+                                    <span class="w-2 h-2 rounded-full {{ $statusStyle['dot'] }}"></span>
+                                    {{ $statusStyle['label'] }}
                                 </span>
-                                {{-- Tombol Laporkan dari workspace (kontekstual) --}}
+
                                 @php
-                                    $reportedTarget = auth()->user()->role === 'company'
-                                        ? $workspace->freelancer
-                                        : $workspace->company;
+                                    $reportedTarget = auth()->user()->role === 'company' ? $workspace->freelancer : $workspace->company;
                                 @endphp
                                 @if($reportedTarget && (int) $reportedTarget->id !== (int) auth()->id())
                                     <a href="{{ route(auth()->user()->role === 'company' ? 'company.reports.create' : 'freelancer.reports.create', ['workspace_id' => $workspace->id, 'reported_user_id' => $reportedTarget->id]) }}"
-                                       class="inline-flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-semibold text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition">
+                                       class="inline-flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-blue-500 bg-white border border-blue-200 hover:bg-blue-50 hover:border-blue-300 rounded-lg transition-colors">
                                         <i class="fa-solid fa-flag"></i> Laporkan
                                     </a>
                                 @endif
@@ -324,59 +323,54 @@
                         </div>
 
                         {{-- Chat Body --}}
-                        <div id="chatBody" class="flex-1 overflow-y-auto p-5 space-y-4 bg-slate-50/50">
+                        <div id="chatBody" class="flex-1 overflow-y-auto chat-scroll p-6 space-y-5 bg-white/40 hologram-grid-blue relative">
                             @if ($workspace->messages->isNotEmpty())
                                 @foreach ($workspace->messages as $message)
                                     @if ($message->type === 'system')
-                                        <div class="flex justify-center">
-                                            <div
-                                                class="bg-white text-slate-400 text-[10px] font-medium px-4 py-2 rounded-full border border-slate-200 inline-flex items-center gap-2 shadow-sm">
-                                                <i class="fa-solid fa-gear text-[9px]"></i>
+                                        <div class="flex justify-center my-6 relative z-10">
+                                            <div class="bg-blue-50/80 backdrop-blur-sm text-blue-600 text-[10px] font-bold tracking-wide px-5 py-2 rounded-full border border-blue-100/50 inline-flex items-center gap-2 shadow-sm uppercase">
+                                                <i class="fa-solid fa-gear opacity-60"></i>
                                                 {{ $message->message }}
                                             </div>
                                         </div>
                                     @else
                                         @php $isMine = (int) $message->sender_id === (int) auth()->id(); @endphp
-                                        <div class="flex {{ $isMine ? 'justify-end' : 'justify-start' }}">
-                                            <div
-                                                class="max-w-[80%] {{ $isMine ? 'bg-brand text-white' : 'bg-white text-slate-700 border border-slate-200' }} rounded-2xl px-4 py-3 shadow-sm">
+                                        <div class="flex {{ $isMine ? 'justify-end' : 'justify-start' }} relative z-10">
+                                            <div class="max-w-[75%] {{ $isMine ? 'bg-gradient-to-br from-blue-600 to-blue-500 text-white rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl rounded-br-sm shadow-[0_5px_15px_rgba(37,99,235,0.2)]' : 'bg-white text-blue-900 border border-blue-100 rounded-tl-2xl rounded-tr-2xl rounded-br-2xl rounded-bl-sm shadow-sm' }} px-5 py-3.5">
                                                 @if (!$isMine)
-                                                    <p class="text-[10px] font-bold text-slate-400 mb-1">
-                                                        {{ $message->sender->name }}</p>
+                                                    <p class="text-[9px] font-black uppercase tracking-widest text-blue-400 mb-1.5">
+                                                        {{ $message->sender->name }}
+                                                    </p>
                                                 @endif
-                                                <p class="text-sm leading-relaxed">{{ $message->message }}</p>
-                                                <p
-                                                    class="text-[9px] mt-1.5 {{ $isMine ? 'text-white/60' : 'text-slate-400' }} text-right">
-                                                    {{ $message->created_at->format('H:i, d M') }}</p>
+                                                <p class="text-[13px] leading-relaxed font-medium">{{ $message->message }}</p>
+                                                <p class="text-[9px] font-bold mt-2 {{ $isMine ? 'text-blue-200' : 'text-blue-300' }} text-right tracking-wider">
+                                                    {{ $message->created_at->format('H:i, d M') }}
+                                                </p>
                                             </div>
                                         </div>
                                     @endif
                                 @endforeach
                             @else
-                                <div class="flex flex-col items-center justify-center h-full py-12">
-                                    <div
-                                        class="w-16 h-16 mx-auto mb-4 bg-white rounded-2xl border border-slate-200 flex items-center justify-center">
-                                        <i class="fa-regular fa-message text-2xl text-slate-300"></i>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                    <div class="w-16 h-16 mx-auto mb-4 bg-blue-50 rounded-2xl border border-blue-100 flex items-center justify-center shadow-inner">
+                                        <i class="fa-regular fa-message text-2xl text-blue-300"></i>
                                     </div>
-                                    <h3 class="text-sm font-bold text-slate-600">Belum Ada Pesan</h3>
-                                    <p class="text-xs text-slate-400 mt-1">Mulai percakapan dengan mengirim pesan.</p>
+                                    <h3 class="text-sm font-black text-blue-900 tracking-tight">Belum Ada Pesan</h3>
+                                    <p class="text-xs font-semibold text-blue-400 mt-1">Mulai percakapan dengan mengirim pesan.</p>
                                 </div>
                             @endif
                         </div>
 
                         {{-- Chat Input --}}
-                        <div class="px-5 py-4 border-t border-slate-200 bg-white shrink-0">
-                            <form method="POST"
-                                action="{{ route(auth()->user()->role === 'company' ? 'company.workspaces.message' : 'freelancer.workspaces.message', $workspace) }}"
-                                class="flex items-center gap-3">
+                        <div class="px-6 py-5 border-t border-blue-50/50 bg-white shrink-0 relative z-10">
+                            <form method="POST" action="{{ route(auth()->user()->role === 'company' ? 'company.workspaces.message' : 'freelancer.workspaces.message', $workspace) }}" class="flex items-center gap-3">
                                 @csrf
-                                <input type="text" name="message" placeholder="Ketik pesan..." required
-                                    maxlength="1000"
-                                    class="flex-1 px-4 py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand transition">
+                                <input type="text" name="message" placeholder="Ketik pesan..." required maxlength="1000"
+                                    class="flex-1 px-5 py-3.5 bg-blue-50/50 border border-blue-100 rounded-xl text-sm text-blue-950 font-medium placeholder-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 focus:bg-white transition-all">
                                 <button type="submit"
-                                    class="px-5 py-2.5 bg-brand text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition flex items-center gap-2">
+                                    class="w-12 h-12 sm:w-auto sm:px-6 sm:py-3.5 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition flex items-center justify-center gap-2 shadow-[0_5px_15px_rgba(37,99,235,0.25)] shrink-0">
                                     <i class="fa-solid fa-paper-plane"></i>
-                                    <span class="hidden sm:inline">Kirim</span>
+                                    <span class="hidden sm:inline tracking-wide">Kirim</span>
                                 </button>
                             </form>
                         </div>
@@ -385,215 +379,200 @@
                     {{-- ROW 3: HASIL PEKERJAAN / SUBMISSIONS --}}
                     @include('workspace._submissions')
 
-                    {{-- ROW 4: TIMELINE + ACTIONS --}}
-                    {{-- ============================================================
-                         ROW 4: INVOICE (untuk company saat Menunggu Pembayaran / Menunggu Verifikasi Admin)
-                    ============================================================ --}}
+                    {{-- ROW 4: INVOICE (company Menunggu Pembayaran / Verifikasi Admin) --}}
                     @if(auth()->user()->role === 'company' && in_array($workspace->status, ['Menunggu Pembayaran', 'Menunggu Verifikasi Admin']) && $payment)
-                        <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-                            <div class="px-5 py-4 border-b border-slate-100">
-                                <h2 class="font-bold text-sm text-slate-800">Invoice Pembayaran</h2>
+                        <div class="glass-card rounded-3xl overflow-hidden">
+                            <div class="px-6 py-5 border-b border-blue-50/50 bg-gradient-to-b from-blue-50/50 to-transparent">
+                                <h2 class="font-black text-sm text-blue-950 tracking-tight">Invoice Pembayaran</h2>
                             </div>
-                            <div class="p-5 space-y-4">
+                            <div class="p-6 space-y-6">
                                 {{-- Invoice Info --}}
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div class="bg-slate-50 rounded-xl p-4 space-y-2">
-                                        <div class="flex items-center justify-between">
-                                            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Nomor Invoice</p>
-                                            <span class="text-xs font-bold text-slate-800">{{ $payment->invoice_number }}</span>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div class="bg-white border border-blue-100 rounded-2xl p-5 shadow-sm space-y-3">
+                                        <div class="flex items-center justify-between border-b border-blue-50 pb-2">
+                                            <p class="text-[10px] font-black text-blue-400 uppercase tracking-widest">Nomor Invoice</p>
+                                            <span class="text-xs font-bold text-blue-950 bg-blue-50 px-2 py-0.5 rounded">{{ $payment->invoice_number }}</span>
                                         </div>
                                         <div class="flex items-center justify-between">
-                                            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Total</p>
-                                            <span class="text-sm font-bold text-slate-800">Rp {{ number_format($payment->amount, 0, ',', '.') }}</span>
+                                            <p class="text-[10px] font-black text-blue-400 uppercase tracking-widest">Total</p>
+                                            <span class="text-sm font-bold text-blue-900">Rp {{ number_format($payment->amount, 0, ',', '.') }}</span>
                                         </div>
                                         <div class="flex items-center justify-between">
-                                            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Biaya Platform (5%)</p>
-                                            <span class="text-xs font-semibold text-slate-600">Rp {{ number_format($payment->platform_fee, 0, ',', '.') }}</span>
+                                            <p class="text-[10px] font-black text-blue-400 uppercase tracking-widest">Biaya Platform (5%)</p>
+                                            <span class="text-xs font-bold text-blue-500">Rp {{ number_format($payment->platform_fee, 0, ',', '.') }}</span>
                                         </div>
-                                        <div class="flex items-center justify-between pt-2 border-t border-slate-200">
-                                            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Total Dibayar</p>
-                                            <span class="text-sm font-bold text-emerald-600">Rp {{ number_format($payment->amount, 0, ',', '.') }}</span>
+                                        <div class="flex items-center justify-between pt-3 border-t border-blue-100/50">
+                                            <p class="text-[10px] font-black text-blue-600 uppercase tracking-widest">Total Dibayar</p>
+                                            <span class="text-base font-black text-blue-700">Rp {{ number_format($payment->amount, 0, ',', '.') }}</span>
                                         </div>
                                     </div>
 
-                                    <div class="bg-slate-50 rounded-xl p-4 space-y-2">
-                                        <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Status Pembayaran</p>
+                                    <div class="bg-white border border-blue-100 rounded-2xl p-5 shadow-sm space-y-3">
+                                        <p class="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-1">Status Pembayaran</p>
                                         @php
-                                            $psColor = $payment->status === 'pending' ? 'bg-amber-50 text-amber-600 border-amber-200' : 'bg-slate-50 text-slate-600 border-slate-200';
+                                            $psDesign = $payment->status === 'pending' 
+                                                ? 'bg-white border-blue-400 text-blue-600' 
+                                                : 'bg-blue-600 border-blue-600 text-white shadow-[0_5px_15px_rgba(37,99,235,0.3)]';
                                             $psLabel = $payment->status === 'pending' ? 'Belum Dibayar' : 'Menunggu Verifikasi';
                                         @endphp
-                                        <span class="text-[10px] font-bold px-2.5 py-1 rounded-full border {{ $psColor }}">
+                                        <div class="inline-block px-3 py-1.5 rounded-lg border text-[11px] font-bold tracking-wide {{ $psDesign }}">
                                             {{ $psLabel }}
-                                        </span>
+                                        </div>
 
                                         @if($payment->status === 'rejected')
-                                            <div class="mt-3 px-3 py-2 bg-red-50 border border-red-200 rounded-lg">
-                                                <p class="text-[10px] font-semibold text-red-700">Pembayaran ditolak. Silakan upload ulang.</p>
+                                            <div class="mt-4 p-3 bg-white border border-blue-400 rounded-xl relative overflow-hidden">
+                                                <div class="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+                                                <p class="text-xs font-bold text-blue-900 ml-2">Pembayaran ditolak. Silakan upload ulang.</p>
                                                 @if($payment->admin_note)
-                                                    <p class="text-[9px] text-red-600 mt-1">Alasan: {{ $payment->admin_note }}</p>
+                                                    <p class="text-[10px] text-blue-600 mt-2 ml-2 p-2 bg-blue-50 rounded-lg border border-blue-100">Alasan: {{ $payment->admin_note }}</p>
                                                 @endif
                                             </div>
                                         @endif
                                     </div>
                                 </div>
 
-{{-- Payment Gateway (hanya jika status pending) --}}
+                                {{-- Payment Gateway (hanya pending) --}}
                                 @if($payment->status === 'pending')
-                                    <div class="flex flex-col gap-3">
-                                        <p class="text-xs text-slate-500 leading-relaxed">
+                                    <div class="flex flex-col gap-4 bg-gradient-to-r from-blue-50 to-transparent p-5 rounded-2xl border border-blue-100">
+                                        <p class="text-xs font-semibold text-blue-800 leading-relaxed max-w-2xl">
                                             Silakan lanjutkan ke <strong>Payment Gateway</strong> untuk melakukan pembayaran, kemudian upload bukti pembayaran pada halaman berikutnya.
                                         </p>
-                                        <a href="{{ route('company.payments.gateway', $workspace) }}"
-                                           class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-brand text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition shadow-lg shadow-brand/20">
-                                            <i class="fa-solid fa-credit-card"></i> Bayar Sekarang
-                                        </a>
-                                        <p class="text-[10px] text-slate-400 text-center">
-                                            <i class="fa-solid fa-circle-info mr-1"></i>
-                                            <strong>Mode Simulasi</strong> &mdash; Pembayaran ini digunakan untuk demonstrasi aplikasi. Integrasi Midtrans, QRIS, Virtual Account, dan E-Wallet akan tersedia pada versi berikutnya.
-                                        </p>
+                                        <div class="flex flex-col sm:flex-row items-center gap-4">
+                                            <a href="{{ route('company.payments.gateway', $workspace) }}"
+                                               class="w-full sm:w-auto px-6 py-3 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition shadow-[0_5px_15px_rgba(37,99,235,0.3)] flex items-center justify-center gap-2">
+                                                <i class="fa-solid fa-credit-card"></i> Bayar Sekarang
+                                            </a>
+                                            <p class="text-[10px] font-bold text-blue-400 flex items-center gap-1.5">
+                                                <i class="fa-solid fa-circle-info"></i> Mode Simulasi
+                                            </p>
+                                        </div>
                                     </div>
                                 @endif
 
-                                {{-- Payment Upload Form (hanya jika status rejected / re-upload) --}}
+                                {{-- Payment Upload Form (rejected / re-upload) --}}
                                 @if($payment->status === 'rejected')
-                                    <form method="POST" action="{{ route('company.payments.upload', $workspace) }}" enctype="multipart/form-data" class="space-y-4">
+                                    <form method="POST" action="{{ route('company.payments.upload', $workspace) }}" enctype="multipart/form-data" class="space-y-5 bg-white border border-blue-100 p-5 rounded-2xl shadow-sm">
                                         @csrf
-
-                                        <div>
-                                            <label class="block text-xs font-semibold text-slate-600 mb-1.5">Metode Pembayaran</label>
-                                            <select name="payment_method" required
-                                                    class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/30">
-                                                <option value="">Pilih Metode</option>
-                                                <option value="Transfer Bank">Transfer Bank</option>
-                                                <option value="QRIS">QRIS</option>
-                                                <option value="E-Wallet">E-Wallet</option>
-                                            </select>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                            <div>
+                                                <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2">Metode Pembayaran</label>
+                                                <select name="payment_method" required class="w-full px-4 py-3 bg-blue-50/50 border border-blue-100 rounded-xl text-sm font-bold text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all">
+                                                    <option value="">Pilih Metode</option>
+                                                    <option value="Transfer Bank">Transfer Bank</option>
+                                                    <option value="QRIS">QRIS</option>
+                                                    <option value="E-Wallet">E-Wallet</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2">Upload Bukti Pembayaran</label>
+                                                <input type="file" name="payment_proof" required accept=".jpg,.jpeg,.png,.pdf"
+                                                       class="w-full px-4 py-2 bg-blue-50/50 border border-blue-100 rounded-xl text-sm font-semibold text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-black file:uppercase file:tracking-wider file:bg-blue-600 file:text-white hover:file:bg-blue-700 transition-all cursor-pointer">
+                                                <p class="text-[9px] font-bold text-blue-400 mt-1.5 uppercase tracking-wide">Format: jpg, jpeg, png, pdf. Maksimal 10 MB.</p>
+                                            </div>
                                         </div>
-
                                         <div>
-                                            <label class="block text-xs font-semibold text-slate-600 mb-1.5">Upload Bukti Pembayaran</label>
-                                            <input type="file" name="payment_proof" required accept=".jpg,.jpeg,.png,.pdf"
-                                                   class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/30 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-brand file:text-white hover:file:bg-blue-700 transition">
-                                            <p class="text-[10px] text-slate-400 mt-1">Format: jpg, jpeg, png, pdf. Maksimal 10 MB.</p>
+                                            <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2">Catatan (opsional)</label>
+                                            <textarea name="company_note" rows="2" maxlength="2000" placeholder="Tambahkan catatan..."
+                                                      class="w-full px-4 py-3 bg-blue-50/50 border border-blue-100 rounded-xl text-sm font-medium text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all resize-none"></textarea>
                                         </div>
-
-                                        <div>
-                                            <label class="block text-xs font-semibold text-slate-600 mb-1.5">Catatan (opsional)</label>
-                                            <textarea name="company_note" rows="2" maxlength="2000"
-                                                      placeholder="Tambahkan catatan..."
-                                                      class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/30 resize-none"></textarea>
-                                        </div>
-
-                                        <button type="submit"
-                                                class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-brand text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition">
-                                            <i class="fa-solid fa-paper-plane"></i> Kirim Pembayaran
+                                        <button type="submit" class="w-full sm:w-auto px-6 py-3 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition flex items-center justify-center gap-2 shadow-[0_5px_15px_rgba(37,99,235,0.3)]">
+                                            <i class="fa-solid fa-cloud-arrow-up"></i> Kirim Pembayaran
                                         </button>
                                     </form>
                                 @endif
 
-                                {{-- Status waiting verification --}}
                                 @if($payment->status === 'waiting_verification')
-                                    <div class="flex items-center gap-3 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-700">
-                                        <i class="fa-solid fa-clock"></i>
-                                        <p class="text-xs font-medium">Bukti pembayaran telah dikirim. Menunggu verifikasi admin.</p>
+                                    <div class="flex items-center gap-3 px-5 py-4 bg-white border border-blue-200 rounded-2xl shadow-[0_5px_20px_rgba(59,130,246,0.1)]">
+                                        <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center shrink-0 border border-blue-100">
+                                            <i class="fa-solid fa-clock animate-pulse"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-bold text-blue-900">Bukti pembayaran telah dikirim. Menunggu verifikasi admin.</p>
+                                        </div>
                                     </div>
                                 @endif
                             </div>
                         </div>
                     @endif
 
-                    {{-- ============================================================
-                         ROW 5: TIMELINE + ACTIONS (side by side)
-                    ============================================================ --}}
+                    {{-- ROW 5: TIMELINE + ACTIONS --}}
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
                         {{-- Card: Timeline --}}
-                        <div
-                            class="md:col-span-2 bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-                            <div class="px-5 py-4 border-b border-slate-100">
-                                <h2 class="font-bold text-sm text-slate-800">Timeline Progress</h2>
+                        <div class="md:col-span-2 glass-card rounded-3xl overflow-hidden">
+                            <div class="px-6 py-5 border-b border-blue-50/50 bg-gradient-to-b from-blue-50/50 to-transparent">
+                                <h2 class="font-black text-sm text-blue-950 tracking-tight">Timeline Progress</h2>
                             </div>
-                            <div class="p-5">
+                            <div class="p-6">
                                 @if ($workspace->progressHistories->isNotEmpty())
-                                    <div class="space-y-4">
+                                    <div class="space-y-6">
                                         @foreach ($workspace->progressHistories as $history)
-                                            <div class="relative pl-6 border-l-2 border-slate-200">
-                                                <div
-                                                    class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-brand flex items-center justify-center">
-                                                    <span
-                                                        class="text-[8px] text-white font-bold">{{ $history->progress }}%</span>
+                                            <div class="relative pl-8 border-l border-blue-100/70 ml-2">
+                                                <div class="absolute -left-[13px] top-0 w-6 h-6 rounded-full bg-white border border-blue-200 shadow-[0_0_10px_rgba(59,130,246,0.2)] flex items-center justify-center z-10">
+                                                    <span class="text-[8px] text-blue-600 font-black">{{ $history->progress }}%</span>
                                                 </div>
-                                                <div class="bg-slate-50 rounded-xl p-3 ml-2">
-                                                    <div class="flex items-center justify-between gap-2 mb-1">
-                                                        <span
-                                                            class="text-xs font-bold text-slate-700">{{ $history->stage }}</span>
-                                                        <span
-                                                            class="text-[10px] text-slate-400">{{ $history->created_at->format('d M Y') }}</span>
+                                                <div class="bg-blue-50/40 rounded-2xl p-4 border border-blue-50 ml-1 hover:bg-blue-50 hover:border-blue-100 transition-colors">
+                                                    <div class="flex flex-wrap items-center justify-between gap-2 mb-2 border-b border-blue-100/50 pb-2">
+                                                        <span class="text-xs font-black text-blue-900">{{ $history->stage }}</span>
+                                                        <span class="text-[9px] font-bold tracking-widest uppercase text-blue-400 bg-white px-2 py-0.5 rounded shadow-sm border border-blue-50">{{ $history->created_at->format('d M Y') }}</span>
                                                     </div>
                                                     @if ($history->description)
-                                                        <p class="text-xs text-slate-500 leading-relaxed">
-                                                            {{ $history->description }}</p>
+                                                        <p class="text-[11px] font-medium text-blue-800/70 leading-relaxed">{{ $history->description }}</p>
                                                     @endif
                                                 </div>
                                             </div>
                                         @endforeach
                                     </div>
                                 @else
-                                    <div class="py-8 text-center">
-                                        <p class="text-xs text-slate-400">Belum ada riwayat progress.</p>
+                                    <div class="py-12 flex flex-col items-center justify-center">
+                                        <i class="fa-solid fa-clock-rotate-left text-3xl text-blue-100 mb-3"></i>
+                                        <p class="text-xs font-bold text-blue-300 uppercase tracking-widest">Belum ada riwayat progress.</p>
                                     </div>
                                 @endif
                             </div>
                         </div>
 
                         {{-- Card: Actions & Rating --}}
-                        <div
-                            class="md:col-span-1 bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden flex flex-col justify-between">
+                        <div class="md:col-span-1 glass-card rounded-3xl overflow-hidden flex flex-col justify-between">
                             <div>
-                                <div class="px-5 py-4 border-b border-slate-100">
-                                    <h2 class="font-bold text-sm text-slate-800">Aksi & Ulasan</h2>
+                                <div class="px-6 py-5 border-b border-blue-50/50 bg-gradient-to-b from-blue-50/50 to-transparent">
+                                    <h2 class="font-black text-sm text-blue-950 tracking-tight">Aksi & Ulasan</h2>
                                 </div>
-                                <div class="p-5 space-y-3">
-                                    @if (auth()->user()->role === 'company' && $progressValue == 100 && $workspace->status !== 'Selesai')
-                                        {{-- Confirm Completion Button (Company Only) --}}
-                                        <form method="POST"
-                                            action="{{ route('company.workspaces.complete', $workspace) }}"
-                                            onsubmit="return confirm('Konfirmasi bahwa pekerjaan telah selesai?')">
-                                            @csrf
-                                            <button type="submit"
-                                                class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-500 text-white rounded-xl text-sm font-semibold hover:bg-emerald-600 transition">
-                                                <i class="fa-solid fa-check-circle"></i> Konfirmasi Pekerjaan Selesai
-                                            </button>
-                                        </form>
+                                <div class="p-6 space-y-4">
+                                    @if (auth()->user()->role === 'company' && $workspace->status === 'Menunggu Review')
+                                        <div class="flex items-center gap-3 px-4 py-3.5 bg-amber-50 border border-amber-200 rounded-xl text-amber-700">
+                                            <i class="fa-solid fa-clock"></i>
+                                            <p class="text-xs font-bold">Perusahaan sedang meninjau hasil pekerjaan Anda.</p>
+                                        </div>
                                     @endif
 
-                                    {{-- Bagian Rating / Ulasan --}}
                                     @if ($workspace->status === 'Selesai')
-                                        <div class="pt-2 border-t border-slate-100">
+                                        <div class="pt-2">
                                             @if ($workspace->rating)
-                                                {{-- Tampilan saat rating sudah diberikan --}}
-                                                <div class="bg-blue-50 border border-blue-100 rounded-xl p-3 text-center">
-                                                    <p class="text-xs font-bold text-brand mb-1">Rating Telah Diberikan</p>
-                                                    <div class="flex justify-center gap-1 text-amber-400 text-sm mb-1">
+                                                <div class="bg-blue-50 border border-blue-100 rounded-2xl p-5 text-center shadow-inner">
+                                                    <p class="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-3">Rating Telah Diberikan</p>
+                                                    <div class="flex justify-center gap-1.5 text-blue-500 text-lg mb-3 drop-shadow-[0_0_8px_rgba(59,130,246,0.4)]">
                                                         @for ($i = 1; $i <= 5; $i++)
                                                             <i class="fa-{{ $i <= $workspace->rating->score ? 'solid' : 'regular' }} fa-star"></i>
                                                         @endfor
                                                     </div>
                                                     @if ($workspace->rating->review)
-                                                        <p class="text-[11px] text-slate-600 italic">"{{ $workspace->rating->review }}"</p>
+                                                        <div class="relative">
+                                                            <i class="fa-solid fa-quote-left absolute -top-1 -left-1 text-blue-200 text-xl opacity-50"></i>
+                                                            <p class="text-xs font-semibold text-blue-900 italic px-4 leading-relaxed relative z-10">"{{ $workspace->rating->review }}"</p>
+                                                        </div>
                                                     @endif
                                                 </div>
                                             @else
-                                                {{-- Tampilan saat belum pernah diberi rating --}}
                                                 @if (auth()->user()->role === 'company')
                                                     <button type="button"
                                                         onclick="document.getElementById('ratingModal').classList.remove('hidden')"
-                                                        class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-brand to-cyan-500 text-white rounded-xl text-sm font-semibold hover:shadow-lg hover:shadow-brand/30 hover:-translate-y-0.5 active:translate-y-0 transition-all">
+                                                        class="w-full flex items-center justify-center gap-2 px-4 py-3.5 bg-white border border-blue-300 text-blue-600 rounded-xl text-sm font-bold hover:bg-blue-50 transition shadow-sm">
                                                         <i class="fa-solid fa-star"></i> Beri Rating & Ulasan
                                                     </button>
                                                 @else
-                                                    <div class="text-center py-2 bg-slate-50 rounded-xl border border-slate-100">
-                                                        <p class="text-xs text-slate-400">Belum ada rating dari perusahaan.</p>
+                                                    <div class="text-center py-5 bg-white rounded-2xl border border-blue-50 border-dashed">
+                                                        <p class="text-[10px] font-bold text-blue-300 uppercase tracking-widest">Belum ada rating dari perusahaan.</p>
                                                     </div>
                                                 @endif
                                             @endif
@@ -613,181 +592,216 @@
     </div>
 
     {{-- MODAL UPDATE PROGRESS --}}
-    <div id="progressModal"
-        class="hidden modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-        <div class="modal-panel bg-white rounded-3xl shadow-2xl shadow-brand/10 w-full max-w-md overflow-hidden border border-slate-100 ring-1 ring-black/[.03]">
-            {{-- Gradient header with pattern + floating decor --}}
-            <div class="relative px-6 py-7 bg-gradient-to-br from-blue-600 via-brand to-cyan-400 overflow-hidden">
-                <div class="absolute inset-0 modal-header-pattern"></div>
-                <div class="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full"></div>
-                <div class="absolute -bottom-12 -left-8 w-28 h-28 bg-white/10 rounded-full"></div>
-                <i class="fa-solid fa-chart-simple deco-star text-xl" style="top:14px; right:56px; animation-delay:.2s;"></i>
-                <i class="fa-solid fa-bolt deco-star text-sm" style="bottom:16px; left:70px; animation-delay:.8s;"></i>
+    <div id="progressModal" class="hidden modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-blue-950/40 backdrop-blur-md p-4">
+        <div class="modal-panel bg-white rounded-3xl shadow-[0_20px_50px_rgba(30,58,138,0.2)] w-full max-w-md overflow-hidden border border-blue-100">
+            <div class="relative px-6 py-7 bg-gradient-to-br from-blue-700 via-blue-600 to-blue-500 overflow-hidden">
+                <div class="absolute inset-0 modal-header-pattern opacity-50"></div>
+                <div class="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
+                <div class="absolute -bottom-12 -left-8 w-28 h-28 bg-white/10 rounded-full blur-xl"></div>
                 <div class="relative flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="icon-badge w-12 h-12 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center ring-1 ring-white/30">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-inner">
                             <i class="fa-solid fa-chart-line text-white text-lg"></i>
                         </div>
                         <div>
-                            <h3 class="font-bold text-white text-base tracking-tight">Update Progress</h3>
-                            <p class="text-[11px] text-white/75">Perbarui status pekerjaan Anda</p>
+                            <h3 class="font-black text-white text-base tracking-tight">Update Progress</h3>
+                            <p class="text-[10px] font-bold tracking-widest uppercase text-blue-200 mt-0.5">Perbarui status pekerjaan Anda</p>
                         </div>
                     </div>
                     <button type="button" onclick="document.getElementById('progressModal').classList.add('hidden')"
-                        class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 hover:rotate-90 flex items-center justify-center transition-all duration-300">
+                        class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors">
                         <i class="fa-solid fa-xmark text-white text-sm"></i>
                     </button>
                 </div>
             </div>
 
-            <form method="POST" action="{{ route('freelancer.workspaces.progress', $workspace) }}"
-                class="p-6 space-y-4 bg-gradient-to-b from-blue-50/40 to-white">
+            <form method="POST" action="{{ route('freelancer.workspaces.progress', $workspace) }}" class="p-6 space-y-5 bg-white">
                 @csrf
+                <input type="hidden" name="action" value="select">
 
                 <div>
-                    <label class="flex items-center gap-1.5 text-xs font-semibold text-slate-600 mb-1.5">
-                        <i class="fa-solid fa-layer-group text-brand text-[11px]"></i> Stage
-                    </label>
-                    <div class="field-shell rounded-2xl transition">
-                        <select name="stage" required
-                            class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:border-brand transition">
-                            @foreach ($allStages as $stage)
-                                <option value="{{ $stage }}" {{ $activeStage === $stage ? 'selected' : '' }}>
-                                    {{ $stage }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+                    <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2">Tahap Pengerjaan</label>
+                    <select name="stage" id="stageSelect" required onchange="updateStageProgress()"
+                        class="w-full px-4 py-3 bg-blue-50/50 border border-blue-100 rounded-xl text-sm font-bold text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all appearance-none cursor-pointer">
+                        @foreach ($stages as $stage)
+                            <option value="{{ $stage }}" {{ $activeStage === $stage ? 'selected' : '' }}>{{ $stage }}</option>
+                        @endforeach
+                    </select>
                 </div>
 
                 <div>
-                    <label class="flex items-center gap-1.5 text-xs font-semibold text-slate-600 mb-1.5">
-                        <i class="fa-solid fa-gauge-high text-brand text-[11px]"></i> Progress (0-100%)
-                    </label>
-                    <div class="field-shell rounded-2xl transition">
-                        <input type="number" name="progress" min="0" max="100"
-                            value="{{ $progressValue }}" required
-                            class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:border-brand transition">
+                    <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2">Progress Saat Ini</label>
+                    <div class="flex items-center gap-4 p-4 bg-blue-50 border border-blue-100 rounded-xl">
+                        <span id="progressPreview" class="text-2xl font-black text-blue-600">{{ $progressValue }}%</span>
+                        <div class="flex-1">
+                            <div class="w-full bg-white border border-blue-100 rounded-full h-2.5 overflow-hidden shadow-inner">
+                                <div id="progressPreviewBar" class="h-full rounded-full bg-blue-500 transition-all shadow-[0_0_8px_rgba(59,130,246,0.6)]" style="width: {{ $progressValue }}%"></div>
+                            </div>
+                        </div>
                     </div>
-                    <p class="text-[10px] text-slate-400 mt-1.5 flex items-center gap-1">
-                        <i class="fa-solid fa-circle-info"></i> Progress minimal: {{ $progressValue }}% (tidak boleh turun)
+                    <p class="text-[9px] font-bold text-blue-400 mt-2 flex items-start gap-1">
+                        <i class="fa-solid fa-circle-info mt-0.5"></i> Persentase ditentukan otomatis dari urutan tahap (tidak dapat diedit manual).
                     </p>
                 </div>
 
                 <div>
-                    <label class="flex items-center gap-1.5 text-xs font-semibold text-slate-600 mb-1.5">
-                        <i class="fa-solid fa-pen text-brand text-[11px]"></i> Deskripsi
-                    </label>
-                    <div class="field-shell rounded-2xl transition">
-                        <textarea name="description" rows="3" maxlength="500" id="progressDesc"
-                            oninput="document.getElementById('progressDescCount').textContent = this.value.length"
-                            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:border-brand transition resize-none"
-                            placeholder="Jelaskan update progress..."></textarea>
-                    </div>
-                    <p class="text-[10px] text-slate-400 mt-1 text-right"><span id="progressDescCount">0</span>/500</p>
+                    <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2">Deskripsi</label>
+                    <textarea name="description" rows="3" maxlength="500" id="progressDesc"
+                        oninput="document.getElementById('progressDescCount').textContent = this.value.length"
+                        class="w-full px-4 py-3 bg-blue-50/50 border border-blue-100 rounded-xl text-sm font-medium text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all resize-none"
+                        placeholder="Jelaskan update progress..."></textarea>
+                    <p class="text-[9px] font-black text-blue-300 mt-1.5 text-right"><span id="progressDescCount">0</span>/500</p>
                 </div>
 
-                <button type="submit"
-                    class="btn-shimmer w-full py-3 bg-gradient-to-r from-brand via-blue-600 to-cyan-500 text-white rounded-2xl text-sm font-semibold shadow-lg shadow-brand/30 hover:shadow-xl hover:shadow-brand/40 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-floppy-disk"></i> Simpan Progress
+                <button type="submit" class="btn-shimmer w-full py-3.5 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition shadow-[0_5px_15px_rgba(37,99,235,0.3)]">
+                    Update Progres
                 </button>
             </form>
+
+            <div class="px-6 py-5 bg-blue-50/30 border-t border-blue-100 space-y-4">
+                <p class="text-[9px] font-black text-blue-400 uppercase tracking-widest flex items-center gap-1.5 mb-2">
+                    <i class="fa-solid fa-pen-to-square text-blue-500"></i> Kelola Tahap
+                </p>
+
+                <form method="POST" action="{{ route('freelancer.workspaces.progress', $workspace) }}" class="flex gap-2">
+                    @csrf
+                    <input type="hidden" name="action" value="add">
+                    <input type="text" name="new_stage" maxlength="255" placeholder="Nama tahap baru..."
+                        class="flex-1 px-4 py-2 bg-white border border-blue-100 rounded-lg text-xs font-semibold focus:outline-none focus:border-blue-400">
+                    <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition">Tambah</button>
+                </form>
+
+                <form method="POST" action="{{ route('freelancer.workspaces.progress', $workspace) }}" class="flex gap-2">
+                    @csrf
+                    <input type="hidden" name="action" value="rename">
+                    <select name="old_stage" class="w-1/3 px-2 py-2 bg-white border border-blue-100 rounded-lg text-xs font-semibold focus:outline-none focus:border-blue-400">
+                        @foreach ($stages as $stage)
+                            <option value="{{ $stage }}" {{ $activeStage === $stage ? 'selected' : '' }}>{{ $stage }}</option>
+                        @endforeach
+                    </select>
+                    <input type="text" name="new_stage" maxlength="255" placeholder="Nama baru..."
+                        class="flex-1 px-3 py-2 bg-white border border-blue-100 rounded-lg text-xs font-semibold focus:outline-none focus:border-blue-400">
+                    <button type="submit" class="px-3 py-2 bg-blue-100 text-blue-600 border border-blue-200 hover:bg-blue-200 rounded-lg text-xs font-bold transition">Ganti</button>
+                </form>
+
+                @php $isAtLastStage = $activeStageOrder >= $totalStages; @endphp
+                @if (!$isAtLastStage)
+                    <form method="POST" action="{{ route('freelancer.workspaces.progress', $workspace) }}" class="pt-2 border-t border-blue-100">
+                        @csrf
+                        <input type="hidden" name="action" value="move_next">
+                        <button type="submit" class="w-full px-4 py-2 bg-white border border-blue-500 text-blue-600 hover:bg-blue-50 rounded-lg text-xs font-bold transition flex items-center justify-center gap-2">
+                            Lanjut ke Tahap Berikutnya <i class="fa-solid fa-forward"></i>
+                        </button>
+                    </form>
+                @else
+                    <div class="w-full px-4 py-2.5 bg-blue-50 border border-blue-100 text-blue-400 rounded-lg text-[10px] font-bold tracking-wide text-center mt-2">
+                        Anda sudah berada di tahap terakhir.
+                    </div>
+                @endif
+            </div>
+
+            <script>
+                const STAGE_LIST = @json($stages);
+                function calcStageProgress(index) {
+                    const total = STAGE_LIST.length;
+                    if (!total) return 0;
+                    const order = index + 1;
+                    if (order >= total) return 100;
+                    return Math.round((order / total) * 100);
+                }
+                function updateStageProgress() {
+                    const sel = document.getElementById('stageSelect');
+                    if (!sel) return;
+                    const idx = STAGE_LIST.indexOf(sel.value);
+                    const pct = calcStageProgress(idx);
+                    const elVal = document.getElementById('progressPreview');
+                    const elBar = document.getElementById('progressPreviewBar');
+                    if (elVal) elVal.textContent = pct + '%';
+                    if (elBar) elBar.style.width = pct + '%';
+                }
+            </script>
         </div>
     </div>
 
-    {{-- MODAL RATING & ULASAN (Untuk Company) --}}
+    {{-- MODAL RATING & ULASAN (Company Only) --}}
     @if (auth()->user()->role === 'company' && $workspace->status === 'Selesai')
-        <div id="ratingModal"
-            class="hidden modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-            <div class="modal-panel bg-white rounded-3xl shadow-2xl shadow-brand/10 w-full max-w-md overflow-hidden border border-slate-100 ring-1 ring-black/[.03]">
-                {{-- Gradient header with pattern + floating decor --}}
-                <div class="relative px-6 py-7 bg-gradient-to-br from-blue-600 via-brand to-cyan-400 overflow-hidden">
-                    <div class="absolute inset-0 modal-header-pattern"></div>
-                    <div class="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full"></div>
-                    <div class="absolute -bottom-12 -left-8 w-28 h-28 bg-white/10 rounded-full"></div>
-                    <i class="fa-solid fa-star deco-star text-lg" style="top:16px; right:60px; animation-delay:.1s;"></i>
-                    <i class="fa-solid fa-star deco-star text-xs" style="bottom:14px; left:78px; animation-delay:.6s;"></i>
-                    <i class="fa-regular fa-star deco-star text-sm" style="top:40px; right:100px; animation-delay:1.1s;"></i>
+        <div id="ratingModal" class="hidden modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-blue-950/40 backdrop-blur-md p-4">
+            <div class="modal-panel bg-white rounded-3xl shadow-[0_20px_50px_rgba(30,58,138,0.2)] w-full max-w-md overflow-hidden border border-blue-100">
+                <div class="relative px-6 py-7 bg-gradient-to-br from-blue-700 via-blue-600 to-blue-500 overflow-hidden">
+                    <div class="absolute inset-0 modal-header-pattern opacity-50"></div>
+                    <div class="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
+                    <div class="absolute -bottom-12 -left-8 w-28 h-28 bg-white/10 rounded-full blur-xl"></div>
                     <div class="relative flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <div class="icon-badge w-12 h-12 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center ring-1 ring-white/30">
-                                <i class="fa-solid fa-star text-white text-lg"></i>
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-inner">
+                                <i class="fa-solid fa-ranking-star text-white text-lg"></i>
                             </div>
                             <div>
-                                <h3 class="font-bold text-white text-base tracking-tight">Beri Rating & Ulasan</h3>
-                                <p class="text-[11px] text-white/75">Bagikan pengalaman Anda</p>
+                                <h3 class="font-black text-white text-base tracking-tight">Beri Rating & Ulasan</h3>
+                                <p class="text-[10px] font-bold tracking-widest uppercase text-blue-200 mt-0.5">Bagikan pengalaman Anda</p>
                             </div>
                         </div>
                         <button type="button" onclick="document.getElementById('ratingModal').classList.add('hidden')"
-                            class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 hover:rotate-90 flex items-center justify-center transition-all duration-300">
+                            class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors">
                             <i class="fa-solid fa-xmark text-white text-sm"></i>
                         </button>
                     </div>
                 </div>
 
-                {{-- Sesuaikan route endpoint aksi penyimpanan rating di backend Anda --}}
-                <form method="POST" action="{{ route('company.client.review.store', $workspace->project_id) }}"
-                    class="p-6 space-y-5 bg-gradient-to-b from-blue-50/40 to-white">
+                <form method="POST" action="{{ route('company.client.review.store', $workspace->project_id) }}" class="p-6 space-y-6 bg-white">
                     @csrf
-
-                    <div class="text-center bg-gradient-to-b from-blue-50 to-white border border-blue-100 rounded-2xl py-5 px-4">
-                        <label class="block text-xs font-semibold text-slate-500 mb-3 uppercase tracking-wide">Pilih Rating</label>
+                    <div class="bg-blue-50 border border-blue-100 rounded-2xl p-5 text-center shadow-inner">
+                        <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-3">Pilih Rating</label>
                         <input type="hidden" name="rating" id="ratingInput" value="5">
-                        <div class="flex justify-center gap-1.5" id="starRating">
+                        <div class="flex justify-center gap-2 mb-3" id="starRating">
                             @for ($i = 1; $i <= 5; $i++)
-                                <button type="button" class="star-btn active" data-value="{{ $i }}"
-                                    onclick="setRating({{ $i }})">
+                                <button type="button" class="star-btn active" data-value="{{ $i }}" onclick="setRating({{ $i }})">
                                     <i class="fa-solid fa-star"></i>
                                 </button>
                             @endfor
                         </div>
-                        <p class="text-xs font-bold text-brand mt-2.5 bg-white inline-block px-3 py-1 rounded-full shadow-sm border border-blue-100" id="ratingLabel">5 - Sempurna</p>
+                        <span class="inline-block px-3 py-1 bg-white border border-blue-100 rounded text-[10px] font-black text-blue-600 uppercase tracking-widest shadow-sm" id="ratingLabel">5 - Sempurna</span>
                     </div>
 
                     <div>
-                        <label class="flex items-center gap-1.5 text-xs font-semibold text-slate-600 mb-1.5">
-                            <i class="fa-solid fa-comment-dots text-brand text-[11px]"></i> Ulasan / Testimoni
-                        </label>
-                        <div class="field-shell rounded-2xl transition">
-                            <textarea name="review" rows="3" maxlength="500" id="reviewText"
-                                oninput="document.getElementById('reviewCount').textContent = this.value.length"
-                                class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:border-brand transition resize-none"
-                                placeholder="Tulis ulasan kinerja freelancer ini..."></textarea>
-                        </div>
-                        <p class="text-[10px] text-slate-400 mt-1 text-right"><span id="reviewCount">0</span>/500</p>
+                        <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2">Ulasan / Testimoni</label>
+                        <textarea name="review" rows="3" maxlength="500" id="reviewText"
+                            oninput="document.getElementById('reviewCount').textContent = this.value.length"
+                            class="w-full px-4 py-3 bg-blue-50/50 border border-blue-100 rounded-xl text-sm font-medium text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all resize-none"
+                            placeholder="Tulis ulasan kinerja freelancer ini..."></textarea>
+                        <p class="text-[9px] font-black text-blue-300 mt-1.5 text-right"><span id="reviewCount">0</span>/500</p>
                     </div>
 
-                    <button type="submit"
-                        class="btn-shimmer w-full py-3 bg-gradient-to-r from-brand via-blue-600 to-cyan-500 text-white rounded-2xl text-sm font-semibold shadow-lg shadow-brand/30 hover:shadow-xl hover:shadow-brand/40 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-paper-plane"></i> Kirim Ulasan
+                    <button type="submit" class="btn-shimmer w-full py-3.5 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition shadow-[0_5px_15px_rgba(37,99,235,0.3)]">
+                        Kirim Ulasan
                     </button>
                 </form>
             </div>
-        </div>
 
-        <script>
-            const ratingLabels = { 1: '1 - Buruk', 2: '2 - Kurang', 3: '3 - Cukup', 4: '4 - Sangat Baik', 5: '5 - Sempurna' };
-            function setRating(v) {
-                document.getElementById('ratingInput').value = v;
-                document.getElementById('ratingLabel').textContent = ratingLabels[v];
-                document.querySelectorAll('#starRating .star-btn').forEach((btn, idx) => {
-                    if (idx < v) {
-                        btn.classList.add('active');
-                    } else {
-                        btn.classList.remove('active');
+            <script>
+                const ratingLabels = { 1: '1 - Buruk', 2: '2 - Kurang', 3: '3 - Cukup', 4: '4 - Sangat Baik', 5: '5 - Sempurna' };
+                function setRating(v) {
+                    document.getElementById('ratingInput').value = v;
+                    document.getElementById('ratingLabel').textContent = ratingLabels[v];
+                    document.querySelectorAll('#starRating .star-btn').forEach((btn, idx) => {
+                        if (idx < v) {
+                            btn.classList.add('active');
+                        } else {
+                            btn.classList.remove('active');
+                        }
+                    });
+                    const clicked = document.querySelector('#starRating .star-btn[data-value="' + v + '"]');
+                    if (clicked) {
+                        clicked.classList.remove('pop');
+                        void clicked.offsetWidth;
+                        clicked.classList.add('pop');
                     }
-                });
-                const clicked = document.querySelector('#starRating .star-btn[data-value="' + v + '"]');
-                if (clicked) {
-                    clicked.classList.remove('pop');
-                    void clicked.offsetWidth;
-                    clicked.classList.add('pop');
                 }
-            }
-        </script>
+            </script>
+        </div>
     @endif
 
     <script>
-        // Auto scroll chat ke bawah
         document.addEventListener('DOMContentLoaded', function() {
             const chatBody = document.getElementById('chatBody');
             if (chatBody) {
@@ -795,7 +809,5 @@
             }
         });
     </script>
-
 </body>
-
 </html>

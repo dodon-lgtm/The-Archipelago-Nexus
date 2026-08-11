@@ -68,9 +68,9 @@ body{
 
         {{-- Info Project & Freelancer --}}
         <div class="card bg-light border-0 rounded-4 p-3 mb-4 text-center">
-            <div class="mb-2">
+<div class="mb-2">
                 @php
-                    $profile = $project->freelancer->freelancerProfile ?? null;
+                    $profile = $freelancer->freelancerProfile ?? null;
                 @endphp
                 @if($profile && $profile->photo)
                     <img src="{{ asset('storage/' . $profile->photo) }}" class="freelancer-photo" alt="Foto Freelancer">
@@ -78,8 +78,8 @@ body{
                     <img src="{{ asset('images/default-profile.png') }}" class="freelancer-photo" alt="Default Foto">
                 @endif
             </div>
-            <h5 class="fw-bold mb-1">{{ $project->freelancer->name ?? 'Freelancer' }}</h5>
-            <small class="text-muted">Project: <b>{{ $project->title ?? 'Judul Project' }}</b></small>
+            <h5 class="fw-bold mb-1">{{ $freelancer->name ?? 'Freelancer' }}</h5>
+            <small class="text-muted">Project: <b>{{ $project->project_name ?? 'Judul Project' }}</b></small>
         </div>
 
         {{-- Form Review --}}

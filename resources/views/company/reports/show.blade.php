@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detail Laporan - The Archipelago Nexus</title>
+    <title>Detail Laporan - ApexForge Labs</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -106,21 +106,38 @@
                                     <p class="text-xs text-slate-500 font-semibold mb-2">Lampiran / Bukti ({{ $report->attachments->count() }})</p>
                                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                                         @foreach($report->attachments as $attachment)
-                                            <a href="{{ $attachment->file_url }}" target="_blank"
-                                               class="group rounded-xl border border-slate-200 overflow-hidden bg-slate-50 hover:border-brand transition">
+                                            <div class="group rounded-xl border border-slate-200 overflow-hidden bg-slate-50 hover:border-brand transition">
                                                 @if($attachment->is_image)
-                                                    <img src="{{ $attachment->file_url }}" alt="{{ $attachment->file_name }}"
-                                                         class="w-full h-24 object-cover group-hover:scale-105 transition">
+                                                    {{-- Thumbnail - klik untuk preview gambar --}}
+                                                    <a href="{{ $attachment->file_url }}" target="_blank" title="{{ $attachment->file_name }}">
+                                                        <img src="{{ $attachment->file_url }}" alt="{{ $attachment->file_name }}"
+                                                             class="w-full h-24 object-cover group-hover:scale-105 transition">
+                                                    </a>
+                                                    <div class="p-2">
+                                                        <p class="text-[11px] font-semibold text-slate-700 truncate">🖼 {{ $attachment->file_name }}</p>
+                                                        <p class="text-[10px] text-slate-400">{{ $attachment->formatted_size }}</p>
+                                                    </div>
                                                 @else
+                                                    {{-- PDF / File - icon + Buka/Download --}}
                                                     <div class="h-24 flex items-center justify-center bg-slate-100 text-brand">
-                                                        <i class="fa-solid fa-file-lines text-2xl"></i>
+                                                        <i class="fa-solid fa-file-pdf text-3xl"></i>
+                                                    </div>
+                                                    <div class="p-2">
+                                                        <p class="text-[11px] font-semibold text-slate-700 truncate">📄 {{ $attachment->file_name }}</p>
+                                                        <p class="text-[10px] text-slate-400">{{ $attachment->formatted_size }}</p>
+                                                        <div class="flex gap-2 mt-2">
+                                                            <a href="{{ $attachment->file_url }}" target="_blank"
+                                                               class="flex-1 text-center px-2 py-1.5 rounded-lg bg-brand/10 text-brand hover:bg-brand/20 text-[10px] font-bold transition">
+                                                                <i class="fa-solid fa-eye mr-1"></i> Buka
+                                                            </a>
+                                                            <a href="{{ $attachment->file_url }}" download
+                                                               class="flex-1 text-center px-2 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 text-[10px] font-bold transition">
+                                                                <i class="fa-solid fa-download mr-1"></i> Download
+                                                            </a>
+                                                        </div>
                                                     </div>
                                                 @endif
-                                                <div class="p-2">
-                                                    <p class="text-[11px] font-semibold text-slate-700 truncate">{{ $attachment->file_name }}</p>
-                                                    <p class="text-[10px] text-slate-400">{{ $attachment->formatted_size }}</p>
-                                                </div>
-                                            </a>
+                                            </div>
                                         @endforeach
                                     </div>
                                 </div>
@@ -132,52 +149,6 @@
                                     <p class="text-xs font-bold text-violet-700 mb-1 flex items-center gap-2"><i class="fa-solid fa-upload"></i> Unggah Bukti Tambahan</p>
                                     <p class="text-xs text-violet-600 mb-3">Admin meminta bukti tambahan untuk laporan ini.</p>
                                     <form method="POST" action="{{ route('company.reports.evidence', $report) }}" enctype="multipart/form-data" class="space-y-3">
-                                        @csrf
-                                        <input type="file" name="attachments[]" multiple accept=".jpg,.jpeg,.png,.pdf"
-                                               class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-violet-100 file:text-violet-700 hover:file:bg-violet-200">
-                                        @error('attachments') <p class="text-xs text-red-500">{{ $message }}</p> @enderror
-                                        @error('attachments.*') <p class="text-xs text-red-500">{{ $message }}</p> @enderror
-                                        <button type="submit" class="px-4 py-2 bg-violet-500 hover:bg-violet-600 text-white rounded-lg text-xs font-bold transition">
-                                            <i class="fa-solid fa-paper-plane mr-1"></i> Kirim Bukti
-                                        </button>
-                                    </form>
-                                </div>
-                            @endif
-
-{{-- Lampiran / Bukti --}}
-                            @if($report->attachments->count() > 0)
-                                <div class="mt-4 space-y-2">
-                                    <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Lampiran / Bukti ({{ $report->attachments->count() }})</h2>
-                                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                                        @foreach($report->attachments as $attachment)
-                                            <a href="{{ $attachment->file_url }}" target="_blank"
-                                               class="group rounded-xl border border-slate-200 overflow-hidden bg-slate-50 hover:border-brand transition">
-                                                @if($attachment->is_image)
-                                                    <img src="{{ $attachment->file_url }}" alt="{{ $attachment->file_name }}"
-                                                         class="w-full h-24 object-cover group-hover:scale-105 transition">
-                                                @else
-                                                    <div class="h-24 flex items-center justify-center bg-slate-100 text-brand">
-                                                        <i class="fa-solid fa-file-lines text-2xl"></i>
-                                                    </div>
-                                                @endif
-                                                <div class="p-2">
-                                                    <p class="text-[11px] font-semibold text-slate-700 truncate">{{ $attachment->file_name }}</p>
-                                                    <p class="text-[10px] text-slate-400">{{ $attachment->formatted_size }}</p>
-                                                </div>
-                                            </a>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            @endif
-
-                            {{-- Form Unggah Bukti Tambahan (menunggu-bukti) --}}
-                            @if($report->status == 'menunggu-bukti')
-                                <div class="mt-4 space-y-2 bg-violet-50 border border-violet-200 rounded-xl p-4">
-                                    <h2 class="text-xs font-bold uppercase tracking-wider text-violet-600 flex items-center gap-2">
-                                        <i class="fa-solid fa-upload"></i> Unggah Bukti Tambahan
-                                    </h2>
-                                    <p class="text-xs text-violet-700">Admin meminta bukti tambahan untuk laporan ini. Silakan unggah screenshot/bukti pendukung.</p>
-                                    <form method="POST" action="{{ route('company.reports.evidence', $report) }}" enctype="multipart/form-data" class="space-y-3 mt-2">
                                         @csrf
                                         <input type="file" name="attachments[]" multiple accept=".jpg,.jpeg,.png,.pdf"
                                                class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-violet-100 file:text-violet-700 hover:file:bg-violet-200">

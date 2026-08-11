@@ -20,7 +20,7 @@
         --bg-color: #f0f9ff;
         --card-bg: rgba(255, 255, 255, 0.85);
         --text-main: #0f172a;
-        --text-muted: #64748b;
+        --text-muted: #64748b;a
         --border-color: rgba(186, 230, 253, 0.6);
     }
 
@@ -434,9 +434,17 @@ $missingFields = get_missing_profile_fields();
                 <!-- TOMBOL EDIT / VIEW MODE -->
                 <div class="col-lg-3 text-center text-lg-end mt-4 mt-lg-0">
                     @if(isset($isViewOnly) && $isViewOnly)
-                        <span class="badge bg-light text-primary border border-primary px-3 py-2 rounded-pill shadow-sm" style="font-size: 13px;">
-                            <i class="fa-solid fa-eye me-1"></i> Mode Lihat Profil
-                        </span>
+                        @if(Auth::check() && Auth::user()->role === 'company' && isset($user) && (int)$user->id !== (int)Auth::id())
+                            <a href="{{ route('company.reports.create', ['reported_user_id' => $user->id]) }}"
+                               class="btn btn-custom-primary"
+                               style="background: linear-gradient(135deg, #dc2626 0%, #f87171 100%); box-shadow: 0 8px 20px rgba(220,38,38,0.25);">
+                                <i class="fa-solid fa-flag me-2"></i> Laporkan Freelancer
+                            </a>
+                        @else
+                            <span class="badge bg-light text-primary border border-primary px-3 py-2 rounded-pill shadow-sm" style="font-size: 13px;">
+                                <i class="fa-solid fa-eye me-1"></i> Mode Lihat Profil
+                            </span>
+                        @endif
                     @else
                         <a href="{{ route('freelancer.profile.edit') }}" class="btn btn-custom-primary">
                             <i class="fa-solid fa-pen-to-square me-2"></i> Edit Profil

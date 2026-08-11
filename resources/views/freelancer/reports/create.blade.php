@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buat Laporan - The Archipelago Nexus</title>
+    <title>Buat Laporan - ApexForge Labs</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -67,13 +67,16 @@
                         @csrf
 
 {{-- Hidden inputs for contextual reporting --}}
-                        @if($workspace)
+@if($workspace)
                             <input type="hidden" name="workspace_id" value="{{ $workspace->id }}">
                             <input type="hidden" name="project_id" value="{{ $project ? $project->id : '' }}">
                             <input type="hidden" name="reported_user_id" value="{{ $reportedUser ? $reportedUser->id : '' }}">
                         @elseif($project)
                             <input type="hidden" name="project_id" value="{{ $project->id }}">
                             <input type="hidden" name="reported_user_id" value="{{ $reportedUser ? $reportedUser->id : '' }}">
+                        @elseif($reportedUser)
+                            {{-- Konteks murni: Freelancer melaporkan Company --}}
+                            <input type="hidden" name="reported_user_id" value="{{ $reportedUser->id }}">
                         @endif
 
                         {{-- Context Info: Workspace (if reporting from workspace) --}}
@@ -95,7 +98,7 @@
                                     </div>
                                 </div>
                             </div>
-                        @elseif($project)
+@elseif($project)
                             {{-- Context Info: Project Details (if reporting from project detail page) --}}
                             <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
                                 <div class="flex items-center gap-2 text-slate-500 text-xs font-semibold uppercase tracking-wider">
@@ -114,15 +117,45 @@
                                     </div>
                                 </div>
                             </div>
+                        @elseif($reportedUser)
+                            {{-- Context Info: Company yang Dilaporkan (Freelancer melaporkan Company) --}}
+                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
+                                <div class="flex items-center gap-2 text-slate-500 text-xs font-semibold uppercase tracking-wider">
+                                    <i class="fa-solid fa-building"></i>
+                                    <span>Perusahaan yang Dilaporkan</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-cyan-100 text-cyan-600 flex items-center justify-center font-bold">
+                                        {{ strtoupper(substr($reportedUser->name ?? '?', 0, 1)) }}
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-slate-800">{{ $reportedUser->name }}</p>
+                                        <p class="text-xs text-slate-500">{{ $reportedUser->email }}</p>
+                                    </div>
+                                </div>
+                            </div>
                         @endif
 
-{{-- Category --}}
+                        {{-- Category --}}
+                        @php
+                            // Frontend hanya mengikuti target. Backend tetap source of truth.
+                            // - Workspace   -> melaporkan Company => TARGET_COMPANY
+                            // - Project     -> melaporkan Project => TARGET_PROJECT
+                            // - reportedUser (murni Company)      => TARGET_COMPANY
+                            // - selain itu (Bantuan -> Laporkan Bug) => TARGET_WEBSITE
+                            $reportTarget = $workspace || ($reportedUser && !$project)
+                                ? \App\Models\Report::TARGET_COMPANY
+                                : ($project
+                                    ? \App\Models\Report::TARGET_PROJECT
+                                    : \App\Models\Report::TARGET_WEBSITE);
+                            $targetCategories = \App\Models\Report::categoriesForTarget($reportTarget);
+                        @endphp
                         <div>
                             <label class="text-xs font-semibold text-slate-600 mb-1.5 block">Kategori Laporan <span class="text-red-500">*</span></label>
                             <select name="category"
                                 class="w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-2.5 text-sm focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100 outline-none @error('category') border-red-300 @enderror">
-                                @foreach(\App\Models\Report::categories() as $cat)
-                                    <option value="{{ $cat }}" @selected(old('category', 'umum') == $cat)>{{ \App\Models\Report::categoryLabel($cat) }}</option>
+                                @foreach($targetCategories as $cat)
+                                    <option value="{{ $cat }}" @selected(old('category') == $cat)>{{ \App\Models\Report::categoryLabel($cat) }}</option>
                                 @endforeach
                             </select>
                             @error('category') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Masuk ke Akun - The Archipelago Nexus</title>
+    <title>Masuk ke Akun - ApexForge Labs</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -45,7 +45,7 @@
                         <img src="{{ asset('images/nexus.jpg') }}" alt="Logo Nexus" class="w-7 h-7 rounded-full object-cover">
                     </div>
                     <span class="font-extrabold text-base tracking-tight text-slate-900">
-                        The Archipelago Nexus
+                        ApexForge Labs
                     </span>
                 </div>
 
@@ -64,7 +64,7 @@
                         <br>
                         di 
                         <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
-                            The Archipelago Nexus
+                            ApexForge Labs
                         </span>
                     </h1>
 
@@ -131,7 +131,7 @@
 
                 <div>
                     <h2 class="font-extrabold text-base tracking-wide text-white">
-                        The Archipelago<span class="text-blue-400">Nexus</span>
+                       ApexForge Labs<span class="text-blue-400">Labs</span>
                     </h2>
                     <p class="text-[11px] text-slate-400 font-medium mt-0.5">
                         Masuk ke akun untuk melanjutkan

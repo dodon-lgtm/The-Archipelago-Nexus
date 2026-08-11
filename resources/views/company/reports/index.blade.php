@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan Saya - The Archipelago Nexus</title>
+    <title>Laporan Saya - ApexForge Labs</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -70,7 +70,7 @@
                         <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Laporan Saya</h1>
                         <p class="text-slate-500 mt-2 text-sm sm:text-base">Pantau laporan yang telah Anda buat ke admin.</p>
                     </div>
-                    <a href="{{ route('company.reports.create') }}"
+                    <a href="{{ route('reports.create') }}"
                        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-red-500 hover:bg-red-600 text-white text-sm font-bold rounded-xl transition-all duration-200 shadow-sm shadow-red-500/20">
                         <i class="fa-solid fa-plus text-xs"></i>
                         Buat Laporan
