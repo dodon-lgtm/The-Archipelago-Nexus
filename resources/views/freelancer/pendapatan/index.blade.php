@@ -3,15 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pendapatan - The Archipelago Nexus</title>
+    <title>Pendapatan - ApexForge Labs</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
     </style>
+<style>
+
+/* ApexForge Labs — Unified UI System */
+:root{
+    --af-primary:#2563eb;
+    --af-primary-dark:#1d4ed8;
+    --af-primary-soft:#eff6ff;
+    --af-sky:#38bdf8;
+    --af-ink:#0f172a;
+    --af-muted:#64748b;
+    --af-border:#dbeafe;
+    --af-surface:#ffffff;
+    --af-page:#f6f9ff;
+}
+html{scroll-behavior:smooth}
+body{
+    font-family:'Plus Jakarta Sans',sans-serif;
+    background:
+        radial-gradient(circle at 10% -10%,rgba(56,189,248,.10),transparent 30%),
+        radial-gradient(circle at 100% 0%,rgba(37,99,235,.08),transparent 28%),
+        var(--af-page);
+}
+::selection{background:rgba(37,99,235,.18);color:#0f172a}
+::-webkit-scrollbar{width:7px;height:7px}
+::-webkit-scrollbar-track{background:rgba(241,245,249,.7)}
+::-webkit-scrollbar-thumb{background:rgba(37,99,235,.22);border-radius:999px}
+::-webkit-scrollbar-thumb:hover{background:rgba(37,99,235,.38)}
+
+input,select,textarea{
+    border-color:var(--af-border)!important;
+    background:rgba(255,255,255,.92);
+    transition:border-color .2s ease,box-shadow .2s ease,background .2s ease;
+}
+input:focus,select:focus,textarea:focus{
+    border-color:rgba(37,99,235,.55)!important;
+    box-shadow:0 0 0 4px rgba(37,99,235,.09)!important;
+    outline:none!important;
+}
+button,a,[role="button"]{transition:all .2s ease}
+button:focus-visible,a:focus-visible,[role="button"]:focus-visible{
+    outline:2px solid rgba(37,99,235,.55);
+    outline-offset:2px;
+}
+table{border-collapse:separate;border-spacing:0}
+thead th{
+    background:rgba(239,246,255,.72)!important;
+    color:#334155;
+    font-weight:700;
+}
+tbody tr{transition:background .18s ease}
+tbody tr:hover{background:rgba(239,246,255,.48)}
+[class*="bg-blue-600"]{
+    box-shadow:0 8px 22px -12px rgba(37,99,235,.72);
+}
+[class*="bg-blue-600"]:hover{
+    box-shadow:0 12px 28px -12px rgba(37,99,235,.78);
+    transform:translateY(-1px);
+}
+.glass-panel,.glass-card,.glass-surface{
+    background:rgba(255,255,255,.72);
+    border:1px solid rgba(219,234,254,.85);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    box-shadow:0 18px 50px -32px rgba(30,64,175,.32);
+}
+.apex-page-glow{
+    position:fixed;inset:auto -10rem -12rem auto;width:28rem;height:28rem;
+    background:rgba(56,189,248,.09);filter:blur(70px);border-radius:999px;
+    pointer-events:none;z-index:-1;
+}
+@media (max-width:767px){
+    main{padding-left:1rem!important;padding-right:1rem!important}
+    table{min-width:680px}
+    .overflow-x-auto{-webkit-overflow-scrolling:touch}
+}
+@media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+
+</style>
 </head>
-<body class="bg-slate-50 text-slate-800">
+<body class="bg-[#f6f9ff] text-slate-800">
 
 <div class="flex h-screen overflow-hidden">
     @include('navbar.navigasi')
@@ -43,7 +123,7 @@
 
                 {{-- Stat Cards --}}
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div class="bg-white border border-slate-200 rounded-2xl shadow-sm p-5">
+                    <div class="bg-white border border-blue-100 rounded-2xl shadow-sm p-5">
                         <div class="flex items-center gap-4">
                             <div class="w-14 h-14 rounded-xl bg-emerald-100 flex items-center justify-center">
                                 <i class="fa-solid fa-wallet text-emerald-600 text-xl"></i>
@@ -55,7 +135,7 @@
                         </div>
                     </div>
 
-                    <div class="bg-white border border-slate-200 rounded-2xl shadow-sm p-5">
+                    <div class="bg-white border border-blue-100 rounded-2xl shadow-sm p-5">
                         <div class="flex items-center gap-4">
                             <div class="w-14 h-14 rounded-xl bg-amber-100 flex items-center justify-center">
                                 <i class="fa-solid fa-clock text-amber-600 text-xl"></i>
@@ -82,8 +162,8 @@
                 @endif
 
                 {{-- Daftar Pendapatan --}}
-                <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-                    <div class="px-6 py-5 border-b border-slate-100">
+                <div class="bg-white border border-blue-100 rounded-2xl shadow-sm overflow-hidden">
+                    <div class="px-6 py-5 border-b border-blue-50">
                         <h2 class="font-bold text-slate-800">Riwayat Pendapatan</h2>
                     </div>
 
@@ -92,7 +172,7 @@
                             @foreach($payments as $payment)
                                 @php
                                     $statusColors = [
-                                        'pending' => 'bg-slate-50 text-slate-600 border-slate-200',
+                                        'pending' => 'bg-[#f6f9ff] text-slate-600 border-blue-100',
                                         'waiting_verification' => 'bg-amber-50 text-amber-600 border-amber-200',
                                         'paid' => 'bg-emerald-50 text-emerald-600 border-emerald-200',
                                         'rejected' => 'bg-red-50 text-red-600 border-red-200',
@@ -106,7 +186,7 @@
                                     $sc = $statusColors[$payment->status] ?? $statusColors['pending'];
                                     $sl = $statusLabels[$payment->status] ?? $payment->status;
                                 @endphp
-                                <div class="px-6 py-4 hover:bg-slate-50/50 transition">
+                                <div class="px-6 py-4 hover:bg-[#f6f9ff]/50 transition">
                                     <div class="flex items-start justify-between gap-4">
                                         <div class="flex-1 min-w-0">
                                             <div class="flex items-center gap-2">
@@ -143,13 +223,13 @@
                         </div>
 
                         @if(method_exists($payments, 'links'))
-                            <div class="px-6 py-4 border-t border-slate-100">
+                            <div class="px-6 py-4 border-t border-blue-50">
                                 {{ $payments->links() }}
                             </div>
                         @endif
                     @else
                         <div class="py-16 text-center">
-                            <div class="w-16 h-16 mx-auto mb-4 bg-slate-100 rounded-2xl flex items-center justify-center">
+                            <div class="w-16 h-16 mx-auto mb-4 bg-blue-50 rounded-2xl flex items-center justify-center">
                                 <i class="fa-solid fa-wallet text-2xl text-slate-400"></i>
                             </div>
                             <h3 class="text-sm font-bold text-slate-600">Belum Ada Pendapatan</h3>
@@ -174,7 +254,7 @@
     <div class="bg-white rounded-3xl shadow-2xl shadow-slate-900/10 w-full max-w-md overflow-hidden ring-1 ring-black/[.03]">
 
         {{-- Gradient header --}}
-        <div class="relative px-6 py-7 bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500 overflow-hidden">
+        <div class="relative px-6 py-7 bg-gradient-to-br from-emerald-500 via-teal-500 to-blue-500 overflow-hidden">
             <div class="absolute inset-0" style="background-image: radial-gradient(rgba(255,255,255,.16) 1.5px, transparent 1.5px); background-size: 16px 16px;"></div>
             <div class="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full"></div>
             <div class="absolute -bottom-12 -left-8 w-28 h-28 bg-white/10 rounded-full"></div>
@@ -212,7 +292,7 @@
             </div>
 
             {{-- Roadmap --}}
-            <div class="bg-white border border-slate-200 rounded-2xl divide-y divide-slate-100 overflow-hidden">
+            <div class="bg-white border border-blue-100 rounded-2xl divide-y divide-slate-100 overflow-hidden">
                 <div class="px-4 py-3 flex items-center gap-3">
                     <span class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
                         <i class="fa-solid fa-check text-xs"></i>

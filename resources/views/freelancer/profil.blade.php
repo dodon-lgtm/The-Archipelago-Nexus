@@ -20,7 +20,7 @@
         --bg-color: #f0f9ff;
         --card-bg: rgba(255, 255, 255, 0.85);
         --text-main: #0f172a;
-        --text-muted: #64748b;
+        --text-muted: #64748b;a
         --border-color: rgba(186, 230, 253, 0.6);
     }
 
@@ -325,6 +325,86 @@
         box-shadow: 0 10px 25px rgba(2, 132, 199, 0.05);
     }
 </style>
+<style>
+
+/* ApexForge Labs — Unified UI System */
+:root{
+    --af-primary:#2563eb;
+    --af-primary-dark:#1d4ed8;
+    --af-primary-soft:#eff6ff;
+    --af-sky:#38bdf8;
+    --af-ink:#0f172a;
+    --af-muted:#64748b;
+    --af-border:#dbeafe;
+    --af-surface:#ffffff;
+    --af-page:#f6f9ff;
+}
+html{scroll-behavior:smooth}
+body{
+    font-family:'Plus Jakarta Sans',sans-serif;
+    background:
+        radial-gradient(circle at 10% -10%,rgba(56,189,248,.10),transparent 30%),
+        radial-gradient(circle at 100% 0%,rgba(37,99,235,.08),transparent 28%),
+        var(--af-page);
+}
+::selection{background:rgba(37,99,235,.18);color:#0f172a}
+::-webkit-scrollbar{width:7px;height:7px}
+::-webkit-scrollbar-track{background:rgba(241,245,249,.7)}
+::-webkit-scrollbar-thumb{background:rgba(37,99,235,.22);border-radius:999px}
+::-webkit-scrollbar-thumb:hover{background:rgba(37,99,235,.38)}
+
+input,select,textarea{
+    border-color:var(--af-border)!important;
+    background:rgba(255,255,255,.92);
+    transition:border-color .2s ease,box-shadow .2s ease,background .2s ease;
+}
+input:focus,select:focus,textarea:focus{
+    border-color:rgba(37,99,235,.55)!important;
+    box-shadow:0 0 0 4px rgba(37,99,235,.09)!important;
+    outline:none!important;
+}
+button,a,[role="button"]{transition:all .2s ease}
+button:focus-visible,a:focus-visible,[role="button"]:focus-visible{
+    outline:2px solid rgba(37,99,235,.55);
+    outline-offset:2px;
+}
+table{border-collapse:separate;border-spacing:0}
+thead th{
+    background:rgba(239,246,255,.72)!important;
+    color:#334155;
+    font-weight:700;
+}
+tbody tr{transition:background .18s ease}
+tbody tr:hover{background:rgba(239,246,255,.48)}
+[class*="bg-blue-600"]{
+    box-shadow:0 8px 22px -12px rgba(37,99,235,.72);
+}
+[class*="bg-blue-600"]:hover{
+    box-shadow:0 12px 28px -12px rgba(37,99,235,.78);
+    transform:translateY(-1px);
+}
+.glass-panel,.glass-card,.glass-surface{
+    background:rgba(255,255,255,.72);
+    border:1px solid rgba(219,234,254,.85);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    box-shadow:0 18px 50px -32px rgba(30,64,175,.32);
+}
+.apex-page-glow{
+    position:fixed;inset:auto -10rem -12rem auto;width:28rem;height:28rem;
+    background:rgba(56,189,248,.09);filter:blur(70px);border-radius:999px;
+    pointer-events:none;z-index:-1;
+}
+@media (max-width:767px){
+    main{padding-left:1rem!important;padding-right:1rem!important}
+    table{min-width:680px}
+    .overflow-x-auto{-webkit-overflow-scrolling:touch}
+}
+@media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+
+</style>
 </head>
 
 <body>
@@ -398,9 +478,9 @@ $missingFields = get_missing_profile_fields();
                 <div class="col-lg-2 text-center mb-4 mb-lg-0">
                     <div class="profile-photo-wrapper">
                         @if($profile->photo)
-                            <img src="{{ asset('storage/'.$profile->photo) }}" class="profile-photo">
+                            <img src="{{ asset('storage/'.$profile->photo) }}" alt="Foto profil {{ $user->name }}" class="profile-photo">
                         @else
-                            <img src="{{ asset('images/default-profile.png') }}" class="profile-photo" onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=0284c7&color=fff&size=140'">
+                            <img src="{{ asset('images/default-profile.png') }}" alt="Foto profil {{ $user->name }}" class="profile-photo" onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=0284c7&color=fff&size=140'">
                         @endif
                         <div class="status-badge" title="Aktif / Online"></div>
                     </div>
@@ -434,9 +514,17 @@ $missingFields = get_missing_profile_fields();
                 <!-- TOMBOL EDIT / VIEW MODE -->
                 <div class="col-lg-3 text-center text-lg-end mt-4 mt-lg-0">
                     @if(isset($isViewOnly) && $isViewOnly)
-                        <span class="badge bg-light text-primary border border-primary px-3 py-2 rounded-pill shadow-sm" style="font-size: 13px;">
-                            <i class="fa-solid fa-eye me-1"></i> Mode Lihat Profil
-                        </span>
+                        @if(Auth::check() && Auth::user()->role === 'company' && isset($user) && (int)$user->id !== (int)Auth::id())
+                            <a href="{{ route('company.reports.create', ['reported_user_id' => $user->id]) }}"
+                               class="btn btn-custom-primary"
+                               style="background: linear-gradient(135deg, #dc2626 0%, #f87171 100%); box-shadow: 0 8px 20px rgba(220,38,38,0.25);">
+                                <i class="fa-solid fa-flag me-2"></i> Laporkan Freelancer
+                            </a>
+                        @else
+                            <span class="badge bg-light text-primary border border-primary px-3 py-2 rounded-pill shadow-sm" style="font-size: 13px;">
+                                <i class="fa-solid fa-eye me-1"></i> Mode Lihat Profil
+                            </span>
+                        @endif
                     @else
                         <a href="{{ route('freelancer.profile.edit') }}" class="btn btn-custom-primary">
                             <i class="fa-solid fa-pen-to-square me-2"></i> Edit Profil

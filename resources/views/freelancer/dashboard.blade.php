@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - The Archipelago Nexus</title>
+    <title>Dashboard - ApexForge Labs</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -17,6 +17,7 @@
         }
         .reveal {
             opacity: 0;
+            /* DIBETULKAN: cuabic-bezier -> cubic-bezier */
             animation: fadeInUp .6s cubic-bezier(.22,1,.36,1) forwards;
         }
         .reveal-1 { animation-delay: .05s; }
@@ -91,9 +92,79 @@
             border-radius: 999px;
             background: linear-gradient(180deg, #06b6d4, #2563eb);
         }
+
+        /* ApexForge Labs — Unified UI System */
+        :root {
+            --af-primary: #2563eb;
+            --af-primary-dark: #1d4ed8;
+            --af-primary-soft: #eff6ff;
+            --af-sky: #38bdf8;
+            --af-ink: #0f172a;
+            --af-muted: #64748b;
+            --af-border: #dbeafe;
+            --af-surface: #ffffff;
+            --af-page: #f6f9ff;
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background:
+                radial-gradient(circle at 10% -10%, rgba(56,189,248,.10), transparent 30%),
+                radial-gradient(circle at 100% 0%, rgba(37,99,235,.08), transparent 28%),
+                var(--af-page);
+        }
+        ::selection { background: rgba(37,99,235,.18); color: #0f172a; }
+        ::-webkit-scrollbar { width: 7px; height: 7px; }
+        ::-webkit-scrollbar-track { background: rgba(241,245,249,.7); }
+        ::-webkit-scrollbar-thumb { background: rgba(37,99,235,.22); border-radius: 999px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(37,99,235,.38); }
+
+        input, select, textarea {
+            border-color: var(--af-border) !important;
+            background: rgba(255,255,255,.92);
+            transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: rgba(37,99,235,.55) !important;
+            box-shadow: 0 0 0 4px rgba(37,99,235,.09) !important;
+            outline: none !important;
+        }
+        button, a, [role="button"] { transition: all .2s ease; }
+        button:focus-visible, a:focus-visible, [role="button"]:focus-visible {
+            outline: 2px solid rgba(37,99,235,.55);
+            outline-offset: 2px;
+        }
+        table { border-collapse: separate; border-spacing: 0; }
+        thead th {
+            background: rgba(239,246,255,.72) !important;
+            color: #334155;
+            font-weight: 700;
+        }
+        tbody tr { transition: background .18s ease; }
+        tbody tr:hover { background: rgba(239,246,255,.48); }
+        [class*="bg-blue-600"] {
+            box-shadow: 0 8px 22px -12px rgba(37,99,235,.72);
+        }
+        [class*="bg-blue-600"]:hover {
+            box-shadow: 0 12px 28px -12px rgba(37,99,235,.78);
+            transform: translateY(-1px);
+        }
+        @media (max-width:767px) {
+            main { padding-left:1rem !important; padding-right:1rem !important; }
+            table { min-width: 680px; }
+            .overflow-x-auto { -webkit-overflow-scrolling: touch; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: .01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800">
+<body class="bg-[#f6f9ff] text-slate-800">
 
 <div class="flex h-screen overflow-hidden">
 
@@ -108,7 +179,7 @@
         <main class="flex-1 overflow-y-auto p-8">
 
             {{-- Welcome --}}
-            <div class="reveal reveal-1 relative overflow-hidden rounded-2xl mb-8 shadow-sm bg-gradient-to-br from-cyan-600 via-cyan-500 to-blue-600 p-8">
+            <div class="reveal reveal-1 relative overflow-hidden rounded-2xl mb-8 shadow-sm bg-gradient-to-br from-blue-600 via-blue-500 to-blue-600 p-8">
                 <div class="blob absolute -top-16 -right-10 w-64 h-64 bg-white/10 rounded-full"></div>
                 <div class="blob absolute -bottom-20 -left-10 w-72 h-72 bg-white/10 rounded-full" style="animation-delay:1.4s;"></div>
                 <div class="absolute inset-0 opacity-[.08]" style="background-image: radial-gradient(rgba(255,255,255,.7) 1.5px, transparent 1.5px); background-size: 18px 18px;"></div>
@@ -118,7 +189,7 @@
                         Selamat Datang, <span class="text-white/95 underline decoration-white/30 decoration-4 underline-offset-4">{{ auth()->user()->name ?? 'User' }}</span>
                         <span class="wave-hand text-3xl">👋</span>
                     </h2>
-                    <p class="text-cyan-50/90 mt-2 max-w-lg">Temukan pekerjaan freelance terbaik dan mulai karirmu sekarang.</p>
+                    <p class="text-blue-50/90 mt-2 max-w-lg">Temukan pekerjaan freelance terbaik dan mulai karirmu sekarang.</p>
                 </div>
             </div>
 
@@ -126,30 +197,30 @@
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 mb-10">
 
                 {{-- Card 1: Proyek Baru --}}
-                <div class="reveal reveal-2 stat-card bg-white rounded-2xl border border-slate-100 p-5 shadow-sm">
+                <div class="reveal reveal-2 stat-card bg-white rounded-2xl border border-blue-50 p-5 shadow-sm">
                     <div class="flex items-center gap-4 mb-4">
-                        <div class="stat-icon w-14 h-14 rounded-xl bg-gradient-to-br from-cyan-100 to-cyan-50 flex items-center justify-center shadow-inner">
-                            <i class="fa-solid fa-folder-plus text-cyan-600 text-xl"></i>
+                        <div class="stat-icon w-14 h-14 rounded-xl bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center shadow-inner">
+                            <i class="fa-solid fa-folder-plus text-blue-600 text-xl"></i>
                         </div>
                         <div>
                             <p class="text-xs text-slate-400 font-bold uppercase tracking-wide">Proyek Baru</p>
-                            <h3 class="text-2xl font-black">{{ $projects->count() }}</h3>
+                            <h3 class="text-2xl font-black">{{ isset($projects) ? $projects->count() : 0 }}</h3>
                         </div>
                     </div>
-                    <a href="{{ route('freelancer.proyek') }}" class="btn-shimmer block text-center text-xs font-bold text-cyan-700 py-2.5 rounded-lg bg-cyan-50 hover:bg-cyan-600 hover:text-white transition-colors duration-300">
+                    <a href="{{ route('freelancer.proyek') }}" class="btn-shimmer block text-center text-xs font-bold text-blue-700 py-2.5 rounded-lg bg-blue-50 hover:bg-blue-600 hover:text-white transition-colors duration-300">
                         Lihat Semua
                     </a>
                 </div>
 
                 {{-- Card 2: Lamaran Saya --}}
-                <div class="reveal reveal-3 stat-card bg-white rounded-2xl border border-slate-100 p-5 shadow-sm">
+                <div class="reveal reveal-3 stat-card bg-white rounded-2xl border border-blue-50 p-5 shadow-sm">
                     <div class="flex items-center gap-4 mb-4">
                         <div class="stat-icon w-14 h-14 rounded-xl bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center shadow-inner">
                             <i class="fa-solid fa-paper-plane text-blue-600 text-xl"></i>
                         </div>
                         <div>
                             <p class="text-xs text-slate-400 font-bold uppercase tracking-wide">Lamaran Saya</p>
-                            <h3 class="text-2xl font-black">{{ $lamaranCount }}</h3>
+                            <h3 class="text-2xl font-black">{{ $lamaranCount ?? 0 }}</h3>
                         </div>
                     </div>
                     <a href="{{ route('freelancer.lamaran') }}" class="btn-shimmer block text-center text-xs font-bold text-blue-700 py-2.5 rounded-lg bg-blue-50 hover:bg-blue-600 hover:text-white transition-colors duration-300">
@@ -158,14 +229,14 @@
                 </div>
 
                 {{-- Card 3: Tersimpan --}}
-                <div class="reveal reveal-4 stat-card bg-white rounded-2xl border border-slate-100 p-5 shadow-sm">
+                <div class="reveal reveal-4 stat-card bg-white rounded-2xl border border-blue-50 p-5 shadow-sm">
                     <div class="flex items-center gap-4 mb-4">
                         <div class="stat-icon w-14 h-14 rounded-xl bg-gradient-to-br from-purple-100 to-purple-50 flex items-center justify-center shadow-inner">
                             <i class="fa-solid fa-heart text-purple-600 text-xl"></i>
                         </div>
                         <div>
                             <p class="text-xs text-slate-400 font-bold uppercase tracking-wide">Tersimpan</p>
-                            <h3 class="text-2xl font-black">{{ $savedCount }}</h3>
+                            <h3 class="text-2xl font-black">{{ $savedCount ?? 0 }}</h3>
                         </div>
                     </div>
                     <a href="{{ route('freelancer.saved-projects.index') }}" class="btn-shimmer block text-center text-xs font-bold text-purple-700 py-2.5 rounded-lg bg-purple-50 hover:bg-purple-600 hover:text-white transition-colors duration-300">
@@ -174,7 +245,7 @@
                 </div>
 
                 {{-- Card 4: Pesan Baru --}}
-                <div class="reveal reveal-5 stat-card bg-white rounded-2xl border border-slate-100 p-5 shadow-sm">
+                <div class="reveal reveal-5 stat-card bg-white rounded-2xl border border-blue-50 p-5 shadow-sm">
                     <div class="flex items-center gap-4 mb-4">
                         <div class="stat-icon w-14 h-14 rounded-xl bg-gradient-to-br from-amber-100 to-amber-50 flex items-center justify-center shadow-inner">
                             <i class="fa-solid fa-comment text-amber-600 text-xl"></i>
@@ -201,33 +272,33 @@
                             <span class="section-accent h-6"></span>
                             Rekomendasi Pekerjaan
                         </h2>
-                        <a href="{{ route('freelancer.projects.index') }}" class="text-cyan-600 font-semibold text-sm hover:text-cyan-700 transition flex items-center gap-1 group">
+                        <a href="{{ route('freelancer.projects.index') }}" class="text-blue-600 font-semibold text-sm hover:text-blue-700 transition flex items-center gap-1 group">
                             Lihat Semua <i class="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
                         </a>
                     </div>
 
                     <div class="space-y-4">
-                        @forelse($projects as $project)
-                            <div class="job-card bg-white border border-slate-200 rounded-2xl p-4 flex items-center justify-between shadow-sm">
+                        @forelse($projects ?? [] as $project)
+                            <div class="job-card bg-white border border-blue-100 rounded-2xl p-4 flex items-center justify-between shadow-sm">
                                 <div class="flex items-center gap-4 min-w-0">
-                                    <div class="job-thumb w-16 h-16 rounded-xl overflow-hidden shrink-0 bg-slate-100">
-                                        <img src="{{ $project->image ? asset('storage/'.$project->image) : asset('images/no-image.png') }}" class="w-16 h-16 object-cover">
+                                    <div class="job-thumb w-16 h-16 rounded-xl overflow-hidden shrink-0 bg-blue-50">
+                                        <img src="{{ $project->image ? asset('storage/'.$project->image) : asset('images/no-image.png') }}" class="w-16 h-16 object-cover" alt="Thumb">
                                     </div>
                                     <div class="min-w-0">
                                         <h2 class="text-sm font-bold truncate">{{ $project->project_name }}</h2>
                                         <p class="text-[11px] text-slate-500 mt-0.5 inline-flex items-center gap-1">
-                                            <i class="fa-solid fa-tag text-[9px] text-cyan-400"></i>
+                                            <i class="fa-solid fa-tag text-[9px] text-blue-400"></i>
                                             {{ $project->category->name ?? '-' }}
                                         </p>
                                     </div>
                                 </div>
                                 <div class="text-right shrink-0 pl-3">
-                                    <p class="font-bold text-cyan-600 text-xs">Rp {{ number_format($project->budget,0,',','.') }}</p>
-                                    <a href="{{ route('freelancer.projects.show',$project) }}" class="text-[10px] font-semibold bg-slate-100 hover:bg-cyan-600 hover:text-white text-slate-600 px-3 py-1.5 rounded-lg mt-2 inline-block transition-colors duration-300">Detail</a>
+                                    <p class="font-bold text-blue-600 text-xs">Rp {{ number_format($project->budget,0,',','.') }}</p>
+                                    <a href="{{ route('freelancer.projects.show',$project) }}" class="text-[10px] font-semibold bg-blue-50 hover:bg-blue-600 hover:text-white text-slate-600 px-3 py-1.5 rounded-lg mt-2 inline-block transition-colors duration-300">Detail</a>
                                 </div>
                             </div>
                         @empty
-                            <div class="bg-white rounded-2xl p-8 text-center border border-dashed border-slate-200">
+                            <div class="bg-white rounded-2xl p-8 text-center border border-dashed border-blue-100">
                                 <i class="fa-regular fa-folder-open text-3xl text-slate-300 mb-2"></i>
                                 <p class="text-sm text-slate-400">Belum ada proyek.</p>
                             </div>
@@ -236,7 +307,7 @@
                 </div>
 
                 {{-- KANAN: Lamaran Terbaru --}}
-                <div class="reveal reveal-6 bg-white rounded-2xl shadow-sm border border-slate-100 p-5 h-fit">
+                <div class="reveal reveal-6 bg-white rounded-2xl shadow-sm border border-blue-50 p-5 h-fit">
 
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-xl font-black flex items-center gap-3">
@@ -244,76 +315,59 @@
                             Lamaran Terbaru
                         </h2>
 
-                        <a href="{{ route('freelancer.lamaran') }}"
-                           class="text-cyan-600 font-semibold text-sm hover:text-cyan-700 transition">
+                        <a href="{{ route('freelancer.lamaran') }}" class="text-blue-600 font-semibold text-sm hover:text-blue-700 transition">
                             Lihat Semua
                         </a>
                     </div>
 
                     <div class="space-y-3">
+                        @forelse($latestApplications ?? [] as $app)
+                            <div class="relative pl-4 border-l-2 border-blue-50">
+                                <span class="dot-pulse absolute -left-[7px] top-4 w-3 h-3 rounded-full
+                                    {{ $app->status == 'Menunggu' ? 'bg-amber-400' : ($app->status == 'Diterima' ? 'bg-emerald-500' : 'bg-red-400') }}"></span>
 
-                        @forelse($latestApplications as $app)
-
-                        <div class="relative pl-4 border-l-2 border-slate-100">
-                            <span class="dot-pulse absolute -left-[7px] top-4 w-3 h-3 rounded-full
-                                {{ $app->status == 'Menunggu' ? 'bg-amber-400' : ($app->status == 'Diterima' ? 'bg-emerald-500' : 'bg-red-400') }}"></span>
-
-                            <div class="border border-slate-200 rounded-xl p-3 hover:shadow-md hover:border-cyan-200 transition-all duration-300 ml-2">
-
-                                <div class="flex justify-between gap-2">
-
-                                    <div class="min-w-0">
-
-                                        <h3 class="font-semibold text-sm truncate">
-                                            {{ $app->project->project_name }}
-                                        </h3>
-
-                                        <p class="text-xs text-gray-500 mt-0.5">
-                                            Rp {{ number_format($app->harga_penawaran,0,',','.') }}
-                                        </p>
-
-                                        <p class="text-xs text-gray-400">
-                                            Estimasi {{ $app->estimasi_hari }} Hari
-                                        </p>
-
-                                    </div>
-
-                                    <div class="text-right shrink-0">
-
-                                        @if($app->status=='Menunggu')
-                                            <span class="px-2 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs font-semibold">
-                                                Menunggu
-                                            </span>
-                                        @elseif($app->status=='Diterima')
-                                            <span class="px-2 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">
-                                                Diterima
-                                            </span>
-                                        @else
-                                            <span class="px-2 py-1 rounded-full bg-red-100 text-red-700 text-xs font-semibold">
-                                                Ditolak
-                                            </span>
-                                        @endif
-
-                                        <div class="text-[11px] text-gray-400 mt-2">
-                                            {{ $app->created_at->format('d M Y') }}
+                                <div class="border border-blue-100 rounded-xl p-3 hover:shadow-md hover:border-blue-200 transition-all duration-300 ml-2">
+                                    <div class="flex justify-between gap-2">
+                                        <div class="min-w-0">
+                                            <h3 class="font-semibold text-sm truncate">
+                                                {{ $app->project->project_name ?? 'Proyek' }}
+                                            </h3>
+                                            <p class="text-xs text-gray-500 mt-0.5">
+                                                Rp {{ number_format($app->harga_penawaran,0,',','.') }}
+                                            </p>
+                                            <p class="text-xs text-gray-400">
+                                                Estimasi {{ $app->estimasi_hari }} Hari
+                                            </p>
                                         </div>
 
+                                        <div class="text-right shrink-0">
+                                            @if($app->status == 'Menunggu')
+                                                <span class="px-2 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs font-semibold">
+                                                    Menunggu
+                                                </span>
+                                            @elseif($app->status == 'Diterima')
+                                                <span class="px-2 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">
+                                                    Diterima
+                                                </span>
+                                            @else
+                                                <span class="px-2 py-1 rounded-full bg-red-100 text-red-700 text-xs font-semibold">
+                                                    Ditolak
+                                                </span>
+                                            @endif
+
+                                            <div class="text-[11px] text-gray-400 mt-2">
+                                                {{ optional($app->created_at)->format('d M Y') }}
+                                            </div>
+                                        </div>
                                     </div>
-
                                 </div>
-
                             </div>
-                        </div>
-
                         @empty
-
-                        <div class="text-center py-10 text-gray-400">
-                            <i class="fa-regular fa-paper-plane text-3xl text-slate-300 mb-2"></i>
-                            <p>Belum ada lamaran.</p>
-                        </div>
-
+                            <div class="text-center py-10 text-gray-400">
+                                <i class="fa-regular fa-paper-plane text-3xl text-slate-300 mb-2"></i>
+                                <p>Belum ada lamaran.</p>
+                            </div>
                         @endforelse
-
                     </div>
 
                 </div>

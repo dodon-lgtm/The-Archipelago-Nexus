@@ -1,6 +1,6 @@
 {{-- Card: Hasil Pekerjaan (Submissions) --}}
-<div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-    <div class="px-5 py-4 border-b border-slate-100">
+<div class="bg-white border border-blue-100 rounded-2xl shadow-sm overflow-hidden">
+    <div class="px-5 py-4 border-b border-blue-50">
         <h2 class="font-bold text-sm text-slate-800">Hasil Pekerjaan</h2>
     </div>
     <div class="p-5 space-y-4">
@@ -69,7 +69,7 @@
                             ],
                         ];
                     @endphp
-                    <div class="relative pl-6 border-l-2 {{ $loop->first ? 'border-brand' : 'border-slate-200' }}">
+                    <div class="relative pl-6 border-l-2 {{ $loop->first ? 'border-brand' : 'border-blue-100' }}">
                         <div
                             class="absolute -left-[9px] top-0 w-4 h-4 rounded-full {{ $loop->first ? 'bg-brand' : 'bg-slate-300' }} flex items-center justify-center">
                             <i class="text-[8px] text-white fa-solid fa-check"></i>
@@ -102,8 +102,8 @@
                                     @foreach ($categoryMeta as $catKey => $catMeta)
                                         @php $catFiles = $groupedFiles[$catKey] ?? collect(); @endphp
                                         @if ($catFiles->isNotEmpty())
-                                            <div class="bg-white/60 border border-slate-200 rounded-lg overflow-hidden">
-                                                <div class="px-3 py-2 {{ $catMeta['bg'] }} border-b border-slate-200">
+                                            <div class="bg-white/60 border border-blue-100 rounded-lg overflow-hidden">
+                                                <div class="px-3 py-2 {{ $catMeta['bg'] }} border-b border-blue-100">
                                                     <p class="text-[10px] font-bold {{ $catMeta['color'] }} uppercase tracking-wider flex items-center gap-1.5">
                                                         <i class="{{ $catMeta['icon'] }}"></i>
                                                         {{ $catMeta['label'] }} ({{ $catFiles->count() }})
@@ -113,14 +113,14 @@
                                                     @foreach ($catFiles as $file)
                                                         <div class="flex items-center gap-3 px-3 py-2.5 hover:bg-white transition">
                                                             @if ($catKey === 'image')
-                                                                <div class="w-10 h-10 rounded-lg bg-slate-100 overflow-hidden shrink-0 border border-slate-200">
+                                                                <div class="w-10 h-10 rounded-lg bg-blue-50 overflow-hidden shrink-0 border border-blue-100">
                                                                     <img src="{{ $file->file_url }}"
                                                                         alt="{{ $file->file_name }}"
                                                                         class="w-full h-full object-cover"
                                                                         onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'w-full h-full flex items-center justify-center\\'><i class=\\'{{ $file->file_icon }} text-sm {{ $file->file_color }}\\'></i></div>'">
                                                                 </div>
                                                             @else
-                                                                <div class="w-10 h-10 rounded-lg {{ $catMeta['bg'] }} flex items-center justify-center {{ $file->file_color }} shrink-0 border border-slate-200">
+                                                                <div class="w-10 h-10 rounded-lg {{ $catMeta['bg'] }} flex items-center justify-center {{ $file->file_color }} shrink-0 border border-blue-100">
                                                                     <i class="{{ $file->file_icon }} text-sm"></i>
                                                                 </div>
                                                             @endif
@@ -129,7 +129,7 @@
                                                                 <p class="text-[10px] text-slate-400">{{ $file->formatted_size }}</p>
                                                             </div>
                                                             <a href="{{ $file->file_url }}" target="_blank"
-                                                                class="inline-flex items-center gap-1 px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-[10px] font-semibold text-slate-600 hover:bg-slate-50 hover:border-brand/30 transition shrink-0">
+                                                                class="inline-flex items-center gap-1 px-2.5 py-1.5 bg-white border border-blue-100 rounded-lg text-[10px] font-semibold text-slate-600 hover:bg-[#f6f9ff] hover:border-brand/30 transition shrink-0">
                                                                 <i class="fa-solid fa-download"></i> Download
                                                             </a>
                                                         </div>
@@ -142,7 +142,7 @@
                             @endif
 
                             @if ($submission->company_note)
-                                <div class="bg-white/60 border border-slate-200 rounded-lg p-3">
+                                <div class="bg-white/60 border border-blue-100 rounded-lg p-3">
                                     <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Catatan Perusahaan</p>
                                     <p class="text-xs text-slate-700">{{ $submission->company_note }}</p>
                                 </div>
@@ -169,7 +169,7 @@
             </div>
         @else
             <div class="py-8 text-center">
-                <div class="w-12 h-12 mx-auto mb-3 bg-slate-100 rounded-xl flex items-center justify-center">
+                <div class="w-12 h-12 mx-auto mb-3 bg-blue-50 rounded-xl flex items-center justify-center">
                     <i class="fa-solid fa-folder-open text-slate-400"></i>
                 </div>
                 <p class="text-xs text-slate-500">Belum ada hasil pekerjaan yang dikirim.</p>
@@ -208,10 +208,10 @@
 ============================================================ --}}
 <div id="uploadModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl mx-4 overflow-auto max-h-[90vh]">
-        <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between sticky top-0 bg-white z-10">
+        <div class="px-6 py-5 border-b border-blue-50 flex items-center justify-between sticky top-0 bg-white z-10">
             <h3 class="font-bold text-slate-800">Upload Hasil Pekerjaan</h3>
             <button type="button" onclick="document.getElementById('uploadModal').classList.add('hidden')"
-                class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center hover:bg-slate-200 transition">
+                class="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center hover:bg-slate-200 transition">
                 <i class="fa-solid fa-xmark text-slate-500"></i>
             </button>
         </div>
@@ -223,16 +223,16 @@
                 <label class="block text-xs font-semibold text-slate-600 mb-1.5">Judul Pekerjaan <span class="text-red-500">*</span></label>
                 <input type="text" name="title" required maxlength="255"
                     placeholder="Contoh: Final Design Dashboard"
-                    class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/30">
+                    class="w-full px-4 py-2.5 bg-[#f6f9ff] border border-blue-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/30">
             </div>
 
             <div>
                 <label class="block text-xs font-semibold text-slate-600 mb-1.5">Deskripsi</label>
                 <textarea name="description" rows="2" maxlength="2000" placeholder="Jelaskan hasil pekerjaan yang dikirim..."
-                    class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/30 resize-none"></textarea>
+                    class="w-full px-4 py-2.5 bg-[#f6f9ff] border border-blue-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/30 resize-none"></textarea>
             </div>
 
-            <div class="border-t border-slate-100 pt-2">
+            <div class="border-t border-blue-50 pt-2">
                 <p class="text-xs font-semibold text-slate-600 mb-1">Upload File <span class="text-red-500">*</span></p>
                 <p class="text-[10px] text-slate-400 mb-3">Minimal 1 file dari salah satu kategori di bawah ini.</p>
             </div>
@@ -310,10 +310,10 @@
 ============================================================ --}}
 <div id="acceptModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
-        <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
+        <div class="px-6 py-5 border-b border-blue-50 flex items-center justify-between">
             <h3 class="font-bold text-slate-800">Terima Hasil Pekerjaan</h3>
             <button type="button" onclick="document.getElementById('acceptModal').classList.add('hidden')"
-                class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center hover:bg-slate-200 transition">
+                class="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center hover:bg-slate-200 transition">
                 <i class="fa-solid fa-xmark text-slate-500"></i>
             </button>
         </div>
@@ -328,7 +328,7 @@
             <div>
                 <label class="block text-xs font-semibold text-slate-600 mb-1.5">Catatan (opsional)</label>
                 <textarea name="company_note" rows="3" maxlength="2000" placeholder="Tambahkan catatan untuk freelancer..."
-                    class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/30 resize-none"></textarea>
+                    class="w-full px-4 py-2.5 bg-[#f6f9ff] border border-blue-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/30 resize-none"></textarea>
             </div>
 
             <button type="submit"
@@ -344,10 +344,10 @@
 ============================================================ --}}
 <div id="revisionModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
-        <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
+        <div class="px-6 py-5 border-b border-blue-50 flex items-center justify-between">
             <h3 class="font-bold text-slate-800">Minta Revisi</h3>
             <button type="button" onclick="document.getElementById('revisionModal').classList.add('hidden')"
-                class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center hover:bg-slate-200 transition">
+                class="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center hover:bg-slate-200 transition">
                 <i class="fa-solid fa-xmark text-slate-500"></i>
             </button>
         </div>
@@ -363,7 +363,7 @@
                 <label class="block text-xs font-semibold text-slate-600 mb-1.5">Catatan Revisi <span class="text-red-500">*</span></label>
                 <textarea name="company_note" rows="4" maxlength="2000" required
                     placeholder="Contoh: Mohon perbaiki halaman login dan tampilan responsif navbar..."
-                    class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/30 resize-none"></textarea>
+                    class="w-full px-4 py-2.5 bg-[#f6f9ff] border border-blue-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/30 resize-none"></textarea>
             </div>
 
             <button type="submit"

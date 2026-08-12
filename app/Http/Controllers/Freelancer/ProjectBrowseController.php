@@ -29,6 +29,12 @@ class ProjectBrowseController extends Controller
         $query->where('category_id', $categoryId);
     }
 
+// Hanya tampilkan proyek yang masih menerima penawaran:
+    // archive_status = active, status Open, DAN belum memiliki workspace.
+    $query->where('archive_status', 'active')
+        ->where('status', 'Open')
+        ->whereDoesntHave('workspace');
+
     $projects = $query->paginate(10)->withQueryString();
 
     $categories = Category::orderBy('name')->get();
@@ -66,10 +72,19 @@ public function show(Project $project): View
             ->where('freelancer_id', Auth::id())
             ->exists();
 
-        return view('freelancer.projects.show', compact('project', 'hasOffered'));
+        $acceptsOffers = $project->acceptsOffers();
+
+        return view('freelancer.projects.show', compact('project', 'hasOffered', 'acceptsOffers'));
     }
     public function create(Project $project)
 {
+    // ── Backend source of truth: proyek harus masih menerima penawaran ──
+    if (!$project->acceptsOffers()) {
+        return redirect()
+            ->route('freelancer.projects.show', $project)
+            ->with('error', 'Proyek ini sudah tidak menerima penawaran baru.');
+    }
+
     // Cek apakah freelancer sudah pernah mengirim penawaran
     $alreadyOffered = Penawaran::where('project_id', $project->id)
         ->where('freelancer_id', Auth::id())
@@ -85,6 +100,13 @@ public function show(Project $project): View
 }
 public function store(Request $request, Project $project)
 {
+    // ── Backend source of truth: tolak jika proyek tidak menerima penawaran ──
+    if (!$project->acceptsOffers()) {
+        return redirect()
+            ->route('freelancer.projects.show', $project)
+            ->with('error', 'Proyek ini sudah tidak menerima penawaran baru.');
+    }
+
     // Cek apakah freelancer sudah pernah mengirim penawaran
     $alreadyOffered = Penawaran::where('project_id', $project->id)
         ->where('freelancer_id', Auth::id())

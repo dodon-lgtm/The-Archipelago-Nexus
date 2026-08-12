@@ -10,46 +10,52 @@ use Illuminate\Support\Facades\Auth;
 class ProfilController extends Controller
 {
     public function profile($id = null)
-{
-    // Jika $id ada (artinya company/orang lain yang lihat), ambil user berdasarkan $id.
-    // Jika $id kosong, ambil user yang sedang login (milik freelancer itu sendiri).
-    if ($id) {
-        $user = \App\Models\User::findOrFail($id);
-    } else {
-        $user = Auth::user();
+    {
+        // Jika $id ada (artinya company/orang lain yang melihat),
+        // ambil user berdasarkan $id.
+        // Jika $id kosong, ambil user yang sedang login.
+        if ($id) {
+            $user = \App\Models\User::findOrFail($id);
+        } else {
+            $user = Auth::user();
+        }
+
+        // Ambil profil berdasarkan user_id
+        $profile = FreelancerProfile::firstOrCreate(
+            ['user_id' => $user->id],
+            [
+                'bio' => '',
+                'location' => '',
+                'skills' => '',
+                'portfolio_link' => '',
+            ]
+        );
+
+        // Ambil ulasan yang diterima freelancer
+        $reviews = $user->reviewsReceived()
+            ->with('client')
+            ->latest()
+            ->get();
+
+        // Hitung rata-rata rating dan total ulasan
+        $averageRating = $reviews->avg('rating');
+        $totalReview = $reviews->count();
+
+        // Mode hanya lihat jika bukan pemilik profil
+        $isViewOnly = Auth::id() !== $user->id;
+
+        return view(
+            'freelancer.profil',
+            compact(
+                'profile',
+                'user',
+                'reviews',
+                'averageRating',
+                'totalReview',
+                'isViewOnly'
+            )
+        );
     }
-
-    // Ambil profil berdasarkan user_id dari user tersebut
-    $profile = FreelancerProfile::firstOrCreate(
-        ['user_id' => $user->id],
-        [
-            'bio' => '',
-            'location' => '',
-            'skills' => '',
-            'portfolio_link' => '',
-        ]
-    );
-
-    // Ambil ulasan yang diterima freelancer tersebut
-    $reviews = $user->reviewsReceived()->with('client')->latest()->get();
-    
-    // Hitung rata-rata rating dan total ulasan
-    $averageRating = $reviews->avg('rating');
-    $totalReview = $reviews->count();
-
-    // Tentukan apakah ini mode "hanya lihat" (view-only)
-    // True jika yang login adalah company / bukan pemilik akun profil ini
-    $isViewOnly = Auth::id() !== $user->id;
-
-    return view('freelancer.profil', compact(
-        'profile', 
-        'user', 
-        'reviews', 
-        'averageRating', 
-        'totalReview',
-        'isViewOnly'
-    ));
-}
 
     public function dashboard()
     {
@@ -63,19 +69,35 @@ class ProfilController extends Controller
     //     $freelancers = User::where('role', 'freelancer')->get();
     //     return view('freelancer.index', compact('freelancers'));
     // }
-    
+
     public function editProfile()
     {
+        $user = Auth::user();
+
         $profile = FreelancerProfile::firstOrCreate(
-            ['user_id' => Auth::id()]
+            ['user_id' => $user->id]
         );
 
-        return view('freelancer.edit_profile', compact('profile'));
+        return view(
+            'freelancer.edit_profile',
+            compact('profile', 'user')
+        );
     }
 
     public function updateProfile(Request $request)
     {
+        $user = Auth::user();
+
+        // ==========================================
+        // VALIDASI
+        // ==========================================
+
         $request->validate([
+            // DATA AKUN
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+
+            // DATA PROFIL
             'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'bio' => 'nullable|string',
             'location' => 'nullable|string|max:255',
@@ -85,21 +107,49 @@ class ProfilController extends Controller
             'cv' => 'nullable|mimes:pdf|max:2048',
         ]);
 
+        // ==========================================
+        // AMBIL / BUAT PROFIL FREELANCER
+        // ==========================================
+
         $profile = FreelancerProfile::firstOrCreate([
-            'user_id' => Auth::id()
+            'user_id' => $user->id
         ]);
 
-        // Upload Foto
+        // ==========================================
+        // UPDATE DATA AKUN USER
+        // ==========================================
+
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->save();
+
+        // ==========================================
+        // UPLOAD FOTO
+        // ==========================================
+
         if ($request->hasFile('photo')) {
-            $photo = $request->file('photo')->store('profile', 'public');
+            $photo = $request
+                ->file('photo')
+                ->store('profile', 'public');
+
             $profile->photo = $photo;
         }
 
-        // Upload CV
+        // ==========================================
+        // UPLOAD CV
+        // ==========================================
+
         if ($request->hasFile('cv')) {
-            $cv = $request->file('cv')->store('cv', 'public');
+            $cv = $request
+                ->file('cv')
+                ->store('cv', 'public');
+
             $profile->cv = $cv;
         }
+
+        // ==========================================
+        // UPDATE DATA PROFIL FREELANCER
+        // ==========================================
 
         $profile->bio = $request->bio;
         $profile->location = $request->location;
@@ -109,8 +159,15 @@ class ProfilController extends Controller
 
         $profile->save();
 
+        // ==========================================
+        // REDIRECT
+        // ==========================================
+
         return redirect()
             ->route('freelancer.profile')
-            ->with('success', 'Profil berhasil diperbarui.');
+            ->with(
+                'success',
+                'Profil berhasil diperbarui.'
+            );
     }
 }

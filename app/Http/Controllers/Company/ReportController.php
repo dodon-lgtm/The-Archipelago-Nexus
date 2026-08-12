@@ -46,12 +46,36 @@ $reports = Report::with([
     /**
      * Form membuat laporan.
      */
-public function create(Request $request): View
+    public function create(Request $request): View
     {
         $penawaran = null;
         $project = null;
         $reportedUser = null;
         $workspace = null;
+
+        // Konteks: reported_user_id murni (Company melaporkan Freelancer dari
+        // halaman profil freelancer view-only). Target ditentukan backend,
+        // bukan dari browser (browser hanya mengirim user yang dilaporkan).
+        if ($request->filled('reported_user_id')
+            && !$request->filled('workspace_id')
+            && !$request->filled('penawaran_id')) {
+            $reportedUser = \App\Models\User::findOrFail($request->reported_user_id);
+
+            // Company hanya boleh melaporkan freelancer & bukan dirinya sendiri.
+            if ((int) $reportedUser->id === (int) Auth::id()) {
+                abort(403, 'Anda tidak dapat melaporkan diri sendiri.');
+            }
+            if ($reportedUser->role !== 'freelancer') {
+                abort(403, 'Anda hanya dapat melaporkan freelancer.');
+            }
+
+            return view('company.reports.create', compact(
+                'penawaran',
+                'project',
+                'reportedUser',
+                'workspace'
+            ));
+        }
 
         // Konteks dari workspace (Company melaporkan Freelancer di workspace).
         if ($request->filled('workspace_id')) {

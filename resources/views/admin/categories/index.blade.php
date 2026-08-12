@@ -6,22 +6,22 @@
 @section('content')
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {{-- Add Category Form --}}
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+        <div class="bg-white rounded-2xl border border-blue-100 shadow-sm p-5">
             <h2 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
-                <i class="fa-solid fa-plus-circle text-cyan-500"></i> Tambah Kategori
+                <i class="fa-solid fa-plus-circle text-blue-500"></i> Tambah Kategori
             </h2>
             <form method="POST" action="{{ route('admin.categories.store') }}">
                 @csrf
                 <div class="mb-3">
                     <label class="text-xs font-semibold text-slate-600 mb-1 block">Nama Kategori</label>
                     <input type="text" name="name" value="{{ old('name') }}" required
-                           class="w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-2.5 text-sm focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100 outline-none"
+                           class="w-full rounded-xl border-blue-100 bg-[#f6f9ff] px-4 py-2.5 text-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none"
                            placeholder="Contoh: Web Development">
                     @error('name')
                         <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
                     @enderror
                 </div>
-                <button type="submit" class="w-full px-4 py-2.5 bg-cyan-500 hover:bg-cyan-600 text-white rounded-xl text-sm font-semibold transition">
+                <button type="submit" class="w-full px-4 py-2.5 bg-blue-500 hover:bg-blue-600 text-white rounded-xl text-sm font-semibold transition">
                     <i class="fa-solid fa-plus mr-1"></i> Tambah Kategori
                 </button>
             </form>
@@ -30,28 +30,28 @@
         {{-- Categories List --}}
         <div class="lg:col-span-2">
             {{-- Search --}}
-            <div class="bg-white rounded-2xl border border-slate-200 p-4 mb-4 shadow-sm">
+            <div class="bg-white rounded-2xl border border-blue-100 p-4 mb-4 shadow-sm">
                 <form method="GET" action="{{ route('admin.categories.index') }}" class="flex gap-3 items-end">
                     <div class="flex-1">
                         <label class="text-xs font-semibold text-slate-600 mb-1 block">Cari Kategori</label>
                         <input type="text" name="search" value="{{ request('search') }}"
-                               class="w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-2.5 text-sm focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100 outline-none"
+                               class="w-full rounded-xl border-blue-100 bg-[#f6f9ff] px-4 py-2.5 text-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none"
                                placeholder="Ketik nama kategori...">
                     </div>
-                    <button type="submit" class="px-5 py-2.5 bg-cyan-500 hover:bg-cyan-600 text-white rounded-xl text-sm font-semibold transition">
+                    <button type="submit" class="px-5 py-2.5 bg-blue-500 hover:bg-blue-600 text-white rounded-xl text-sm font-semibold transition">
                         <i class="fa-solid fa-search mr-1"></i> Cari
                     </button>
-                    <a href="{{ route('admin.categories.index') }}" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-sm font-semibold transition">
+                    <a href="{{ route('admin.categories.index') }}" class="px-4 py-2.5 bg-blue-50 hover:bg-slate-200 text-slate-600 rounded-xl text-sm font-semibold transition">
                         Reset
                     </a>
                 </form>
             </div>
 
             {{-- Table --}}
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="bg-white rounded-2xl border border-blue-100 shadow-sm overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm">
-                        <thead class="bg-slate-50 border-b border-slate-200">
+                        <thead class="bg-[#f6f9ff] border-b border-blue-100">
                             <tr>
                                 <th class="text-left px-5 py-3 font-bold text-slate-600 text-xs uppercase">Nama Kategori</th>
                                 <th class="text-center px-5 py-3 font-bold text-slate-600 text-xs uppercase">Jumlah Proyek</th>
@@ -61,10 +61,10 @@
                         </thead>
                         <tbody class="divide-y divide-slate-100">
                             @forelse($categories as $category)
-                                <tr class="hover:bg-slate-50 transition">
+                                <tr class="hover:bg-[#f6f9ff] transition">
                                     <td class="px-5 py-4 font-semibold text-slate-800">{{ $category->name }}</td>
                                     <td class="px-5 py-4 text-center">
-                                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-cyan-50 text-cyan-600 text-xs font-bold">
+                                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-50 text-blue-600 text-xs font-bold">
                                             {{ $category->projects_count }}
                                         </span>
                                     </td>
@@ -117,13 +117,13 @@
                 <div class="mb-4">
                     <label class="text-xs font-semibold text-slate-600 mb-1 block">Nama Kategori</label>
                     <input type="text" name="name" id="editName" required
-                           class="w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-2.5 text-sm focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100 outline-none">
+                           class="w-full rounded-xl border-blue-100 bg-[#f6f9ff] px-4 py-2.5 text-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none">
                 </div>
                 <div class="flex gap-3">
-                    <button type="submit" class="flex-1 px-4 py-2.5 bg-cyan-500 hover:bg-cyan-600 text-white rounded-xl text-sm font-semibold transition">
+                    <button type="submit" class="flex-1 px-4 py-2.5 bg-blue-500 hover:bg-blue-600 text-white rounded-xl text-sm font-semibold transition">
                         Simpan Perubahan
                     </button>
-                    <button type="button" onclick="closeEditModal()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-sm font-semibold transition">
+                    <button type="button" onclick="closeEditModal()" class="px-4 py-2.5 bg-blue-50 hover:bg-slate-200 text-slate-600 rounded-xl text-sm font-semibold transition">
                         Batal
                     </button>
                 </div>
