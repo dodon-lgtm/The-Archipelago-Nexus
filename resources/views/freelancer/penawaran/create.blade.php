@@ -258,6 +258,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                 <div class="absolute inset-0 bg-blue-600/10 opacity-0 group-hover:opacity-100 transition-opacity z-10"></div>
                                 <img
                                     src="{{ asset('storage/'.$project->image) }}"
+                                    alt="{{ $project->project_name }}"
                                     class="h-48 w-full object-cover transform group-hover:scale-105 transition-transform duration-500">
                             </div>
 

@@ -478,9 +478,9 @@ $missingFields = get_missing_profile_fields();
                 <div class="col-lg-2 text-center mb-4 mb-lg-0">
                     <div class="profile-photo-wrapper">
                         @if($profile->photo)
-                            <img src="{{ asset('storage/'.$profile->photo) }}" class="profile-photo">
+                            <img src="{{ asset('storage/'.$profile->photo) }}" alt="Foto profil {{ $user->name }}" class="profile-photo">
                         @else
-                            <img src="{{ asset('images/default-profile.png') }}" class="profile-photo" onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=0284c7&color=fff&size=140'">
+                            <img src="{{ asset('images/default-profile.png') }}" alt="Foto profil {{ $user->name }}" class="profile-photo" onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=0284c7&color=fff&size=140'">
                         @endif
                         <div class="status-badge" title="Aktif / Online"></div>
                     </div>

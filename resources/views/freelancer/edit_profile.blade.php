@@ -332,9 +332,9 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
             <div class="card-body-custom text-center">
                 <div class="mb-4">
                     @if($profile->photo)
-                        <img id="preview" src="{{ asset('storage/'.$profile->photo) }}" class="profile-preview">
+                        <img id="preview" src="{{ asset('storage/'.$profile->photo) }}" alt="Foto profil {{ Auth::user()->name }}" class="profile-preview">
                     @else
-                        <img id="preview" src="{{ asset('images/default-profile.png') }}" class="profile-preview" onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=0284c7&color=fff&size=150'">
+                        <img id="preview" src="{{ asset('images/default-profile.png') }}" alt="Foto profil {{ Auth::user()->name }}" class="profile-preview" onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=0284c7&color=fff&size=150'">
                     @endif
                 </div>
                 <div class="mb-2 col-md-6 mx-auto">

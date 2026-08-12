@@ -96,7 +96,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 <div class="flex h-screen overflow-hidden">
     @include('navbar.navigasi')
 
-    <div class="flex-1 flex flex-col overflow-hidden">a
+    <div class="flex-1 flex flex-col overflow-hidden">
         <div class="sticky top-0 z-40 bg-white border-b">
             @include('navbar.nav')
         </div>

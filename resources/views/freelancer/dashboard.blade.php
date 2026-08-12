@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,7 +17,8 @@
         }
         .reveal {
             opacity: 0;
-            animation: fadeInUp .6s cuabic-bezier(.22,1,.36,1) forwards;
+            /* DIBETULKAN: cuabic-bezier -> cubic-bezier */
+            animation: fadeInUp .6s cubic-bezier(.22,1,.36,1) forwards;
         }
         .reveal-1 { animation-delay: .05s; }
         .reveal-2 { animation-delay: .12s; }
@@ -91,87 +92,77 @@
             border-radius: 999px;
             background: linear-gradient(180deg, #06b6d4, #2563eb);
         }
+
+        /* ApexForge Labs — Unified UI System */
+        :root {
+            --af-primary: #2563eb;
+            --af-primary-dark: #1d4ed8;
+            --af-primary-soft: #eff6ff;
+            --af-sky: #38bdf8;
+            --af-ink: #0f172a;
+            --af-muted: #64748b;
+            --af-border: #dbeafe;
+            --af-surface: #ffffff;
+            --af-page: #f6f9ff;
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background:
+                radial-gradient(circle at 10% -10%, rgba(56,189,248,.10), transparent 30%),
+                radial-gradient(circle at 100% 0%, rgba(37,99,235,.08), transparent 28%),
+                var(--af-page);
+        }
+        ::selection { background: rgba(37,99,235,.18); color: #0f172a; }
+        ::-webkit-scrollbar { width: 7px; height: 7px; }
+        ::-webkit-scrollbar-track { background: rgba(241,245,249,.7); }
+        ::-webkit-scrollbar-thumb { background: rgba(37,99,235,.22); border-radius: 999px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(37,99,235,.38); }
+
+        input, select, textarea {
+            border-color: var(--af-border) !important;
+            background: rgba(255,255,255,.92);
+            transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: rgba(37,99,235,.55) !important;
+            box-shadow: 0 0 0 4px rgba(37,99,235,.09) !important;
+            outline: none !important;
+        }
+        button, a, [role="button"] { transition: all .2s ease; }
+        button:focus-visible, a:focus-visible, [role="button"]:focus-visible {
+            outline: 2px solid rgba(37,99,235,.55);
+            outline-offset: 2px;
+        }
+        table { border-collapse: separate; border-spacing: 0; }
+        thead th {
+            background: rgba(239,246,255,.72) !important;
+            color: #334155;
+            font-weight: 700;
+        }
+        tbody tr { transition: background .18s ease; }
+        tbody tr:hover { background: rgba(239,246,255,.48); }
+        [class*="bg-blue-600"] {
+            box-shadow: 0 8px 22px -12px rgba(37,99,235,.72);
+        }
+        [class*="bg-blue-600"]:hover {
+            box-shadow: 0 12px 28px -12px rgba(37,99,235,.78);
+            transform: translateY(-1px);
+        }
+        @media (max-width:767px) {
+            main { padding-left:1rem !important; padding-right:1rem !important; }
+            table { min-width: 680px; }
+            .overflow-x-auto { -webkit-overflow-scrolling: touch; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: .01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
     </style>
-<style>
-
-/* ApexForge Labs — Unified UI System */
-:root{
-    --af-primary:#2563eb;
-    --af-primary-dark:#1d4ed8;
-    --af-primary-soft:#eff6ff;
-    --af-sky:#38bdf8;
-    --af-ink:#0f172a;
-    --af-muted:#64748b;
-    --af-border:#dbeafe;
-    --af-surface:#ffffff;
-    --af-page:#f6f9ff;
-}
-html{scroll-behavior:smooth}
-body{
-    font-family:'Plus Jakarta Sans',sans-serif;
-    background:
-        radial-gradient(circle at 10% -10%,rgba(56,189,248,.10),transparent 30%),
-        radial-gradient(circle at 100% 0%,rgba(37,99,235,.08),transparent 28%),
-        var(--af-page);
-}
-::selection{background:rgba(37,99,235,.18);color:#0f172a}
-::-webkit-scrollbar{width:7px;height:7px}
-::-webkit-scrollbar-track{background:rgba(241,245,249,.7)}
-::-webkit-scrollbar-thumb{background:rgba(37,99,235,.22);border-radius:999px}
-::-webkit-scrollbar-thumb:hover{background:rgba(37,99,235,.38)}
-
-input,select,textarea{
-    border-color:var(--af-border)!important;
-    background:rgba(255,255,255,.92);
-    transition:border-color .2s ease,box-shadow .2s ease,background .2s ease;
-}
-input:focus,select:focus,textarea:focus{
-    border-color:rgba(37,99,235,.55)!important;
-    box-shadow:0 0 0 4px rgba(37,99,235,.09)!important;
-    outline:none!important;
-}
-button,a,[role="button"]{transition:all .2s ease}
-button:focus-visible,a:focus-visible,[role="button"]:focus-visible{
-    outline:2px solid rgba(37,99,235,.55);
-    outline-offset:2px;
-}
-table{border-collapse:separate;border-spacing:0}
-thead th{
-    background:rgba(239,246,255,.72)!important;
-    color:#334155;
-    font-weight:700;
-}
-tbody tr{transition:background .18s ease}
-tbody tr:hover{background:rgba(239,246,255,.48)}
-[class*="bg-blue-600"]{
-    box-shadow:0 8px 22px -12px rgba(37,99,235,.72);
-}
-[class*="bg-blue-600"]:hover{
-    box-shadow:0 12px 28px -12px rgba(37,99,235,.78);
-    transform:translateY(-1px);
-}
-.glass-panel,.glass-card,.glass-surface{
-    background:rgba(255,255,255,.72);
-    border:1px solid rgba(219,234,254,.85);
-    backdrop-filter:blur(18px);
-    -webkit-backdrop-filter:blur(18px);
-    box-shadow:0 18px 50px -32px rgba(30,64,175,.32);
-}
-.apex-page-glow{
-    position:fixed;inset:auto -10rem -12rem auto;width:28rem;height:28rem;
-    background:rgba(56,189,248,.09);filter:blur(70px);border-radius:999px;
-    pointer-events:none;z-index:-1;
-}
-@media (max-width:767px){
-    main{padding-left:1rem!important;padding-right:1rem!important}
-    table{min-width:680px}
-    .overflow-x-auto{-webkit-overflow-scrolling:touch}
-}
-@media (prefers-reduced-motion:reduce){
-    *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
-}
-
-</style>
 </head>
 <body class="bg-[#f6f9ff] text-slate-800">
 
@@ -213,7 +204,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                         </div>
                         <div>
                             <p class="text-xs text-slate-400 font-bold uppercase tracking-wide">Proyek Baru</p>
-                            <h3 class="text-2xl font-black">{{ $projects->count() }}</h3>
+                            <h3 class="text-2xl font-black">{{ isset($projects) ? $projects->count() : 0 }}</h3>
                         </div>
                     </div>
                     <a href="{{ route('freelancer.proyek') }}" class="btn-shimmer block text-center text-xs font-bold text-blue-700 py-2.5 rounded-lg bg-blue-50 hover:bg-blue-600 hover:text-white transition-colors duration-300">
@@ -229,7 +220,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                         </div>
                         <div>
                             <p class="text-xs text-slate-400 font-bold uppercase tracking-wide">Lamaran Saya</p>
-                            <h3 class="text-2xl font-black">{{ $lamaranCount }}</h3>
+                            <h3 class="text-2xl font-black">{{ $lamaranCount ?? 0 }}</h3>
                         </div>
                     </div>
                     <a href="{{ route('freelancer.lamaran') }}" class="btn-shimmer block text-center text-xs font-bold text-blue-700 py-2.5 rounded-lg bg-blue-50 hover:bg-blue-600 hover:text-white transition-colors duration-300">
@@ -245,7 +236,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                         </div>
                         <div>
                             <p class="text-xs text-slate-400 font-bold uppercase tracking-wide">Tersimpan</p>
-                            <h3 class="text-2xl font-black">{{ $savedCount }}</h3>
+                            <h3 class="text-2xl font-black">{{ $savedCount ?? 0 }}</h3>
                         </div>
                     </div>
                     <a href="{{ route('freelancer.saved-projects.index') }}" class="btn-shimmer block text-center text-xs font-bold text-purple-700 py-2.5 rounded-lg bg-purple-50 hover:bg-purple-600 hover:text-white transition-colors duration-300">
@@ -287,11 +278,11 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                     </div>
 
                     <div class="space-y-4">
-                        @forelse($projects as $project)
+                        @forelse($projects ?? [] as $project)
                             <div class="job-card bg-white border border-blue-100 rounded-2xl p-4 flex items-center justify-between shadow-sm">
                                 <div class="flex items-center gap-4 min-w-0">
                                     <div class="job-thumb w-16 h-16 rounded-xl overflow-hidden shrink-0 bg-blue-50">
-                                        <img src="{{ $project->image ? asset('storage/'.$project->image) : asset('images/no-image.png') }}" class="w-16 h-16 object-cover">
+                                        <img src="{{ $project->image ? asset('storage/'.$project->image) : asset('images/no-image.png') }}" class="w-16 h-16 object-cover" alt="Thumb">
                                     </div>
                                     <div class="min-w-0">
                                         <h2 class="text-sm font-bold truncate">{{ $project->project_name }}</h2>
@@ -324,76 +315,59 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                             Lamaran Terbaru
                         </h2>
 
-                        <a href="{{ route('freelancer.lamaran') }}"
-                           class="text-blue-600 font-semibold text-sm hover:text-blue-700 transition">
+                        <a href="{{ route('freelancer.lamaran') }}" class="text-blue-600 font-semibold text-sm hover:text-blue-700 transition">
                             Lihat Semua
                         </a>
                     </div>
 
                     <div class="space-y-3">
+                        @forelse($latestApplications ?? [] as $app)
+                            <div class="relative pl-4 border-l-2 border-blue-50">
+                                <span class="dot-pulse absolute -left-[7px] top-4 w-3 h-3 rounded-full
+                                    {{ $app->status == 'Menunggu' ? 'bg-amber-400' : ($app->status == 'Diterima' ? 'bg-emerald-500' : 'bg-red-400') }}"></span>
 
-                        @forelse($latestApplications as $app)
-
-                        <div class="relative pl-4 border-l-2 border-blue-50">
-                            <span class="dot-pulse absolute -left-[7px] top-4 w-3 h-3 rounded-full
-                                {{ $app->status == 'Menunggu' ? 'bg-amber-400' : ($app->status == 'Diterima' ? 'bg-emerald-500' : 'bg-red-400') }}"></span>
-
-                            <div class="border border-blue-100 rounded-xl p-3 hover:shadow-md hover:border-blue-200 transition-all duration-300 ml-2">
-
-                                <div class="flex justify-between gap-2">
-
-                                    <div class="min-w-0">
-
-                                        <h3 class="font-semibold text-sm truncate">
-                                            {{ $app->project->project_name }}
-                                        </h3>
-
-                                        <p class="text-xs text-gray-500 mt-0.5">
-                                            Rp {{ number_format($app->harga_penawaran,0,',','.') }}
-                                        </p>
-
-                                        <p class="text-xs text-gray-400">
-                                            Estimasi {{ $app->estimasi_hari }} Hari
-                                        </p>
-
-                                    </div>
-
-                                    <div class="text-right shrink-0">
-
-                                        @if($app->status=='Menunggu')
-                                            <span class="px-2 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs font-semibold">
-                                                Menunggu
-                                            </span>
-                                        @elseif($app->status=='Diterima')
-                                            <span class="px-2 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">
-                                                Diterima
-                                            </span>
-                                        @else
-                                            <span class="px-2 py-1 rounded-full bg-red-100 text-red-700 text-xs font-semibold">
-                                                Ditolak
-                                            </span>
-                                        @endif
-
-                                        <div class="text-[11px] text-gray-400 mt-2">
-                                            {{ $app->created_at->format('d M Y') }}
+                                <div class="border border-blue-100 rounded-xl p-3 hover:shadow-md hover:border-blue-200 transition-all duration-300 ml-2">
+                                    <div class="flex justify-between gap-2">
+                                        <div class="min-w-0">
+                                            <h3 class="font-semibold text-sm truncate">
+                                                {{ $app->project->project_name ?? 'Proyek' }}
+                                            </h3>
+                                            <p class="text-xs text-gray-500 mt-0.5">
+                                                Rp {{ number_format($app->harga_penawaran,0,',','.') }}
+                                            </p>
+                                            <p class="text-xs text-gray-400">
+                                                Estimasi {{ $app->estimasi_hari }} Hari
+                                            </p>
                                         </div>
 
+                                        <div class="text-right shrink-0">
+                                            @if($app->status == 'Menunggu')
+                                                <span class="px-2 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs font-semibold">
+                                                    Menunggu
+                                                </span>
+                                            @elseif($app->status == 'Diterima')
+                                                <span class="px-2 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">
+                                                    Diterima
+                                                </span>
+                                            @else
+                                                <span class="px-2 py-1 rounded-full bg-red-100 text-red-700 text-xs font-semibold">
+                                                    Ditolak
+                                                </span>
+                                            @endif
+
+                                            <div class="text-[11px] text-gray-400 mt-2">
+                                                {{ optional($app->created_at)->format('d M Y') }}
+                                            </div>
+                                        </div>
                                     </div>
-
                                 </div>
-
                             </div>
-                        </div>
-
                         @empty
-
-                        <div class="text-center py-10 text-gray-400">
-                            <i class="fa-regular fa-paper-plane text-3xl text-slate-300 mb-2"></i>
-                            <p>Belum ada lamaran.</p>
-                        </div>
-
+                            <div class="text-center py-10 text-gray-400">
+                                <i class="fa-regular fa-paper-plane text-3xl text-slate-300 mb-2"></i>
+                                <p>Belum ada lamaran.</p>
+                            </div>
                         @endforelse
-
                     </div>
 
                 </div>

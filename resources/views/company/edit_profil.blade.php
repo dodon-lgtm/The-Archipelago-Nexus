@@ -314,9 +314,9 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                     <div class="col-md-4 text-center mb-4 mb-md-0" data-aos="zoom-in" data-aos-delay="200">
                         <div class="logo-preview-wrapper mb-3">
                             @if($profile->company_logo)
-                                <img src="{{ asset('storage/'.$profile->company_logo) }}" id="preview" class="logo-preview">
+                                <img src="{{ asset('storage/'.$profile->company_logo) }}" id="preview" alt="Logo {{ $profile->company_name ?? 'Perusahaan' }}" class="logo-preview">
                             @else
-                                <img src="{{ asset('images/company.png') }}" id="preview" class="logo-preview" onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($profile->company_name ?? 'Company') }}&background=0284c7&color=fff&size=140'">
+                                <img src="{{ asset('images/company.png') }}" id="preview" alt="Logo {{ $profile->company_name ?? 'Perusahaan' }}" class="logo-preview" onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($profile->company_name ?? 'Company') }}&background=0284c7&color=fff&size=140'">
                             @endif
                         </div>
                         <div>
