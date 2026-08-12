@@ -930,8 +930,27 @@
                                                 @endif
                                             </div>
 
-                                            {{-- ACTION --}}
+{{-- ACTION --}}
                                             <div>
+                                                {{-- TOMBOL LAPOR PENAWARAN (terikat ke penawaran_id) --}}
+                                                <a
+                                                    href="{{ route('company.reports.create', ['penawaran_id' => $penawaran->id]) }}"
+                                                    class="inline-flex items-center gap-2
+                                                           px-3 py-2
+                                                           border border-red-200
+                                                           text-red-600
+                                                           bg-red-50
+                                                           rounded-lg
+                                                           text-xs font-semibold
+                                                           hover:bg-red-100
+                                                           hover:-translate-y-0.5
+                                                           transition-all duration-200"
+                                                    title="Laporkan penawaran dari {{ $penawaran->freelancer->name ?? 'freelancer ini' }}"
+                                                >
+                                                    <i class="fa-solid fa-flag"></i>
+                                                    Lapor
+                                                </a>
+
                                                 @if ($penawaran->status === 'Menunggu' && !$hasAccepted)
                                                     <form
                                                         method="POST"
