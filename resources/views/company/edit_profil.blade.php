@@ -3,6 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+
     <title>Edit Profil Perusahaan - Ultra Modern</title>
 
     <!-- Bootstrap 5.3 & Bootstrap Icons -->

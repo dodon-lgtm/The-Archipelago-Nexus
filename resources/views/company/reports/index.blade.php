@@ -63,6 +63,7 @@
         .modern-row {
             transition: all .3s cubic-bezier(.16,1,.3,1);
         }
+
         .modern-row:hover {
             transform: translateY(-2px);
             background-color: #ffffff;
@@ -76,6 +77,7 @@
             overflow: hidden;
             isolation: isolate;
         }
+
         .btn-shimmer::after {
             content: '';
             position: absolute;
@@ -85,6 +87,7 @@
             transform: skewX(-20deg);
             transition: left .7s ease;
         }
+
         .btn-shimmer:hover::after {
             left: 150%;
         }
@@ -97,7 +100,7 @@
     </style>
 </head>
 
-<body class="bg-surface text-slate-800 min-h-screen flex font-sans antialiased selection:bg-brand selection:text-white">
+<body class="bg-surface dark:bg-slate-950 text-slate-800 dark:text-white min-h-screen flex font-sans antialiased selection:bg-brand selection:text-white">
 
     {{-- SIDEBAR --}}
     @include('navbar.navigasi')
@@ -136,7 +139,7 @@
                         </div>
 
                         <div class="flex flex-wrap items-center gap-3 shrink-0">
-                            <a href="{{ route('reports.create') }}" class="btn-shimmer inline-flex items-center gap-2 bg-white text-brand hover:bg-[#f6f9ff] px-5 py-3 rounded-2xl text-sm font-bold shadow-lg shadow-black/5 transition">
+                            <a href="{{ route('reports.create') }}" class="btn-shimmer inline-flex items-center gap-2 bg-white dark:bg-slate-900 text-brand hover:bg-[#f6f9ff] dark:hover:bg-slate-800 px-5 py-3 rounded-2xl text-sm font-bold shadow-lg shadow-black/5 transition">
                                 <i class="fa-solid fa-plus text-xs"></i>
                                 <span>Buat Laporan Baru</span>
                             </a>
@@ -146,28 +149,28 @@
 
                 {{-- FLASH MESSAGES --}}
                 @if(session('success'))
-                    <div class="reveal reveal-1 flex items-center justify-between gap-3 px-5 py-4 bg-emerald-50/80 backdrop-blur-md border border-emerald-200/60 text-emerald-800 text-sm font-medium rounded-2xl shadow-sm">
+                    <div class="reveal reveal-1 flex items-center justify-between gap-3 px-5 py-4 bg-emerald-50/80 dark:bg-emerald-900/40 backdrop-blur-md border border-emerald-200/60 dark:border-emerald-900 text-emerald-800 dark:text-emerald-300 text-sm font-medium rounded-2xl shadow-sm">
                         <div class="flex items-center gap-3 min-w-0">
                             <div class="w-8 h-8 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-sm shadow-emerald-500/30">
                                 <i class="fa-solid fa-check text-xs"></i>
                             </div>
                             <span class="truncate">{{ session('success') }}</span>
                         </div>
-                        <button onclick="this.parentElement.remove()" class="text-emerald-500 hover:text-emerald-700 p-1">
+                        <button onclick="this.parentElement.remove()" class="text-emerald-500 dark:text-emerald-300 hover:text-emerald-700 dark:hover:text-emerald-300 p-1">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
                     </div>
                 @endif
 
                 @if(session('error'))
-                    <div class="reveal reveal-1 flex items-center justify-between gap-3 px-5 py-4 bg-rose-50/80 backdrop-blur-md border border-rose-200/60 text-rose-800 text-sm font-medium rounded-2xl shadow-sm">
+                    <div class="reveal reveal-1 flex items-center justify-between gap-3 px-5 py-4 bg-rose-50/80 dark:bg-red-900/40 backdrop-blur-md border border-rose-200/60 dark:border-red-900 text-rose-800 dark:text-red-300 text-sm font-medium rounded-2xl shadow-sm">
                         <div class="flex items-center gap-3 min-w-0">
                             <div class="w-8 h-8 rounded-xl bg-rose-500 text-white flex items-center justify-center shrink-0 shadow-sm shadow-rose-500/30">
                                 <i class="fa-solid fa-xmark text-xs"></i>
                             </div>
                             <span class="truncate">{{ session('error') }}</span>
                         </div>
-                        <button onclick="this.parentElement.remove()" class="text-rose-500 hover:text-rose-700 p-1">
+                        <button onclick="this.parentElement.remove()" class="text-rose-500 dark:text-red-300 hover:text-rose-700 dark:hover:text-red-300 p-1">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
                     </div>
@@ -176,8 +179,8 @@
                 {{-- SUB HEADER --}}
                 <div class="reveal reveal-2 flex items-center justify-between">
                     <div>
-                        <h2 class="text-lg font-extrabold text-slate-900 tracking-tight">Riwayat Pengaduan</h2>
-                        <p class="text-xs text-slate-400 font-medium">Daftar keluhan dan progres penanganan dari admin</p>
+                        <h2 class="text-lg font-extrabold text-slate-900 dark:text-white tracking-tight">Riwayat Pengaduan</h2>
+                        <p class="text-xs text-slate-400 dark:text-slate-400 font-medium">Daftar keluhan dan progres penanganan dari admin</p>
                     </div>
                 </div>
 
@@ -187,11 +190,11 @@
                         @foreach($reports as $report)
                             @php
                                 $statusBg = match($report->status) {
-                                    'menunggu' => 'bg-amber-50 text-amber-700 border-amber-200',
-                                    'ditinjau' => 'bg-blue-50 text-blue-700 border-blue-200',
-                                    'menunggu-bukti' => 'bg-violet-50 text-violet-700 border-violet-200',
-                                    'selesai' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
-                                    default => 'bg-rose-50 text-rose-700 border-rose-200',
+                                    'menunggu' => 'bg-amber-50 dark:bg-yellow-900/40 text-amber-700 dark:text-yellow-300 border-amber-200 dark:border-yellow-900',
+                                    'ditinjau' => 'bg-blue-50 dark:bg-slate-800 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-slate-700',
+                                    'menunggu-bukti' => 'bg-violet-50 dark:bg-purple-900/40 text-violet-700 dark:text-purple-300 border-violet-200 dark:border-purple-900',
+                                    'selesai' => 'bg-emerald-50 dark:bg-green-900/40 text-emerald-700 dark:text-green-300 border-emerald-200 dark:border-green-900',
+                                    default => 'bg-rose-50 dark:bg-red-900/40 text-rose-700 dark:text-red-300 border-rose-200 dark:border-red-900',
                                 };
 
                                 $accentBg = match($report->status) {
@@ -203,7 +206,7 @@
                                 };
                             @endphp
 
-                            <div class="modern-row block bg-white border border-blue-100/80 rounded-2xl p-5 shadow-sm relative overflow-hidden group">
+                            <div class="modern-row block bg-white dark:bg-slate-900 border border-blue-100/80 dark:border-slate-800 rounded-2xl p-5 shadow-sm relative overflow-hidden group">
                                 
                                 {{-- Left Accent Bar --}}
                                 <div class="absolute left-0 top-0 bottom-0 w-1.5 {{ $accentBg }}"></div>
@@ -211,13 +214,13 @@
                                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pl-2">
                                     {{-- Left Information --}}
                                     <div class="flex items-start gap-4 min-w-0 flex-1">
-                                        <div class="w-12 h-12 rounded-2xl bg-blue-50 text-brand border border-blue-100 flex items-center justify-center shrink-0 text-lg shadow-inner group-hover:bg-brand group-hover:text-white transition-colors duration-300">
+                                        <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-slate-800 text-brand border border-blue-100 dark:border-slate-800 flex items-center justify-center shrink-0 text-lg shadow-inner group-hover:bg-brand group-hover:text-white transition-colors duration-300">
                                             <i class="fa-solid fa-shield-halved"></i>
                                         </div>
 
                                         <div class="min-w-0 flex-1">
                                             <div class="flex flex-wrap items-center gap-2">
-                                                <h3 class="text-base font-bold text-slate-800 group-hover:text-brand transition-colors truncate">
+                                                <h3 class="text-base font-bold text-slate-800 dark:text-white group-hover:text-brand transition-colors truncate">
                                                     {{ $report->subject }}
                                                 </h3>
                                                 <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold border {{ $statusBg }}">
@@ -226,35 +229,35 @@
                                                 </span>
                                             </div>
 
-                                            <p class="mt-1 text-xs text-slate-500 line-clamp-2 leading-relaxed">
+                                            <p class="mt-1 text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
                                                 {{ \Illuminate\Support\Str::limit($report->description, 150) }}
                                             </p>
 
                                             <div class="mt-3 flex flex-wrap items-center gap-2 text-xs font-semibold">
-                                                <span class="inline-flex items-center gap-1.5 text-blue-700 bg-blue-50 border border-blue-100 px-2.5 py-1 rounded-lg">
+                                                <span class="inline-flex items-center gap-1.5 text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-800 px-2.5 py-1 rounded-lg">
                                                     <i class="fa-solid fa-tag text-[10px]"></i>
                                                     {{ \App\Models\Report::categoryLabel($report->category) }}
                                                 </span>
 
-                                                <span class="inline-flex items-center gap-1.5 text-slate-600 bg-slate-50 border border-slate-200/80 px-2.5 py-1 rounded-lg">
+                                                <span class="inline-flex items-center gap-1.5 text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 px-2.5 py-1 rounded-lg">
                                                     <i class="fa-regular fa-calendar text-[10px]"></i>
                                                     {{ $report->created_at->format('d M Y') }}
                                                 </span>
 
                                                 @if($report->reportedUser)
-                                                    <span class="inline-flex items-center gap-1.5 text-orange-700 bg-orange-50 border border-orange-100 px-2.5 py-1 rounded-lg">
+                                                    <span class="inline-flex items-center gap-1.5 text-orange-700 dark:text-orange-300 bg-orange-50 dark:bg-orange-900/40 border border-orange-100 dark:border-orange-900 px-2.5 py-1 rounded-lg">
                                                         <i class="fa-solid fa-user text-[10px]"></i>
                                                         {{ $report->reportedUser->name }}
                                                     </span>
                                                 @endif
 
                                                 @if($report->workspace)
-                                                    <span class="inline-flex items-center gap-1.5 text-indigo-700 bg-indigo-50 border border-indigo-100 px-2.5 py-1 rounded-lg">
+                                                    <span class="inline-flex items-center gap-1.5 text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/40 border border-indigo-100 dark:border-indigo-900 px-2.5 py-1 rounded-lg">
                                                         <i class="fa-solid fa-layer-group text-[10px]"></i>
                                                         {{ \Illuminate\Support\Str::limit($report->workspace->project->project_name ?? 'Workspace', 30) }}
                                                     </span>
                                                 @elseif($report->project)
-                                                    <span class="inline-flex items-center gap-1.5 text-indigo-700 bg-indigo-50 border border-indigo-100 px-2.5 py-1 rounded-lg">
+                                                    <span class="inline-flex items-center gap-1.5 text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/40 border border-indigo-100 dark:border-indigo-900 px-2.5 py-1 rounded-lg">
                                                         <i class="fa-solid fa-folder text-[10px]"></i>
                                                         {{ \Illuminate\Support\Str::limit($report->project->project_name, 30) }}
                                                     </span>
@@ -264,9 +267,9 @@
                                     </div>
 
                                     {{-- Right Action Button --}}
-                                    <div class="flex items-center justify-end shrink-0 pt-3 md:pt-0 border-t md:border-t-0 border-slate-100">
+                                    <div class="flex items-center justify-end shrink-0 pt-3 md:pt-0 border-t md:border-t-0 border-slate-100 dark:border-slate-800">
                                         <a href="{{ route('company.reports.show', $report) }}"
-                                           class="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-bold bg-brand/10 text-brand hover:bg-brand hover:text-white rounded-xl transition-all duration-200">
+                                           class="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-bold bg-brand/10 dark:bg-blue-900/40 text-brand dark:text-blue-300 hover:bg-brand hover:text-white rounded-xl transition-all duration-200">
                                             <span>Lihat Detail</span>
                                             <i class="fa-solid fa-arrow-right text-[10px]"></i>
                                         </a>
@@ -279,19 +282,19 @@
                     {{-- PAGINATION --}}
                     @if(method_exists($reports, 'links') && $reports->hasPages())
                         <div class="pt-4 flex justify-center">
-                            <div class="bg-white border border-blue-100/80 rounded-2xl shadow-sm px-4 py-2">
+                            <div class="bg-white dark:bg-slate-900 border border-blue-100/80 dark:border-slate-800 rounded-2xl shadow-sm px-4 py-2">
                                 {{ $reports->links() }}
                             </div>
                         </div>
                     @endif
                 @else
                     {{-- EMPTY STATE --}}
-                    <div class="reveal reveal-3 bg-white border border-blue-100/80 rounded-3xl p-12 text-center shadow-sm">
-                        <div class="w-14 h-14 mx-auto mb-3 bg-blue-50 text-slate-400 rounded-2xl flex items-center justify-center text-xl shadow-inner">
+                    <div class="reveal reveal-3 bg-white dark:bg-slate-900 border border-blue-100/80 dark:border-slate-800 rounded-3xl p-12 text-center shadow-sm">
+                        <div class="w-14 h-14 mx-auto mb-3 bg-blue-50 dark:bg-slate-800 text-slate-400 dark:text-slate-400 rounded-2xl flex items-center justify-center text-xl shadow-inner">
                             <i class="fa-solid fa-flag"></i>
                         </div>
-                        <h3 class="text-sm font-bold text-slate-700">Belum Ada Laporan</h3>
-                        <p class="text-xs text-slate-400 mt-1 max-w-xs mx-auto">Anda belum membuat laporan apa pun. Jika menemukan masalah, silakan buat laporan baru.</p>
+                        <h3 class="text-sm font-bold text-slate-700 dark:text-white">Belum Ada Laporan</h3>
+                        <p class="text-xs text-slate-400 dark:text-slate-400 mt-1 max-w-xs mx-auto">Anda belum membuat laporan apa pun. Jika menemukan masalah, silakan buat laporan baru.</p>
                         <a href="{{ route('reports.create') }}" class="btn-shimmer inline-flex items-center gap-2 mt-4 px-4 py-2.5 bg-brand text-white rounded-xl text-xs font-bold shadow-md shadow-brand/20">
                             <i class="fa-solid fa-plus text-[10px]"></i> Buat Laporan Baru
                         </a>

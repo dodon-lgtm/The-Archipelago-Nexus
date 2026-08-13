@@ -6,7 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Workspace - {{ $workspace->project->project_name }}</title>
 
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = tailwind.config || {};
+        tailwind.config.darkMode = 'class';
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
@@ -177,7 +186,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 </style>
 </head>
 
-<body class="bg-white text-blue-950 min-h-screen flex antialiased relative font-sans">
+<body class="bg-white dark:bg-slate-900 text-blue-950 dark:text-white min-h-screen flex antialiased relative font-sans transition-colors duration-300">
     
     {{-- Ambient Background Glows --}}
     <div class="fixed inset-0 pointer-events-none hologram-grid-blue z-0"></div>
@@ -192,32 +201,32 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
             <div class="max-w-7xl mx-auto px-6 py-10">
 
                 {{-- Breadcrumb --}}
-                <div class="flex items-center gap-3 text-xs font-bold text-blue-300 uppercase tracking-widest mb-8">
+                <div class="flex items-center gap-3 text-xs font-bold text-blue-300 dark:text-slate-400 uppercase tracking-widest mb-8">
                     @if (auth()->user()->role === 'company')
-                        <a href="{{ route('company.workspaces.index') }}" class="hover:text-blue-600 transition">Workspace</a>
+                        <a href="{{ route('company.workspaces.index') }}" class="hover:text-blue-600 dark:hover:text-blue-400 transition">Workspace</a>
                     @else
-                        <a href="{{ route('freelancer.workspaces.index') }}" class="hover:text-blue-600 transition">Workspace Saya</a>
+                        <a href="{{ route('freelancer.workspaces.index') }}" class="hover:text-blue-600 dark:hover:text-blue-400 transition">Workspace Saya</a>
                     @endif
-                    <i class="fa-solid fa-chevron-right text-[9px] text-blue-200"></i>
-                    <span class="text-blue-600 font-medium">{{ $workspace->project->project_name }}</span>
+                    <i class="fa-solid fa-chevron-right text-[9px] text-blue-200 dark:text-slate-600"></i>
+                    <span class="text-blue-600 dark:text-blue-400 font-medium">{{ $workspace->project->project_name }}</span>
                 </div>
 
                 {{-- Pure Blue System Alerts --}}
                 @if (session('success'))
-                    <div class="mb-8 overflow-hidden relative bg-blue-50 border border-blue-200 p-4 rounded-2xl flex items-start gap-4">
+                    <div class="mb-8 overflow-hidden relative bg-blue-50 dark:bg-slate-800 border border-blue-200 dark:border-slate-700 p-4 rounded-2xl flex items-start gap-4">
                         <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(59,130,246,0.4)]">
                             <i class="fa-solid fa-check text-white text-sm"></i>
                         </div>
-                        <div class="pt-1.5 font-bold text-blue-900 text-sm">{{ session('success') }}</div>
+                        <div class="pt-1.5 font-bold text-blue-900 dark:text-white text-sm">{{ session('success') }}</div>
                     </div>
                 @endif
 
                 @if (session('error'))
-                    <div class="mb-8 overflow-hidden relative bg-white border-2 border-blue-600 p-4 rounded-2xl shadow-[0_0_20px_rgba(59,130,246,0.15)] flex items-start gap-4">
-                        <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 border border-blue-200 flex items-center justify-center shrink-0">
+                    <div class="mb-8 overflow-hidden relative bg-white dark:bg-slate-900 border-2 border-blue-600 p-4 rounded-2xl shadow-[0_0_20px_rgba(59,130,246,0.15)] flex items-start gap-4">
+                        <div class="w-8 h-8 rounded-full bg-blue-100 dark:bg-slate-800 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-slate-700 flex items-center justify-center shrink-0">
                             <i class="fa-solid fa-xmark text-sm"></i>
                         </div>
-                        <div class="pt-1.5 font-bold text-blue-950 text-sm">{{ session('error') }}</div>
+                        <div class="pt-1.5 font-bold text-blue-950 dark:text-white text-sm">{{ session('error') }}</div>
                     </div>
                 @endif
 
@@ -228,37 +237,37 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
                         {{-- Card: Info Project --}}
-                        <div class="md:col-span-1 glass-card rounded-3xl overflow-hidden">
-                            <div class="px-6 py-5 border-b border-blue-50/50 bg-gradient-to-b from-blue-50/50 to-transparent">
-                                <h2 class="font-black text-sm text-blue-950 tracking-tight">{{ $workspace->project->project_name }}</h2>
+                        <div class="md:col-span-1 glass-card dark:bg-slate-900 rounded-3xl overflow-hidden">
+                            <div class="px-6 py-5 border-b border-blue-50/50 dark:border-slate-800 bg-gradient-to-b from-blue-50/50 to-transparent">
+                                <h2 class="font-black text-sm text-blue-950 dark:text-white tracking-tight">{{ $workspace->project->project_name }}</h2>
                             </div>
                             <div class="p-6 space-y-5">
                                 <div class="flex items-center gap-4">
-                                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center shrink-0">
+                                    <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-slate-800 flex items-center justify-center shrink-0">
                                         <i class="fa-regular fa-building text-sm"></i>
                                     </div>
                                     <div>
-                                        <p class="text-[9px] font-black tracking-widest uppercase text-blue-400 mb-0.5">Perusahaan</p>
-                                        <p class="text-xs font-bold text-blue-900">{{ $workspace->company->name }}</p>
+                                        <p class="text-[9px] font-black tracking-widest uppercase text-blue-400 dark:text-slate-400 mb-0.5">Perusahaan</p>
+                                        <p class="text-xs font-bold text-blue-900 dark:text-white">{{ $workspace->company->name }}</p>
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-4">
-                                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center shrink-0">
+                                    <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-slate-800 flex items-center justify-center shrink-0">
                                         <i class="fa-regular fa-user text-sm"></i>
                                     </div>
                                     <div>
-                                        <p class="text-[9px] font-black tracking-widest uppercase text-blue-400 mb-0.5">Freelancer</p>
-                                        <p class="text-xs font-bold text-blue-900">{{ $workspace->freelancer->name }}</p>
+                                        <p class="text-[9px] font-black tracking-widest uppercase text-blue-400 dark:text-slate-400 mb-0.5">Freelancer</p>
+                                        <p class="text-xs font-bold text-blue-900 dark:text-white">{{ $workspace->freelancer->name }}</p>
                                     </div>
                                 </div>
                                 @if ($workspace->project->deadline)
                                     <div class="flex items-center gap-4">
-                                        <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center shrink-0">
+                                        <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-slate-800 flex items-center justify-center shrink-0">
                                             <i class="fa-regular fa-calendar-days text-sm"></i>
                                         </div>
                                         <div>
-                                            <p class="text-[9px] font-black tracking-widest uppercase text-blue-400 mb-0.5">Deadline</p>
-                                            <p class="text-xs font-bold text-blue-900">
+                                            <p class="text-[9px] font-black tracking-widest uppercase text-blue-400 dark:text-slate-400 mb-0.5">Deadline</p>
+                                            <p class="text-xs font-bold text-blue-900 dark:text-white">
                                                 {{ \Carbon\Carbon::parse($workspace->project->deadline)->format('d M Y') }}
                                             </p>
                                         </div>
@@ -268,22 +277,22 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                         </div>
 
                         {{-- Card: Progress Bar --}}
-                        <div class="md:col-span-1 glass-card rounded-3xl overflow-hidden flex flex-col justify-between">
+                        <div class="md:col-span-1 glass-card dark:bg-slate-900 rounded-3xl overflow-hidden flex flex-col justify-between">
                             <div>
-                                <div class="px-6 py-5 border-b border-blue-50/50 bg-gradient-to-b from-blue-50/50 to-transparent">
-                                    <h2 class="font-black text-sm text-blue-950 tracking-tight">Progress Pengerjaan</h2>
+                                <div class="px-6 py-5 border-b border-blue-50/50 dark:border-slate-800 bg-gradient-to-b from-blue-50/50 to-transparent">
+                                    <h2 class="font-black text-sm text-blue-950 dark:text-white tracking-tight">Progress Pengerjaan</h2>
                                 </div>
                                 <div class="p-6">
                                     <div class="text-center mb-5">
                                         <span class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-blue-400 tracking-tighter">{{ $progressValue }}%</span>
                                         @if ($activeStage)
-                                            <p class="text-xs font-bold text-blue-500 mt-2">{{ $activeStage }}</p>
+                                            <p class="text-xs font-bold text-blue-500 dark:text-blue-400 mt-2">{{ $activeStage }}</p>
                                         @endif
                                         @if ($totalStages > 0)
-                                            <p class="text-[9px] font-bold uppercase tracking-widest text-blue-300 mt-1">Tahap {{ $activeStageOrder }} dari {{ $totalStages }}</p>
+                                            <p class="text-[9px] font-bold uppercase tracking-widest text-blue-300 dark:text-slate-400 mt-1">Tahap {{ $activeStageOrder }} dari {{ $totalStages }}</p>
                                         @endif
                                     </div>
-                                    <div class="w-full bg-blue-50 border border-blue-100 rounded-full h-3 overflow-hidden shadow-inner">
+                                    <div class="w-full bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-full h-3 overflow-hidden shadow-inner">
                                         <div class="h-full rounded-full bg-gradient-to-r from-blue-600 to-blue-400 transition-all duration-700 shadow-[0_0_10px_rgba(59,130,246,0.5)] relative overflow-hidden"
                                             style="width: {{ $progressValue }}%">
                                             <div class="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.2)_50%,transparent_75%,transparent_100%)] bg-[length:20px_20px] animate-[slide_1s_linear_infinite]"></div>    
@@ -303,9 +312,9 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                         </div>
 
                         {{-- Card: Stage --}}
-                        <div class="md:col-span-1 glass-card rounded-3xl overflow-hidden flex flex-col h-full">
-                            <div class="px-6 py-5 border-b border-blue-50/50 bg-gradient-to-b from-blue-50/50 to-transparent">
-                                <h2 class="font-black text-sm text-blue-950 tracking-tight">Tahap Pengerjaan</h2>
+                        <div class="md:col-span-1 glass-card dark:bg-slate-900 rounded-3xl overflow-hidden flex flex-col h-full">
+                            <div class="px-6 py-5 border-b border-blue-50/50 dark:border-slate-800 bg-gradient-to-b from-blue-50/50 to-transparent">
+                                <h2 class="font-black text-sm text-blue-950 dark:text-white tracking-tight">Tahap Pengerjaan</h2>
                             </div>
                             <div class="p-6 flex-1 overflow-y-auto custom-sidebar-scroll max-h-[300px]">
                                 <div class="grid grid-cols-1 gap-3">
@@ -317,20 +326,20 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                             // PURE BLUE LOGIC
                                             if ($isCompleted) {
                                                 $icon = 'fa-solid fa-check-circle';
-                                                $color = 'text-blue-500';
-                                                $bg = 'bg-blue-50/80 border-blue-200';
+                                                $color = 'text-blue-500 dark:text-blue-400';
+                                                $bg = 'bg-blue-50/80 border-blue-200 dark:bg-slate-800/80 dark:border-slate-700';
                                                 $label = 'Selesai';
-                                                $labelColor = 'text-blue-600 bg-white border border-blue-200';
+                                                $labelColor = 'text-blue-600 bg-white border border-blue-200 dark:text-blue-400 dark:bg-slate-900 dark:border-slate-700';
                                             } elseif ($isActive) {
                                                 $icon = 'fa-solid fa-play-circle animate-pulse';
                                                 $color = 'text-white';
                                                 $bg = 'bg-blue-600 border-blue-500 shadow-[0_5px_15px_rgba(37,99,235,0.3)]';
                                                 $label = 'Aktif';
-                                                $labelColor = 'text-blue-600 bg-white';
+                                                $labelColor = 'text-blue-600 bg-white dark:text-blue-400 dark:bg-slate-900';
                                             } else {
                                                 $icon = 'fa-regular fa-circle';
-                                                $color = 'text-blue-200';
-                                                $bg = 'bg-transparent border-blue-50/50 opacity-60';
+                                                $color = 'text-blue-200 dark:text-slate-500';
+                                                $bg = 'bg-transparent border-blue-50/50 dark:border-slate-800 opacity-60';
                                                 $label = '';
                                                 $labelColor = '';
                                             }
@@ -340,7 +349,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                                 <i class="{{ $icon }} {{ $color }} text-sm"></i>
                                             </div>
                                             <div class="min-w-0 flex-1 flex items-center justify-between">
-                                                <p class="text-xs font-bold truncate {{ $isActive ? 'text-white' : 'text-blue-900' }}">
+                                                <p class="text-xs font-bold truncate {{ $isActive ? 'text-white' : 'text-blue-900 dark:text-white' }}">
                                                     {{ $stage }}
                                                 </p>
                                                 @if ($label)
@@ -356,32 +365,32 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                     </div>
 
                     {{-- ROW 2: CHAT --}}
-                    <div class="glass-card rounded-3xl overflow-hidden flex flex-col h-[500px]">
+                    <div class="glass-card dark:bg-slate-900 rounded-3xl overflow-hidden flex flex-col h-[500px]">
                         {{-- Chat Header --}}
-                        <div class="px-6 py-4 border-b border-blue-50/50 bg-gradient-to-b from-blue-50/80 to-transparent flex items-center justify-between shrink-0">
+                        <div class="px-6 py-4 border-b border-blue-50/50 dark:border-slate-800 bg-gradient-to-b from-blue-50/80 to-transparent flex items-center justify-between shrink-0">
                             <div class="flex items-center gap-4">
                                 <div class="w-12 h-12 rounded-[1rem] bg-gradient-to-br from-blue-500 to-blue-700 text-white flex items-center justify-center font-black text-lg shadow-[0_4px_10px_rgba(59,130,246,0.3)]">
                                     {{ strtoupper(substr(auth()->user()->role === 'company' ? $workspace->freelancer->name : $workspace->company->name, 0, 1)) }}
                                 </div>
                                 <div>
-                                    <h3 class="font-black text-sm text-blue-950 tracking-tight">
+                                    <h3 class="font-black text-sm text-blue-950 dark:text-white tracking-tight">
                                         {{ auth()->user()->role === 'company' ? $workspace->freelancer->name : $workspace->company->name }}
                                     </h3>
-                                    <p class="text-[10px] font-bold text-blue-400 uppercase tracking-widest mt-0.5">{{ $workspace->project->project_name }}</p>
+                                    <p class="text-[10px] font-bold text-blue-400 dark:text-slate-400 uppercase tracking-widest mt-0.5">{{ $workspace->project->project_name }}</p>
                                 </div>
                             </div>
 
                             @php
                                 // Pure Blue Status Indicators using ORIGINAL labels
 $chatStatusMap = [
-                                    'Sedang Dikerjakan' => ['label' => 'Sedang Dikerjakan', 'dot' => 'bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.8)]', 'box' => 'bg-blue-50 border-blue-100 text-blue-600'],
-                                    'Menunggu Review' => ['label' => 'Menunggu Review', 'dot' => 'bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.8)]', 'box' => 'bg-amber-50 border-amber-200 text-amber-700'],
-                                    'Menunggu Revisi' => ['label' => 'Menunggu Revisi', 'dot' => 'bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)]', 'box' => 'bg-white border-blue-200 text-blue-700'],
-                                    'Menunggu Pembayaran' => ['label' => 'Menunggu Pembayaran', 'dot' => 'bg-blue-700 shadow-[0_0_8px_rgba(29,78,216,0.8)]', 'box' => 'bg-blue-50 border-blue-200 text-blue-800'],
-                                    'Menunggu Verifikasi Admin' => ['label' => 'Menunggu Verifikasi Admin', 'dot' => 'bg-blue-300 shadow-[0_0_8px_rgba(147,197,253,0.8)]', 'box' => 'bg-white border-blue-100 text-blue-500'],
+                                    'Sedang Dikerjakan' => ['label' => 'Sedang Dikerjakan', 'dot' => 'bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.8)]', 'box' => 'bg-blue-50 border-blue-100 text-blue-600 dark:bg-slate-800 dark:border-slate-800 dark:text-blue-400'],
+                                    'Menunggu Review' => ['label' => 'Menunggu Review', 'dot' => 'bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.8)]', 'box' => 'bg-amber-50 border-amber-200 text-amber-700 dark:bg-amber-900/40 dark:border-amber-900 dark:text-amber-300'],
+                                    'Menunggu Revisi' => ['label' => 'Menunggu Revisi', 'dot' => 'bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)]', 'box' => 'bg-white border-blue-200 text-blue-700 dark:bg-slate-900 dark:border-slate-700 dark:text-blue-400'],
+                                    'Menunggu Pembayaran' => ['label' => 'Menunggu Pembayaran', 'dot' => 'bg-blue-700 shadow-[0_0_8px_rgba(29,78,216,0.8)]', 'box' => 'bg-blue-50 border-blue-200 text-blue-800 dark:bg-slate-800 dark:border-slate-700 dark:text-blue-400'],
+                                    'Menunggu Verifikasi Admin' => ['label' => 'Menunggu Verifikasi Admin', 'dot' => 'bg-blue-300 shadow-[0_0_8px_rgba(147,197,253,0.8)]', 'box' => 'bg-white border-blue-100 text-blue-500 dark:bg-slate-900 dark:border-slate-800 dark:text-blue-400'],
                                     'Selesai' => ['label' => 'Selesai', 'dot' => 'bg-white', 'box' => 'bg-blue-600 border-blue-600 text-white shadow-md'],
                                 ];
-                                $statusStyle = $chatStatusMap[$workspace->status] ?? ['label' => $workspace->status, 'dot' => 'bg-blue-300', 'box' => 'bg-white text-blue-400 border-blue-100'];
+                                $statusStyle = $chatStatusMap[$workspace->status] ?? ['label' => $workspace->status, 'dot' => 'bg-blue-300', 'box' => 'bg-white text-blue-400 border-blue-100 dark:bg-slate-900 dark:text-slate-400 dark:border-slate-800'];
                             @endphp
 
                             <div class="flex items-center gap-4">
@@ -395,7 +404,7 @@ $chatStatusMap = [
                                 @endphp
                                 @if($reportedTarget && (int) $reportedTarget->id !== (int) auth()->id())
                                     <a href="{{ route(auth()->user()->role === 'company' ? 'company.reports.create' : 'freelancer.reports.create', ['workspace_id' => $workspace->id, 'reported_user_id' => $reportedTarget->id]) }}"
-                                       class="inline-flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-blue-500 bg-white border border-blue-200 hover:bg-blue-50 hover:border-blue-300 rounded-lg transition-colors">
+                                       class="inline-flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-blue-500 dark:text-blue-400 bg-white dark:bg-slate-900 border border-blue-200 dark:border-slate-700 hover:bg-blue-50 dark:hover:bg-slate-800 hover:border-blue-300 dark:hover:border-slate-600 rounded-lg transition-colors">
                                         <i class="fa-solid fa-flag"></i> Laporkan
                                     </a>
                                 @endif
@@ -403,12 +412,12 @@ $chatStatusMap = [
                         </div>
 
                         {{-- Chat Body --}}
-                        <div id="chatBody" class="flex-1 overflow-y-auto chat-scroll p-6 space-y-5 bg-white/40 hologram-grid-blue relative">
+                        <div id="chatBody" class="flex-1 overflow-y-auto chat-scroll p-6 space-y-5 bg-white/40 dark:bg-slate-900/40 hologram-grid-blue relative">
                             @if ($workspace->messages->isNotEmpty())
                                 @foreach ($workspace->messages as $message)
                                     @if ($message->type === 'system')
                                         <div class="flex justify-center my-6 relative z-10">
-                                            <div class="bg-blue-50/80 backdrop-blur-sm text-blue-600 text-[10px] font-bold tracking-wide px-5 py-2 rounded-full border border-blue-100/50 inline-flex items-center gap-2 shadow-sm uppercase">
+                                            <div class="bg-blue-50/80 dark:bg-slate-800/80 backdrop-blur-sm text-blue-600 dark:text-blue-400 text-[10px] font-bold tracking-wide px-5 py-2 rounded-full border border-blue-100/50 dark:border-slate-800 inline-flex items-center gap-2 shadow-sm uppercase">
                                                 <i class="fa-solid fa-gear opacity-60"></i>
                                                 {{ $message->message }}
                                             </div>
@@ -416,14 +425,14 @@ $chatStatusMap = [
                                     @else
                                         @php $isMine = (int) $message->sender_id === (int) auth()->id(); @endphp
                                         <div class="flex {{ $isMine ? 'justify-end' : 'justify-start' }} relative z-10">
-                                            <div class="max-w-[75%] {{ $isMine ? 'bg-gradient-to-br from-blue-600 to-blue-500 text-white rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl rounded-br-sm shadow-[0_5px_15px_rgba(37,99,235,0.2)]' : 'bg-white text-blue-900 border border-blue-100 rounded-tl-2xl rounded-tr-2xl rounded-br-2xl rounded-bl-sm shadow-sm' }} px-5 py-3.5">
+                                            <div class="max-w-[75%] {{ $isMine ? 'bg-gradient-to-br from-blue-600 to-blue-500 text-white rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl rounded-br-sm shadow-[0_5px_15px_rgba(37,99,235,0.2)]' : 'bg-white dark:bg-slate-800 text-blue-900 dark:text-white border border-blue-100 dark:border-slate-700 rounded-tl-2xl rounded-tr-2xl rounded-br-2xl rounded-bl-sm shadow-sm' }} px-5 py-3.5">
                                                 @if (!$isMine)
-                                                    <p class="text-[9px] font-black uppercase tracking-widest text-blue-400 mb-1.5">
+                                                    <p class="text-[9px] font-black uppercase tracking-widest text-blue-400 dark:text-slate-400 mb-1.5">
                                                         {{ $message->sender->name }}
                                                     </p>
                                                 @endif
                                                 <p class="text-[13px] leading-relaxed font-medium">{{ $message->message }}</p>
-                                                <p class="text-[9px] font-bold mt-2 {{ $isMine ? 'text-blue-200' : 'text-blue-300' }} text-right tracking-wider">
+                                                <p class="text-[9px] font-bold mt-2 {{ $isMine ? 'text-blue-200' : 'text-blue-300 dark:text-slate-500' }} text-right tracking-wider">
                                                     {{ $message->created_at->format('H:i, d M') }}
                                                 </p>
                                             </div>
@@ -432,21 +441,21 @@ $chatStatusMap = [
                                 @endforeach
                             @else
                                 <div class="absolute inset-0 flex flex-col items-center justify-center">
-                                    <div class="w-16 h-16 mx-auto mb-4 bg-blue-50 rounded-2xl border border-blue-100 flex items-center justify-center shadow-inner">
-                                        <i class="fa-regular fa-message text-2xl text-blue-300"></i>
+                                    <div class="w-16 h-16 mx-auto mb-4 bg-blue-50 dark:bg-slate-800 rounded-2xl border border-blue-100 dark:border-slate-800 flex items-center justify-center shadow-inner">
+                                        <i class="fa-regular fa-message text-2xl text-blue-300 dark:text-slate-400"></i>
                                     </div>
-                                    <h3 class="text-sm font-black text-blue-900 tracking-tight">Belum Ada Pesan</h3>
-                                    <p class="text-xs font-semibold text-blue-400 mt-1">Mulai percakapan dengan mengirim pesan.</p>
+                                    <h3 class="text-sm font-black text-blue-900 dark:text-white tracking-tight">Belum Ada Pesan</h3>
+                                    <p class="text-xs font-semibold text-blue-400 dark:text-slate-400 mt-1">Mulai percakapan dengan mengirim pesan.</p>
                                 </div>
                             @endif
                         </div>
 
                         {{-- Chat Input --}}
-                        <div class="px-6 py-5 border-t border-blue-50/50 bg-white shrink-0 relative z-10">
+                        <div class="px-6 py-5 border-t border-blue-50/50 dark:border-slate-800 bg-white dark:bg-slate-900 shrink-0 relative z-10">
                             <form method="POST" action="{{ route(auth()->user()->role === 'company' ? 'company.workspaces.message' : 'freelancer.workspaces.message', $workspace) }}" class="flex items-center gap-3">
                                 @csrf
                                 <input type="text" name="message" placeholder="Ketik pesan..." required maxlength="1000"
-                                    class="flex-1 px-5 py-3.5 bg-blue-50/50 border border-blue-100 rounded-xl text-sm text-blue-950 font-medium placeholder-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 focus:bg-white transition-all">
+                                    class="flex-1 px-5 py-3.5 bg-blue-50/50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-xl text-sm text-blue-950 dark:text-white font-medium placeholder-blue-300 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 focus:bg-white dark:focus:bg-slate-800 transition-all">
                                 <button type="submit"
                                     class="w-12 h-12 sm:w-auto sm:px-6 sm:py-3.5 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition flex items-center justify-center gap-2 shadow-[0_5px_15px_rgba(37,99,235,0.25)] shrink-0">
                                     <i class="fa-solid fa-paper-plane"></i>
@@ -461,37 +470,37 @@ $chatStatusMap = [
 
                     {{-- ROW 4: INVOICE (company Menunggu Pembayaran / Verifikasi Admin) --}}
                     @if(auth()->user()->role === 'company' && in_array($workspace->status, ['Menunggu Pembayaran', 'Menunggu Verifikasi Admin']) && $payment)
-                        <div class="glass-card rounded-3xl overflow-hidden">
-                            <div class="px-6 py-5 border-b border-blue-50/50 bg-gradient-to-b from-blue-50/50 to-transparent">
-                                <h2 class="font-black text-sm text-blue-950 tracking-tight">Invoice Pembayaran</h2>
+                        <div class="glass-card dark:bg-slate-900 rounded-3xl overflow-hidden">
+                            <div class="px-6 py-5 border-b border-blue-50/50 dark:border-slate-800 bg-gradient-to-b from-blue-50/50 to-transparent">
+                                <h2 class="font-black text-sm text-blue-950 dark:text-white tracking-tight">Invoice Pembayaran</h2>
                             </div>
                             <div class="p-6 space-y-6">
                                 {{-- Invoice Info --}}
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div class="bg-white border border-blue-100 rounded-2xl p-5 shadow-sm space-y-3">
-                                        <div class="flex items-center justify-between border-b border-blue-50 pb-2">
-                                            <p class="text-[10px] font-black text-blue-400 uppercase tracking-widest">Nomor Invoice</p>
-                                            <span class="text-xs font-bold text-blue-950 bg-blue-50 px-2 py-0.5 rounded">{{ $payment->invoice_number }}</span>
+                                    <div class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl p-5 shadow-sm space-y-3">
+                                        <div class="flex items-center justify-between border-b border-blue-50 dark:border-slate-800 pb-2">
+                                            <p class="text-[10px] font-black text-blue-400 dark:text-slate-400 uppercase tracking-widest">Nomor Invoice</p>
+                                            <span class="text-xs font-bold text-blue-950 dark:text-white bg-blue-50 dark:bg-slate-800 px-2 py-0.5 rounded">{{ $payment->invoice_number }}</span>
                                         </div>
                                         <div class="flex items-center justify-between">
-                                            <p class="text-[10px] font-black text-blue-400 uppercase tracking-widest">Total</p>
-                                            <span class="text-sm font-bold text-blue-900">Rp {{ number_format($payment->amount, 0, ',', '.') }}</span>
+                                            <p class="text-[10px] font-black text-blue-400 dark:text-slate-400 uppercase tracking-widest">Total</p>
+                                            <span class="text-sm font-bold text-blue-900 dark:text-white">Rp {{ number_format($payment->amount, 0, ',', '.') }}</span>
                                         </div>
                                         <div class="flex items-center justify-between">
-                                            <p class="text-[10px] font-black text-blue-400 uppercase tracking-widest">Biaya Platform (5%)</p>
-                                            <span class="text-xs font-bold text-blue-500">Rp {{ number_format($payment->platform_fee, 0, ',', '.') }}</span>
+                                            <p class="text-[10px] font-black text-blue-400 dark:text-slate-400 uppercase tracking-widest">Biaya Platform (5%)</p>
+                                            <span class="text-xs font-bold text-blue-500 dark:text-blue-400">Rp {{ number_format($payment->platform_fee, 0, ',', '.') }}</span>
                                         </div>
-                                        <div class="flex items-center justify-between pt-3 border-t border-blue-100/50">
-                                            <p class="text-[10px] font-black text-blue-600 uppercase tracking-widest">Total Dibayar</p>
-                                            <span class="text-base font-black text-blue-700">Rp {{ number_format($payment->amount, 0, ',', '.') }}</span>
+                                        <div class="flex items-center justify-between pt-3 border-t border-blue-100/50 dark:border-slate-800">
+                                            <p class="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest">Total Dibayar</p>
+                                            <span class="text-base font-black text-blue-700 dark:text-blue-400">Rp {{ number_format($payment->amount, 0, ',', '.') }}</span>
                                         </div>
                                     </div>
 
-                                    <div class="bg-white border border-blue-100 rounded-2xl p-5 shadow-sm space-y-3">
-                                        <p class="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-1">Status Pembayaran</p>
+                                    <div class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl p-5 shadow-sm space-y-3">
+                                        <p class="text-[10px] font-black text-blue-400 dark:text-slate-400 uppercase tracking-widest mb-1">Status Pembayaran</p>
                                         @php
                                             $psDesign = $payment->status === 'pending' 
-                                                ? 'bg-white border-blue-400 text-blue-600' 
+                                                ? 'bg-white border-blue-400 text-blue-600 dark:bg-slate-900 dark:border-blue-400 dark:text-blue-400' 
                                                 : 'bg-blue-600 border-blue-600 text-white shadow-[0_5px_15px_rgba(37,99,235,0.3)]';
                                             $psLabel = $payment->status === 'pending' ? 'Belum Dibayar' : 'Menunggu Verifikasi';
                                         @endphp
@@ -500,11 +509,11 @@ $chatStatusMap = [
                                         </div>
 
                                         @if($payment->status === 'rejected')
-                                            <div class="mt-4 p-3 bg-white border border-blue-400 rounded-xl relative overflow-hidden">
+                                            <div class="mt-4 p-3 bg-white dark:bg-slate-900 border border-blue-400 dark:border-slate-700 rounded-xl relative overflow-hidden">
                                                 <div class="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
-                                                <p class="text-xs font-bold text-blue-900 ml-2">Pembayaran ditolak. Silakan upload ulang.</p>
+                                                <p class="text-xs font-bold text-blue-900 dark:text-white ml-2">Pembayaran ditolak. Silakan upload ulang.</p>
                                                 @if($payment->admin_note)
-                                                    <p class="text-[10px] text-blue-600 mt-2 ml-2 p-2 bg-blue-50 rounded-lg border border-blue-100">Alasan: {{ $payment->admin_note }}</p>
+                                                    <p class="text-[10px] text-blue-600 dark:text-blue-400 mt-2 ml-2 p-2 bg-blue-50 dark:bg-slate-800 rounded-lg border border-blue-100 dark:border-slate-800">Alasan: {{ $payment->admin_note }}</p>
                                                 @endif
                                             </div>
                                         @endif
@@ -513,8 +522,8 @@ $chatStatusMap = [
 
                                 {{-- Payment Gateway (hanya pending) --}}
                                 @if($payment->status === 'pending')
-                                    <div class="flex flex-col gap-4 bg-gradient-to-r from-blue-50 to-transparent p-5 rounded-2xl border border-blue-100">
-                                        <p class="text-xs font-semibold text-blue-800 leading-relaxed max-w-2xl">
+                                    <div class="flex flex-col gap-4 bg-gradient-to-r from-blue-50 to-transparent p-5 rounded-2xl border border-blue-100 dark:border-slate-800">
+                                        <p class="text-xs font-semibold text-blue-800 dark:text-blue-300 leading-relaxed max-w-2xl">
                                             Silakan lanjutkan ke <strong>Payment Gateway</strong> untuk melakukan pembayaran, kemudian upload bukti pembayaran pada halaman berikutnya.
                                         </p>
                                         <div class="flex flex-col sm:flex-row items-center gap-4">
@@ -522,7 +531,7 @@ $chatStatusMap = [
                                                class="w-full sm:w-auto px-6 py-3 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition shadow-[0_5px_15px_rgba(37,99,235,0.3)] flex items-center justify-center gap-2">
                                                 <i class="fa-solid fa-credit-card"></i> Bayar Sekarang
                                             </a>
-                                            <p class="text-[10px] font-bold text-blue-400 flex items-center gap-1.5">
+                                            <p class="text-[10px] font-bold text-blue-400 dark:text-slate-400 flex items-center gap-1.5">
                                                 <i class="fa-solid fa-circle-info"></i> Mode Simulasi
                                             </p>
                                         </div>
@@ -531,12 +540,12 @@ $chatStatusMap = [
 
                                 {{-- Payment Upload Form (rejected / re-upload) --}}
                                 @if($payment->status === 'rejected')
-                                    <form method="POST" action="{{ route('company.payments.upload', $workspace) }}" enctype="multipart/form-data" class="space-y-5 bg-white border border-blue-100 p-5 rounded-2xl shadow-sm">
+                                    <form method="POST" action="{{ route('company.payments.upload', $workspace) }}" enctype="multipart/form-data" class="space-y-5 bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 p-5 rounded-2xl shadow-sm">
                                         @csrf
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                                             <div>
-                                                <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2">Metode Pembayaran</label>
-                                                <select name="payment_method" required class="w-full px-4 py-3 bg-blue-50/50 border border-blue-100 rounded-xl text-sm font-bold text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all">
+                                                <label class="block text-[10px] font-black text-blue-500 dark:text-blue-400 uppercase tracking-widest mb-2">Metode Pembayaran</label>
+                                                <select name="payment_method" required class="w-full px-4 py-3 bg-blue-50/50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-xl text-sm font-bold text-blue-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white dark:focus:bg-slate-800 transition-all">
                                                     <option value="">Pilih Metode</option>
                                                     <option value="Transfer Bank">Transfer Bank</option>
                                                     <option value="QRIS">QRIS</option>
@@ -544,16 +553,16 @@ $chatStatusMap = [
                                                 </select>
                                             </div>
                                             <div>
-                                                <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2">Upload Bukti Pembayaran</label>
+                                                <label class="block text-[10px] font-black text-blue-500 dark:text-blue-400 uppercase tracking-widest mb-2">Upload Bukti Pembayaran</label>
                                                 <input type="file" name="payment_proof" required accept=".jpg,.jpeg,.png,.pdf"
-                                                       class="w-full px-4 py-2 bg-blue-50/50 border border-blue-100 rounded-xl text-sm font-semibold text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-black file:uppercase file:tracking-wider file:bg-blue-600 file:text-white hover:file:bg-blue-700 transition-all cursor-pointer">
-                                                <p class="text-[9px] font-bold text-blue-400 mt-1.5 uppercase tracking-wide">Format: jpg, jpeg, png, pdf. Maksimal 10 MB.</p>
+                                                       class="w-full px-4 py-2 bg-blue-50/50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-xl text-sm font-semibold text-blue-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-black file:uppercase file:tracking-wider file:bg-blue-600 file:text-white hover:file:bg-blue-700 transition-all cursor-pointer">
+                                                <p class="text-[9px] font-bold text-blue-400 dark:text-slate-400 mt-1.5 uppercase tracking-wide">Format: jpg, jpeg, png, pdf. Maksimal 10 MB.</p>
                                             </div>
                                         </div>
                                         <div>
-                                            <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2">Catatan (opsional)</label>
+                                            <label class="block text-[10px] font-black text-blue-500 dark:text-blue-400 uppercase tracking-widest mb-2">Catatan (opsional)</label>
                                             <textarea name="company_note" rows="2" maxlength="2000" placeholder="Tambahkan catatan..."
-                                                      class="w-full px-4 py-3 bg-blue-50/50 border border-blue-100 rounded-xl text-sm font-medium text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all resize-none"></textarea>
+                                                      class="w-full px-4 py-3 bg-blue-50/50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-xl text-sm font-medium text-blue-900 dark:text-white dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white dark:focus:bg-slate-800 transition-all resize-none"></textarea>
                                         </div>
                                         <button type="submit" class="w-full sm:w-auto px-6 py-3 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition flex items-center justify-center gap-2 shadow-[0_5px_15px_rgba(37,99,235,0.3)]">
                                             <i class="fa-solid fa-cloud-arrow-up"></i> Kirim Pembayaran
@@ -562,12 +571,12 @@ $chatStatusMap = [
                                 @endif
 
                                 @if($payment->status === 'waiting_verification')
-                                    <div class="flex items-center gap-3 px-5 py-4 bg-white border border-blue-200 rounded-2xl shadow-[0_5px_20px_rgba(59,130,246,0.1)]">
-                                        <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center shrink-0 border border-blue-100">
+                                    <div class="flex items-center gap-3 px-5 py-4 bg-white dark:bg-slate-900 border border-blue-200 dark:border-slate-700 rounded-2xl shadow-[0_5px_20px_rgba(59,130,246,0.1)]">
+                                        <div class="w-10 h-10 rounded-full bg-blue-50 dark:bg-slate-800 text-blue-500 dark:text-blue-400 flex items-center justify-center shrink-0 border border-blue-100 dark:border-slate-800">
                                             <i class="fa-solid fa-clock animate-pulse"></i>
                                         </div>
                                         <div>
-                                            <p class="text-sm font-bold text-blue-900">Bukti pembayaran telah dikirim. Menunggu verifikasi admin.</p>
+                                            <p class="text-sm font-bold text-blue-900 dark:text-white">Bukti pembayaran telah dikirim. Menunggu verifikasi admin.</p>
                                         </div>
                                     </div>
                                 @endif
@@ -579,25 +588,25 @@ $chatStatusMap = [
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
                         {{-- Card: Timeline --}}
-                        <div class="md:col-span-2 glass-card rounded-3xl overflow-hidden">
-                            <div class="px-6 py-5 border-b border-blue-50/50 bg-gradient-to-b from-blue-50/50 to-transparent">
-                                <h2 class="font-black text-sm text-blue-950 tracking-tight">Timeline Progress</h2>
+                        <div class="md:col-span-2 glass-card dark:bg-slate-900 rounded-3xl overflow-hidden">
+                            <div class="px-6 py-5 border-b border-blue-50/50 dark:border-slate-800 bg-gradient-to-b from-blue-50/50 to-transparent">
+                                <h2 class="font-black text-sm text-blue-950 dark:text-white tracking-tight">Timeline Progress</h2>
                             </div>
                             <div class="p-6">
                                 @if ($workspace->progressHistories->isNotEmpty())
                                     <div class="space-y-6">
                                         @foreach ($workspace->progressHistories as $history)
-                                            <div class="relative pl-8 border-l border-blue-100/70 ml-2">
-                                                <div class="absolute -left-[13px] top-0 w-6 h-6 rounded-full bg-white border border-blue-200 shadow-[0_0_10px_rgba(59,130,246,0.2)] flex items-center justify-center z-10">
-                                                    <span class="text-[8px] text-blue-600 font-black">{{ $history->progress }}%</span>
+                                            <div class="relative pl-8 border-l border-blue-100/70 dark:border-slate-800 ml-2">
+                                                <div class="absolute -left-[13px] top-0 w-6 h-6 rounded-full bg-white dark:bg-slate-900 border border-blue-200 dark:border-slate-700 shadow-[0_0_10px_rgba(59,130,246,0.2)] flex items-center justify-center z-10">
+                                                    <span class="text-[8px] text-blue-600 dark:text-blue-400 font-black">{{ $history->progress }}%</span>
                                                 </div>
-                                                <div class="bg-blue-50/40 rounded-2xl p-4 border border-blue-50 ml-1 hover:bg-blue-50 hover:border-blue-100 transition-colors">
-                                                    <div class="flex flex-wrap items-center justify-between gap-2 mb-2 border-b border-blue-100/50 pb-2">
-                                                        <span class="text-xs font-black text-blue-900">{{ $history->stage }}</span>
-                                                        <span class="text-[9px] font-bold tracking-widest uppercase text-blue-400 bg-white px-2 py-0.5 rounded shadow-sm border border-blue-50">{{ $history->created_at->format('d M Y') }}</span>
+                                                <div class="bg-blue-50/40 dark:bg-slate-800/40 rounded-2xl p-4 border border-blue-50 dark:border-slate-800 ml-1 hover:bg-blue-50 dark:hover:bg-slate-800 hover:border-blue-100 dark:hover:border-slate-700 transition-colors">
+                                                    <div class="flex flex-wrap items-center justify-between gap-2 mb-2 border-b border-blue-100/50 dark:border-slate-800 pb-2">
+                                                        <span class="text-xs font-black text-blue-900 dark:text-white">{{ $history->stage }}</span>
+                                                        <span class="text-[9px] font-bold tracking-widest uppercase text-blue-400 dark:text-slate-400 bg-white dark:bg-slate-800 px-2 py-0.5 rounded shadow-sm border border-blue-50 dark:border-slate-800">{{ $history->created_at->format('d M Y') }}</span>
                                                     </div>
                                                     @if ($history->description)
-                                                        <p class="text-[11px] font-medium text-blue-800/70 leading-relaxed">{{ $history->description }}</p>
+                                                        <p class="text-[11px] font-medium text-blue-800/70 dark:text-blue-300 leading-relaxed">{{ $history->description }}</p>
                                                     @endif
                                                 </div>
                                             </div>
@@ -605,22 +614,22 @@ $chatStatusMap = [
                                     </div>
                                 @else
                                     <div class="py-12 flex flex-col items-center justify-center">
-                                        <i class="fa-solid fa-clock-rotate-left text-3xl text-blue-100 mb-3"></i>
-                                        <p class="text-xs font-bold text-blue-300 uppercase tracking-widest">Belum ada riwayat progress.</p>
+                                        <i class="fa-solid fa-clock-rotate-left text-3xl text-blue-100 dark:text-slate-600 mb-3"></i>
+                                        <p class="text-xs font-bold text-blue-300 dark:text-slate-400 uppercase tracking-widest">Belum ada riwayat progress.</p>
                                     </div>
                                 @endif
                             </div>
                         </div>
 
                         {{-- Card: Actions & Rating --}}
-                        <div class="md:col-span-1 glass-card rounded-3xl overflow-hidden flex flex-col justify-between">
+                        <div class="md:col-span-1 glass-card dark:bg-slate-900 rounded-3xl overflow-hidden flex flex-col justify-between">
                             <div>
-                                <div class="px-6 py-5 border-b border-blue-50/50 bg-gradient-to-b from-blue-50/50 to-transparent">
-                                    <h2 class="font-black text-sm text-blue-950 tracking-tight">Aksi & Ulasan</h2>
+                                <div class="px-6 py-5 border-b border-blue-50/50 dark:border-slate-800 bg-gradient-to-b from-blue-50/50 to-transparent">
+                                    <h2 class="font-black text-sm text-blue-950 dark:text-white tracking-tight">Aksi & Ulasan</h2>
                                 </div>
                                 <div class="p-6 space-y-4">
                                     @if (auth()->user()->role === 'company' && $workspace->status === 'Menunggu Review')
-                                        <div class="flex items-center gap-3 px-4 py-3.5 bg-amber-50 border border-amber-200 rounded-xl text-amber-700">
+                                        <div class="flex items-center gap-3 px-4 py-3.5 bg-amber-50 dark:bg-amber-900/40 border border-amber-200 dark:border-amber-900 rounded-xl text-amber-700 dark:text-amber-300">
                                             <i class="fa-solid fa-clock"></i>
                                             <p class="text-xs font-bold">Perusahaan sedang meninjau hasil pekerjaan Anda.</p>
                                         </div>
@@ -629,17 +638,17 @@ $chatStatusMap = [
                                     @if ($workspace->status === 'Selesai')
                                         <div class="pt-2">
                                             @if ($workspace->rating)
-                                                <div class="bg-blue-50 border border-blue-100 rounded-2xl p-5 text-center shadow-inner">
-                                                    <p class="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-3">Rating Telah Diberikan</p>
-                                                    <div class="flex justify-center gap-1.5 text-blue-500 text-lg mb-3 drop-shadow-[0_0_8px_rgba(59,130,246,0.4)]">
+                                                <div class="bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-800 rounded-2xl p-5 text-center shadow-inner">
+                                                    <p class="text-[10px] font-black text-blue-400 dark:text-slate-400 uppercase tracking-widest mb-3">Rating Telah Diberikan</p>
+                                                    <div class="flex justify-center gap-1.5 text-blue-500 dark:text-blue-400 text-lg mb-3 drop-shadow-[0_0_8px_rgba(59,130,246,0.4)]">
                                                         @for ($i = 1; $i <= 5; $i++)
                                                             <i class="fa-{{ $i <= $workspace->rating->score ? 'solid' : 'regular' }} fa-star"></i>
                                                         @endfor
                                                     </div>
                                                     @if ($workspace->rating->review)
                                                         <div class="relative">
-                                                            <i class="fa-solid fa-quote-left absolute -top-1 -left-1 text-blue-200 text-xl opacity-50"></i>
-                                                            <p class="text-xs font-semibold text-blue-900 italic px-4 leading-relaxed relative z-10">"{{ $workspace->rating->review }}"</p>
+                                                            <i class="fa-solid fa-quote-left absolute -top-1 -left-1 text-blue-200 dark:text-slate-600 text-xl opacity-50"></i>
+                                                            <p class="text-xs font-semibold text-blue-900 dark:text-white italic px-4 leading-relaxed relative z-10">"{{ $workspace->rating->review }}"</p>
                                                         </div>
                                                     @endif
                                                 </div>
@@ -647,12 +656,12 @@ $chatStatusMap = [
                                                 @if (auth()->user()->role === 'company')
                                                     <button type="button"
                                                         onclick="document.getElementById('ratingModal').classList.remove('hidden')"
-                                                        class="w-full flex items-center justify-center gap-2 px-4 py-3.5 bg-white border border-blue-300 text-blue-600 rounded-xl text-sm font-bold hover:bg-blue-50 transition shadow-sm">
+                                                        class="w-full flex items-center justify-center gap-2 px-4 py-3.5 bg-white dark:bg-slate-900 border border-blue-300 dark:border-slate-700 text-blue-600 dark:text-blue-400 rounded-xl text-sm font-bold hover:bg-blue-50 dark:hover:bg-slate-800 transition shadow-sm">
                                                         <i class="fa-solid fa-star"></i> Beri Rating & Ulasan
                                                     </button>
                                                 @else
-                                                    <div class="text-center py-5 bg-white rounded-2xl border border-blue-50 border-dashed">
-                                                        <p class="text-[10px] font-bold text-blue-300 uppercase tracking-widest">Belum ada rating dari perusahaan.</p>
+                                                    <div class="text-center py-5 bg-white dark:bg-slate-900 rounded-2xl border border-blue-50 dark:border-slate-800 border-dashed">
+                                                        <p class="text-[10px] font-bold text-blue-300 dark:text-slate-400 uppercase tracking-widest">Belum ada rating dari perusahaan.</p>
                                                     </div>
                                                 @endif
                                             @endif
@@ -673,7 +682,7 @@ $chatStatusMap = [
 
     {{-- MODAL UPDATE PROGRESS --}}
     <div id="progressModal" class="hidden modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-blue-950/40 backdrop-blur-md p-4">
-        <div class="modal-panel bg-white rounded-3xl shadow-[0_20px_50px_rgba(30,58,138,0.2)] w-full max-w-md overflow-hidden border border-blue-100">
+            <div class="modal-panel bg-white dark:bg-slate-900 rounded-3xl shadow-[0_20px_50px_rgba(30,58,138,0.2)] w-full max-w-md overflow-hidden border border-blue-100 dark:border-slate-800">
             <div class="relative px-6 py-7 bg-gradient-to-br from-blue-700 via-blue-600 to-blue-500 overflow-hidden">
                 <div class="absolute inset-0 modal-header-pattern opacity-50"></div>
                 <div class="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
@@ -695,14 +704,14 @@ $chatStatusMap = [
                 </div>
             </div>
 
-            <form method="POST" action="{{ route('freelancer.workspaces.progress', $workspace) }}" class="p-6 space-y-5 bg-white">
+            <form method="POST" action="{{ route('freelancer.workspaces.progress', $workspace) }}" class="p-6 space-y-5 bg-white dark:bg-slate-900">
                 @csrf
                 <input type="hidden" name="action" value="select">
 
                 <div>
-                    <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2">Tahap Pengerjaan</label>
+                    <label class="block text-[10px] font-black text-blue-500 dark:text-blue-400 uppercase tracking-widest mb-2">Tahap Pengerjaan</label>
                     <select name="stage" id="stageSelect" required onchange="updateStageProgress()"
-                        class="w-full px-4 py-3 bg-blue-50/50 border border-blue-100 rounded-xl text-sm font-bold text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all appearance-none cursor-pointer">
+                        class="w-full px-4 py-3 bg-blue-50/50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-xl text-sm font-bold text-blue-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white dark:focus:bg-slate-800 transition-all appearance-none cursor-pointer">
                         @foreach ($stages as $stage)
                             <option value="{{ $stage }}" {{ $activeStage === $stage ? 'selected' : '' }}>{{ $stage }}</option>
                         @endforeach
@@ -710,27 +719,27 @@ $chatStatusMap = [
                 </div>
 
                 <div>
-                    <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2">Progress Saat Ini</label>
-                    <div class="flex items-center gap-4 p-4 bg-blue-50 border border-blue-100 rounded-xl">
-                        <span id="progressPreview" class="text-2xl font-black text-blue-600">{{ $progressValue }}%</span>
+                    <label class="block text-[10px] font-black text-blue-500 dark:text-blue-400 uppercase tracking-widest mb-2">Progress Saat Ini</label>
+                    <div class="flex items-center gap-4 p-4 bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-800 rounded-xl">
+                        <span id="progressPreview" class="text-2xl font-black text-blue-600 dark:text-blue-400">{{ $progressValue }}%</span>
                         <div class="flex-1">
-                            <div class="w-full bg-white border border-blue-100 rounded-full h-2.5 overflow-hidden shadow-inner">
+                            <div class="w-full bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-700 rounded-full h-2.5 overflow-hidden shadow-inner">
                                 <div id="progressPreviewBar" class="h-full rounded-full bg-blue-500 transition-all shadow-[0_0_8px_rgba(59,130,246,0.6)]" style="width: {{ $progressValue }}%"></div>
                             </div>
                         </div>
                     </div>
-                    <p class="text-[9px] font-bold text-blue-400 mt-2 flex items-start gap-1">
+                    <p class="text-[9px] font-bold text-blue-400 dark:text-slate-400 mt-2 flex items-start gap-1">
                         <i class="fa-solid fa-circle-info mt-0.5"></i> Persentase ditentukan otomatis dari urutan tahap (tidak dapat diedit manual).
                     </p>
                 </div>
 
                 <div>
-                    <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2">Deskripsi</label>
+                    <label class="block text-[10px] font-black text-blue-500 dark:text-blue-400 uppercase tracking-widest mb-2">Deskripsi</label>
                     <textarea name="description" rows="3" maxlength="500" id="progressDesc"
                         oninput="document.getElementById('progressDescCount').textContent = this.value.length"
-                        class="w-full px-4 py-3 bg-blue-50/50 border border-blue-100 rounded-xl text-sm font-medium text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all resize-none"
+                        class="w-full px-4 py-3 bg-blue-50/50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-xl text-sm font-medium text-blue-900 dark:text-white dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white dark:focus:bg-slate-800 transition-all resize-none"
                         placeholder="Jelaskan update progress..."></textarea>
-                    <p class="text-[9px] font-black text-blue-300 mt-1.5 text-right"><span id="progressDescCount">0</span>/500</p>
+                    <p class="text-[9px] font-black text-blue-300 dark:text-slate-400 mt-1.5 text-right"><span id="progressDescCount">0</span>/500</p>
                 </div>
 
                 <button type="submit" class="btn-shimmer w-full py-3.5 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition shadow-[0_5px_15px_rgba(37,99,235,0.3)]">
@@ -738,43 +747,43 @@ $chatStatusMap = [
                 </button>
             </form>
 
-            <div class="px-6 py-5 bg-blue-50/30 border-t border-blue-100 space-y-4">
-                <p class="text-[9px] font-black text-blue-400 uppercase tracking-widest flex items-center gap-1.5 mb-2">
-                    <i class="fa-solid fa-pen-to-square text-blue-500"></i> Kelola Tahap
+            <div class="px-6 py-5 bg-blue-50/30 dark:bg-slate-800/30 border-t border-blue-100 dark:border-slate-800 space-y-4">
+                <p class="text-[9px] font-black text-blue-400 dark:text-slate-400 uppercase tracking-widest flex items-center gap-1.5 mb-2">
+                    <i class="fa-solid fa-pen-to-square text-blue-500 dark:text-blue-400"></i> Kelola Tahap
                 </p>
 
                 <form method="POST" action="{{ route('freelancer.workspaces.progress', $workspace) }}" class="flex gap-2">
                     @csrf
                     <input type="hidden" name="action" value="add">
                     <input type="text" name="new_stage" maxlength="255" placeholder="Nama tahap baru..."
-                        class="flex-1 px-4 py-2 bg-white border border-blue-100 rounded-lg text-xs font-semibold focus:outline-none focus:border-blue-400">
+                        class="flex-1 px-4 py-2 bg-white dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-lg text-xs font-semibold dark:text-white dark:placeholder:text-slate-500 focus:outline-none focus:border-blue-400">
                     <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition">Tambah</button>
                 </form>
 
                 <form method="POST" action="{{ route('freelancer.workspaces.progress', $workspace) }}" class="flex gap-2">
                     @csrf
                     <input type="hidden" name="action" value="rename">
-                    <select name="old_stage" class="w-1/3 px-2 py-2 bg-white border border-blue-100 rounded-lg text-xs font-semibold focus:outline-none focus:border-blue-400">
+                    <select name="old_stage" class="w-1/3 px-2 py-2 bg-white dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-lg text-xs font-semibold dark:text-white focus:outline-none focus:border-blue-400">
                         @foreach ($stages as $stage)
                             <option value="{{ $stage }}" {{ $activeStage === $stage ? 'selected' : '' }}>{{ $stage }}</option>
                         @endforeach
                     </select>
                     <input type="text" name="new_stage" maxlength="255" placeholder="Nama baru..."
-                        class="flex-1 px-3 py-2 bg-white border border-blue-100 rounded-lg text-xs font-semibold focus:outline-none focus:border-blue-400">
-                    <button type="submit" class="px-3 py-2 bg-blue-100 text-blue-600 border border-blue-200 hover:bg-blue-200 rounded-lg text-xs font-bold transition">Ganti</button>
+                        class="flex-1 px-3 py-2 bg-white dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-lg text-xs font-semibold dark:text-white dark:placeholder:text-slate-500 focus:outline-none focus:border-blue-400">
+                    <button type="submit" class="px-3 py-2 bg-blue-100 dark:bg-slate-800 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-slate-700 hover:bg-blue-200 dark:hover:bg-slate-700 rounded-lg text-xs font-bold transition">Ganti</button>
                 </form>
 
                 @php $isAtLastStage = $activeStageOrder >= $totalStages; @endphp
                 @if (!$isAtLastStage)
-                    <form method="POST" action="{{ route('freelancer.workspaces.progress', $workspace) }}" class="pt-2 border-t border-blue-100">
+                    <form method="POST" action="{{ route('freelancer.workspaces.progress', $workspace) }}" class="pt-2 border-t border-blue-100 dark:border-slate-800">
                         @csrf
                         <input type="hidden" name="action" value="move_next">
-                        <button type="submit" class="w-full px-4 py-2 bg-white border border-blue-500 text-blue-600 hover:bg-blue-50 rounded-lg text-xs font-bold transition flex items-center justify-center gap-2">
+                        <button type="submit" class="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-blue-500 dark:border-blue-400 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-slate-800 rounded-lg text-xs font-bold transition flex items-center justify-center gap-2">
                             Lanjut ke Tahap Berikutnya <i class="fa-solid fa-forward"></i>
                         </button>
                     </form>
                 @else
-                    <div class="w-full px-4 py-2.5 bg-blue-50 border border-blue-100 text-blue-400 rounded-lg text-[10px] font-bold tracking-wide text-center mt-2">
+                    <div class="w-full px-4 py-2.5 bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-800 text-blue-400 dark:text-slate-400 rounded-lg text-[10px] font-bold tracking-wide text-center mt-2">
                         Anda sudah berada di tahap terakhir.
                     </div>
                 @endif
@@ -806,7 +815,7 @@ $chatStatusMap = [
     {{-- MODAL RATING & ULASAN (Company Only) --}}
     @if (auth()->user()->role === 'company' && $workspace->status === 'Selesai')
         <div id="ratingModal" class="hidden modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-blue-950/40 backdrop-blur-md p-4">
-            <div class="modal-panel bg-white rounded-3xl shadow-[0_20px_50px_rgba(30,58,138,0.2)] w-full max-w-md overflow-hidden border border-blue-100">
+        <div class="modal-panel bg-white dark:bg-slate-900 rounded-3xl shadow-[0_20px_50px_rgba(30,58,138,0.2)] w-full max-w-md overflow-hidden border border-blue-100 dark:border-slate-800">
                 <div class="relative px-6 py-7 bg-gradient-to-br from-blue-700 via-blue-600 to-blue-500 overflow-hidden">
                     <div class="absolute inset-0 modal-header-pattern opacity-50"></div>
                     <div class="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
@@ -828,10 +837,10 @@ $chatStatusMap = [
                     </div>
                 </div>
 
-                <form method="POST" action="{{ route('company.client.review.store', $workspace->project_id) }}" class="p-6 space-y-6 bg-white">
+                <form method="POST" action="{{ route('company.client.review.store', $workspace->project_id) }}" class="p-6 space-y-6 bg-white dark:bg-slate-900">
                     @csrf
-                    <div class="bg-blue-50 border border-blue-100 rounded-2xl p-5 text-center shadow-inner">
-                        <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-3">Pilih Rating</label>
+                    <div class="bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-800 rounded-2xl p-5 text-center shadow-inner">
+                        <label class="block text-[10px] font-black text-blue-500 dark:text-blue-400 uppercase tracking-widest mb-3">Pilih Rating</label>
                         <input type="hidden" name="rating" id="ratingInput" value="5">
                         <div class="flex justify-center gap-2 mb-3" id="starRating">
                             @for ($i = 1; $i <= 5; $i++)
@@ -840,16 +849,16 @@ $chatStatusMap = [
                                 </button>
                             @endfor
                         </div>
-                        <span class="inline-block px-3 py-1 bg-white border border-blue-100 rounded text-[10px] font-black text-blue-600 uppercase tracking-widest shadow-sm" id="ratingLabel">5 - Sempurna</span>
+                        <span class="inline-block px-3 py-1 bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest shadow-sm" id="ratingLabel">5 - Sempurna</span>
                     </div>
 
                     <div>
-                        <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2">Ulasan / Testimoni</label>
+                        <label class="block text-[10px] font-black text-blue-500 dark:text-blue-400 uppercase tracking-widest mb-2">Ulasan / Testimoni</label>
                         <textarea name="review" rows="3" maxlength="500" id="reviewText"
                             oninput="document.getElementById('reviewCount').textContent = this.value.length"
-                            class="w-full px-4 py-3 bg-blue-50/50 border border-blue-100 rounded-xl text-sm font-medium text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all resize-none"
+                            class="w-full px-4 py-3 bg-blue-50/50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-xl text-sm font-medium text-blue-900 dark:text-white dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white dark:focus:bg-slate-800 transition-all resize-none"
                             placeholder="Tulis ulasan kinerja freelancer ini..."></textarea>
-                        <p class="text-[9px] font-black text-blue-300 mt-1.5 text-right"><span id="reviewCount">0</span>/500</p>
+                        <p class="text-[9px] font-black text-blue-300 dark:text-slate-400 mt-1.5 text-right"><span id="reviewCount">0</span>/500</p>
                     </div>
 
                     <button type="submit" class="btn-shimmer w-full py-3.5 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition shadow-[0_5px_15px_rgba(37,99,235,0.3)]">

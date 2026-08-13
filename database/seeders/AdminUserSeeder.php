@@ -18,7 +18,7 @@ class AdminUserSeeder extends Seeder
         if ($existing) {
             return;
         }
-
+            
         User::create([
             'name' => 'Administrator',
             'email' => $email,

@@ -5,7 +5,16 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Kirim Penawaran</title>
 
+        <script>
+            if (localStorage.getItem('theme') === 'dark') {
+                document.documentElement.classList.add('dark');
+            }
+        </script>
         <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = tailwind.config || {};
+            tailwind.config.darkMode = 'class';
+        </script>
 
         <link rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -130,7 +139,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 </style>
 </head>
 
-    <body class="bg-white text-blue-950 relative min-h-screen antialiased">
+    <body class="bg-white dark:bg-slate-900 text-blue-950 dark:text-white relative min-h-screen antialiased transition-colors duration-300">
 
         {{-- Ambient Background Glows --}}
         <div class="fixed inset-0 pointer-events-none hologram-grid-blue z-0"></div>
@@ -142,7 +151,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
             <div class="max-w-7xl mx-auto py-10 px-6">
 
                 <a href="{{ route('freelancer.projects.show',$project->id) }}"
-                class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-blue-500 hover:text-blue-700 transition-colors mb-8 group">
+                class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-400 transition-colors mb-8 group">
                     <i class="fa fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
                     Kembali ke Detail
                 </a>
@@ -152,12 +161,12 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                     <!-- FORM -->
                     <div class="lg:col-span-2">
 
-                        <div class="glass-card rounded-3xl p-8 relative overflow-hidden">
+                        <div class="glass-card dark:bg-slate-900 dark:border-slate-700 rounded-3xl p-8 relative overflow-hidden transition-colors duration-300">
                             
                             {{-- Decorative gradient line --}}
                             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 via-blue-600 to-blue-400"></div>
 
-                            <h2 class="text-2xl font-black text-blue-950 tracking-tight mb-8">
+                            <h2 class="text-2xl font-black text-blue-950 dark:text-white tracking-tight mb-8">
                                 Kirim Penawaran
                             </h2>
 
@@ -170,7 +179,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
                                 <div class="mb-6 relative">
 
-                                    <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2">
+                                    <label class="block text-[10px] font-black text-blue-500 dark:text-blue-400 uppercase tracking-widest mb-2">
                                         Harga Penawaran
                                     </label>
 
@@ -180,12 +189,12 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                     {{-- Visible input for the formatted "1.000" visual --}}
                                     <div class="relative">
                                         <div class="absolute inset-y-0 left-0 flex items-center pl-5 pointer-events-none">
-                                            <span class="text-blue-400 font-bold text-sm">Rp</span>
+                                            <span class="text-blue-400 dark:text-slate-400 font-bold text-sm">Rp</span>
                                         </div>
                                         <input
                                             type="text"
                                             id="display_harga_penawaran"
-                                            class="w-full bg-blue-50/50 border border-blue-100 rounded-xl pl-12 pr-4 py-3.5 text-sm font-bold text-blue-950 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 focus:bg-white transition-all"
+                                            class="w-full bg-blue-50/50 dark:bg-slate-800/50 border border-blue-100 dark:border-slate-700 rounded-xl pl-12 pr-4 py-3.5 text-sm font-bold text-blue-950 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 focus:bg-white dark:focus:bg-slate-800 transition-all dark:placeholder:text-slate-500"
                                             placeholder="Contoh : 4500000">
                                     </div>
 
@@ -193,44 +202,44 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
                                 <div class="mb-6">
 
-                                    <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2">
+                                    <label class="block text-[10px] font-black text-blue-500 dark:text-blue-400 uppercase tracking-widest mb-2">
                                         Estimasi Pengerjaan (Hari)
                                     </label>
 
                                     <input
                                         type="number"
                                         name="estimasi_hari"
-                                        class="w-full bg-blue-50/50 border border-blue-100 rounded-xl px-5 py-3.5 text-sm font-bold text-blue-950 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 focus:bg-white transition-all"
+                                        class="w-full bg-blue-50/50 dark:bg-slate-800/50 border border-blue-100 dark:border-slate-700 rounded-xl px-5 py-3.5 text-sm font-bold text-blue-950 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 focus:bg-white dark:focus:bg-slate-800 transition-all dark:placeholder:text-slate-500"
                                         placeholder="Misal : 14">
 
                                 </div>
 
                                 <div class="mb-6">
 
-                                    <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2">
+                                    <label class="block text-[10px] font-black text-blue-500 dark:text-blue-400 uppercase tracking-widest mb-2">
                                         Pesan Kepada Perusahaan
                                     </label>
 
                                     <textarea
                                         name="pesan"
                                         rows="7"
-                                        class="w-full bg-blue-50/50 border border-blue-100 rounded-xl px-5 py-4 text-sm font-medium text-blue-950 leading-relaxed focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 focus:bg-white transition-all resize-none"
+                                        class="w-full bg-blue-50/50 dark:bg-slate-800/50 border border-blue-100 dark:border-slate-700 rounded-xl px-5 py-4 text-sm font-medium text-blue-950 dark:text-white leading-relaxed focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 focus:bg-white dark:focus:bg-slate-800 transition-all resize-none dark:placeholder:text-slate-500"
                                         placeholder="Perkenalkan diri dan jelaskan mengapa Anda cocok mengerjakan proyek ini..."></textarea>
 
                                 </div>
 
                                 <div class="mb-8">
 
-                                    <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2">
+                                    <label class="block text-[10px] font-black text-blue-500 dark:text-blue-400 uppercase tracking-widest mb-2">
                                         Upload Proposal (PDF)
                                     </label>
 
-                                    <div class="relative w-full border-2 border-dashed border-blue-200 rounded-xl bg-blue-50/30 hover:bg-blue-50/80 hover:border-blue-400 transition-colors duration-300">
+                                    <div class="relative w-full border-2 border-dashed border-blue-200 dark:border-slate-700 rounded-xl bg-blue-50/30 dark:bg-slate-800/30 hover:bg-blue-50/80 dark:hover:bg-slate-800/80 hover:border-blue-400 dark:hover:border-slate-700 transition-colors duration-300">
                                         <input
                                             type="file"
                                             name="proposal"
                                             accept=".pdf"
-                                            class="w-full px-5 py-4 text-sm text-blue-900 cursor-pointer file:cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-[10px] file:font-black file:uppercase file:tracking-wider file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:transition-colors focus:outline-none">
+                                            class="w-full px-5 py-4 text-sm text-blue-900 dark:text-white cursor-pointer file:cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-[10px] file:font-black file:uppercase file:tracking-wider file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:transition-colors focus:outline-none">
                                     </div>
 
                                 </div>
@@ -252,9 +261,9 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                     <!-- SIDEBAR -->
                     <div>
 
-                        <div class="glass-card rounded-3xl p-6 sticky top-24 border border-blue-100">
+                        <div class="glass-card dark:bg-slate-900 dark:border-slate-800 rounded-3xl p-6 sticky top-24 border border-blue-100">
 
-                            <div class="rounded-2xl overflow-hidden border border-blue-50 mb-5 relative group shadow-sm">
+                            <div class="rounded-2xl overflow-hidden border border-blue-50 dark:border-slate-800 mb-5 relative group shadow-sm">
                                 <div class="absolute inset-0 bg-blue-600/10 opacity-0 group-hover:opacity-100 transition-opacity z-10"></div>
                                 <img
                                     src="{{ asset('storage/'.$project->image) }}"
@@ -262,14 +271,14 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                     class="h-48 w-full object-cover transform group-hover:scale-105 transition-transform duration-500">
                             </div>
 
-                            <h2 class="font-black text-lg text-blue-950 tracking-tight leading-tight">
+                            <h2 class="font-black text-lg text-blue-950 dark:text-white tracking-tight leading-tight">
                                 {{ $project->project_name }}
                             </h2>
 
                             <div class="mt-6 space-y-4">
 
                                 <div>
-                                    <p class="text-[9px] font-black tracking-widest uppercase text-blue-400 mb-1">
+                                    <p class="text-[9px] font-black tracking-widest uppercase text-blue-400 dark:text-slate-400 mb-1">
                                         Budget
                                     </p>
                                     <h3 class="font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-blue-500 text-2xl tracking-tighter drop-shadow-[0_2px_10px_rgba(59,130,246,0.1)]">
@@ -277,35 +286,35 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                     </h3>
                                 </div>
 
-                                <div class="h-px w-full bg-blue-100/50"></div>
+                                <div class="h-px w-full bg-blue-100/50 dark:bg-slate-700/50"></div>
 
                                 <div>
-                                    <p class="text-[9px] font-black tracking-widest uppercase text-blue-400 mb-1">
+                                    <p class="text-[9px] font-black tracking-widest uppercase text-blue-400 dark:text-slate-400 mb-1">
                                         Deadline
                                     </p>
-                                    <h3 class="font-bold text-blue-900 text-sm">
+                                    <h3 class="font-bold text-blue-900 dark:text-white text-sm">
                                         {{ $project->deadline }}
                                     </h3>
                                 </div>
 
-                                <div class="h-px w-full bg-blue-100/50"></div>
+                                <div class="h-px w-full bg-blue-100/50 dark:bg-slate-700/50"></div>
 
                                 <div>
-                                    <p class="text-[9px] font-black tracking-widest uppercase text-blue-400 mb-1">
+                                    <p class="text-[9px] font-black tracking-widest uppercase text-blue-400 dark:text-slate-400 mb-1">
                                         Perusahaan
                                     </p>
-                                    <h3 class="font-bold text-blue-900 text-sm">
+                                    <h3 class="font-bold text-blue-900 dark:text-white text-sm">
                                         {{ $project->owner->name }}
                                     </h3>
                                 </div>
 
-                                <div class="h-px w-full bg-blue-100/50"></div>
+                                <div class="h-px w-full bg-blue-100/50 dark:bg-slate-700/50"></div>
 
                                 <div>
-                                    <p class="text-[9px] font-black tracking-widest uppercase text-blue-400 mb-2">
+                                    <p class="text-[9px] font-black tracking-widest uppercase text-blue-400 dark:text-slate-400 mb-2">
                                         Status
                                     </p>
-                                    <span class="bg-blue-50 border border-blue-200 text-blue-600 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest shadow-sm">
+                                    <span class="bg-blue-50 dark:bg-slate-800 border border-blue-200 dark:border-slate-700 text-blue-600 dark:text-blue-400 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest shadow-sm">
                                         {{ $project->status }}
                                     </span>
                                 </div>

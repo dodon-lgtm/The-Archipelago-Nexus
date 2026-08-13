@@ -3,6 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
     <title>Arsip Proyek | ApexForge Labs</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -12,6 +17,7 @@
 
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
@@ -97,7 +103,7 @@
     </style>
 </head>
 
-<body class="bg-surface text-slate-800 min-h-screen flex font-sans antialiased selection:bg-brand selection:text-white">
+<body class="bg-surface text-slate-800 min-h-screen flex font-sans antialiased selection:bg-brand selection:text-white dark:bg-slate-900 dark:text-white transition-colors duration-300">
 
     {{-- SIDEBAR --}}
     @include('navbar.navigasi')
@@ -136,7 +142,7 @@
                         </div>
 
                         <div class="flex flex-wrap items-center gap-3 shrink-0">
-                            <a href="{{ route('company.projects.index') }}" class="btn-shimmer inline-flex items-center gap-2 bg-white text-brand hover:bg-[#f6f9ff] px-5 py-3 rounded-2xl text-sm font-bold shadow-lg shadow-black/5 transition">
+                            <a href="{{ route('company.projects.index') }}" class="btn-shimmer inline-flex items-center gap-2 bg-white text-brand hover:bg-[#f6f9ff] px-5 py-3 rounded-2xl text-sm font-bold shadow-lg shadow-black/5 transition dark:bg-slate-900 dark:hover:bg-slate-800">
                                 <i class="fa-solid fa-folder-open text-xs"></i>
                                 <span>Proyek Aktif</span>
                             </a>
@@ -146,28 +152,28 @@
 
                 {{-- SESSION SUCCESS / ERROR NOTIFICATIONS --}}
                 @if (session('success'))
-                    <div class="reveal reveal-1 flex items-center justify-between gap-3 px-5 py-4 bg-emerald-50/80 backdrop-blur-md border border-emerald-200/60 text-emerald-800 text-sm font-medium rounded-2xl shadow-sm">
+                    <div class="reveal reveal-1 flex items-center justify-between gap-3 px-5 py-4 bg-emerald-50/80 backdrop-blur-md border border-emerald-200/60 text-emerald-800 text-sm font-medium rounded-2xl shadow-sm dark:bg-emerald-900/40 dark:border-emerald-900 dark:text-emerald-300">
                         <div class="flex items-center gap-3 min-w-0">
                             <div class="w-8 h-8 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-sm shadow-emerald-500/30">
                                 <i class="fa-solid fa-check text-xs"></i>
                             </div>
                             <span class="truncate">{{ session('success') }}</span>
                         </div>
-                        <button onclick="this.parentElement.remove()" class="text-emerald-500 hover:text-emerald-700 p-1">
+                        <button onclick="this.parentElement.remove()" class="text-emerald-500 hover:text-emerald-700 p-1 dark:text-emerald-300">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
                     </div>
                 @endif
 
                 @if (session('error'))
-                    <div class="reveal reveal-1 flex items-center justify-between gap-3 px-5 py-4 bg-rose-50/80 backdrop-blur-md border border-rose-200/60 text-rose-800 text-sm font-medium rounded-2xl shadow-sm">
+                    <div class="reveal reveal-1 flex items-center justify-between gap-3 px-5 py-4 bg-rose-50/80 backdrop-blur-md border border-rose-200/60 text-rose-800 text-sm font-medium rounded-2xl shadow-sm dark:bg-rose-900/40 dark:border-rose-900 dark:text-rose-300">
                         <div class="flex items-center gap-3 min-w-0">
                             <div class="w-8 h-8 rounded-xl bg-rose-500 text-white flex items-center justify-center shrink-0 shadow-sm shadow-rose-500/30">
                                 <i class="fa-solid fa-xmark text-xs"></i>
                             </div>
                             <span class="truncate">{{ session('error') }}</span>
                         </div>
-                        <button onclick="this.parentElement.remove()" class="text-rose-500 hover:text-rose-700 p-1">
+                        <button onclick="this.parentElement.remove()" class="text-rose-500 hover:text-rose-700 p-1 dark:text-rose-300">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
                     </div>
@@ -176,8 +182,8 @@
                 {{-- SUB HEADER --}}
                 <div class="reveal reveal-2 flex items-center justify-between">
                     <div>
-                        <h2 class="text-lg font-extrabold text-slate-900 tracking-tight">Daftar Arsip</h2>
-                        <p class="text-xs text-slate-400 font-medium">Koleksi proyek nonaktif dan yang telah selesai dilakukan</p>
+                        <h2 class="text-lg font-extrabold text-slate-900 tracking-tight dark:text-white">Daftar Arsip</h2>
+                        <p class="text-xs text-slate-400 font-medium dark:text-slate-400">Koleksi proyek nonaktif dan yang telah selesai dilakukan</p>
                     </div>
                 </div>
 
@@ -191,7 +197,7 @@
                             $isInactive = $project->isInactive();
                         @endphp
                         
-                        <div class="modern-row block bg-white border border-blue-100/80 rounded-2xl p-5 shadow-sm relative overflow-hidden group">
+                        <div class="modern-row block bg-white border border-blue-100/80 rounded-2xl p-5 shadow-sm relative overflow-hidden group dark:bg-slate-900 dark:border-slate-800">
                             
                             {{-- Left Accent Bar Based on Status --}}
                             <div class="absolute left-0 top-0 bottom-0 w-1.5 {{ $isCompleted ? 'bg-emerald-500' : ($isInactive ? 'bg-amber-500' : 'bg-indigo-400') }}"></div>
@@ -199,43 +205,43 @@
                             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pl-2">
                                 {{-- Left Info --}}
                                 <div class="flex items-start gap-4 min-w-0 flex-1">
-                                    <div class="w-12 h-12 rounded-2xl bg-blue-50 text-brand border border-blue-100 flex items-center justify-center shrink-0 text-lg shadow-inner group-hover:bg-brand group-hover:text-white transition-colors duration-300">
+                                    <div class="w-12 h-12 rounded-2xl bg-blue-50 text-brand border border-blue-100 flex items-center justify-center shrink-0 text-lg shadow-inner group-hover:bg-brand group-hover:text-white transition-colors duration-300 dark:bg-slate-800 dark:border-slate-800">
                                         <i class="fa-solid fa-box-archive"></i>
                                     </div>
 
                                     <div class="min-w-0 flex-1">
                                         <div class="flex flex-wrap items-center gap-2">
-                                            <h3 class="text-base font-bold text-slate-800 group-hover:text-brand transition-colors truncate">
+                                            <h3 class="text-base font-bold text-slate-800 group-hover:text-brand transition-colors truncate dark:text-white">
                                                 {{ $project->project_name }}
                                             </h3>
                                             @if($project->category)
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-md bg-blue-50 border border-blue-100 text-brand text-[11px] font-bold">
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-md bg-blue-50 border border-blue-100 text-brand text-[11px] font-bold dark:bg-slate-800 dark:border-slate-800">
                                                     {{ $project->category->name }}
                                                 </span>
                                             @endif
                                         </div>
 
                                         @if($project->project_description)
-                                            <p class="mt-1 text-xs text-slate-500 line-clamp-1 leading-relaxed">
+                                            <p class="mt-1 text-xs text-slate-500 line-clamp-1 leading-relaxed dark:text-slate-400">
                                                 {{ $project->project_description }}
                                             </p>
                                         @endif
 
                                         <div class="mt-3 flex flex-wrap items-center gap-2 text-xs font-semibold">
                                             @if($project->budget)
-                                                <span class="inline-flex items-center gap-1.5 text-emerald-700 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-lg">
-                                                    <i class="fa-solid fa-wallet text-emerald-600 text-[10px]"></i>
+                                                <span class="inline-flex items-center gap-1.5 text-emerald-700 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-lg dark:text-emerald-300 dark:bg-emerald-900/40 dark:border-emerald-900">
+                                                    <i class="fa-solid fa-wallet text-emerald-600 text-[10px] dark:text-emerald-300"></i>
                                                     Rp {{ number_format($project->budget, 0, ',', '.') }}
                                                 </span>
                                             @endif
                                             @if($project->deadline)
-                                                <span class="inline-flex items-center gap-1.5 text-amber-700 bg-amber-50 border border-amber-100 px-2.5 py-1 rounded-lg">
+                                                <span class="inline-flex items-center gap-1.5 text-amber-700 bg-amber-50 border border-amber-100 px-2.5 py-1 rounded-lg dark:text-amber-300 dark:bg-amber-900/40 dark:border-amber-900">
                                                     <i class="fa-regular fa-calendar text-[10px]"></i>
                                                     {{ \Carbon\Carbon::parse($project->deadline)->format('d M Y') }}
                                                 </span>
                                             @endif
                                             @if($project->penawarans)
-                                                <span class="inline-flex items-center gap-1.5 text-blue-700 bg-blue-50 border border-blue-100 px-2.5 py-1 rounded-lg">
+                                                <span class="inline-flex items-center gap-1.5 text-blue-700 bg-blue-50 border border-blue-100 px-2.5 py-1 rounded-lg dark:text-blue-400 dark:bg-slate-800 dark:border-slate-800">
                                                     <i class="fa-solid fa-handshake text-[10px]"></i>
                                                     {{ $project->penawarans->count() }} Penawaran
                                                 </span>
@@ -258,18 +264,18 @@
                                                     default => 'bg-blue-50 text-blue-700 border-blue-200',
                                                 };
                                             @endphp
-                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-xl border {{ $workBadge }}">
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-xl border dark:bg-slate-800 {{ $workBadge }}">
                                                 <i class="fa-solid {{ $isCompleted ? 'fa-circle-check' : 'fa-circle-half-stroke' }} text-[10px]"></i>
                                                 {{ $workStatus }}
                                             </span>
                                         @endif
 
                                         @if($isInactive)
-                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-xl border bg-amber-50 text-amber-700 border-amber-200">
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-xl border bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/40 dark:text-amber-300 dark:border-amber-900">
                                                 <i class="fa-solid fa-pause text-[10px]"></i> Nonaktif
                                             </span>
                                         @else
-                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-xl border bg-indigo-50 text-indigo-700 border-indigo-200">
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-xl border bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-900/40 dark:text-indigo-300 dark:border-indigo-900">
                                                 <i class="fa-solid fa-box-archive text-[10px]"></i> Arsip
                                             </span>
                                         @endif
@@ -277,7 +283,7 @@
 
                                     <div class="flex items-center gap-2 w-full sm:w-auto">
                                         <a href="{{ route('company.projects.show', $project) }}"
-                                           class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition">
+                                           class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-white">
                                             <i class="fa-solid fa-eye text-[10px]"></i> Detail
                                         </a>
 
@@ -285,12 +291,12 @@
                                             <form method="POST" action="{{ route('company.projects.activate', $project) }}" class="inline">
                                                 @csrf
                                                 <button type="submit"
-                                                        class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 text-xs font-bold transition">
+                                                        class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 text-xs font-bold transition dark:bg-emerald-900/40 dark:hover:bg-emerald-900/60 dark:border-emerald-900 dark:text-emerald-300">
                                                     <i class="fa-solid fa-rotate-left text-[10px]"></i> Aktifkan
                                                 </button>
                                             </form>
                                         @else
-                                            <span class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-400 text-xs font-bold cursor-not-allowed">
+                                            <span class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-400 text-xs font-bold cursor-not-allowed dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400">
                                                 <i class="fa-solid fa-lock text-[10px]"></i> Selesai
                                             </span>
                                         @endif
@@ -299,12 +305,12 @@
                             </div>
                         </div>
                     @empty
-                        <div class="bg-white border border-blue-100/80 rounded-3xl p-12 text-center shadow-sm">
-                            <div class="w-14 h-14 mx-auto mb-3 bg-blue-50 text-slate-400 rounded-2xl flex items-center justify-center text-xl shadow-inner">
+                        <div class="bg-white border border-blue-100/80 rounded-3xl p-12 text-center shadow-sm dark:bg-slate-900 dark:border-slate-800">
+                            <div class="w-14 h-14 mx-auto mb-3 bg-blue-50 text-slate-400 rounded-2xl flex items-center justify-center text-xl shadow-inner dark:bg-slate-800 dark:text-slate-400">
                                 <i class="fa-solid fa-box-archive"></i>
                             </div>
-                            <h3 class="text-sm font-bold text-slate-700">Belum ada proyek diarsipkan</h3>
-                            <p class="text-xs text-slate-400 mt-1 max-w-xs mx-auto">Proyek yang Anda nonaktifkan atau selesaikan akan tersimpan otomatis di sini.</p>
+                            <h3 class="text-sm font-bold text-slate-700 dark:text-white">Belum ada proyek diarsipkan</h3>
+                            <p class="text-xs text-slate-400 mt-1 max-w-xs mx-auto dark:text-slate-400">Proyek yang Anda nonaktifkan atau selesaikan akan tersimpan otomatis di sini.</p>
                             <a href="{{ route('company.projects.index') }}" class="btn-shimmer inline-flex items-center gap-2 mt-4 px-4 py-2.5 bg-brand text-white rounded-xl text-xs font-bold shadow-md shadow-brand/20">
                                 <i class="fa-solid fa-arrow-left text-[10px]"></i> Kembali ke Proyek Aktif
                             </a>
@@ -315,7 +321,7 @@
                 {{-- PAGINATION --}}
                 @if ($archivedProjects->hasPages())
                     <div class="pt-4 flex justify-center">
-                        <div class="bg-white border border-blue-100/80 rounded-2xl shadow-sm px-4 py-2">
+                        <div class="bg-white border border-blue-100/80 rounded-2xl shadow-sm px-4 py-2 dark:bg-slate-900 dark:border-slate-800">
                             {{ $archivedProjects->links() }}
                         </div>
                     </div>

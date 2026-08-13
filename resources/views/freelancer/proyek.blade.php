@@ -1,10 +1,19 @@
 <!DOCTYPE html>
-<html lang="id" class="h-full bg-[#f6f9ff]">
+<html lang="id" class="h-full bg-[#f6f9ff] dark:bg-slate-950">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Proyek Terbaru - ApexForge Labs</title>
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = tailwind.config || {};
+        tailwind.config.darkMode = 'class';
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -91,7 +100,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
 </style>
 </head>
-<body class="h-full bg-[#f6f9ff] text-slate-800 antialiased selection:bg-blue-500 selection:text-white">
+<body class="h-full bg-[#f6f9ff] dark:bg-slate-950 text-slate-800 dark:text-white antialiased selection:bg-blue-500 selection:text-white transition-colors duration-300">
 
 <div class="flex h-screen overflow-hidden">
 
@@ -99,7 +108,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
 
-        <div class="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-blue-100/80 shadow-xs">
+        <div class="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-blue-100/80 dark:border-slate-800 shadow-xs">
             @include('navbar.nav')
         </div>
 
@@ -128,19 +137,19 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                 @if($projects->count() > 0)
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                         @foreach($projects as $project)
-                            <div class="group bg-white rounded-2xl border border-blue-100/80 shadow-sm hover:shadow-xl hover:border-blue-200 hover:-translate-y-1.5 transition-all duration-300 ease-out overflow-hidden flex flex-col justify-between">
+                            <div class="group bg-white dark:bg-slate-900 rounded-2xl border border-blue-100/80 dark:border-slate-800 shadow-sm hover:shadow-xl hover:border-blue-200 dark:hover:border-slate-700 hover:-translate-y-1.5 transition-all duration-300 ease-out overflow-hidden flex flex-col justify-between">
                                 
                                 <div>
                                     {{-- Image Header --}}
-                                    <div class="relative h-48 overflow-hidden bg-blue-50">
+                                    <div class="relative h-48 overflow-hidden bg-blue-50 dark:bg-slate-800">
                                         @if($project->image)
                                             <img src="{{ asset('storage/'.$project->image) }}" 
                                                  alt="{{ $project->project_name }}"
                                                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out">
                                         @else
-                                            <div class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50/50 text-slate-300">
-                                                <i class="fa-solid fa-image text-4xl mb-1 text-slate-300"></i>
-                                                <span class="text-xs font-medium text-slate-400">Tidak ada gambar</span>
+                                            <div class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 dark:from-slate-800 to-blue-50/50 dark:to-slate-800/50 text-slate-300 dark:text-slate-600">
+                                                <i class="fa-solid fa-image text-4xl mb-1 text-slate-300 dark:text-slate-600"></i>
+                                                <span class="text-xs font-medium text-slate-400 dark:text-slate-400">Tidak ada gambar</span>
                                             </div>
                                         @endif
 
@@ -162,20 +171,20 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                     <div class="p-6">
                                         {{-- Category --}}
                                         @if($project->category && $project->category->name)
-                                            <span class="inline-flex items-center text-[11px] font-bold tracking-wide uppercase text-blue-600 bg-blue-50 border border-blue-100 px-3 py-1 rounded-full mb-3">
+                                            <span class="inline-flex items-center text-[11px] font-bold tracking-wide uppercase text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-800 px-3 py-1 rounded-full mb-3">
                                                 {{ $project->category->name }}
                                             </span>
                                         @endif
 
                                         {{-- Project Name --}}
-                                        <h3 class="text-lg font-bold text-slate-900 leading-snug mb-2 group-hover:text-blue-600 transition-colors duration-200 line-clamp-2">
+                                        <h3 class="text-lg font-bold text-slate-900 dark:text-white leading-snug mb-2 group-hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 line-clamp-2">
                                             {{ $project->project_name }}
                                         </h3>
 
                                         {{-- Company / Owner --}}
                                         @if($project->owner && $project->owner->name)
-                                            <p class="text-xs font-medium text-slate-500 flex items-center gap-2 mb-3">
-                                                <span class="w-5 h-5 rounded-md bg-blue-50 flex items-center justify-center text-slate-500">
+                                            <p class="text-xs font-medium text-slate-500 dark:text-slate-400 flex items-center gap-2 mb-3">
+                                                <span class="w-5 h-5 rounded-md bg-blue-50 dark:bg-slate-800 flex items-center justify-center text-slate-500 dark:text-slate-400">
                                                     <i class="fa-regular fa-building text-[10px]"></i>
                                                 </span>
                                                 {{ $project->owner->name }}
@@ -184,7 +193,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
                                         {{-- Description --}}
                                         @if($project->project_description)
-                                            <p class="text-sm text-slate-600 leading-relaxed line-clamp-2">
+                                            <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed line-clamp-2">
                                                 {{ \Illuminate\Support\Str::limit($project->project_description, 100) }}
                                             </p>
                                         @endif
@@ -194,15 +203,15 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                 {{-- Footer Card Section --}}
                                 <div class="px-6 pb-6 pt-0">
                                     {{-- Budget & Deadline --}}
-                                    <div class="flex items-center justify-between border-t border-blue-50 pt-4 mb-4">
+                                    <div class="flex items-center justify-between border-t border-blue-50 dark:border-slate-800 pt-4 mb-4">
                                         <div>
-                                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Budget</p>
-                                            <p class="text-base font-extrabold text-blue-600">Rp {{ number_format($project->budget, 0, ',', '.') }}</p>
+                                            <p class="text-[10px] text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider">Budget</p>
+                                            <p class="text-base font-extrabold text-blue-600 dark:text-blue-400">Rp {{ number_format($project->budget, 0, ',', '.') }}</p>
                                         </div>
                                         <div class="text-right">
-                                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Deadline</p>
-                                            <p class="text-xs font-bold text-slate-700 bg-blue-50 px-2.5 py-1 rounded-md mt-0.5">
-                                                <i class="fa-regular fa-calendar-alt mr-1 text-slate-400"></i>
+                                            <p class="text-[10px] text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider">Deadline</p>
+                                            <p class="text-xs font-bold text-slate-700 dark:text-white bg-blue-50 dark:bg-slate-800 px-2.5 py-1 rounded-md mt-0.5">
+                                                <i class="fa-regular fa-calendar-alt mr-1 text-slate-400 dark:text-slate-400"></i>
                                                 {{ \Carbon\Carbon::parse($project->deadline)->isoFormat('D MMM YYYY') }}
                                             </p>
                                         </div>
@@ -228,16 +237,16 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
                 @else
                     {{-- Empty State --}}
-                    <div class="bg-white rounded-3xl border border-blue-100/80 p-12 text-center max-w-lg mx-auto my-8 shadow-xs">
-                        <div class="w-20 h-20 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-6 shadow-inner">
+                    <div class="bg-white dark:bg-slate-900 rounded-3xl border border-blue-100/80 dark:border-slate-800 p-12 text-center max-w-lg mx-auto my-8 shadow-xs">
+                        <div class="w-20 h-20 rounded-2xl bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto mb-6 shadow-inner">
                             <i class="fa-solid fa-briefcase text-3xl"></i>
                         </div>
-                        <h3 class="text-xl font-bold text-slate-900 mb-2">Belum Ada Proyek</h3>
-                        <p class="text-sm text-slate-500 leading-relaxed mb-6">
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Belum Ada Proyek</h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-6">
                             Saat ini belum ada proyek terbaru yang dipublikasikan. Silakan kembali lagi nanti untuk melihat proyek-proyek terbaru dari perusahaan.
                         </p>
                         <a href="{{ route('freelancer.dashboard') }}" 
-                           class="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold rounded-xl transition-all duration-200 shadow-sm">
+                           class="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white text-sm font-semibold rounded-xl transition-all duration-200 shadow-sm">
                             <i class="fa-solid fa-arrow-left text-xs"></i>
                             Kembali ke Dashboard
                         </a>

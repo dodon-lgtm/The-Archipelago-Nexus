@@ -5,6 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+
     <title>{{ $project->project_name }} - Detail Proyek</title>
 
     {{-- Google Font --}}
@@ -21,6 +27,11 @@
 
     {{-- Tailwind --}}
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = tailwind.config || {};
+        tailwind.config.darkMode = 'class';
+    </script>
 
     <style>
         /* ==========================================================
@@ -188,7 +199,7 @@
 </head>
 
 
-<body class="text-slate-800 min-h-screen flex">
+<body class="text-slate-800 min-h-screen flex dark:bg-slate-950 dark:text-white transition-colors duration-300">
 
 
     {{-- =====================================================
@@ -273,12 +284,12 @@
                                 href="{{ route('company.projects.index') }}"
                                 class="inline-flex items-center justify-center gap-2
                                        px-4 py-2.5
-                                       bg-white
+                                       bg-white dark:bg-slate-900
                                        rounded-xl
                                        text-sm font-semibold
-                                       text-blue-700
+                                       text-blue-700 dark:text-blue-400
                                        shadow-sm
-                                       hover:bg-blue-50
+                                       hover:bg-blue-50 dark:hover:bg-slate-800
                                        hover:-translate-y-0.5
                                        transition-all duration-200
                                        w-fit shrink-0"
@@ -353,10 +364,10 @@
                                 rounded-xl
                                 text-sm font-medium
                                 shadow-sm
-                                animate-pop">
+                                animate-pop dark:from-emerald-900/40 dark:to-teal-900/40 dark:border-emerald-900 dark:text-emerald-300">
 
-                        <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
-                            <i class="fa-solid fa-check text-emerald-600"></i>
+                        <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 dark:bg-emerald-900/40">
+                            <i class="fa-solid fa-check text-emerald-600 dark:text-emerald-300"></i>
                         </div>
 
                         <span>{{ session('success') }}</span>
@@ -376,10 +387,10 @@
                                 rounded-xl
                                 text-sm font-medium
                                 shadow-sm
-                                animate-pop">
+                                animate-pop dark:from-red-900/40 dark:to-rose-900/40 dark:border-red-900 dark:text-red-300">
 
-                        <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center shrink-0">
-                            <i class="fa-solid fa-xmark text-red-600"></i>
+                        <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center shrink-0 dark:bg-red-900/40">
+                            <i class="fa-solid fa-xmark text-red-600 dark:text-red-300"></i>
                         </div>
 
                         <span>{{ session('error') }}</span>
@@ -393,7 +404,7 @@
                 {{-- =================================================
                     INFORMASI PROYEK
                 ================================================== --}}
-                <div class="bg-white border border-blue-100 rounded-2xl overflow-hidden shadow-lg shadow-blue-500/5 mb-6 animate-slide delay-1">
+                <div class="bg-white border border-blue-100 rounded-2xl overflow-hidden shadow-lg shadow-blue-500/5 mb-6 animate-slide delay-1 transition-colors duration-300 dark:bg-slate-900 dark:border-slate-800">
 
 
                     {{-- HEADER CARD --}}
@@ -441,8 +452,8 @@
                             <span class="relative z-10 inline-flex items-center gap-2
                                          px-3 py-1.5
                                          rounded-full
-                                         bg-white
-                                         text-emerald-600
+                                         bg-white dark:bg-slate-900
+                                         text-emerald-600 dark:text-emerald-300
                                          text-xs font-bold
                                          shadow-sm w-fit">
                                 <span class="w-2 h-2 rounded-full bg-emerald-500 status-dot-live-amber"></span>
@@ -454,8 +465,8 @@
                             <span class="relative z-10 inline-flex items-center gap-2
                                          px-3 py-1.5
                                          rounded-full
-                                         bg-white
-                                         text-red-600
+                                         bg-white dark:bg-slate-900
+                                         text-red-600 dark:text-red-300
                                          text-xs font-bold
                                          shadow-sm w-fit">
                                 <span class="w-2 h-2 rounded-full bg-red-500"></span>
@@ -467,8 +478,8 @@
                             <span class="relative z-10 inline-flex items-center gap-2
                                          px-3 py-1.5
                                          rounded-full
-                                         bg-white
-                                         text-slate-600
+                                         bg-white dark:bg-slate-900
+                                         text-slate-600 dark:text-slate-300
                                          text-xs font-bold
                                          shadow-sm w-fit">
                                 <span class="w-2 h-2 rounded-full bg-slate-400"></span>
@@ -488,7 +499,7 @@
                         {{-- DESKRIPSI --}}
                         <div class="mb-6">
 
-                            <p class="text-xs font-bold uppercase tracking-wider text-blue-500 mb-3 flex items-center gap-2">
+                            <p class="text-xs font-bold uppercase tracking-wider text-blue-500 mb-3 flex items-center gap-2 dark:text-blue-400">
                                 <i class="fa-solid fa-align-left"></i>
                                 Deskripsi Proyek
                             </p>
@@ -497,17 +508,17 @@
                                         border border-blue-100
                                         border-l-4 border-l-blue-500
                                         rounded-xl
-                                        p-5">
+                                        p-5 dark:bg-slate-800/60 dark:border-slate-700">
 
                                 @if($project->project_description)
 
-                                    <p class="text-sm text-slate-600 leading-relaxed whitespace-pre-line">
+                                    <p class="text-sm text-slate-600 leading-relaxed whitespace-pre-line dark:text-slate-300">
                                         {{ $project->project_description }}
                                     </p>
 
                                 @else
 
-                                    <p class="text-sm text-slate-400 italic">
+                                    <p class="text-sm text-slate-400 italic dark:text-slate-400">
                                         Tidak ada deskripsi proyek.
                                     </p>
 
@@ -623,7 +634,7 @@
 
 
                         {{-- ACTION BUTTON --}}
-                        <div class="flex flex-wrap gap-3 pt-5 border-t border-blue-100">
+                        <div class="flex flex-wrap gap-3 pt-5 border-t border-blue-100 dark:border-slate-800">
 
                             <a
                                 href="{{ route('company.projects.edit', $project) }}"
@@ -655,12 +666,12 @@
                                     type="submit"
                                     class="inline-flex items-center gap-2
                                            px-4 py-2.5
-                                           bg-red-50
-                                           text-red-600
-                                           border border-red-100
+                                           bg-red-50 dark:bg-red-900/40
+                                           text-red-600 dark:text-red-300
+                                           border border-red-100 dark:border-red-900
                                            rounded-lg
                                            text-sm font-semibold
-                                           hover:bg-red-100
+                                           hover:bg-red-100 dark:hover:bg-red-900/60
                                            hover:-translate-y-0.5
                                            transition-all duration-200"
                                 >
@@ -680,7 +691,7 @@
                 {{-- =================================================
                         PENAWARAN FREELANCER
                     ================================================== --}}
-                <div class="bg-white border border-blue-100 rounded-2xl overflow-hidden shadow-lg shadow-blue-500/5 animate-slide delay-2">
+                <div class="bg-white border border-blue-100 rounded-2xl overflow-hidden shadow-lg shadow-blue-500/5 animate-slide delay-2 transition-colors duration-300 dark:bg-slate-900 dark:border-slate-800">
 
                     {{-- HEADER --}}
                     <div class="relative overflow-hidden px-6 py-5 border-b border-blue-100 bg-gradient-to-r from-blue-700 to-indigo-700">
@@ -717,18 +728,18 @@
                         @if ($project->penawarans->isEmpty())
 
                             {{-- EMPTY STATE --}}
-                            <div class="relative overflow-hidden py-16 text-center rounded-2xl bg-gradient-to-br from-blue-50 via-sky-50 to-indigo-50">
+                            <div class="relative overflow-hidden py-16 text-center rounded-2xl bg-gradient-to-br from-blue-50 via-sky-50 to-indigo-50 dark:from-slate-800 dark:via-slate-800 dark:to-slate-800">
                                 <div class="w-16 h-16 mx-auto mb-5
-                                            bg-white
+                                            bg-white dark:bg-slate-900
                                             shadow-sm
                                             rounded-2xl
                                             flex items-center justify-center">
-                                    <i class="fa-regular fa-file-lines text-2xl text-blue-600"></i>
+                                    <i class="fa-regular fa-file-lines text-2xl text-blue-600 dark:text-blue-400"></i>
                                 </div>
-                                <h3 class="text-base font-bold text-slate-700">
+                                <h3 class="text-base font-bold text-slate-700 dark:text-white">
                                     Belum Ada Penawaran
                                 </h3>
-                                <p class="text-sm text-slate-400 mt-2">
+                                <p class="text-sm text-slate-400 mt-2 dark:text-slate-400">
                                     Penawaran dari freelancer akan muncul di sini.
                                 </p>
                             </div>
@@ -757,7 +768,7 @@
                                                 rounded-xl
                                                 p-5
                                                 bg-gradient-to-r from-white to-blue-50/50
-                                                lift-card">
+                                                lift-card dark:border-slate-800 dark:from-slate-900 dark:to-slate-800/50">
 
                                         {{-- BAGIAN ATAS --}}
                                         <div class="flex flex-col lg:flex-row
@@ -786,16 +797,16 @@
                                                 @endif
 
                                                 <div>
-                                                    <h3 class="font-bold text-slate-800">
+                                                    <h3 class="font-bold text-slate-800 dark:text-white">
                                                         @if($penawaran->freelancer)
-                                                            <a href="{{ route('company.freelancer.profile', $penawaran->freelancer->id) }}" class="hover:text-blue-700 transition-colors duration-200">
+                                                            <a href="{{ route('company.freelancer.profile', $penawaran->freelancer->id) }}" class="hover:text-blue-700 transition-colors duration-200 dark:hover:text-blue-400">
                                                                 {{ $penawaran->freelancer->name }}
                                                             </a>
                                                         @else
                                                             Tidak diketahui
                                                         @endif
                                                     </h3>
-                                                    <p class="text-xs text-slate-400 mt-1">
+                                                    <p class="text-xs text-slate-400 mt-1 dark:text-slate-400">
                                                         Freelancer
                                                     </p>
                                                 </div>
@@ -807,9 +818,9 @@
                                                     <span class="inline-flex items-center gap-2
                                                                  px-3 py-1.5
                                                                  rounded-full
-                                                                 bg-amber-50
-                                                                 text-amber-600
-                                                                 border border-amber-100
+                                                                 bg-amber-50 dark:bg-amber-900/40
+                                                                 text-amber-600 dark:text-amber-300
+                                                                 border border-amber-100 dark:border-amber-900
                                                                  text-xs font-bold">
                                                         <span class="w-2 h-2 rounded-full bg-amber-500 status-dot-live-amber"></span>
                                                         Menunggu
@@ -818,9 +829,9 @@
                                                     <span class="inline-flex items-center gap-2
                                                                  px-3 py-1.5
                                                                  rounded-full
-                                                                 bg-emerald-50
-                                                                 text-emerald-600
-                                                                 border border-emerald-100
+                                                                 bg-emerald-50 dark:bg-emerald-900/40
+                                                                 text-emerald-600 dark:text-emerald-300
+                                                                 border border-emerald-100 dark:border-emerald-900
                                                                  text-xs font-bold">
                                                         <i class="fa-solid fa-check"></i>
                                                         Freelancer Terpilih
@@ -829,9 +840,9 @@
                                                     <span class="inline-flex items-center gap-2
                                                                  px-3 py-1.5
                                                                  rounded-full
-                                                                 bg-red-50
-                                                                 text-red-600
-                                                                 border border-red-100
+                                                                 bg-red-50 dark:bg-red-900/40
+                                                                 text-red-600 dark:text-red-300
+                                                                 border border-red-100 dark:border-red-900
                                                                  text-xs font-bold">
                                                         <i class="fa-solid fa-xmark"></i>
                                                         Ditolak
@@ -843,31 +854,31 @@
                                         {{-- DETAIL PENAWARAN --}}
                                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
                                             {{-- HARGA --}}
-                                            <div class="bg-blue-50 border border-blue-100 rounded-lg p-4 hover:bg-blue-100/70 transition-colors duration-200">
-                                                <p class="text-xs text-blue-600 font-semibold">
+                                            <div class="bg-blue-50 border border-blue-100 rounded-lg p-4 hover:bg-blue-100/70 transition-colors duration-200 dark:bg-slate-800 dark:border-slate-800 dark:hover:bg-slate-700/70">
+                                                <p class="text-xs text-blue-600 font-semibold dark:text-blue-400">
                                                     Harga Penawaran
                                                 </p>
-                                                <p class="text-base font-bold text-slate-800 mt-1">
+                                                <p class="text-base font-bold text-slate-800 mt-1 dark:text-white">
                                                     Rp {{ number_format($penawaran->harga_penawaran, 0, ',', '.') }}
                                                 </p>
                                             </div>
 
                                             {{-- ESTIMASI --}}
-                                            <div class="bg-sky-50 border border-sky-100 rounded-lg p-4 hover:bg-sky-100/70 transition-colors duration-200">
-                                                <p class="text-xs text-sky-600 font-semibold">
+                                            <div class="bg-sky-50 border border-sky-100 rounded-lg p-4 hover:bg-sky-100/70 transition-colors duration-200 dark:bg-slate-800 dark:border-slate-800 dark:hover:bg-slate-700/70">
+                                                <p class="text-xs text-sky-600 font-semibold dark:text-sky-400">
                                                     Estimasi Pengerjaan
                                                 </p>
-                                                <p class="text-base font-bold text-slate-800 mt-1">
+                                                <p class="text-base font-bold text-slate-800 mt-1 dark:text-white">
                                                     {{ $penawaran->estimasi_hari }} Hari
                                                 </p>
                                             </div>
 
                                             {{-- WAKTU --}}
-                                            <div class="bg-indigo-50 border border-indigo-100 rounded-lg p-4 hover:bg-indigo-100/70 transition-colors duration-200">
-                                                <p class="text-xs text-indigo-600 font-semibold">
+                                            <div class="bg-indigo-50 border border-indigo-100 rounded-lg p-4 hover:bg-indigo-100/70 transition-colors duration-200 dark:bg-slate-800 dark:border-slate-800 dark:hover:bg-slate-700/70">
+                                                <p class="text-xs text-indigo-600 font-semibold dark:text-indigo-400">
                                                     Waktu Dipilih
                                                 </p>
-                                                <p class="text-sm font-bold text-slate-800 mt-1">
+                                                <p class="text-sm font-bold text-slate-800 mt-1 dark:text-white">
                                                     @if ($penawaran->selected_at)
                                                         {{ $penawaran->selected_at->format('d M Y H:i') }}
                                                     @else
@@ -880,15 +891,15 @@
                                         {{-- PESAN --}}
                                         @if($penawaran->pesan)
                                             <div class="mt-4">
-                                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 dark:text-slate-400">
                                                     Pesan Freelancer
                                                 </p>
                                                 <div class="bg-slate-50
                                                             border border-slate-100
                                                             border-l-4 border-l-blue-300
                                                             rounded-lg
-                                                            p-4">
-                                                    <p class="text-sm text-slate-600 leading-relaxed">
+                                                            p-4 dark:bg-slate-800 dark:border-slate-700">
+                                                    <p class="text-sm text-slate-600 leading-relaxed dark:text-slate-300">
                                                         {{ $penawaran->pesan }}
                                                     </p>
                                                 </div>
@@ -902,7 +913,7 @@
                                                     gap-4
                                                     mt-5
                                                     pt-5
-                                                    border-t border-blue-100">
+                                                    border-t border-blue-100 dark:border-slate-800">
                                             {{-- PROPOSAL --}}
                                             <div>
                                                 @if ($penawaran->proposal)
@@ -911,12 +922,12 @@
                                                         target="_blank"
                                                         class="inline-flex items-center gap-2
                                                                px-3 py-2
-                                                               border border-blue-200
-                                                               text-blue-600
-                                                               bg-blue-50
+                                                               border border-blue-200 dark:border-slate-700
+                                                               text-blue-600 dark:text-blue-400
+                                                               bg-blue-50 dark:bg-slate-800
                                                                rounded-lg
                                                                text-xs font-semibold
-                                                               hover:bg-blue-100
+                                                               hover:bg-blue-100 dark:hover:bg-slate-700
                                                                hover:-translate-y-0.5
                                                                transition-all duration-200"
                                                     >
@@ -935,16 +946,16 @@
                                                 {{-- TOMBOL LAPOR PENAWARAN (terikat ke penawaran_id) --}}
                                                 <a
                                                     href="{{ route('company.reports.create', ['penawaran_id' => $penawaran->id]) }}"
-                                                    class="inline-flex items-center gap-2
-                                                           px-3 py-2
-                                                           border border-red-200
-                                                           text-red-600
-                                                           bg-red-50
-                                                           rounded-lg
-                                                           text-xs font-semibold
-                                                           hover:bg-red-100
-                                                           hover:-translate-y-0.5
-                                                           transition-all duration-200"
+                                                            class="inline-flex items-center gap-2
+                                                                   px-3 py-2
+                                                                   border border-red-200 dark:border-red-900
+                                                                   text-red-600 dark:text-red-300
+                                                                   bg-red-50 dark:bg-red-900/40
+                                                                   rounded-lg
+                                                                   text-xs font-semibold
+                                                                   hover:bg-red-100 dark:hover:bg-red-900/60
+                                                                   hover:-translate-y-0.5
+                                                                   transition-all duration-200"
                                                     title="Laporkan penawaran dari {{ $penawaran->freelancer->name ?? 'freelancer ini' }}"
                                                 >
                                                     <i class="fa-solid fa-flag"></i>
@@ -979,8 +990,8 @@
                                                     <div class="flex items-center gap-2">
                                                         <span class="inline-flex items-center gap-2
                                                                      px-4 py-2.5
-                                                                     bg-emerald-50
-                                                                     text-emerald-600
+                                                                     bg-emerald-50 dark:bg-emerald-900/40
+                                                                     text-emerald-600 dark:text-emerald-300
                                                                      rounded-lg
                                                                      text-xs font-bold">
                                                             <i class="fa-solid fa-circle-check"></i>
