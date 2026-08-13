@@ -19,39 +19,106 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
-        
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
 
         /* High-Tech Scrollbar (Blue/White Theme) */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.2); border-radius: 9999px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(59, 130, 246, 0.5); }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(59, 130, 246, 0.2);
+            border-radius: 9999px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(59, 130, 246, 0.5);
+        }
 
         /* Animations */
-        @keyframes fadeInBackdrop { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes modalPop { from { opacity: 0; transform: scale(.92) translateY(12px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-        
-        .modal-backdrop { animation: fadeInBackdrop .25s ease-out forwards; }
-        .modal-panel { animation: modalPop .35s cubic-bezier(.34, 1.56, .64, 1) forwards; }
+        @keyframes fadeInBackdrop {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes modalPop {
+            from {
+                opacity: 0;
+                transform: scale(.92) translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .modal-backdrop {
+            animation: fadeInBackdrop .25s ease-out forwards;
+        }
+
+        .modal-panel {
+            animation: modalPop .35s cubic-bezier(.34, 1.56, .64, 1) forwards;
+        }
 
         @keyframes iconPulseBlue {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.45); }
-            50% { box-shadow: 0 0 0 9px rgba(255, 255, 255, 0); }
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.45);
+            }
+
+            50% {
+                box-shadow: 0 0 0 9px rgba(255, 255, 255, 0);
+            }
         }
-        .icon-badge { animation: iconPulseBlue 2.4s ease-in-out infinite; }
+
+        .icon-badge {
+            animation: iconPulseBlue 2.4s ease-in-out infinite;
+        }
 
         @keyframes starPop {
-            0% { transform: scale(1) rotate(0); }
-            45% { transform: scale(1.4) rotate(-10deg); }
-            100% { transform: scale(1.05) rotate(0); }
+            0% {
+                transform: scale(1) rotate(0);
+            }
+
+            45% {
+                transform: scale(1.4) rotate(-10deg);
+            }
+
+            100% {
+                transform: scale(1.05) rotate(0);
+            }
         }
-        .star-btn.pop { animation: starPop .38s ease; }
+
+        .star-btn.pop {
+            animation: starPop .38s ease;
+        }
 
         @keyframes floatSlow {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-6px) rotate(8deg); }
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-6px) rotate(8deg);
+            }
         }
+
         .deco-star {
             position: absolute;
             color: rgba(255, 255, 255, 0.25);
@@ -60,38 +127,60 @@
 
         /* Pure Blue Styling */
         .modal-header-pattern {
-            background-image: radial-gradient(rgba(255,255,255,.16) 1.5px, transparent 1.5px);
+            background-image: radial-gradient(rgba(255, 255, 255, .16) 1.5px, transparent 1.5px);
             background-size: 16px 16px;
         }
 
         .hologram-grid-blue {
-            background-image: 
+            background-image:
                 linear-gradient(to right, rgba(59, 130, 246, 0.04) 1px, transparent 1px),
                 linear-gradient(to bottom, rgba(59, 130, 246, 0.04) 1px, transparent 1px);
             background-size: 32px 32px;
         }
 
         .star-btn {
-            background: none; border: none; cursor: pointer;
-            font-size: 1.85rem; color: #dbeafe; /* blue-100 */
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.85rem;
+            color: #dbeafe;
+            /* blue-100 */
             filter: drop-shadow(0 0 0 rgba(59, 130, 246, 0));
             transition: transform .18s ease, color .18s ease, filter .18s ease;
         }
-        .star-btn:hover { transform: scale(1.18); }
+
+        .star-btn:hover {
+            transform: scale(1.18);
+        }
+
         .star-btn.active {
-            color: #3b82f6; /* blue-500 */
+            color: #3b82f6;
+            /* blue-500 */
             transform: scale(1.05);
             filter: drop-shadow(0 2px 8px rgba(59, 130, 246, 0.6));
         }
 
-        .btn-shimmer { position: relative; overflow: hidden; isolation: isolate; }
-        .btn-shimmer::after {
-            content: ''; position: absolute; top: 0; left: -75%;
-            width: 50%; height: 100%;
-            background: linear-gradient(120deg, transparent, rgba(255,255,255,.4), transparent);
-            transform: skewX(-20deg); transition: left .65s ease;
+        .btn-shimmer {
+            position: relative;
+            overflow: hidden;
+            isolation: isolate;
         }
-        .btn-shimmer:hover::after { left: 125%; }
+
+        .btn-shimmer::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -75%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255, 255, 255, .4), transparent);
+            transform: skewX(-20deg);
+            transition: left .65s ease;
+        }
+
+        .btn-shimmer:hover::after {
+            left: 125%;
+        }
 
         .glass-card {
             background: rgba(255, 255, 255, 0.9);
@@ -100,97 +189,176 @@
             border: 1px solid rgba(59, 130, 246, 0.1);
             box-shadow: 0 10px 30px -15px rgba(59, 130, 246, 0.1);
         }
-        
-        .chat-scroll::-webkit-scrollbar { width: 4px; }
-        .chat-scroll::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.15); border-radius: 9999px; }
+
+        .chat-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .chat-scroll::-webkit-scrollbar-thumb {
+            background: rgba(59, 130, 246, 0.15);
+            border-radius: 9999px;
+        }
     </style>
-<style>
+    <style>
+        /* ApexForge Labs — Unified UI System */
+        :root {
+            --af-primary: #2563eb;
+            --af-primary-dark: #1d4ed8;
+            --af-primary-soft: #eff6ff;
+            --af-sky: #38bdf8;
+            --af-ink: #0f172a;
+            --af-muted: #64748b;
+            --af-border: #dbeafe;
+            --af-surface: #ffffff;
+            --af-page: #f6f9ff;
+        }
 
-/* ApexForge Labs — Unified UI System */
-:root{
-    --af-primary:#2563eb;
-    --af-primary-dark:#1d4ed8;
-    --af-primary-soft:#eff6ff;
-    --af-sky:#38bdf8;
-    --af-ink:#0f172a;
-    --af-muted:#64748b;
-    --af-border:#dbeafe;
-    --af-surface:#ffffff;
-    --af-page:#f6f9ff;
-}
-html{scroll-behavior:smooth}
-body{
-    font-family:'Plus Jakarta Sans',sans-serif;
-    background:
-        radial-gradient(circle at 10% -10%,rgba(56,189,248,.10),transparent 30%),
-        radial-gradient(circle at 100% 0%,rgba(37,99,235,.08),transparent 28%),
-        var(--af-page);
-}
-::selection{background:rgba(37,99,235,.18);color:#0f172a}
-::-webkit-scrollbar{width:7px;height:7px}
-::-webkit-scrollbar-track{background:rgba(241,245,249,.7)}
-::-webkit-scrollbar-thumb{background:rgba(37,99,235,.22);border-radius:999px}
-::-webkit-scrollbar-thumb:hover{background:rgba(37,99,235,.38)}
+        html {
+            scroll-behavior: smooth
+        }
 
-input,select,textarea{
-    border-color:var(--af-border)!important;
-    background:rgba(255,255,255,.92);
-    transition:border-color .2s ease,box-shadow .2s ease,background .2s ease;
-}
-input:focus,select:focus,textarea:focus{
-    border-color:rgba(37,99,235,.55)!important;
-    box-shadow:0 0 0 4px rgba(37,99,235,.09)!important;
-    outline:none!important;
-}
-button,a,[role="button"]{transition:all .2s ease}
-button:focus-visible,a:focus-visible,[role="button"]:focus-visible{
-    outline:2px solid rgba(37,99,235,.55);
-    outline-offset:2px;
-}
-table{border-collapse:separate;border-spacing:0}
-thead th{
-    background:rgba(239,246,255,.72)!important;
-    color:#334155;
-    font-weight:700;
-}
-tbody tr{transition:background .18s ease}
-tbody tr:hover{background:rgba(239,246,255,.48)}
-[class*="bg-blue-600"]{
-    box-shadow:0 8px 22px -12px rgba(37,99,235,.72);
-}
-[class*="bg-blue-600"]:hover{
-    box-shadow:0 12px 28px -12px rgba(37,99,235,.78);
-    transform:translateY(-1px);
-}
-.glass-panel,.glass-card,.glass-surface{
-    background:rgba(255,255,255,.72);
-    border:1px solid rgba(219,234,254,.85);
-    backdrop-filter:blur(18px);
-    -webkit-backdrop-filter:blur(18px);
-    box-shadow:0 18px 50px -32px rgba(30,64,175,.32);
-}
-.apex-page-glow{
-    position:fixed;inset:auto -10rem -12rem auto;width:28rem;height:28rem;
-    background:rgba(56,189,248,.09);filter:blur(70px);border-radius:999px;
-    pointer-events:none;z-index:-1;
-}
-@media (max-width:767px){
-    main{padding-left:1rem!important;padding-right:1rem!important}
-    table{min-width:680px}
-    .overflow-x-auto{-webkit-overflow-scrolling:touch}
-}
-@media (prefers-reduced-motion:reduce){
-    *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
-}
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background:
+                radial-gradient(circle at 10% -10%, rgba(56, 189, 248, .10), transparent 30%),
+                radial-gradient(circle at 100% 0%, rgba(37, 99, 235, .08), transparent 28%),
+                var(--af-page);
+        }
 
-</style>
+        ::selection {
+            background: rgba(37, 99, 235, .18);
+            color: #0f172a
+        }
+
+        ::-webkit-scrollbar {
+            width: 7px;
+            height: 7px
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(241, 245, 249, .7)
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(37, 99, 235, .22);
+            border-radius: 999px
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(37, 99, 235, .38)
+        }
+
+        input,
+        select,
+        textarea {
+            border-color: var(--af-border) !important;
+            background: rgba(255, 255, 255, .92);
+            transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: rgba(37, 99, 235, .55) !important;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, .09) !important;
+            outline: none !important;
+        }
+
+        button,a,[role="button"] {
+            transition: all .2s ease
+        }
+
+        button:focus-visible,a:focus-visible,[role="button"]:focus-visible {
+            outline: 2px solid rgba(37, 99, 235, .55);
+            outline-offset: 2px;
+        }
+
+        table {
+            border-collapse: separate;
+            border-spacing: 0
+        }
+
+        thead th {
+            background: rgba(239, 246, 255, .72) !important;
+            color: #334155;
+            font-weight: 700;
+        }
+
+        tbody tr {
+            transition: background .18s ease
+        }
+
+        tbody tr:hover {
+            background: rgba(239, 246, 255, .48)
+        }
+
+        [class*="bg-blue-600"] {
+            box-shadow: 0 8px 22px -12px rgba(37, 99, 235, .72);
+        }
+
+        [class*="bg-blue-600"]:hover {
+            box-shadow: 0 12px 28px -12px rgba(37, 99, 235, .78);
+            transform: translateY(-1px);
+        }
+
+        .glass-panel,
+        .glass-card,
+        .glass-surface {
+            background: rgba(255, 255, 255, .72);
+            border: 1px solid rgba(219, 234, 254, .85);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            box-shadow: 0 18px 50px -32px rgba(30, 64, 175, .32);
+        }
+
+        .apex-page-glow {
+            position: fixed;
+            inset: auto -10rem -12rem auto;
+            width: 28rem;
+            height: 28rem;
+            background: rgba(56, 189, 248, .09);
+            filter: blur(70px);
+            border-radius: 999px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        @media (max-width:767px) {
+            main {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important
+            }
+
+            table {
+                min-width: 680px
+            }
+
+            .overflow-x-auto {
+                -webkit-overflow-scrolling: touch
+            }
+        }
+
+        @media (prefers-reduced-motion:reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: .01ms !important;
+                scroll-behavior: auto !important
+            }
+        }
+    </style>
 </head>
 
 <body class="bg-white dark:bg-slate-900 text-blue-950 dark:text-white min-h-screen flex antialiased relative font-sans transition-colors duration-300">
     
     {{-- Ambient Background Glows --}}
     <div class="fixed inset-0 pointer-events-none hologram-grid-blue z-0"></div>
-    <div class="fixed top-[-20%] left-[-10%] w-[50rem] h-[50rem] bg-gradient-to-br from-blue-100/40 to-transparent rounded-full blur-[100px] pointer-events-none z-0"></div>
+    <div
+        class="fixed top-[-20%] left-[-10%] w-[50rem] h-[50rem] bg-gradient-to-br from-blue-100/40 to-transparent rounded-full blur-[100px] pointer-events-none z-0">
+    </div>
 
     @include('navbar.navigasi')
 
@@ -284,7 +452,8 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                 </div>
                                 <div class="p-6">
                                     <div class="text-center mb-5">
-                                        <span class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-blue-400 tracking-tighter">{{ $progressValue }}%</span>
+                                        <span
+                                            class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-blue-400 tracking-tighter">{{ $progressValue }}%</span>
                                         @if ($activeStage)
                                             <p class="text-xs font-bold text-blue-500 dark:text-blue-400 mt-2">{{ $activeStage }}</p>
                                         @endif
@@ -295,18 +464,27 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                     <div class="w-full bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-full h-3 overflow-hidden shadow-inner">
                                         <div class="h-full rounded-full bg-gradient-to-r from-blue-600 to-blue-400 transition-all duration-700 shadow-[0_0_10px_rgba(59,130,246,0.5)] relative overflow-hidden"
                                             style="width: {{ $progressValue }}%">
-                                            <div class="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.2)_50%,transparent_75%,transparent_100%)] bg-[length:20px_20px] animate-[slide_1s_linear_infinite]"></div>    
+                                            <div
+                                                class="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.2)_50%,transparent_75%,transparent_100%)] bg-[length:20px_20px] animate-[slide_1s_linear_infinite]">
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             @if (auth()->user()->role === 'freelancer')
                                 <div class="px-6 pb-6 mt-6">
-                                    <button type="button"
-                                        onclick="document.getElementById('progressModal').classList.remove('hidden')"
-                                        class="btn-shimmer w-full flex items-center justify-center gap-2 px-4 py-3.5 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition shadow-[0_5px_15px_rgba(37,99,235,0.3)]">
-                                        <i class="fa-solid fa-chart-line"></i> Update Progress
-                                    </button>
+                                    @if (in_array($workspace->status, ['Menunggu Pembayaran', 'Menunggu Verifikasi Admin', 'Selesai']))
+                                        <button type="button" disabled
+                                            class="w-full flex items-center justify-center gap-2 px-4 py-3.5 bg-gray-200 text-gray-500 rounded-xl text-sm font-bold cursor-not-allowed border border-gray-300">
+                                            <i class="fa-solid fa-lock"></i> Update Progress Dikunci
+                                        </button>
+                                    @else
+                                        <button type="button"
+                                            onclick="document.getElementById('progressModal').classList.remove('hidden')"
+                                            class="btn-shimmer w-full flex items-center justify-center gap-2 px-4 py-3.5 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition shadow-[0_5px_15px_rgba(37,99,235,0.3)]">
+                                            <i class="fa-solid fa-chart-line"></i> Update Progress
+                                        </button>
+                                    @endif
                                 </div>
                             @endif
                         </div>
@@ -322,7 +500,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                         @php
                                             $isCompleted = $index + 1 < $activeStageOrder;
                                             $isActive = $index + 1 === $activeStageOrder;
-                                            
+
                                             // PURE BLUE LOGIC
                                             if ($isCompleted) {
                                                 $icon = 'fa-solid fa-check-circle';
@@ -333,7 +511,8 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                             } elseif ($isActive) {
                                                 $icon = 'fa-solid fa-play-circle animate-pulse';
                                                 $color = 'text-white';
-                                                $bg = 'bg-blue-600 border-blue-500 shadow-[0_5px_15px_rgba(37,99,235,0.3)]';
+                                                $bg =
+                                                    'bg-blue-600 border-blue-500 shadow-[0_5px_15px_rgba(37,99,235,0.3)]';
                                                 $label = 'Aktif';
                                                 $labelColor = 'text-blue-600 bg-white dark:text-blue-400 dark:bg-slate-900';
                                             } else {
@@ -344,7 +523,8 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                                 $labelColor = '';
                                             }
                                         @endphp
-                                        <div class="border rounded-xl p-3 flex items-center gap-3 transition-all duration-300 {{ $bg }}">
+                                        <div
+                                            class="border rounded-xl p-3 flex items-center gap-3 transition-all duration-300 {{ $bg }}">
                                             <div class="w-6 flex justify-center shrink-0">
                                                 <i class="{{ $icon }} {{ $color }} text-sm"></i>
                                             </div>
@@ -353,7 +533,8 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                                     {{ $stage }}
                                                 </p>
                                                 @if ($label)
-                                                    <span class="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md {{ $labelColor }} ml-2 shrink-0">{{ $label }}</span>
+                                                    <span
+                                                        class="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md {{ $labelColor }} ml-2 shrink-0">{{ $label }}</span>
                                                 @endif
                                             </div>
                                         </div>
@@ -369,7 +550,8 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                         {{-- Chat Header --}}
                         <div class="px-6 py-4 border-b border-blue-50/50 dark:border-slate-800 bg-gradient-to-b from-blue-50/80 to-transparent flex items-center justify-between shrink-0">
                             <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 rounded-[1rem] bg-gradient-to-br from-blue-500 to-blue-700 text-white flex items-center justify-center font-black text-lg shadow-[0_4px_10px_rgba(59,130,246,0.3)]">
+                                <div
+                                    class="w-12 h-12 rounded-[1rem] bg-gradient-to-br from-blue-500 to-blue-700 text-white flex items-center justify-center font-black text-lg shadow-[0_4px_10px_rgba(59,130,246,0.3)]">
                                     {{ strtoupper(substr(auth()->user()->role === 'company' ? $workspace->freelancer->name : $workspace->company->name, 0, 1)) }}
                                 </div>
                                 <div>
@@ -394,15 +576,19 @@ $chatStatusMap = [
                             @endphp
 
                             <div class="flex items-center gap-4">
-                                <span class="flex items-center gap-2 px-3 py-1.5 rounded-lg border text-[10px] font-black uppercase tracking-wider {{ $statusStyle['box'] }}">
+                                <span
+                                    class="flex items-center gap-2 px-3 py-1.5 rounded-lg border text-[10px] font-black uppercase tracking-wider {{ $statusStyle['box'] }}">
                                     <span class="w-2 h-2 rounded-full {{ $statusStyle['dot'] }}"></span>
                                     {{ $statusStyle['label'] }}
                                 </span>
 
                                 @php
-                                    $reportedTarget = auth()->user()->role === 'company' ? $workspace->freelancer : $workspace->company;
+                                    $reportedTarget =
+                                        auth()->user()->role === 'company'
+                                            ? $workspace->freelancer
+                                            : $workspace->company;
                                 @endphp
-                                @if($reportedTarget && (int) $reportedTarget->id !== (int) auth()->id())
+                                @if ($reportedTarget && (int) $reportedTarget->id !== (int) auth()->id())
                                     <a href="{{ route(auth()->user()->role === 'company' ? 'company.reports.create' : 'freelancer.reports.create', ['workspace_id' => $workspace->id, 'reported_user_id' => $reportedTarget->id]) }}"
                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-blue-500 dark:text-blue-400 bg-white dark:bg-slate-900 border border-blue-200 dark:border-slate-700 hover:bg-blue-50 dark:hover:bg-slate-800 hover:border-blue-300 dark:hover:border-slate-600 rounded-lg transition-colors">
                                         <i class="fa-solid fa-flag"></i> Laporkan
@@ -504,7 +690,8 @@ $chatStatusMap = [
                                                 : 'bg-blue-600 border-blue-600 text-white shadow-[0_5px_15px_rgba(37,99,235,0.3)]';
                                             $psLabel = $payment->status === 'pending' ? 'Belum Dibayar' : 'Menunggu Verifikasi';
                                         @endphp
-                                        <div class="inline-block px-3 py-1.5 rounded-lg border text-[11px] font-bold tracking-wide {{ $psDesign }}">
+                                        <div
+                                            class="inline-block px-3 py-1.5 rounded-lg border text-[11px] font-bold tracking-wide {{ $psDesign }}">
                                             {{ $psLabel }}
                                         </div>
 
@@ -528,7 +715,7 @@ $chatStatusMap = [
                                         </p>
                                         <div class="flex flex-col sm:flex-row items-center gap-4">
                                             <a href="{{ route('company.payments.gateway', $workspace) }}"
-                                               class="w-full sm:w-auto px-6 py-3 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition shadow-[0_5px_15px_rgba(37,99,235,0.3)] flex items-center justify-center gap-2">
+                                                class="w-full sm:w-auto px-6 py-3 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition shadow-[0_5px_15px_rgba(37,99,235,0.3)] flex items-center justify-center gap-2">
                                                 <i class="fa-solid fa-credit-card"></i> Bayar Sekarang
                                             </a>
                                             <p class="text-[10px] font-bold text-blue-400 dark:text-slate-400 flex items-center gap-1.5">
@@ -564,7 +751,8 @@ $chatStatusMap = [
                                             <textarea name="company_note" rows="2" maxlength="2000" placeholder="Tambahkan catatan..."
                                                       class="w-full px-4 py-3 bg-blue-50/50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-xl text-sm font-medium text-blue-900 dark:text-white dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white dark:focus:bg-slate-800 transition-all resize-none"></textarea>
                                         </div>
-                                        <button type="submit" class="w-full sm:w-auto px-6 py-3 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition flex items-center justify-center gap-2 shadow-[0_5px_15px_rgba(37,99,235,0.3)]">
+                                        <button type="submit"
+                                            class="w-full sm:w-auto px-6 py-3 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition flex items-center justify-center gap-2 shadow-[0_5px_15px_rgba(37,99,235,0.3)]">
                                             <i class="fa-solid fa-cloud-arrow-up"></i> Kirim Pembayaran
                                         </button>
                                     </form>
@@ -631,7 +819,8 @@ $chatStatusMap = [
                                     @if (auth()->user()->role === 'company' && $workspace->status === 'Menunggu Review')
                                         <div class="flex items-center gap-3 px-4 py-3.5 bg-amber-50 dark:bg-amber-900/40 border border-amber-200 dark:border-amber-900 rounded-xl text-amber-700 dark:text-amber-300">
                                             <i class="fa-solid fa-clock"></i>
-                                            <p class="text-xs font-bold">Perusahaan sedang meninjau hasil pekerjaan Anda.</p>
+                                            <p class="text-xs font-bold">Perusahaan sedang meninjau hasil pekerjaan
+                                                Anda.</p>
                                         </div>
                                     @endif
 
@@ -642,7 +831,8 @@ $chatStatusMap = [
                                                     <p class="text-[10px] font-black text-blue-400 dark:text-slate-400 uppercase tracking-widest mb-3">Rating Telah Diberikan</p>
                                                     <div class="flex justify-center gap-1.5 text-blue-500 dark:text-blue-400 text-lg mb-3 drop-shadow-[0_0_8px_rgba(59,130,246,0.4)]">
                                                         @for ($i = 1; $i <= 5; $i++)
-                                                            <i class="fa-{{ $i <= $workspace->rating->score ? 'solid' : 'regular' }} fa-star"></i>
+                                                            <i
+                                                                class="fa-{{ $i <= $workspace->rating->score ? 'solid' : 'regular' }} fa-star"></i>
                                                         @endfor
                                                     </div>
                                                     @if ($workspace->rating->review)
@@ -689,12 +879,14 @@ $chatStatusMap = [
                 <div class="absolute -bottom-12 -left-8 w-28 h-28 bg-white/10 rounded-full blur-xl"></div>
                 <div class="relative flex items-center justify-between">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-inner">
+                        <div
+                            class="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-inner">
                             <i class="fa-solid fa-chart-line text-white text-lg"></i>
                         </div>
                         <div>
                             <h3 class="font-black text-white text-base tracking-tight">Update Progress</h3>
-                            <p class="text-[10px] font-bold tracking-widest uppercase text-blue-200 mt-0.5">Perbarui status pekerjaan Anda</p>
+                            <p class="text-[10px] font-bold tracking-widest uppercase text-blue-200 mt-0.5">Perbarui
+                                status pekerjaan Anda</p>
                         </div>
                     </div>
                     <button type="button" onclick="document.getElementById('progressModal').classList.add('hidden')"
@@ -727,6 +919,11 @@ $chatStatusMap = [
                                 <div id="progressPreviewBar" class="h-full rounded-full bg-blue-500 transition-all shadow-[0_0_8px_rgba(59,130,246,0.6)]" style="width: {{ $progressValue }}%"></div>
                             </div>
                         </div>
+                        <button type="button"
+                            onclick="document.getElementById('progressModal').classList.add('hidden')"
+                            class="w-full py-3 bg-blue-600 text-white rounded-xl text-sm font-bold">
+                            Tutup
+                        </button>
                     </div>
                     <p class="text-[9px] font-bold text-blue-400 dark:text-slate-400 mt-2 flex items-start gap-1">
                         <i class="fa-solid fa-circle-info mt-0.5"></i> Persentase ditentukan otomatis dari urutan tahap (tidak dapat diedit manual).
@@ -791,6 +988,7 @@ $chatStatusMap = [
 
             <script>
                 const STAGE_LIST = @json($stages);
+
                 function calcStageProgress(index) {
                     const total = STAGE_LIST.length;
                     if (!total) return 0;
@@ -798,6 +996,7 @@ $chatStatusMap = [
                     if (order >= total) return 100;
                     return Math.round((order / total) * 100);
                 }
+
                 function updateStageProgress() {
                     const sel = document.getElementById('stageSelect');
                     if (!sel) return;
@@ -822,15 +1021,18 @@ $chatStatusMap = [
                     <div class="absolute -bottom-12 -left-8 w-28 h-28 bg-white/10 rounded-full blur-xl"></div>
                     <div class="relative flex items-center justify-between">
                         <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-inner">
+                            <div
+                                class="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-inner">
                                 <i class="fa-solid fa-ranking-star text-white text-lg"></i>
                             </div>
                             <div>
                                 <h3 class="font-black text-white text-base tracking-tight">Beri Rating & Ulasan</h3>
-                                <p class="text-[10px] font-bold tracking-widest uppercase text-blue-200 mt-0.5">Bagikan pengalaman Anda</p>
+                                <p class="text-[10px] font-bold tracking-widest uppercase text-blue-200 mt-0.5">Bagikan
+                                    pengalaman Anda</p>
                             </div>
                         </div>
-                        <button type="button" onclick="document.getElementById('ratingModal').classList.add('hidden')"
+                        <button type="button"
+                            onclick="document.getElementById('ratingModal').classList.add('hidden')"
                             class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors">
                             <i class="fa-solid fa-xmark text-white text-sm"></i>
                         </button>
@@ -844,7 +1046,8 @@ $chatStatusMap = [
                         <input type="hidden" name="rating" id="ratingInput" value="5">
                         <div class="flex justify-center gap-2 mb-3" id="starRating">
                             @for ($i = 1; $i <= 5; $i++)
-                                <button type="button" class="star-btn active" data-value="{{ $i }}" onclick="setRating({{ $i }})">
+                                <button type="button" class="star-btn active" data-value="{{ $i }}"
+                                    onclick="setRating({{ $i }})">
                                     <i class="fa-solid fa-star"></i>
                                 </button>
                             @endfor
@@ -861,14 +1064,22 @@ $chatStatusMap = [
                         <p class="text-[9px] font-black text-blue-300 dark:text-slate-400 mt-1.5 text-right"><span id="reviewCount">0</span>/500</p>
                     </div>
 
-                    <button type="submit" class="btn-shimmer w-full py-3.5 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition shadow-[0_5px_15px_rgba(37,99,235,0.3)]">
+                    <button type="submit"
+                        class="btn-shimmer w-full py-3.5 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition shadow-[0_5px_15px_rgba(37,99,235,0.3)]">
                         Kirim Ulasan
                     </button>
                 </form>
             </div>
 
             <script>
-                const ratingLabels = { 1: '1 - Buruk', 2: '2 - Kurang', 3: '3 - Cukup', 4: '4 - Sangat Baik', 5: '5 - Sempurna' };
+                const ratingLabels = {
+                    1: '1 - Buruk',
+                    2: '2 - Kurang',
+                    3: '3 - Cukup',
+                    4: '4 - Sangat Baik',
+                    5: '5 - Sempurna'
+                };
+
                 function setRating(v) {
                     document.getElementById('ratingInput').value = v;
                     document.getElementById('ratingLabel').textContent = ratingLabels[v];
@@ -899,4 +1110,5 @@ $chatStatusMap = [
         });
     </script>
 </body>
+
 </html>

@@ -78,7 +78,8 @@
                         <div class="ml-2 {{ $sc['bg'] }} border {{ $sc['border'] }} rounded-xl p-4 space-y-3">
                             <div class="flex items-start justify-between gap-2">
                                 <div class="min-w-0 flex-1">
-                                    <h4 class="text-sm font-bold {{ $sc['text'] }} truncate">{{ $submission->title }}</h4>
+                                    <h4 class="text-sm font-bold {{ $sc['text'] }} truncate">{{ $submission->title }}
+                                    </h4>
                                     <p class="text-[10px] text-slate-400 mt-0.5">
                                         <i class="fa-regular fa-clock mr-1"></i>
                                         {{ $submission->created_at->format('d M Y H:i') }}
@@ -176,7 +177,7 @@
             </div>
         @endif
 
-@if (auth()->user()->role === 'freelancer')
+        @if (auth()->user()->role === 'freelancer')
             @php
                 $hasAccepted = $workspace->submissions->contains('status', 'accepted');
                 $hasPending = $workspace->submissions->contains('status', 'pending');
@@ -195,7 +196,7 @@
                 </div>
             @else
                 <button type="button" onclick="document.getElementById('uploadModal').classList.remove('hidden')"
-                    class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-brand text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition">
+                    class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-400 text-white rounded-xl text-sm font-semibold hover:bg-blue-500 transition">
                     <i class="fa-solid fa-upload"></i> Upload Hasil Pekerjaan
                 </button>
             @endif
@@ -322,7 +323,8 @@
 
             <div class="flex items-center gap-3 px-4 py-3 bg-emerald-50 dark:bg-emerald-900/40 border border-emerald-200 dark:border-emerald-900 rounded-xl text-sm text-emerald-700 dark:text-emerald-300">
                 <i class="fa-solid fa-check-circle"></i>
-                <p class="text-xs font-medium">Dengan menerima, status workspace akan menjadi <strong>Menunggu Pembayaran</strong>.</p>
+                <p class="text-xs font-medium">Dengan menerima, status workspace akan menjadi <strong>Menunggu
+                        Pembayaran</strong>.</p>
             </div>
 
             <div>
@@ -356,7 +358,8 @@
 
             <div class="flex items-center gap-3 px-4 py-3 bg-amber-50 dark:bg-amber-900/40 border border-amber-200 dark:border-amber-900 rounded-xl text-sm text-amber-700 dark:text-amber-300">
                 <i class="fa-solid fa-pen"></i>
-                <p class="text-xs font-medium">Jelaskan apa yang perlu direvisi agar freelancer dapat memperbaikinya.</p>
+                <p class="text-xs font-medium">Jelaskan apa yang perlu direvisi agar freelancer dapat memperbaikinya.
+                </p>
             </div>
 
             <div>
@@ -378,7 +381,7 @@
     function openAcceptModal(buttonEl) {
         const form = document.getElementById('acceptForm');
         const actionUrl = buttonEl.getAttribute('data-action');
-        
+
         if (form && actionUrl) {
             form.action = actionUrl;
             document.getElementById('acceptModal').classList.remove('hidden');
@@ -388,7 +391,7 @@
     function openRevisionModal(buttonEl) {
         const form = document.getElementById('revisionForm');
         const actionUrl = buttonEl.getAttribute('data-action');
-        
+
         if (form && actionUrl) {
             form.action = actionUrl;
             document.getElementById('revisionModal').classList.remove('hidden');
