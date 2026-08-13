@@ -351,17 +351,27 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
             </div>
             <div class="card-body-custom">
                 <div class="row">
-                    <div class="col-md-6 mb-4">
-                        <label class="form-label">Nama Lengkap</label>
-                        <input type="text" class="form-control bg-light text-muted" value="{{ Auth::user()->name }}" readonly>
-                        <small class="text-muted" style="font-size: 11px;">Nama diambil dari akun utama dan tidak dapat diubah di sini.</small>
-                    </div>
+                   <div class="col-md-6 mb-4">
+    <label class="form-label">Nama Lengkap</label>
+    <input
+        type="text"
+        name="name"
+        class="form-control"
+        value="{{ old('name', $user->name) }}"
+        placeholder="Masukkan nama lengkap"
+    >
+</div>
 
-                    <div class="col-md-6 mb-4">
-                        <label class="form-label">Email Utama</label>
-                        <input type="email" class="form-control bg-light text-muted" value="{{ Auth::user()->email }}" readonly>
-                        <small class="text-muted" style="font-size: 11px;">Alamat email terdaftar.</small>
-                    </div>
+<div class="col-md-6 mb-4">
+    <label class="form-label">Email Utama</label>
+    <input
+        type="email"
+        name="email"
+        class="form-control"
+        value="{{ old('email', $user->email) }}"
+        placeholder="Masukkan email"
+    >
+</div>
 
                     <div class="col-md-6 mb-4">
                         <label class="form-label">Lokasi Domisili</label>

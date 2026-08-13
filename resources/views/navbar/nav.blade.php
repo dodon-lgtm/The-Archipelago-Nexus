@@ -127,7 +127,8 @@
                         </a>
                     @endif
 
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-blue-900/70 hover:bg-blue-50 hover:text-blue-700 transition-colors">
+                    {{-- TOMBOL PENGATURAN --}}
+                    <a href="#" id="btnBukaPengaturan" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-blue-900/70 hover:bg-blue-50 hover:text-blue-700 transition-colors">
                         <i class="fa-solid fa-gear text-blue-500 w-5 text-center"></i> Pengaturan
                     </a>
                 </div>
@@ -136,7 +137,7 @@
                     <form action="{{ url('/logout') }}" method="POST">
                         @csrf
                         <button type="submit" class="w-full text-left px-4 py-3 flex items-center gap-3 rounded-xl text-sm font-bold text-blue-600 hover:bg-blue-600 hover:text-white transition-colors group">
-                            <i class="fa-solid fa-power-off w-5 text-center transition-transform group-hover:scale-110"></i> Logut
+                            <i class="fa-solid fa-power-off w-5 text-center transition-transform group-hover:scale-110"></i> Logout
                         </button>
                     </form>
                 </div>
@@ -144,6 +145,225 @@
         </div>
     </div>
 </header>
+
+<!-- ================= MODAL SETTINGS (GAYA DASHBOARD UI) ================= -->
+<div id="modalSettings" class="hidden fixed inset-0 z-[150] flex items-center justify-center bg-blue-950/30 backdrop-blur-sm transition-opacity p-4">
+    <div class="bg-white w-full max-w-4xl rounded-[2rem] shadow-[0_20px_50px_-10px_rgba(30,58,138,0.2)] overflow-hidden transform transition-all border border-blue-100 flex flex-col md:flex-row max-h-[85vh]">
+        
+        <!-- SIDEBAR MENU SETTINGS (KIRI) -->
+        <div class="w-full md:w-72 bg-blue-50/40 p-6 border-b md:border-b-0 md:border-r border-blue-100 flex flex-col justify-between shrink-0">
+            <div>
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-lg font-black text-blue-950 tracking-tight">Settings</h2>
+                    <!-- Tombol Close khusus Mobile -->
+                    <button id="closeModalSettingsMobile" class="md:hidden text-blue-400 hover:text-blue-600">
+                        <i class="fa-solid fa-xmark text-xl"></i>
+                    </button>
+                </div>
+                <p class="text-xs font-medium text-blue-400 mb-6">Kelola pengaturan akun dan preferensi Anda</p>
+
+                <!-- Menu Tab List -->
+                <nav class="space-y-1.5">
+                    <button type="button" data-tab="security" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold transition-all bg-blue-600 text-white shadow-md shadow-blue-500/20">
+                        <i class="fa-solid fa-shield-halved w-5 text-center text-sm"></i> Security
+                    </button>
+                    <button type="button" data-tab="payment" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold transition-all text-blue-900/70 hover:bg-blue-100/50 hover:text-blue-950">
+                        <i class="fa-solid fa-wallet w-5 text-center text-sm text-blue-500"></i> Payment & Payout
+                    </button>
+                    <button type="button" data-tab="notifications" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold transition-all text-blue-900/70 hover:bg-blue-100/50 hover:text-blue-950">
+                        <i class="fa-solid fa-bell w-5 text-center text-sm text-blue-500"></i> Notifications
+                    </button>
+                    <button type="button" data-tab="privacy" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold transition-all text-blue-900/70 hover:bg-blue-100/50 hover:text-blue-950">
+                        <i class="fa-solid fa-lock w-5 text-center text-sm text-blue-500"></i> Privacy
+                    </button>
+                    <button type="button" data-tab="appearance" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold transition-all text-blue-900/70 hover:bg-blue-100/50 hover:text-blue-950">
+                        <i class="fa-solid fa-palette w-5 text-center text-sm text-blue-500"></i> Appearance
+                    </button>
+                    <button type="button" data-tab="account" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold transition-all text-blue-900/70 hover:bg-blue-100/50 hover:text-blue-950">
+                        <i class="fa-solid fa-user-gear w-5 text-center text-sm text-blue-500"></i> Account
+                    </button>
+                </nav>
+            </div>
+            
+            <div class="pt-4 hidden md:block">
+                <button id="closeModalSettings" class="w-full py-2.5 rounded-xl text-xs font-bold text-blue-600 bg-blue-100/60 hover:bg-blue-200/60 transition-colors">Tutup Jendela</button>
+            </div>
+        </div>
+
+        <!-- CONTENT AREA SETTINGS (KANAN) -->
+        <div class="flex-1 p-6 md:p-8 overflow-y-auto max-h-[75vh]">
+            
+            <!-- TAB CONTENT: SECURITY -->
+            <div id="content-security" class="tab-content space-y-6">
+                <div class="flex items-center justify-between border-b border-blue-50 pb-4">
+                    <div>
+                        <h3 class="text-sm font-black text-blue-950 tracking-tight">Security</h3>
+                        <p class="text-xs text-blue-400 mt-0.5">Kelola keamanan akun Anda untuk menjaga akun tetap aman.</p>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <!-- Item 1: Ubah Password -->
+                    <div class="p-4 rounded-2xl border border-blue-100/80 bg-white hover:border-blue-200 transition-all flex items-center justify-between gap-4">
+                        <div class="flex items-start gap-3.5">
+                            <div class="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 text-blue-600 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-key text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-black text-blue-950">Ubah Password</h4>
+                                <p class="text-[11px] text-blue-400 mt-0.5">Gunakan password yang kuat untuk melindungi akun Anda.</p>
+                            </div>
+                        </div>
+                        <button class="px-3.5 py-2 rounded-xl text-xs font-bold text-blue-600 border border-blue-200 hover:bg-blue-50 transition-colors shrink-0">Ubah Password</button>
+                    </div>
+
+                    <!-- Item 2: Verifikasi Email -->
+                    <div class="p-4 rounded-2xl border border-blue-100/80 bg-white hover:border-blue-200 transition-all flex items-center justify-between gap-4">
+                        <div class="flex items-start gap-3.5">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-envelope-circle-check text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-black text-blue-950">Verifikasi Email</h4>
+                                <p class="text-[11px] text-blue-400 mt-0.5">Email Anda telah diverifikasi.</p>
+                            </div>
+                        </div>
+                        <span class="px-3 py-1.5 rounded-lg text-[10px] font-bold bg-emerald-100/70 text-emerald-700 shrink-0 flex items-center gap-1.5">
+                            <i class="fa-solid fa-check text-[9px]"></i> Terverifikasi
+                        </span>
+                    </div>
+
+                    <!-- Item 3: Verifikasi 2FA -->
+                    <div class="p-4 rounded-2xl border border-blue-100/80 bg-white hover:border-blue-200 transition-all flex items-center justify-between gap-4">
+                        <div class="flex items-start gap-3.5">
+                            <div class="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 text-blue-600 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-shield-cat text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-black text-blue-950">Verifikasi 2FA</h4>
+                                <p class="text-[11px] text-blue-400 mt-0.5">Tambahkan lapisan keamanan ekstra dengan autentikasi dua faktor.</p>
+                            </div>
+                        </div>
+                        <button class="px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-sm transition-all shrink-0">Aktifkan 2FA</button>
+                    </div>
+
+                    <!-- Item 4: Sesi Aktif -->
+                    <div class="p-4 rounded-2xl border border-blue-100/80 bg-white hover:border-blue-200 transition-all flex items-center justify-between gap-4">
+                        <div class="flex items-start gap-3.5">
+                            <div class="w-10 h-10 rounded-xl bg-amber-50 border border-amber-100 text-amber-600 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-laptop text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-black text-blue-950">Sesi Aktif</h4>
+                                <p class="text-[11px] text-blue-400 mt-0.5">Kelola perangkat yang sedang login ke akun Anda.</p>
+                            </div>
+                        </div>
+                        <button class="px-3.5 py-2 rounded-xl text-xs font-bold text-blue-600 border border-blue-200 hover:bg-blue-50 transition-colors shrink-0">Kelola Sesi</button>
+                    </div>
+
+                    <!-- Item 5: Logout Semua -->
+                    <div class="p-4 rounded-2xl border border-red-100/80 bg-red-50/10 hover:border-red-200 transition-all flex items-center justify-between gap-4">
+                        <div class="flex items-start gap-3.5">
+                            <div class="w-10 h-10 rounded-xl bg-red-50 border border-red-100 text-red-500 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-right-from-bracket text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-black text-red-950">Logout dari Semua Perangkat</h4>
+                                <p class="text-[11px] text-red-400 mt-0.5">Keluar dari semua perangkat kecuali perangkat yang Anda gunakan sekarang.</p>
+                            </div>
+                        </div>
+                        <button class="px-3.5 py-2 rounded-xl text-xs font-bold text-red-600 border border-red-200 hover:bg-red-50 transition-colors shrink-0">Logout Semua</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB CONTENT: PAYMENT & PAYOUT -->
+            <div id="content-payment" class="tab-content hidden space-y-6">
+                <div class="border-b border-blue-50 pb-4">
+                    <h3 class="text-sm font-black text-blue-950 tracking-tight">Payment & Payout</h3>
+                    <p class="text-xs text-blue-400 mt-0.5">Atur metode pembayaran, rekening bank, dan pencairan dana.</p>
+                </div>
+                <div class="p-8 text-center text-xs text-blue-400 font-semibold bg-blue-50/30 rounded-2xl border border-dashed border-blue-200">
+                    <i class="fa-solid fa-wallet text-2xl text-blue-300 mb-2"></i>
+                    <p>Belum ada metode pembayaran yang ditambahkan.</p>
+                    <button class="mt-3 px-4 py-2 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-sm transition-all">Tambah Rekening</button>
+                </div>
+            </div>
+
+            <!-- TAB CONTENT: NOTIFICATIONS -->
+            <div id="content-notifications" class="tab-content hidden space-y-6">
+                <div class="border-b border-blue-50 pb-4">
+                    <h3 class="text-sm font-black text-blue-950 tracking-tight">Notifications</h3>
+                    <p class="text-xs text-blue-400 mt-0.5">Atur preferensi pemberitahuan sistem dan email.</p>
+                </div>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between p-4 rounded-2xl border border-blue-100 bg-white">
+                        <div>
+                            <p class="text-xs font-bold text-blue-950">Notifikasi Push</p>
+                            <p class="text-[11px] text-blue-400">Terima notifikasi langsung di browser</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" class="sr-only peer" checked>
+                            <div class="w-10 h-5 bg-blue-100 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-blue-200 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB CONTENT: PRIVACY -->
+            <div id="content-privacy" class="tab-content hidden space-y-6">
+                <div class="border-b border-blue-50 pb-4">
+                    <h3 class="text-sm font-black text-blue-950 tracking-tight">Privacy</h3>
+                    <p class="text-xs text-blue-400 mt-0.5">Kontrol privasi data dan visibilitas profil Anda.</p>
+                </div>
+                <div class="p-6 rounded-2xl border border-blue-100 bg-white text-xs text-blue-900/70 font-medium">
+                    Visibilitas profil publik saat ini diatur aktif.
+                </div>
+            </div>
+
+            <!-- TAB CONTENT: APPEARANCE -->
+            <div id="content-appearance" class="tab-content hidden space-y-6">
+                <div class="border-b border-blue-50 pb-4">
+                    <h3 class="text-sm font-black text-blue-950 tracking-tight">Appearance</h3>
+                    <p class="text-xs text-blue-400 mt-0.5">Sesuaikan tema, bahasa, dan tampilan aplikasi.</p>
+                </div>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between p-4 rounded-2xl border border-blue-100 bg-white">
+                        <div>
+                            <p class="text-xs font-bold text-blue-950">Mode Gelap (Dark Mode)</p>
+                            <p class="text-[11px] text-blue-400">Ganti tema aplikasi menjadi gelap</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" class="sr-only peer">
+                            <div class="w-10 h-5 bg-blue-100 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-blue-200 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB CONTENT: ACCOUNT -->
+            <div id="content-account" class="tab-content hidden space-y-6">
+                <div class="border-b border-blue-50 pb-4">
+                    <h3 class="text-sm font-black text-blue-950 tracking-tight">Account</h3>
+                    <p class="text-xs text-blue-400 mt-0.5">Kelola informasi akun dasar Anda.</p>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-blue-900/70 mb-1">Nama Lengkap</label>
+                        <input type="text" value="{{ Auth::user()->name }}" class="w-full px-4 py-2.5 rounded-xl border border-blue-100 bg-blue-50/30 text-blue-950 text-xs font-bold focus:outline-none focus:border-blue-300 focus:bg-white transition-colors">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-blue-900/70 mb-1">Email</label>
+                        <input type="email" value="{{ Auth::user()->email }}" class="w-full px-4 py-2.5 rounded-xl border border-blue-100 bg-blue-50/30 text-blue-950 text-xs font-bold focus:outline-none focus:border-blue-300 focus:bg-white transition-colors">
+                    </div>
+                    <button class="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-sm transition-all">Simpan Perubahan</button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
 
 <style>
     @keyframes swing {
@@ -158,9 +378,10 @@
     }
 </style>
 
-{{-- Script untuk mengontrol Dropdown & Notifikasi --}}
+{{-- Script untuk mengontrol Dropdown, Notifikasi, Tab Settings & Modal --}}
 <script>
     document.addEventListener('DOMContentLoaded', () => {
+        // ============= KONTROL DROPDOWN USER =============
         const userButton = document.getElementById('userButton');
         const userDropdown = document.getElementById('userDropdown');
 
@@ -176,10 +397,70 @@
                 userDropdown.classList.add('hidden');
             }
         });
-    });
 
-    // ============= PURE BLUE NOTIFIKASI SYSTEM =============
-    document.addEventListener('DOMContentLoaded', () => {
+        // ============= SCRIPT BUKA-TUTUP MODAL SETTINGS =============
+        const btnPengaturan = document.getElementById('btnBukaPengaturan');
+        const modalSettings = document.getElementById('modalSettings');
+        const closeBtn = document.getElementById('closeModalSettings');
+        const closeBtnMobile = document.getElementById('closeModalSettingsMobile');
+
+        if (btnPengaturan && modalSettings) {
+            btnPengaturan.addEventListener('click', (e) => {
+                e.preventDefault();
+                modalSettings.classList.remove('hidden');
+                if (userDropdown) userDropdown.classList.add('hidden');
+            });
+        }
+
+        function tutupModal() {
+            if (modalSettings) modalSettings.classList.add('hidden');
+        }
+
+        if (closeBtn) closeBtn.addEventListener('click', tutupModal);
+        if (closeBtnMobile) closeBtnMobile.addEventListener('click', tutupModal);
+
+        // Menutup modal jika klik di luar box modal
+        if (modalSettings) {
+            modalSettings.addEventListener('click', (e) => {
+                if (e.target === modalSettings) {
+                    tutupModal();
+                }
+            });
+        }
+
+        // ============= SCRIPT TAB SWITCHING SETTINGS =============
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const targetTab = button.getAttribute('data-tab');
+
+                // Reset semua tombol tab (style tidak aktif)
+                tabButtons.forEach(btn => {
+                    btn.classList.remove('bg-blue-600', 'text-white', 'shadow-md', 'shadow-blue-500/20');
+                    btn.classList.add('text-blue-900/70', 'hover:bg-blue-100/50', 'hover:text-blue-950');
+                });
+
+                // Aktifkan tombol yang diklik
+                button.classList.add('bg-blue-600', 'text-white', 'shadow-md', 'shadow-blue-500/20');
+                button.classList.remove('text-blue-900/70', 'hover:bg-blue-100/50', 'hover:text-blue-950');
+
+                // Sembunyikan semua konten tab
+                tabContents.forEach(content => {
+                    content.classList.add('hidden');
+                });
+
+                // Tampilkan konten yang sesuai
+                const activeContent = document.getElementById('content-' + targetTab);
+                if (activeContent) {
+                    activeContent.classList.remove('hidden');
+                }
+            });
+        });
+
+
+        // ============= PURE BLUE NOTIFIKASI SYSTEM =============
         const notifButton = document.getElementById('notificationButton');
         const notifDropdown = document.getElementById('notificationDropdown');
         const notifList = document.getElementById('notificationList');
@@ -242,7 +523,6 @@
                 const timeAgo = getTimeAgo(notif.created_at);
                 const redirectUrl = notif.data?.redirect || '';
                 
-                // Mapped strictly to Blue/White aesthetic
                 let iconClass = 'fa-solid fa-satellite-dish';
                 let iconBg = 'bg-white border border-blue-100 text-blue-500 shadow-sm';
                 

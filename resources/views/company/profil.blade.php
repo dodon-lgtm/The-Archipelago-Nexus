@@ -410,7 +410,21 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 <body>
 
 @php
-$missingFields = get_missing_profile_fields();
+    // Inisialisasi variabel internal tanpa menggunakan external helper function
+    $user = Auth::user();
+    $profileData = $profile ?? ($companyProfile ?? null);
+
+    $missingFields = [];
+    if (!$user->name) $missingFields[] = 'Nama Lengkap';
+    if (!$user->email) $missingFields[] = 'Email';
+    if (!($user->phone ?? null) && !($profileData->phone ?? null)) $missingFields[] = 'Nomor Telepon';
+    if (!($profileData->location ?? null)) $missingFields[] = 'Lokasi';
+    if (!($profileData->company_name ?? null)) $missingFields[] = 'Nama Perusahaan';
+
+    $totalFieldsCount = 5;
+    $filledFieldsCount = $totalFieldsCount - count($missingFields);
+    $completionPercentage = round(($filledFieldsCount / $totalFieldsCount) * 100);
+    $isComplete = $completionPercentage >= 80;
 @endphp
 
 <div class="container">
@@ -466,16 +480,16 @@ $missingFields = get_missing_profile_fields();
             <div class="row align-items-center">
                 <!-- LOGO PERUSAHAAN -->
                 <div class="col-lg-2 text-center mb-4 mb-lg-0">
-                    @if(isset($profile->company_logo) && $profile->company_logo)
-                        <img src="{{ asset('storage/'.$profile->company_logo) }}" class="company-logo" alt="Logo Perusahaan">
+                    @if(isset($profileData->company_logo) && $profileData->company_logo)
+                        <img src="{{ asset('storage/'.$profileData->company_logo) }}" class="company-logo" alt="Logo Perusahaan">
                     @else
-                        <img src="{{ asset('images/company.png') }}" class="company-logo" alt="Logo Perusahaan" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($profile->company_name ?? 'Company') }}&background=0284c7&color=fff&size=140';">
+                        <img src="{{ asset('images/company.png') }}" class="company-logo" alt="Logo Perusahaan" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($profileData->company_name ?? 'Company') }}&background=0284c7&color=fff&size=140';">
                     @endif
                 </div>
 
                 <!-- DETAIL PERUSAHAAN -->
                 <div class="col-lg-7 text-center text-lg-start">
-                    <h2 class="company-name">{{ $profile->company_name ?? 'Nama Perusahaan' }}</h2>
+                    <h2 class="company-name">{{ $profileData->company_name ?? 'Nama Perusahaan' }}</h2>
                     <div>
                         <span class="company-type">
                             <i class="bi bi-patch-check-fill me-1"></i> Client Terverifikasi
@@ -484,7 +498,7 @@ $missingFields = get_missing_profile_fields();
 
                     <div class="info justify-content-center justify-content-lg-start">
                         <i class="bi bi-geo-alt-fill"></i>
-                        <span>{{ $profile->location ?? 'Belum mengisi lokasi' }}</span>
+                        <span>{{ $profileData->location ?? 'Belum mengisi lokasi' }}</span>
                     </div>
                     <div class="info justify-content-center justify-content-lg-start">
                         <i class="bi bi-envelope-fill"></i>
@@ -492,7 +506,7 @@ $missingFields = get_missing_profile_fields();
                     </div>
                     <div class="info justify-content-center justify-content-lg-start">
                         <i class="bi bi-telephone-fill"></i>
-                        <span>{{ $profile->phone ?? 'Belum mengisi nomor telepon' }}</span>
+                        <span>{{ $profileData->phone ?? 'Belum mengisi nomor telepon' }}</span>
                     </div>
                     <div class="info justify-content-center justify-content-lg-start">
                         <i class="bi bi-calendar-event-fill"></i>
@@ -503,7 +517,7 @@ $missingFields = get_missing_profile_fields();
                 <!-- BIDANG & TOMBOL EDIT -->
                 <div class="col-lg-3 text-center text-lg-end mt-4 mt-lg-0">
                     <div class="rate-badge-top">
-                        <i class="bi bi-briefcase me-1 text-primary"></i> {{ $profile->industry ?? 'Bidang Usaha' }}
+                        <i class="bi bi-briefcase me-1 text-primary"></i> {{ $profileData->industry ?? 'Bidang Usaha' }}
                     </div>
                     <br>
                     <a href="{{ route('company.profile.edit') }}" class="edit-btn">
@@ -561,8 +575,8 @@ $missingFields = get_missing_profile_fields();
                 <div class="section-title">
                     <i class="bi bi-building"></i> Tentang Perusahaan
                 </div>
-                @if(isset($profile->description) && $profile->description)
-                    <p class="text-secondary lh-lg fs-6 mb-0">{{ $profile->description }}</p>
+                @if(isset($profileData->description) && $profileData->description)
+                    <p class="text-secondary lh-lg fs-6 mb-0">{{ $profileData->description }}</p>
                 @else
                     <div class="alert alert-light border fst-italic text-muted mb-0">
                         Belum ada deskripsi perusahaan yang ditambahkan.
@@ -583,15 +597,15 @@ $missingFields = get_missing_profile_fields();
                 <table class="table table-borderless align-middle mb-0">
                     <tr>
                         <th>Nama</th>
-                        <td><strong>{{ $profile->company_name ?? '-' }}</strong></td>
+                        <td><strong>{{ $profileData->company_name ?? '-' }}</strong></td>
                     </tr>
                     <tr>
                         <th>Bidang</th>
-                        <td><strong>{{ $profile->industry ?? '-' }}</strong></td>
+                        <td><strong>{{ $profileData->industry ?? '-' }}</strong></td>
                     </tr>
                     <tr>
                         <th>Lokasi</th>
-                        <td><strong>{{ $profile->location ?? '-' }}</strong></td>
+                        <td><strong>{{ $profileData->location ?? '-' }}</strong></td>
                     </tr>
                     <tr>
                         <th>Email</th>
@@ -599,7 +613,7 @@ $missingFields = get_missing_profile_fields();
                     </tr>
                     <tr>
                         <th>Telepon</th>
-                        <td><strong>{{ $profile->phone ?? '-' }}</strong></td>
+                        <td><strong>{{ $profileData->phone ?? '-' }}</strong></td>
                     </tr>
                 </table>
             </div>
@@ -612,14 +626,14 @@ $missingFields = get_missing_profile_fields();
                     <i class="bi bi-globe2"></i> Website & Atribut
                 </div>
 
-                @if(isset($profile->website) && $profile->website)
+                @if(isset($profileData->website) && $profileData->website)
                     <div class="mb-3">
-                        <a href="{{ \Illuminate\Support\Str::startsWith($profile->website, ['http://', 'https://']) ? $profile->website : 'https://' . $profile->website }}" target="_blank" class="btn btn-primary website-btn w-100 text-white text-center">
+                        <a href="{{ \Illuminate\Support\Str::startsWith($profileData->website, ['http://', 'https://']) ? $profileData->website : 'https://' . $profileData->website }}" target="_blank" class="btn btn-primary website-btn w-100 text-white text-center">
                             <i class="bi bi-box-arrow-up-right me-2"></i> Kunjungi Website Resmi
                         </a>
                     </div>
                     <div class="p-3 bg-light rounded-3 text-muted small text-break border">
-                        <i class="bi bi-link-45deg me-1"></i> {{ $profile->website }}
+                        <i class="bi bi-link-45deg me-1"></i> {{ $profileData->website }}
                     </div>
                 @else
                     <div class="alert alert-warning border-0 shadow-sm mb-4">
@@ -632,9 +646,9 @@ $missingFields = get_missing_profile_fields();
                 <div class="row g-3">
                     <div class="col-6">
                         <span class="d-block text-muted small mb-1 fw-semibold">Bidang Usaha</span>
-                        @if(isset($profile->industry) && $profile->industry)
+                        @if(isset($profileData->industry) && $profileData->industry)
                             <span class="badge bg-primary px-3 py-2 rounded-pill fw-semibold" style="background: var(--primary-gradient) !important;">
-                                {{ $profile->industry }}
+                                {{ $profileData->industry }}
                             </span>
                         @else
                             <span class="text-muted fst-italic small">Belum diisi</span>
@@ -657,17 +671,12 @@ $missingFields = get_missing_profile_fields();
                     <h4 class="section-title mb-0">
                         <i class="bi bi-bar-chart-line"></i> Progress Kelengkapan Profil
                     </h4>
-                    <h3 class="fw-extrabold mb-0" style="color: #0284c7 !important;">{{ profile_completion_percentage() }}%</h3>
+                    <h3 class="fw-extrabold mb-0" style="color: #0284c7 !important;">{{ $completionPercentage }}%</h3>
                 </div>
 
                 <div class="progress mb-4 shadow-inner">
-                    <div class="progress-bar progress-bar-striped progress-bar-animated" style="width:{{ profile_completion_percentage() }}%"></div>
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" style="width:{{ $completionPercentage }}%"></div>
                 </div>
-
-                @php
-                    $missing = get_missing_profile_fields();
-                    $isComplete = is_profile_complete();
-                @endphp
 
                 @if($isComplete)
                     <div class="alert alert-success border-0 shadow-sm rounded-4 mb-0">
@@ -679,14 +688,14 @@ $missingFields = get_missing_profile_fields();
                     </div>
                 @endif
 
-                <div class="row g-3 text-sm">
+                <div class="row g-3 text-sm mt-1">
                     @php
                         $fields = [
                             ['key' => 'name', 'label' => 'Nama Lengkap', 'check' => Auth::user()->name],
                             ['key' => 'email', 'label' => 'Email', 'check' => Auth::user()->email],
-                            ['key' => 'phone', 'label' => 'Nomor Telepon', 'check' => Auth::user()->phone],
-                            ['key' => 'location', 'label' => 'Lokasi', 'check' => $profile->location ?? null],
-                            ['key' => 'company_name', 'label' => 'Nama Perusahaan', 'check' => $profile->company_name ?? null],
+                            ['key' => 'phone', 'label' => 'Nomor Telepon', 'check' => Auth::user()->phone ?? ($profileData->phone ?? null)],
+                            ['key' => 'location', 'label' => 'Lokasi', 'check' => $profileData->location ?? null],
+                            ['key' => 'company_name', 'label' => 'Nama Perusahaan', 'check' => $profileData->company_name ?? null],
                         ];
                     @endphp
                     @foreach($fields as $field)
