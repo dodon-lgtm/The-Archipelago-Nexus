@@ -11,6 +11,7 @@ use App\Http\Controllers\WorkspaceController;
 use App\Http\Controllers\ProjectSubmissionController;
 use App\Http\Controllers\review\ReviewController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\PasswordController;
 
 // ─── ADMIN CONTROLLERS ───────────────────────────
 use App\Http\Controllers\Admin\CompanyAccountRequestAdminController;
@@ -46,6 +47,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middl
 
 Route::get('/register', [RegisterController::class, 'showRegister'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
+
 
 // ──────────────────────────────────────────────
 // LANDING PAGE
@@ -326,4 +328,26 @@ Route::middleware('auth')->prefix('notifications')->name('notifications.')->grou
     Route::get('/', [NotificationController::class, 'index'])->name('index');
     Route::post('/{notification}/read', [NotificationController::class, 'markRead'])->name('mark-read');
     Route::post('/mark-all-read', [NotificationController::class, 'markAllRead'])->name('mark-all-read');
+});
+
+Route::middleware('auth')->group(function () {
+
+    // =========================
+    // UBAH PASSWORD
+    // =========================
+
+    Route::post('/settings/password/verify',
+        [PasswordController::class, 'verifyCurrentPassword']
+    )->name('settings.password.verify');
+
+    Route::post('/settings/password/update',
+        [PasswordController::class, 'updatePassword']
+    )->name('settings.password.update');
+
+});
+Route::middleware('auth')->group(function () {
+
+    Route::post('/password/update', [PasswordController::class, 'update'])
+        ->name('password.update');
+
 });
