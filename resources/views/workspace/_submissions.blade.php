@@ -78,7 +78,8 @@
                         <div class="ml-2 {{ $sc['bg'] }} border {{ $sc['border'] }} rounded-xl p-4 space-y-3">
                             <div class="flex items-start justify-between gap-2">
                                 <div class="min-w-0 flex-1">
-                                    <h4 class="text-sm font-bold {{ $sc['text'] }} truncate">{{ $submission->title }}</h4>
+                                    <h4 class="text-sm font-bold {{ $sc['text'] }} truncate">{{ $submission->title }}
+                                    </h4>
                                     <p class="text-[10px] text-slate-400 mt-0.5">
                                         <i class="fa-regular fa-clock mr-1"></i>
                                         {{ $submission->created_at->format('d M Y H:i') }}
@@ -104,29 +105,36 @@
                                         @if ($catFiles->isNotEmpty())
                                             <div class="bg-white/60 border border-blue-100 rounded-lg overflow-hidden">
                                                 <div class="px-3 py-2 {{ $catMeta['bg'] }} border-b border-blue-100">
-                                                    <p class="text-[10px] font-bold {{ $catMeta['color'] }} uppercase tracking-wider flex items-center gap-1.5">
+                                                    <p
+                                                        class="text-[10px] font-bold {{ $catMeta['color'] }} uppercase tracking-wider flex items-center gap-1.5">
                                                         <i class="{{ $catMeta['icon'] }}"></i>
                                                         {{ $catMeta['label'] }} ({{ $catFiles->count() }})
                                                     </p>
                                                 </div>
                                                 <div class="divide-y divide-slate-100">
                                                     @foreach ($catFiles as $file)
-                                                        <div class="flex items-center gap-3 px-3 py-2.5 hover:bg-white transition">
+                                                        <div
+                                                            class="flex items-center gap-3 px-3 py-2.5 hover:bg-white transition">
                                                             @if ($catKey === 'image')
-                                                                <div class="w-10 h-10 rounded-lg bg-blue-50 overflow-hidden shrink-0 border border-blue-100">
+                                                                <div
+                                                                    class="w-10 h-10 rounded-lg bg-blue-50 overflow-hidden shrink-0 border border-blue-100">
                                                                     <img src="{{ $file->file_url }}"
                                                                         alt="{{ $file->file_name }}"
                                                                         class="w-full h-full object-cover"
                                                                         onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'w-full h-full flex items-center justify-center\\'><i class=\\'{{ $file->file_icon }} text-sm {{ $file->file_color }}\\'></i></div>'">
                                                                 </div>
                                                             @else
-                                                                <div class="w-10 h-10 rounded-lg {{ $catMeta['bg'] }} flex items-center justify-center {{ $file->file_color }} shrink-0 border border-blue-100">
+                                                                <div
+                                                                    class="w-10 h-10 rounded-lg {{ $catMeta['bg'] }} flex items-center justify-center {{ $file->file_color }} shrink-0 border border-blue-100">
                                                                     <i class="{{ $file->file_icon }} text-sm"></i>
                                                                 </div>
                                                             @endif
                                                             <div class="flex-1 min-w-0">
-                                                                <p class="text-xs font-semibold text-slate-700 truncate">{{ $file->file_name }}</p>
-                                                                <p class="text-[10px] text-slate-400">{{ $file->formatted_size }}</p>
+                                                                <p
+                                                                    class="text-xs font-semibold text-slate-700 truncate">
+                                                                    {{ $file->file_name }}</p>
+                                                                <p class="text-[10px] text-slate-400">
+                                                                    {{ $file->formatted_size }}</p>
                                                             </div>
                                                             <a href="{{ $file->file_url }}" target="_blank"
                                                                 class="inline-flex items-center gap-1 px-2.5 py-1.5 bg-white border border-blue-100 rounded-lg text-[10px] font-semibold text-slate-600 hover:bg-[#f6f9ff] hover:border-brand/30 transition shrink-0">
@@ -143,7 +151,8 @@
 
                             @if ($submission->company_note)
                                 <div class="bg-white/60 border border-blue-100 rounded-lg p-3">
-                                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Catatan Perusahaan</p>
+                                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+                                        Catatan Perusahaan</p>
                                     <p class="text-xs text-slate-700">{{ $submission->company_note }}</p>
                                 </div>
                             @endif
@@ -176,13 +185,14 @@
             </div>
         @endif
 
-@if (auth()->user()->role === 'freelancer')
+        @if (auth()->user()->role === 'freelancer')
             @php
                 $hasAccepted = $workspace->submissions->contains('status', 'accepted');
                 $hasPending = $workspace->submissions->contains('status', 'pending');
             @endphp
             @if ($hasAccepted)
-                <div class="flex items-center gap-2 px-4 py-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-700 font-medium">
+                <div
+                    class="flex items-center gap-2 px-4 py-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-700 font-medium">
                     <i class="fa-solid fa-check-circle"></i> Hasil pekerjaan telah diterima oleh perusahaan.
                 </div>
             @elseif ($hasPending)
@@ -190,12 +200,13 @@
                     class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-200 text-slate-400 rounded-xl text-sm font-semibold cursor-not-allowed">
                     <i class="fa-solid fa-upload"></i> Upload Hasil Pekerjaan
                 </button>
-                <div class="flex items-center gap-2 px-4 py-2.5 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-700 font-medium">
+                <div
+                    class="flex items-center gap-2 px-4 py-2.5 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-700 font-medium">
                     <i class="fa-solid fa-clock"></i> Menunggu perusahaan meninjau hasil pekerjaan Anda.
                 </div>
             @else
                 <button type="button" onclick="document.getElementById('uploadModal').classList.remove('hidden')"
-                    class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-brand text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition">
+                    class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-400 text-white rounded-xl text-sm font-semibold hover:bg-blue-500 transition">
                     <i class="fa-solid fa-upload"></i> Upload Hasil Pekerjaan
                 </button>
             @endif
@@ -220,7 +231,8 @@
             @csrf
 
             <div>
-                <label class="block text-xs font-semibold text-slate-600 mb-1.5">Judul Pekerjaan <span class="text-red-500">*</span></label>
+                <label class="block text-xs font-semibold text-slate-600 mb-1.5">Judul Pekerjaan <span
+                        class="text-red-500">*</span></label>
                 <input type="text" name="title" required maxlength="255"
                     placeholder="Contoh: Final Design Dashboard"
                     class="w-full px-4 py-2.5 bg-[#f6f9ff] border border-blue-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/30">
@@ -320,9 +332,11 @@
         <form method="POST" action="" id="acceptForm" class="p-6 space-y-4">
             @csrf
 
-            <div class="flex items-center gap-3 px-4 py-3 bg-emerald-50 border border-emerald-200 rounded-xl text-sm text-emerald-700">
+            <div
+                class="flex items-center gap-3 px-4 py-3 bg-emerald-50 border border-emerald-200 rounded-xl text-sm text-emerald-700">
                 <i class="fa-solid fa-check-circle"></i>
-                <p class="text-xs font-medium">Dengan menerima, status workspace akan menjadi <strong>Menunggu Pembayaran</strong>.</p>
+                <p class="text-xs font-medium">Dengan menerima, status workspace akan menjadi <strong>Menunggu
+                        Pembayaran</strong>.</p>
             </div>
 
             <div>
@@ -342,7 +356,8 @@
 {{-- ============================================================
      MODAL MINTA REVISI (Company)
 ============================================================ --}}
-<div id="revisionModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+<div id="revisionModal"
+    class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
         <div class="px-6 py-5 border-b border-blue-50 flex items-center justify-between">
             <h3 class="font-bold text-slate-800">Minta Revisi</h3>
@@ -354,13 +369,16 @@
         <form method="POST" action="" id="revisionForm" class="p-6 space-y-4">
             @csrf
 
-            <div class="flex items-center gap-3 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-700">
+            <div
+                class="flex items-center gap-3 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-700">
                 <i class="fa-solid fa-pen"></i>
-                <p class="text-xs font-medium">Jelaskan apa yang perlu direvisi agar freelancer dapat memperbaikinya.</p>
+                <p class="text-xs font-medium">Jelaskan apa yang perlu direvisi agar freelancer dapat memperbaikinya.
+                </p>
             </div>
 
             <div>
-                <label class="block text-xs font-semibold text-slate-600 mb-1.5">Catatan Revisi <span class="text-red-500">*</span></label>
+                <label class="block text-xs font-semibold text-slate-600 mb-1.5">Catatan Revisi <span
+                        class="text-red-500">*</span></label>
                 <textarea name="company_note" rows="4" maxlength="2000" required
                     placeholder="Contoh: Mohon perbaiki halaman login dan tampilan responsif navbar..."
                     class="w-full px-4 py-2.5 bg-[#f6f9ff] border border-blue-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/30 resize-none"></textarea>
@@ -378,7 +396,7 @@
     function openAcceptModal(buttonEl) {
         const form = document.getElementById('acceptForm');
         const actionUrl = buttonEl.getAttribute('data-action');
-        
+
         if (form && actionUrl) {
             form.action = actionUrl;
             document.getElementById('acceptModal').classList.remove('hidden');
@@ -388,7 +406,7 @@
     function openRevisionModal(buttonEl) {
         const form = document.getElementById('revisionForm');
         const actionUrl = buttonEl.getAttribute('data-action');
-        
+
         if (form && actionUrl) {
             form.action = actionUrl;
             document.getElementById('revisionModal').classList.remove('hidden');

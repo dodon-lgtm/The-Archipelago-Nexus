@@ -366,8 +366,9 @@
         white-space: nowrap;
     }
     
-    /* Menu items in collapsed state */
-    #sidebar.collapsed nav a {
+    /* Menu items in collapsed state (links + Bantuan button) */
+    #sidebar.collapsed nav a,
+    #sidebar.collapsed nav button[data-bantuan-toggle] {
         justify-content: center;
         padding: 0;
         width: 48px;
@@ -377,14 +378,22 @@
         gap: 0;
         border-radius: 16px;
     }
-    #sidebar.collapsed nav a i {
+    #sidebar.collapsed nav a i,
+    #sidebar.collapsed nav button[data-bantuan-toggle] i {
         margin: 0;
         width: auto;
         font-size: 1.1rem;
     }
     #sidebar.collapsed nav a span,
-    #sidebar.collapsed nav a .fa-chevron-down {
+    #sidebar.collapsed nav a .fa-chevron-down,
+    #sidebar.collapsed nav button[data-bantuan-toggle] span,
+    #sidebar.collapsed nav button[data-bantuan-toggle] .fa-chevron-down {
         display: none;
+    }
+
+    /* Submenu Bantuan disembunyikan total saat collapsed (desktop) */
+    #sidebar.collapsed .bantuan-submenu {
+        display: none !important;
     }
     
     /* Footer card in collapsed state */
@@ -426,10 +435,12 @@
     }
 
     /* ===== HIGH-TECH GLASS TOOLTIP ON COLLAPSED HOVER ===== */
-    #sidebar.collapsed nav a {
+    #sidebar.collapsed nav a,
+    #sidebar.collapsed nav button[data-bantuan-toggle] {
         position: relative;
     }
-    #sidebar.collapsed nav a:hover::after {
+    #sidebar.collapsed nav a:hover::after,
+    #sidebar.collapsed nav button[data-bantuan-toggle]:hover::after {
         content: attr(data-tooltip);
         position: fixed;
         left: 100px;
@@ -450,7 +461,8 @@
         box-shadow: 0 10px 25px rgba(59, 130, 246, 0.15);
         animation: tooltipFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     }
-    #sidebar.collapsed nav a:hover::before {
+    #sidebar.collapsed nav a:hover::before,
+    #sidebar.collapsed nav button[data-bantuan-toggle]:hover::before {
         content: '';
         position: fixed;
         left: 90px;
@@ -492,7 +504,8 @@
             width: auto;
             margin: 0;
         }
-        #sidebar.collapsed nav a {
+        #sidebar.collapsed nav a,
+        #sidebar.collapsed nav button[data-bantuan-toggle] {
             justify-content: flex-start;
             padding: 14px 16px;
             width: auto;
@@ -501,13 +514,22 @@
             gap: 12px;
             border-radius: 16px;
         }
-        #sidebar.collapsed nav a i {
+        #sidebar.collapsed nav a i,
+        #sidebar.collapsed nav button[data-bantuan-toggle] i {
             margin: 0;
             width: 20px;
         }
         #sidebar.collapsed nav a span,
-        #sidebar.collapsed nav a .fa-chevron-down {
+        #sidebar.collapsed nav a .fa-chevron-down,
+        #sidebar.collapsed nav button[data-bantuan-toggle] span,
+        #sidebar.collapsed nav button[data-bantuan-toggle] .fa-chevron-down {
             display: inline;
+        }
+        #sidebar.collapsed .bantuan-submenu {
+            display: block !important;
+        }
+        #sidebar.collapsed .bantuan-submenu.hidden {
+            display: none !important;
         }
         #sidebar.collapsed .sidebar-footer-card {
             opacity: 1;
@@ -535,7 +557,9 @@
         }
         /* Tooltip disabled on mobile */
         #sidebar.collapsed nav a:hover::after,
-        #sidebar.collapsed nav a:hover::before {
+        #sidebar.collapsed nav a:hover::before,
+        #sidebar.collapsed nav button[data-bantuan-toggle]:hover::after,
+        #sidebar.collapsed nav button[data-bantuan-toggle]:hover::before {
             display: none !important;
             content: none !important;
         }
@@ -569,7 +593,7 @@
         // Helper to position tooltips correctly
         function positionTooltips() {
             if (!sidebar) return;
-            const links = sidebar.querySelectorAll('nav a');
+            const links = sidebar.querySelectorAll('nav a, nav button[data-bantuan-toggle]');
             const isCollapsed = sidebar.classList.contains('collapsed');
             const isMobile = window.innerWidth < 1024;
             
@@ -584,7 +608,7 @@
         // Update tooltip positions
         function updateTooltipPositions() {
             if (window.innerWidth >= 1024 && sidebar.classList.contains('collapsed')) {
-                const links = sidebar.querySelectorAll('nav a');
+                const links = sidebar.querySelectorAll('nav a, nav button[data-bantuan-toggle]');
                 links.forEach(link => {
                     const rect = link.getBoundingClientRect();
                     link.style.setProperty('--tooltip-top', (rect.top + rect.height/2) + 'px');

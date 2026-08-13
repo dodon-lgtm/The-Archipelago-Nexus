@@ -207,6 +207,13 @@ private function unreadCountForUser(LengthAwarePaginator $workspaces, int $userI
             abort(403, 'Hanya freelancer yang dapat mengupdate progress.');
         }
 
+        // BACKEND GUARD: Kunci update progress jika workspace dalam tahap pembayaran atau selesai
+        if (in_array($workspace->status, ['Menunggu Pembayaran', 'Menunggu Verifikasi Admin', 'Selesai'], true)) {
+            return redirect()
+                ->route('freelancer.workspaces.show', $workspace)
+                ->with('error', 'Tidak dapat mengupdate progress selama workspace dalam proses pembayaran, verifikasi admin, atau sudah selesai.');
+        }
+
         $request->validate([
             'action' => 'required|in:select,add,rename,move_next',
             // Untuk "select": pilih stage yang ada (disimpan sebagai nama stage + order).
@@ -322,7 +329,9 @@ private function unreadCountForUser(LengthAwarePaginator $workspaces, int $userI
      */
     private function handleCompletion(Workspace $workspace, int $progress): void
     {
-        if ($progress >= 100 && $workspace->status !== 'Selesai') {
+        $restrictedStatuses = ['Selesai', 'Menunggu Pembayaran', 'Menunggu Verifikasi Admin'];
+
+        if ($progress >= 100 && !in_array($workspace->status, $restrictedStatuses, true)) {
             $workspace->update(['status' => 'Menunggu Review']);
 
             Message::create([
