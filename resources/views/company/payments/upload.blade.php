@@ -261,7 +261,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
             </div>
         </main>
 
-        @include('navbar.footer')
+     
     </div>
 
 </body>

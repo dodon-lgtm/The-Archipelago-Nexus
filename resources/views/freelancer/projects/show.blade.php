@@ -130,7 +130,7 @@
                                         </span>
                                         <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/90 backdrop-blur-md text-white font-bold text-xs rounded-full shadow-xs border border-emerald-400/30">
                                             <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
-                                            {{ ucfirst($project->status ?? 'Open') }}
+                                            {{ \App\Models\Project::statusLabel($project->status ?? 'open') }}
                                         </span>
                                     </div>
                                 </div>
@@ -219,7 +219,7 @@
                                                 <i class="fa-solid fa-signal text-slate-400"></i> Status Proyek
                                             </span>
                                             <span class="font-bold text-emerald-600 dark:text-emerald-300 text-xs bg-emerald-50 dark:bg-emerald-900/40 px-2.5 py-0.5 rounded-md border border-emerald-100 dark:border-emerald-900">
-                                                {{ ucfirst($project->status ?? 'Open') }}
+                                                {{ \App\Models\Project::statusLabel($project->status ?? 'open') }}
                                             </span>
                                         </div>
 

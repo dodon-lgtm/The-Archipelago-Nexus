@@ -162,7 +162,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                 {{-- HEADER --}}
                 <div>
                     <h1 class="text-3xl font-black text-blue-950 tracking-tight dark:text-white">Edit Proyek</h1>
-                    <p class="text-sm font-semibold text-blue-400 mt-1 dark:text-slate-400">Perbarui informasi proyek Anda. Status proyek tidak dapat diubah dari sini.</p>
+                    <p class="text-sm font-semibold text-blue-400 mt-1 dark:text-slate-400">Perbarui informasi proyek Anda. Pilih status proyek (Open, Tutup, atau Arsip) di bawah.</p>
                 </div>
 
                 {{-- WORKFLOW LOCK NOTICE --}}
@@ -400,13 +400,36 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
                         {{-- SECTION 4: STATUS & SUBMIT --}}
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6 bg-blue-50/50 p-5 rounded-2xl border border-blue-100 dark:bg-slate-800/50 dark:border-slate-800">
-                            {{-- Status (read-only) --}}
-                            <div class="flex items-center gap-4">
-                                <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest dark:text-blue-400">Status:</label>
-                                <span class="px-5 py-2.5 bg-white border border-blue-200 rounded-xl text-sm font-bold dark:bg-slate-800 dark:border-slate-700 {{ $project->status === 'Open' ? 'text-emerald-600' : 'text-slate-500' }} shadow-sm">
-                                    {{ $project->status }}
-                                </span>
-                                <p class="text-[10px] font-semibold text-blue-400 dark:text-slate-400">Status proyek hanya diubah lewat aksi "Tutup Proyek".</p>
+                            {{-- Status: hanya SATU pilihan (open/closed/archived) --}}
+                            <div class="flex items-start sm:items-center gap-4 flex-wrap">
+                                <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest dark:text-blue-400 mt-1.5">Status Proyek:</label>
+
+                                <div class="flex flex-wrap items-center gap-2">
+                                    @foreach ([
+                                        \App\Models\Project::STATUS_OPEN => 'Open',
+                                        \App\Models\Project::STATUS_CLOSED => 'Tutup',
+                                        \App\Models\Project::STATUS_ARCHIVED => 'Arsip',
+                                    ] as $value => $label)
+                                        @php
+                                            $isSelected = (string) old('status', $project->status) === $value;
+                                        @endphp
+                                        <label class="inline-flex items-center gap-2 px-4 py-2 rounded-xl border cursor-pointer transition select-none
+                                            {{ $isSelected
+                                                ? 'bg-blue-600 border-blue-600 text-white shadow-[0_5px_15px_rgba(37,99,235,0.3)]'
+                                                : 'bg-white border-blue-200 text-blue-950 dark:bg-slate-800 dark:border-slate-700 dark:text-white hover:border-blue-400' }}
+                                            {{ $isLocked('status') ? 'opacity-60 cursor-not-allowed' : '' }}">
+                                            <input type="radio" name="status" value="{{ $value }}"
+                                                {{ $isSelected ? 'checked' : '' }}
+                                                {{ $isLocked('status') ? 'disabled' : '' }}
+                                                class="w-4 h-4 accent-blue-600">
+                                            <span class="text-sm font-bold">{{ $label }}</span>
+                                        </label>
+                                    @endforeach
+                                </div>
+
+                                <p class="text-[10px] font-semibold text-blue-400 dark:text-slate-400 hidden md:block">
+                                    Pilih salah satu status. Status yang tersimpan otomatis terpilih.
+                                </p>
                             </div>
 
                             {{-- Buttons --}}
@@ -429,12 +452,13 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
             </div>
         </main>
 
-        @include('navbar.footer')
+       
 
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Budget Formatter Script
             const displayInput = document.getElementById('display_budget');
             const realInput = document.getElementById('real_budget');
 

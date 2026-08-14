@@ -194,13 +194,12 @@
                             $workspace = $project->workspace;
                             $workStatus = $workspace?->status;
                             $isCompleted = $project->isCompleted();
-                            $isInactive = $project->isInactive();
                         @endphp
                         
                         <div class="modern-row block bg-white border border-blue-100/80 rounded-2xl p-5 shadow-sm relative overflow-hidden group dark:bg-slate-900 dark:border-slate-800">
                             
                             {{-- Left Accent Bar Based on Status --}}
-                            <div class="absolute left-0 top-0 bottom-0 w-1.5 {{ $isCompleted ? 'bg-emerald-500' : ($isInactive ? 'bg-amber-500' : 'bg-indigo-400') }}"></div>
+                            <div class="absolute left-0 top-0 bottom-0 w-1.5 {{ $isCompleted ? 'bg-emerald-500' : 'bg-indigo-400' }}"></div>
 
                             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pl-2">
                                 {{-- Left Info --}}
@@ -270,15 +269,9 @@
                                             </span>
                                         @endif
 
-                                        @if($isInactive)
-                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-xl border bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/40 dark:text-amber-300 dark:border-amber-900">
-                                                <i class="fa-solid fa-pause text-[10px]"></i> Nonaktif
-                                            </span>
-                                        @else
-                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-xl border bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-900/40 dark:text-indigo-300 dark:border-indigo-900">
-                                                <i class="fa-solid fa-box-archive text-[10px]"></i> Arsip
-                                            </span>
-                                        @endif
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-xl border bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-900/40 dark:text-indigo-300 dark:border-indigo-900">
+                                            <i class="fa-solid fa-box-archive text-[10px]"></i> Arsip
+                                        </span>
                                     </div>
 
                                     <div class="flex items-center gap-2 w-full sm:w-auto">
@@ -331,7 +324,7 @@
         </main>
 
         {{-- FOOTER --}}
-        @include('navbar.footer')
+       
 
     </div>
 

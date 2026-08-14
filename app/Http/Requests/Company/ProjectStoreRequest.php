@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Company;
 
+use App\Models\Project;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ProjectStoreRequest extends FormRequest
 {
@@ -11,29 +13,28 @@ class ProjectStoreRequest extends FormRequest
         return true;
     }
 
-   public function rules(): array
-{
-    return [
+    public function rules(): array
+    {
+        return [
 
-        'project_name' => ['required', 'string', 'max:255'],
+            'project_name' => ['required', 'string', 'max:255'],
 
-        'project_description' => ['required', 'string'],
+            'project_description' => ['required', 'string'],
 
-        'category_id' => ['nullable', 'integer', 'exists:categories,id'],
+            'category_id' => ['nullable', 'integer', 'exists:categories,id'],
 
-        'budget' => ['required', 'numeric'],
+            'budget' => ['required', 'numeric'],
 
-        'deadline' => ['required', 'date'],
+            'deadline' => ['required', 'date'],
 
-        'skills' => ['required', 'string'],
+            'skills' => ['required', 'string'],
 
-        'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
 
-        'attachment' => ['nullable', 'mimes:pdf,doc,docx,zip,rar', 'max:10240'],
+            'attachment' => ['nullable', 'mimes:pdf,doc,docx,zip,rar', 'max:10240'],
 
-        'status' => ['required', 'in:Open,Closed'],
+            'status' => ['required', Rule::in(Project::STATUSES)],
 
-    ];
+        ];
+    }
 }
-}
-
