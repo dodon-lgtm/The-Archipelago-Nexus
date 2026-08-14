@@ -306,7 +306,7 @@
     </div>
 </div>
 
-<!-- ================= MODAL UBAH PASSWORD ================= -->
+<!-- ================= MODAL UBAH PASSWORD (MULTI-STEP) ================= -->
 <div id="modalUbahPassword"
     class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-blue-950/30 dark:bg-slate-950/70 backdrop-blur-sm p-4">
 
@@ -315,11 +315,11 @@
         <!-- Header -->
         <div class="p-6 border-b border-blue-50 dark:border-slate-800 flex items-center justify-between">
             <div>
-                <h3 class="text-base font-black text-blue-950 dark:text-white">
-                    Ubah Password
+                <h3 id="modalPasswordTitle" class="text-base font-black text-blue-950 dark:text-white">
+                    Verifikasi Keamanan
                 </h3>
-                <p class="text-xs text-blue-400 dark:text-slate-400 mt-1">
-                    Perbarui password untuk menjaga keamanan akun Anda.
+                <p id="modalPasswordSubtitle" class="text-xs text-blue-400 dark:text-slate-400 mt-1">
+                    Masukkan password saat ini untuk melanjutkan.
                 </p>
             </div>
 
@@ -329,93 +329,112 @@
             </button>
         </div>
 
-        <!-- Form Tampilan -->
-        <div class="p-6 space-y-4">
+        <!-- CONTAINER STEP -->
+        <div class="p-6">
 
-            <!-- Password Saat Ini -->
-            <div>
-                <label class="block text-xs font-bold text-blue-900/70 dark:text-slate-300 mb-1.5">
-                    Password Saat Ini
-                </label>
+            <!-- ================= STEP 1: VERIFIKASI PASSWORD SAAT INI ================= -->
+            <div id="step1Card" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-blue-900/70 dark:text-slate-300 mb-1.5">
+                        Password Saat Ini
+                    </label>
 
-                <div class="relative">
-                    <input
-                        type="password"
-                        id="currentPassword"
-                        placeholder="Masukkan password saat ini"
-                        class="w-full px-4 py-3 pr-11 rounded-xl border border-blue-100 dark:border-slate-700 bg-blue-50/30 dark:bg-slate-800 text-blue-950 dark:text-white placeholder-blue-300 dark:placeholder-slate-500 text-xs font-bold focus:outline-none focus:border-blue-300 dark:focus:border-slate-500 focus:bg-white dark:focus:bg-slate-800 transition-colors">
+                    <div class="relative">
+                        <input
+                            type="password"
+                            id="currentPassword"
+                            placeholder="Masukkan password saat ini"
+                            class="w-full px-4 py-3 pr-11 rounded-xl border border-blue-100 dark:border-slate-700 bg-blue-50/30 dark:bg-slate-800 text-blue-950 dark:text-white placeholder-blue-300 dark:placeholder-slate-500 text-xs font-bold focus:outline-none focus:border-blue-300 dark:focus:border-slate-500 focus:bg-white dark:focus:bg-slate-800 transition-colors">
 
-                    <button type="button"
-                        data-password-toggle="currentPassword"
-                        class="absolute right-3 top-1/2 -translate-y-1/2 text-blue-400 dark:text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                        <i class="fa-regular fa-eye"></i>
+                        <button type="button"
+                            data-password-toggle="currentPassword"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 text-blue-400 dark:text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                            <i class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tombol Step 1 -->
+                <div class="flex items-center justify-end gap-2 pt-2">
+                    <button type="button" id="btnBatalStep1"
+                        class="px-4 py-2.5 rounded-xl text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-slate-800 hover:bg-blue-100 dark:hover:bg-slate-700 transition-colors">
+                        Batal
+                    </button>
+
+                    <button type="button" id="btnNextStep"
+                        class="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-sm transition-all">
+                        Lanjutkan
                     </button>
                 </div>
             </div>
 
-            <!-- Password Baru -->
-            <div>
-                <label class="block text-xs font-bold text-blue-900/70 dark:text-slate-300 mb-1.5">
-                    Password Baru
-                </label>
 
-                <div class="relative">
-                    <input
-                        type="password"
-                        id="newPassword"
-                        placeholder="Masukkan password baru"
-                        class="w-full px-4 py-3 pr-11 rounded-xl border border-blue-100 dark:border-slate-700 bg-blue-50/30 dark:bg-slate-800 text-blue-950 dark:text-white placeholder-blue-300 dark:placeholder-slate-500 text-xs font-bold focus:outline-none focus:border-blue-300 dark:focus:border-slate-500 focus:bg-white dark:focus:bg-slate-800 transition-colors">
+            <!-- ================= STEP 2: INPUT PASSWORD BARU (HIDDEN AWALNYA) ================= -->
+            <div id="step2Card" class="hidden space-y-4">
+                <!-- Password Baru -->
+                <div>
+                    <label class="block text-xs font-bold text-blue-900/70 dark:text-slate-300 mb-1.5">
+                        Password Baru
+                    </label>
 
-                    <button type="button"
-                        data-password-toggle="newPassword"
-                        class="absolute right-3 top-1/2 -translate-y-1/2 text-blue-400 dark:text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                        <i class="fa-regular fa-eye"></i>
+                    <div class="relative">
+                        <input
+                            type="password"
+                            id="newPassword"
+                            placeholder="Masukkan password baru"
+                            class="w-full px-4 py-3 pr-11 rounded-xl border border-blue-100 dark:border-slate-700 bg-blue-50/30 dark:bg-slate-800 text-blue-950 dark:text-white placeholder-blue-300 dark:placeholder-slate-500 text-xs font-bold focus:outline-none focus:border-blue-300 dark:focus:border-slate-500 focus:bg-white dark:focus:bg-slate-800 transition-colors">
+
+                        <button type="button"
+                            data-password-toggle="newPassword"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 text-blue-400 dark:text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                            <i class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Konfirmasi Password -->
+                <div>
+                    <label class="block text-xs font-bold text-blue-900/70 dark:text-slate-300 mb-1.5">
+                        Konfirmasi Password Baru
+                    </label>
+
+                    <div class="relative">
+                        <input
+                            type="password"
+                            id="confirmPassword"
+                            placeholder="Ulangi password baru"
+                            class="w-full px-4 py-3 pr-11 rounded-xl border border-blue-100 dark:border-slate-700 bg-blue-50/30 dark:bg-slate-800 text-blue-950 dark:text-white placeholder-blue-300 dark:placeholder-slate-500 text-xs font-bold focus:outline-none focus:border-blue-300 dark:focus:border-slate-500 focus:bg-white dark:focus:bg-slate-800 transition-colors">
+
+                        <button type="button"
+                            data-password-toggle="confirmPassword"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 text-blue-400 dark:text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                            <i class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Info -->
+                <div class="p-3.5 rounded-xl bg-blue-50/50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700">
+                    <div class="flex items-start gap-2.5">
+                        <i class="fa-solid fa-circle-info text-blue-500 dark:text-blue-400 text-sm mt-0.5"></i>
+                        <p class="text-[11px] leading-relaxed text-blue-700 dark:text-slate-300">
+                            Gunakan kombinasi minimal 8 karakter agar akun Anda semakin aman.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Tombol Step 2 -->
+                <div class="flex items-center justify-end gap-2 pt-2">
+                    <button type="button" id="btnBackStep1"
+                        class="px-4 py-2.5 rounded-xl text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-slate-800 hover:bg-blue-100 dark:hover:bg-slate-700 transition-colors">
+                        Kembali
+                    </button>
+
+                    <button type="button" id="btnSimpanPassword"
+                        class="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-sm transition-all">
+                        Simpan Password
                     </button>
                 </div>
-            </div>
-
-            <!-- Konfirmasi Password -->
-            <div>
-                <label class="block text-xs font-bold text-blue-900/70 dark:text-slate-300 mb-1.5">
-                    Konfirmasi Password Baru
-                </label>
-
-                <div class="relative">
-                    <input
-                        type="password"
-                        id="confirmPassword"
-                        placeholder="Ulangi password baru"
-                        class="w-full px-4 py-3 pr-11 rounded-xl border border-blue-100 dark:border-slate-700 bg-blue-50/30 dark:bg-slate-800 text-blue-950 dark:text-white placeholder-blue-300 dark:placeholder-slate-500 text-xs font-bold focus:outline-none focus:border-blue-300 dark:focus:border-slate-500 focus:bg-white dark:focus:bg-slate-800 transition-colors">
-
-                    <button type="button"
-                        data-password-toggle="confirmPassword"
-                        class="absolute right-3 top-1/2 -translate-y-1/2 text-blue-400 dark:text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                        <i class="fa-regular fa-eye"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Info -->
-            <div class="p-3.5 rounded-xl bg-blue-50/50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700">
-                <div class="flex items-start gap-2.5">
-                    <i class="fa-solid fa-circle-info text-blue-500 dark:text-blue-400 text-sm mt-0.5"></i>
-                    <p class="text-[11px] leading-relaxed text-blue-700 dark:text-slate-300">
-                        Untuk keamanan, gunakan password yang sulit ditebak dan jangan bagikan kepada siapa pun.
-                    </p>
-                </div>
-            </div>
-
-            <!-- Tombol -->
-            <div class="flex items-center justify-end gap-2 pt-2">
-                <button type="button" id="btnBatalUbahPassword"
-                    class="px-4 py-2.5 rounded-xl text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-slate-800 hover:bg-blue-100 dark:hover:bg-slate-700 transition-colors">
-                    Batal
-                </button>
-
-                <button type="button" id="btnSimpanPassword"
-                    class="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-sm transition-all">
-                    Simpan Password
-                </button>
             </div>
 
         </div>
@@ -513,15 +532,33 @@
             });
         }
 
-        // ============= MODAL UBAH PASSWORD =============
+       // ============= MODAL UBAH PASSWORD (MULTI-STEP) =============
         const btnBukaUbahPassword = document.getElementById('btnBukaUbahPassword');
         const modalUbahPassword = document.getElementById('modalUbahPassword');
         const closeModalUbahPassword = document.getElementById('closeModalUbahPassword');
-        const btnBatalUbahPassword = document.getElementById('btnBatalUbahPassword');
+        const btnBatalStep1 = document.getElementById('btnBatalStep1');
+        
+        const step1Card = document.getElementById('step1Card');
+        const step2Card = document.getElementById('step2Card');
+        const modalPasswordTitle = document.getElementById('modalPasswordTitle');
+        const modalPasswordSubtitle = document.getElementById('modalPasswordSubtitle');
+
+        const btnNextStep = document.getElementById('btnNextStep');
+        const btnBackStep1 = document.getElementById('btnBackStep1');
         const btnSimpanPassword = document.getElementById('btnSimpanPassword');
 
         function bukaModalUbahPassword() {
             if (modalUbahPassword) {
+                // Reset ke Step 1 setiap kali dibuka
+                step1Card.classList.remove('hidden');
+                step2Card.classList.add('hidden');
+                modalPasswordTitle.textContent = 'Verifikasi Keamanan';
+                modalPasswordSubtitle.textContent = 'Masukkan password saat ini untuk melanjutkan.';
+                
+                document.getElementById('currentPassword').value = '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
+
                 modalUbahPassword.classList.remove('hidden');
             }
         }
@@ -536,18 +573,12 @@
             btnBukaUbahPassword.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-
                 bukaModalUbahPassword();
             });
         }
 
-        if (closeModalUbahPassword) {
-            closeModalUbahPassword.addEventListener('click', tutupModalUbahPassword);
-        }
-
-        if (btnBatalUbahPassword) {
-            btnBatalUbahPassword.addEventListener('click', tutupModalUbahPassword);
-        }
+        if (closeModalUbahPassword) closeModalUbahPassword.addEventListener('click', tutupModalUbahPassword);
+        if (btnBatalStep1) btnBatalStep1.addEventListener('click', tutupModalUbahPassword);
 
         if (modalUbahPassword) {
             modalUbahPassword.addEventListener('click', (e) => {
@@ -557,156 +588,126 @@
             });
         }
 
-        // ============= SHOW / HIDE PASSWORD =============
-        document.querySelectorAll('[data-password-toggle]').forEach(button => {
-            button.addEventListener('click', () => {
-                const inputId = button.getAttribute('data-password-toggle');
-                const input = document.getElementById(inputId);
-                const icon = button.querySelector('i');
+        // Tombol Kembali dari Step 2 ke Step 1
+        if (btnBackStep1) {
+            btnBackStep1.addEventListener('click', () => {
+                step2Card.classList.add('hidden');
+                step1Card.classList.remove('hidden');
+                modalPasswordTitle.textContent = 'Verifikasi Keamanan';
+                modalPasswordSubtitle.textContent = 'Masukkan password saat ini untuk melanjutkan.';
+            });
+        }
 
-                if (!input) return;
+        // ================= STEP 1: VALIDASI PASSWORD LAMA KE BACKEND =================
+        if (btnNextStep) {
+            btnNextStep.addEventListener('click', async () => {
+                const currentPassword = document.getElementById('currentPassword').value.trim();
 
-                if (input.type === 'password') {
-                    input.type = 'text';
+                if (!currentPassword) {
+                    alert('Password saat ini wajib diisi.');
+                    return;
+                }
 
-                    if (icon) {
-                        icon.classList.remove('fa-eye');
-                        icon.classList.add('fa-eye-slash');
+                btnNextStep.disabled = true;
+                btnNextStep.textContent = 'Memeriksa...';
+
+                try {
+                    const verifyResponse = await fetch(
+                        '{{ route("settings.password.verify") }}',
+                        {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({
+                                current_password: currentPassword
+                            })
+                        }
+                    );
+
+                    const verifyData = await verifyResponse.json();
+
+                    if (!verifyResponse.ok || !verifyData.success) {
+                        throw new Error(verifyData.message || 'Password saat ini salah.');
                     }
-                } else {
-                    input.type = 'password';
 
-                    if (icon) {
-                        icon.classList.remove('fa-eye-slash');
-                        icon.classList.add('fa-eye');
-                    }
+                    // Jika BERHASIL, pindah ke Card/Step 2
+                    step1Card.classList.add('hidden');
+                    step2Card.classList.remove('hidden');
+                    modalPasswordTitle.textContent = 'Ubah Password';
+                    modalPasswordSubtitle.textContent = 'Silakan masukkan password baru Anda.';
+
+                } catch (error) {
+                    console.error('Verify error:', error);
+                    alert(error.message);
+                } finally {
+                    btnNextStep.disabled = false;
+                    btnNextStep.textContent = 'Lanjutkan';
                 }
             });
-        });
-
-      // ==========================================================
-// UBAH PASSWORD - VERIFIKASI & UPDATE
-// ==========================================================
-
-if (btnSimpanPassword) {
-
-    btnSimpanPassword.addEventListener('click', async () => {
-
-        const currentPassword = document.getElementById('currentPassword').value.trim();
-        const newPassword = document.getElementById('newPassword').value;
-        const confirmPassword = document.getElementById('confirmPassword').value;
-
-        // Validasi frontend
-        if (!currentPassword || !newPassword || !confirmPassword) {
-            alert('Semua password wajib diisi.');
-            return;
         }
 
-        if (newPassword.length < 8) {
-            alert('Password baru minimal 8 karakter.');
-            return;
-        }
+        // ================= STEP 2: SIMPAN PASSWORD BARU =================
+        if (btnSimpanPassword) {
+            btnSimpanPassword.addEventListener('click', async () => {
+                const newPassword = document.getElementById('newPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
 
-        if (newPassword !== confirmPassword) {
-            alert('Konfirmasi password tidak cocok.');
-            return;
-        }
-
-        // Disable tombol
-        btnSimpanPassword.disabled = true;
-        btnSimpanPassword.textContent = 'Memproses...';
-
-        try {
-
-            // ==================================================
-            // STEP 1 — VERIFIKASI PASSWORD LAMA
-            // ==================================================
-
-            const verifyResponse = await fetch(
-                '{{ route('settings.password.verify') }}',
-                {
-                    method: 'POST',
-
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-
-                    body: JSON.stringify({
-                        current_password: currentPassword
-                    })
+                if (!newPassword || !confirmPassword) {
+                    alert('Semua kolom password baru wajib diisi.');
+                    return;
                 }
-            );
 
-            const verifyData = await verifyResponse.json();
-
-            if (!verifyResponse.ok || !verifyData.success) {
-                throw new Error(
-                    verifyData.message || 'Password saat ini salah.'
-                );
-            }
-
-
-            // ==================================================
-            // STEP 2 — UPDATE PASSWORD BARU
-            // ==================================================
-
-            const updateResponse = await fetch(
-                '{{ route('settings.password.update') }}',
-                {
-                    method: 'POST',
-
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-
-                    body: JSON.stringify({
-                        new_password: newPassword,
-                        new_password_confirmation: confirmPassword
-                    })
+                if (newPassword.length < 8) {
+                    alert('Password baru minimal 8 karakter.');
+                    return;
                 }
-            );
 
-            const updateData = await updateResponse.json();
+                if (newPassword !== confirmPassword) {
+                    alert('Konfirmasi password tidak cocok.');
+                    return;
+                }
 
-            if (!updateResponse.ok || !updateData.success) {
-                throw new Error(
-                    updateData.message || 'Gagal memperbarui password.'
-                );
-            }
+                btnSimpanPassword.disabled = true;
+                btnSimpanPassword.textContent = 'Menyimpan...';
 
+                try {
+                    const updateResponse = await fetch(
+                        '{{ route("settings.password.update") }}',
+                        {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({
+                                new_password: newPassword,
+                                new_password_confirmation: confirmPassword
+                            })
+                        }
+                    );
 
-            // ==================================================
-            // BERHASIL
-            // ==================================================
+                    const updateData = await updateResponse.json();
 
-            alert('Password berhasil diperbarui!');
+                    if (!updateResponse.ok || !updateData.success) {
+                        throw new Error(updateData.message || 'Gagal memperbarui password.');
+                    }
 
-            // Kosongkan form
-            document.getElementById('currentPassword').value = '';
-            document.getElementById('newPassword').value = '';
-            document.getElementById('confirmPassword').value = '';
+                    alert('Password berhasil diperbarui!');
+                    tutupModalUbahPassword();
 
-            // Tutup modal
-            tutupModalUbahPassword();
-
-        } catch (error) {
-
-            console.error('Password update error:', error);
-
-            alert(error.message);
-
-        } finally {
-
-            // Aktifkan kembali tombol
-            btnSimpanPassword.disabled = false;
-            btnSimpanPassword.textContent = 'Simpan Password';
+                } catch (error) {
+                    console.error('Password update error:', error);
+                    alert(error.message);
+                } finally {
+                    btnSimpanPassword.disabled = false;
+                    btnSimpanPassword.textContent = 'Simpan Password';
+                }
+            });
         }
-    });
-}
 
         // ============= SCRIPT TAB SWITCHING SETTINGS =============
         const tabButtons = document.querySelectorAll('.tab-btn');
