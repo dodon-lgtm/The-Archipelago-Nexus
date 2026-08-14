@@ -1,5 +1,9 @@
 <script>
-    if (localStorage.getItem('theme') === 'dark') {
+    // Menggunakan key unik berdasarkan ID user yang sedang login agar tidak saling bentrok antar akun
+    const userId = "{{ Auth::id() }}";
+    const themeStorageKey = 'theme_user_' + userId;
+
+    if (localStorage.getItem(themeStorageKey) === 'dark') {
         document.documentElement.classList.add('dark');
     }
 </script>
@@ -121,7 +125,7 @@
                         <a href="{{ route('freelancer.profile') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-blue-900/70 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800 hover:text-blue-700 dark:hover:text-blue-400 transition-colors">
                             <i class="fa-regular fa-user text-blue-500 w-5 text-center"></i> Profil Utama
                         </a>
-                        <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-blue-900/70 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800 hover:text-blue-700 dark:hover:text-blue-400 transition-colors">
+                        <a href="lamaran" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-blue-900/70 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800 hover:text-blue-700 dark:hover:text-blue-400 transition-colors">
                             <i class="fa-regular fa-file-lines text-blue-500 w-5 text-center"></i> Lamaran Saya
                         </a>
                     @elseif(Auth::user()->role == 'company')
@@ -434,12 +438,16 @@
 {{-- Script untuk mengontrol Dropdown, Notifikasi, Tab Settings, Modal, & Dark Mode --}}
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // ============= DARK MODE INITIALIZER & TOGGLE =============
+        // ============= DARK MODE INITIALIZER & TOGGLE (PER AKUN) =============
         const darkModeToggle = document.getElementById('darkModeToggle');
         const htmlElement = document.documentElement;
+        
+        // Key unik berdasarkan ID user yang sedang login
+        const currentUserId = "{{ Auth::id() }}";
+        const storageKey = 'theme_user_' + currentUserId;
 
-        // Sinkronkan status checkbox dengan preferensi tema tersimpan (localStorage)
-        if (localStorage.getItem('theme') === 'dark') {
+        // Sinkronkan status checkbox dengan preferensi tema tersimpan untuk user ini
+        if (localStorage.getItem(storageKey) === 'dark') {
             htmlElement.classList.add('dark');
             if (darkModeToggle) darkModeToggle.checked = true;
         } else {
@@ -451,10 +459,10 @@
             darkModeToggle.addEventListener('change', function() {
                 if (this.checked) {
                     htmlElement.classList.add('dark');
-                    localStorage.setItem('theme', 'dark');
+                    localStorage.setItem(storageKey, 'dark');
                 } else {
                     htmlElement.classList.remove('dark');
-                    localStorage.setItem('theme', 'light');
+                    localStorage.setItem(storageKey, 'light');
                 }
             });
         }
