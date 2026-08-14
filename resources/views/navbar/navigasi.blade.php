@@ -4,45 +4,124 @@
     {{-- DECORATIVE RIGHT EDGE GLOW --}}
     <div class="absolute top-0 right-0 w-[1px] h-full bg-gradient-to-b from-transparent via-blue-400/30 to-transparent"></div>
 
-    {{-- LOGO SECTION --}}
-    <div class="sidebar-logo-wrapper p-6 flex items-center gap-3 border-b border-blue-50 dark:border-slate-800 shrink-0 transition-all duration-300 relative">
-        
-        {{-- Mobile hamburger --}}
-        <button id="mobileSidebarToggle" class="sidebar-hamburger-mobile w-10 h-10 rounded-xl hover:bg-blue-50 dark:hover:bg-slate-800 flex items-center justify-center shrink-0 transition-colors mr-1 shadow-[0_4px_10px_rgba(59,130,246,0.05)] text-blue-600 dark:text-blue-400">
-            <i class="fa-solid fa-bars text-lg"></i>
-        </button>
+  {{-- LOGO SECTION --}}
+<div class="sidebar-logo-wrapper
+    h-[88px]
+    px-5
+    flex items-center
+    border-b border-blue-50 dark:border-slate-800
+    shrink-0
+    transition-all duration-300
+    relative">
 
-        {{-- Logo image with glowing effect --}}
-        <div class="relative w-10 h-10 shrink-0 group">
-            <div class="absolute inset-0 bg-blue-500 rounded-full blur-[10px] opacity-40 group-hover:opacity-60 transition-opacity duration-300"></div>
-            <div class="relative w-full h-full rounded-full overflow-hidden border-2 border-white dark:border-slate-800 shadow-sm">
-                <img
-                    src="{{ asset('images/nexus.jpg') }}"
-                    alt="ApexForge Labs Logo"
-                    class="w-full h-full object-cover"
-                >
-            </div>
+    {{-- Mobile hamburger --}}
+    <button id="mobileSidebarToggle"
+        class="sidebar-hamburger-mobile
+        w-10 h-10 rounded-xl
+        hover:bg-blue-50 dark:hover:bg-slate-800
+        flex items-center justify-center
+        shrink-0
+        transition-colors
+        text-blue-600 dark:text-blue-400">
+
+        <i class="fa-solid fa-bars text-lg"></i>
+    </button>
+
+
+    {{-- LOGO --}}
+    <div class="sidebar-logo-container relative shrink-0">
+
+        {{-- Glow --}}
+        <div class="absolute inset-0
+            bg-blue-500 rounded-full
+            blur-[10px]
+            opacity-40
+            group-hover:opacity-60
+            transition-opacity duration-300">
         </div>
 
-        {{-- Logo text --}}
-        <div class="sidebar-logo-text transition-all duration-300 overflow-hidden">
-            <h2 class="font-black text-[13px] leading-tight text-blue-950 dark:text-white whitespace-nowrap tracking-tight">
-                ApexForge<br>
-                <span class="text-blue-600 dark:text-blue-400">Labs</span>
-            </h2>
-        </div>
-        
-        {{-- Desktop toggle button --}}
-        <button id="sidebarToggle" class="sidebar-toggle-desktop w-8 h-8 rounded-xl hover:bg-blue-50 dark:hover:bg-slate-800 flex items-center justify-center shrink-0 ml-auto transition-all duration-300 group shadow-sm border border-transparent hover:border-blue-100 dark:hover:border-slate-700">
-            <i class="sidebar-toggle-icon fa-solid fa-chevron-left text-blue-400 dark:text-slate-500 text-xs transition-transform duration-300 group-hover:-translate-x-0.5"></i>
-        </button>
+        {{-- Image --}}
+        <div class="relative
+            w-10 h-10
+            rounded-full
+            overflow-hidden
+            border-2 border-white dark:border-slate-800
+            shadow-sm">
 
-        {{-- Collapsed toggle button --}}
-        <button id="sidebarToggleCollapsed" class="sidebar-toggle-collapsed w-8 h-8 rounded-xl hover:bg-blue-50 dark:hover:bg-slate-800 flex items-center justify-center shrink-0 mx-auto transition-all duration-300 group shadow-sm border border-transparent hover:border-blue-100 dark:hover:border-slate-700">
-            <i class="sidebar-toggle-icon fa-solid fa-chevron-right text-blue-400 dark:text-slate-500 text-xs transition-transform duration-300 group-hover:translate-x-0.5"></i>
-        </button>
+            <img
+                src="{{ asset('images/nexus.jpg') }}"
+                alt="ApexForge Labs Logo"
+                class="w-full h-full object-cover"
+            >
+        </div>
     </div>
 
+
+    {{-- LOGO TEXT --}}
+    <div class="sidebar-logo-text
+        ml-3
+        transition-all duration-300
+        overflow-hidden">
+
+        <h2 class="font-black text-[13px]
+            leading-tight
+            text-blue-950 dark:text-white
+            whitespace-nowrap
+            tracking-tight">
+
+            ApexForge<br>
+
+            <span class="text-blue-600 dark:text-blue-400">
+                Labs
+            </span>
+        </h2>
+    </div>
+
+
+    {{-- DESKTOP TOGGLE --}}
+    <button id="sidebarToggle"
+        class="sidebar-toggle-desktop
+        w-8 h-8
+        rounded-xl
+        hover:bg-blue-50 dark:hover:bg-slate-800
+        flex items-center justify-center
+        shrink-0
+        ml-auto
+        transition-all duration-300
+        group
+        border border-transparent
+        hover:border-blue-100 dark:hover:border-slate-700">
+
+        <i class="sidebar-toggle-icon
+            fa-solid fa-chevron-left
+            text-blue-400 dark:text-slate-500
+            text-xs
+            transition-transform duration-300">
+        </i>
+    </button>
+
+
+    {{-- COLLAPSED TOGGLE --}}
+    <button id="sidebarToggleCollapsed"
+        class="sidebar-toggle-collapsed
+        w-7 h-7
+        rounded-lg
+        bg-white/90 dark:bg-slate-800
+        border border-blue-100 dark:border-slate-700
+        items-center justify-center
+        transition-all duration-300
+        shadow-sm
+        group">
+
+        <i class="sidebar-toggle-icon
+            fa-solid fa-chevron-right
+            text-blue-400 dark:text-slate-400
+            text-[10px]
+            transition-transform duration-300">
+        </i>
+    </button>
+
+</div>
     {{-- MENU NAVIGATION --}}
     <nav class="mt-6 px-4 space-y-1.5 flex-1 overflow-y-auto custom-sidebar-scroll relative z-10">
 
@@ -411,27 +490,54 @@
         display: block !important;
     }
     
-    /* Toggle icon rotation */
-    #sidebar.collapsed .sidebar-toggle-icon {
+    /* FIX IKON BERUBAH: Rotasi panah pada toggle saat sidebar collapsed */
+    #sidebar.collapsed #sidebarToggle .sidebar-toggle-icon {
         transform: rotate(180deg);
     }
     
-    /* Logo section adjustments in collapsed */
+   /* =========================================
+      COLLAPSED LOGO & TOGGLE POSITIONS
+   ========================================= */
+
     #sidebar.collapsed .sidebar-logo-wrapper {
+        padding: 0;
+        width: 88px;
+        height: 88px;
         justify-content: center;
-        padding: 24px 0;
+        position: relative;
     }
-    #sidebar.collapsed .sidebar-logo-wrapper > button,
-    #sidebar.collapsed .sidebar-logo-wrapper > .sidebar-logo-text {
-        display: none;
+
+    #sidebar.collapsed .sidebar-logo-container {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
     }
-    
-    /* Keep toggle visible in collapsed */
-    #sidebar.collapsed .sidebar-logo-wrapper > .sidebar-toggle-collapsed {
+
+    #sidebar.collapsed .sidebar-logo-text {
+        display: none !important;
+    }
+
+    #sidebar.collapsed .sidebar-hamburger-mobile {
+        display: none !important;
+    }
+
+    #sidebar.collapsed .sidebar-toggle-desktop {
+        display: none !important;
+    }
+
+    /* Tampilkan tombol buka sidebar khusus di state collapsed dengan posisi aman */
+    #sidebar.collapsed .sidebar-toggle-collapsed {
         display: flex !important;
+        position: absolute;
+        right: 8px;
+        bottom: 8px;
+        z-index: 10;
     }
-    #sidebar:not(.collapsed) .sidebar-logo-wrapper > .sidebar-toggle-collapsed {
-        display: none;
+
+    /* Sembunyikan tombol collapsed saat sidebar terbuka */
+    #sidebar:not(.collapsed) .sidebar-toggle-collapsed {
+        display: none !important;
     }
 
     /* ===== HIGH-TECH GLASS TOOLTIP ON COLLAPSED HOVER ===== */
@@ -595,10 +701,11 @@
 {{-- SIDEBAR JAVASCRIPT --}}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const sidebar = document.getElementById('sidebar');
         const toggleDesktop = document.getElementById('sidebarToggle');
+        const toggleDesktopCollapsed = document.getElementById('sidebarToggleCollapsed');
         const toggleMobile = document.getElementById('mobileSidebarToggle');
         const overlay = document.getElementById('sidebarOverlay');
+        const sidebar = document.getElementById('sidebar');
         
         // Helper to position tooltips correctly
         function positionTooltips() {
@@ -626,18 +733,33 @@
             }
         }
         
+        function toggleSidebarDesktop(e) {
+            e.stopPropagation();
+
+            if (window.innerWidth >= 1024) {
+                const collapsed = sidebar.classList.toggle('collapsed');
+
+                localStorage.setItem(
+                    'sidebarCollapsed',
+                    collapsed ? 'true' : 'false'
+                );
+
+                window.dispatchEvent(new CustomEvent('sidebar-toggle', {
+                    detail: {
+                        collapsed: collapsed
+                    }
+                }));
+
+                setTimeout(updateTooltipPositions, 50);
+            }
+        }
+
         if (toggleDesktop) {
-            toggleDesktop.addEventListener('click', function(e) {
-                e.stopPropagation();
-                if (window.innerWidth >= 1024) {
-                    sidebar.classList.toggle('collapsed');
-                    localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed') ? 'true' : 'false');
-                    window.dispatchEvent(new CustomEvent('sidebar-toggle', { 
-                        detail: { collapsed: sidebar.classList.contains('collapsed') }
-                    }));
-                    setTimeout(updateTooltipPositions, 50);
-                }
-            });
+            toggleDesktop.addEventListener('click', toggleSidebarDesktop);
+        }
+
+        if (toggleDesktopCollapsed) {
+            toggleDesktopCollapsed.addEventListener('click', toggleSidebarDesktop);
         }
         
         // Mobile toggle: open/close drawer
