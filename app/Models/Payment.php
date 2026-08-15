@@ -24,12 +24,16 @@ class Payment extends Model
         'status',
         'verified_by',
         'verified_at',
+        'midtrans_transaction_id',
+        'midtrans_payment_type',
+        'midtrans_response',
     ];
 
     protected $casts = [
         'amount' => 'decimal:2',
         'platform_fee' => 'decimal:2',
         'freelancer_receive' => 'decimal:2',
+        'midtrans_response' => 'array',
         'verified_at' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
