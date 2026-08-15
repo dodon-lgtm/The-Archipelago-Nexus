@@ -11,6 +11,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class PaymentController extends Controller
 {
@@ -176,5 +177,45 @@ class PaymentController extends Controller
             ->route('admin.payments.show', $payment)
             ->with('success', 'Pembayaran ditolak. Perusahaan dapat mengupload ulang bukti pembayaran.');
     }
-}
 
+    /**
+     * Export / Cetak Struk Pembayaran Tunggal.
+     */
+    public function exportPdfSingle($id)
+    {
+        $payment = Payment::with([
+            'workspace.project',
+            'company',
+            'freelancer',
+            'verifier',
+        ])->findOrFail($id);
+
+        if (class_exists('Barryvdh\DomPDF\Facade\Pdf')) {
+            $pdf = Pdf::loadView('admin.payments.pdf_single', compact('payment'));
+            return $pdf->download('struk-pembayaran-' . $payment->id . '.pdf');
+        }
+
+        return view('admin.payments.pdf_single', compact('payment'));
+    }
+
+    /**
+     * Export seluruh laporan pembayaran ke PDF / View.
+     */
+    public function exportPdfAll()
+    {
+        $payments = Payment::with([
+            'workspace.project',
+            'company',
+            'freelancer',
+        ])->latest()->get();
+
+        if (class_exists('Barryvdh\DomPDF\Facade\Pdf')) {
+           // Ubah admin.payments.pdf_all menjadi admin.payments.pdf-all
+$pdf = Pdf::loadView('admin.payments.pdf-all', compact('payments'));
+
+return view('admin.payments.pdf-all', compact('payments'));
+        }
+
+        return view('admin.payments.pdf_all', compact('payments'));
+    }
+}

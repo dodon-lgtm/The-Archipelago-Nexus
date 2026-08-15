@@ -303,7 +303,7 @@
                 @endif
 
                 <div class="mt-16">
-                    @include('navbar.footer')
+              
                 </div>
 
             </div>

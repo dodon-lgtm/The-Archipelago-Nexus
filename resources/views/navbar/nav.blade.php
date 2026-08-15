@@ -1,6 +1,10 @@
 <script>
     // Menggunakan key unik berdasarkan ID user yang sedang login agar tidak saling bentrok antar akun
-    const userId = "{{ Auth::id() }}";
+    @auth
+        const userId = "{{ Auth::id() }}";
+    @else
+        const userId = 'guest';
+    @endauth
     const themeStorageKey = 'theme_user_' + userId;
 
     if (localStorage.getItem(themeStorageKey) === 'dark') {
@@ -94,75 +98,90 @@
 
         <!-- USER -->
         <div class="relative">
-            <button id="userButton" class="flex items-center gap-3 border border-transparent hover:border-blue-100 dark:hover:border-slate-800 hover:bg-blue-50/50 dark:hover:bg-slate-800/50 rounded-2xl px-2 py-1.5 transition-all duration-300 group">
-                <div class="text-right hidden sm:block pr-1">
-                    <h2 class="text-[13px] font-black text-blue-950 dark:text-white leading-tight">{{ Auth::user()->name }}</h2>
-                    <p class="text-[10px] font-bold tracking-widest uppercase text-blue-400 dark:text-slate-400">{{ ucfirst(Auth::user()->role) }}</p>
-                </div>
-                <div class="w-10 h-10 rounded-[0.9rem] overflow-hidden bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white shrink-0 shadow-[0_4px_15px_rgba(59,130,246,0.3)] group-hover:scale-105 transition-transform">
-                    @if (Auth::user()->role == 'company' && Auth::user()->companyProfile && Auth::user()->companyProfile->company_logo)
-                        <img src="{{ asset('storage/' . Auth::user()->companyProfile->company_logo) }}" alt="Logo" class="w-full h-full object-cover">
-                    @elseif(Auth::user()->role == 'freelancer' && Auth::user()->freelanceProfile && Auth::user()->freelanceProfile->photo)
-                        <img src="{{ asset('storage/' . Auth::user()->freelanceProfile->photo) }}" alt="Profil" class="w-full h-full object-cover">
-                    @else
-                        <i class="fa-solid fa-user text-sm"></i>
-                    @endif
-                </div>
-                <i class="fa-solid fa-chevron-down text-[10px] text-blue-300 dark:text-slate-500 group-hover:text-blue-500 transition-colors"></i>
-            </button>
+            @auth
+                <button id="userButton" class="flex items-center gap-3 border border-transparent hover:border-blue-100 dark:hover:border-slate-800 hover:bg-blue-50/50 dark:hover:bg-slate-800/50 rounded-2xl px-2 py-1.5 transition-all duration-300 group">
+                    <div class="text-right hidden sm:block pr-1">
+                        <h2 class="text-[13px] font-black text-blue-950 dark:text-white leading-tight">{{ Auth::user()->name }}</h2>
+                        <p class="text-[10px] font-bold tracking-widest uppercase text-blue-400 dark:text-slate-400">{{ ucfirst(Auth::user()->role) }}</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-[0.9rem] overflow-hidden bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white shrink-0 shadow-[0_4px_15px_rgba(59,130,246,0.3)] group-hover:scale-105 transition-transform">
+                        @if (Auth::user()->role == 'company' && Auth::user()->companyProfile && Auth::user()->companyProfile->company_logo)
+                            <img src="{{ asset('storage/' . Auth::user()->companyProfile->company_logo) }}" alt="Logo" class="w-full h-full object-cover">
+                        @elseif(Auth::user()->role == 'freelancer' && Auth::user()->freelanceProfile && Auth::user()->freelanceProfile->photo)
+                            <img src="{{ asset('storage/' . Auth::user()->freelanceProfile->photo) }}" alt="Profil" class="w-full h-full object-cover">
+                        @else
+                            <i class="fa-solid fa-user text-sm"></i>
+                        @endif
+                    </div>
+                    <i class="fa-solid fa-chevron-down text-[10px] text-blue-300 dark:text-slate-500 group-hover:text-blue-500 transition-colors"></i>
+                </button>
 
-            <!-- Dropdown User -->
-            <div id="userDropdown"
-                class="hidden absolute right-0 mt-4 w-72 bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl rounded-[1.5rem] border border-blue-100 dark:border-slate-800 shadow-[0_20px_50px_-10px_rgba(30,58,138,0.15)] overflow-hidden z-[100]">
-                
-                <div class="p-6 border-b border-blue-50/50 dark:border-slate-800 bg-gradient-to-b from-blue-50/50 dark:from-slate-800/50 to-transparent">
-                    <h2 class="font-black text-blue-950 dark:text-white tracking-tight">{{ Auth::user()->name }}</h2>
-                    <p class="text-xs font-semibold text-blue-500/70 truncate">{{ Auth::user()->email }}</p>
+                <!-- Dropdown User -->
+                <div id="userDropdown"
+                    class="hidden absolute right-0 mt-4 w-72 bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl rounded-[1.5rem] border border-blue-100 dark:border-slate-800 shadow-[0_20px_50px_-10px_rgba(30,58,138,0.15)] overflow-hidden z-[100]">
+                    
+                    <div class="p-6 border-b border-blue-50/50 dark:border-slate-800 bg-gradient-to-b from-blue-50/50 dark:from-slate-800/50 to-transparent">
+                        <h2 class="font-black text-blue-950 dark:text-white tracking-tight">{{ Auth::user()->name }}</h2>
+                        <p class="text-xs font-semibold text-blue-500/70 truncate">{{ Auth::user()->email }}</p>
+                    </div>
+
+                    <div class="p-2 space-y-1">
+                        @if (Auth::user()->role == 'freelancer')
+                            <a href="{{ route('freelancer.profile') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-blue-900/70 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800 hover:text-blue-700 dark:hover:text-blue-400 transition-colors">
+                                <i class="fa-regular fa-user text-blue-500 w-5 text-center"></i> Profil Utama
+                            </a>
+                            <a href="lamaran" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-blue-900/70 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800 hover:text-blue-700 dark:hover:text-blue-400 transition-colors">
+                                <i class="fa-regular fa-file-lines text-blue-500 w-5 text-center"></i> Lamaran Saya
+                            </a>
+                        @elseif(Auth::user()->role == 'company')
+                            <a href="{{ route('company.profile') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-blue-900/70 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800 hover:text-blue-700 dark:hover:text-blue-400 transition-colors">
+                                <i class="fa-regular fa-building text-blue-500 w-5 text-center"></i> Profil Perusahaan
+                            </a>
+                            <a href="{{ route('company.projects.create') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-blue-900/70 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800 hover:text-blue-700 dark:hover:text-blue-400 transition-colors">
+                                <i class="fa-solid fa-plus text-blue-500 w-5 text-center"></i> Tambah Proyek
+                            </a>
+                        @elseif(Auth::user()->role == 'admin')
+                            <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-blue-900/70 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800 hover:text-blue-700 dark:hover:text-blue-400 transition-colors">
+                                <i class="fa-solid fa-shield-halved text-blue-500 w-5 text-center"></i> Profil Admin
+                            </a>
+                            <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-blue-900/70 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800 hover:text-blue-700 dark:hover:text-blue-400 transition-colors">
+                                <i class="fa-solid fa-chart-pie text-blue-500 w-5 text-center"></i> Analitik Sistem
+                            </a>
+                        @endif
+
+                        {{-- TOMBOL PENGATURAN --}}
+                        <a href="#" id="btnBukaPengaturan" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-blue-900/70 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800 hover:text-blue-700 dark:hover:text-blue-400 transition-colors">
+                            <i class="fa-solid fa-gear text-blue-500 w-5 text-center"></i> Pengaturan
+                        </a>
+                    </div>
+
+                    <div class="p-2 border-t border-blue-50 dark:border-slate-800">
+                        <form action="{{ url('/logout') }}" method="POST">
+                            @csrf
+                            <button type="submit" class="w-full text-left px-4 py-3 flex items-center gap-3 rounded-xl text-sm font-bold text-blue-600 dark:text-red-400 hover:bg-blue-600 dark:hover:bg-red-600 hover:text-white dark:hover:text-white transition-colors group">
+                                <i class="fa-solid fa-power-off w-5 text-center transition-transform group-hover:scale-110"></i> Logout
+                            </button>
+                        </form>
+                    </div>
                 </div>
-
-                <div class="p-2 space-y-1">
-                    @if (Auth::user()->role == 'freelancer')
-                        <a href="{{ route('freelancer.profile') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-blue-900/70 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800 hover:text-blue-700 dark:hover:text-blue-400 transition-colors">
-                            <i class="fa-regular fa-user text-blue-500 w-5 text-center"></i> Profil Utama
-                        </a>
-                        <a href="lamaran" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-blue-900/70 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800 hover:text-blue-700 dark:hover:text-blue-400 transition-colors">
-                            <i class="fa-regular fa-file-lines text-blue-500 w-5 text-center"></i> Lamaran Saya
-                        </a>
-                    @elseif(Auth::user()->role == 'company')
-                        <a href="{{ route('company.profile') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-blue-900/70 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800 hover:text-blue-700 dark:hover:text-blue-400 transition-colors">
-                            <i class="fa-regular fa-building text-blue-500 w-5 text-center"></i> Profil Perusahaan
-                        </a>
-                        <a href="{{ route('company.projects.create') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-blue-900/70 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800 hover:text-blue-700 dark:hover:text-blue-400 transition-colors">
-                            <i class="fa-solid fa-plus text-blue-500 w-5 text-center"></i> Tambah Proyek
-                        </a>
-                    @elseif(Auth::user()->role == 'admin')
-                        <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-blue-900/70 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800 hover:text-blue-700 dark:hover:text-blue-400 transition-colors">
-                            <i class="fa-solid fa-shield-halved text-blue-500 w-5 text-center"></i> Profil Admin
-                        </a>
-                        <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-blue-900/70 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800 hover:text-blue-700 dark:hover:text-blue-400 transition-colors">
-                            <i class="fa-solid fa-chart-pie text-blue-500 w-5 text-center"></i> Analitik Sistem
-                        </a>
-                    @endif
-
-                    {{-- TOMBOL PENGATURAN --}}
-                    <a href="#" id="btnBukaPengaturan" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-blue-900/70 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800 hover:text-blue-700 dark:hover:text-blue-400 transition-colors">
-                        <i class="fa-solid fa-gear text-blue-500 w-5 text-center"></i> Pengaturan
+            @else
+                <!-- Guest: Login/Daftar buttons -->
+                <div class="flex items-center gap-3">
+                    <a href="{{ route('login') }}"
+                        class="px-5 py-2 text-sm font-semibold text-slate-700 hover:text-slate-900 border border-blue-100/80 rounded-xl hover:bg-blue-50/60 transition">
+                        Masuk
+                    </a>
+                    <a href="{{ route('register') }}"
+                        class="px-5 py-2 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition shadow-md shadow-blue-500/20">
+                        Daftar
                     </a>
                 </div>
-
-                <div class="p-2 border-t border-blue-50 dark:border-slate-800">
-                    <form action="{{ url('/logout') }}" method="POST">
-                        @csrf
-                        <button type="submit" class="w-full text-left px-4 py-3 flex items-center gap-3 rounded-xl text-sm font-bold text-blue-600 dark:text-red-400 hover:bg-blue-600 dark:hover:bg-red-600 hover:text-white dark:hover:text-white transition-colors group">
-                            <i class="fa-solid fa-power-off w-5 text-center transition-transform group-hover:scale-110"></i> Logout
-                        </button>
-                    </form>
-                </div>
-            </div>
+            @endauth
         </div>
     </div>
 </header>
 
+@auth
 <!-- ================= MODAL SETTINGS (GAYA DASHBOARD UI) ================= -->
 <div id="modalSettings" class="hidden fixed inset-0 z-[150] flex items-center justify-center bg-blue-950/30 dark:bg-slate-950/60 backdrop-blur-sm transition-opacity p-4">
     <div class="bg-white dark:bg-slate-900 w-full max-w-4xl rounded-[2rem] shadow-[0_20px_50px_-10px_rgba(30,58,138,0.2)] overflow-hidden transform transition-all border border-blue-100 dark:border-slate-800 flex flex-col md:flex-row max-h-[85vh]">
@@ -306,6 +325,9 @@
     </div>
 </div>
 
+@endauth
+
+@auth
 <!-- ================= MODAL UBAH PASSWORD (MULTI-STEP) ================= -->
 <div id="modalUbahPassword"
     class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-blue-950/30 dark:bg-slate-950/70 backdrop-blur-sm p-4">
@@ -441,6 +463,8 @@
     </div>
 </div>
 
+@endauth
+
 <style>
     @keyframes swing {
         0% { transform: rotate(0deg); }
@@ -462,7 +486,11 @@
         const htmlElement = document.documentElement;
         
         // Key unik berdasarkan ID user yang sedang login
-        const currentUserId = "{{ Auth::id() }}";
+        @auth
+            const currentUserId = "{{ Auth::id() }}";
+        @else
+            const currentUserId = 'guest';
+        @endauth
         const storageKey = 'theme_user_' + currentUserId;
 
         // Sinkronkan status checkbox dengan preferensi tema tersimpan untuk user ini
