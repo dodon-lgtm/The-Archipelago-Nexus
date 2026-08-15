@@ -305,7 +305,7 @@
         </main>
 
         {{-- FOOTER --}}
-        @include('navbar.footer')
+       
 
     </div>
 

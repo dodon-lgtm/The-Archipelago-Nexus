@@ -12,7 +12,18 @@ class Project extends Model
 {
     use HasFactory;
 
-protected $fillable = [
+    // ─── STATUS PROYEK (satu-satunya standar value di database) ─────
+    public const STATUS_OPEN     = 'open';
+    public const STATUS_CLOSED   = 'closed';
+    public const STATUS_ARCHIVED = 'archived';
+
+    public const STATUSES = [
+        self::STATUS_OPEN,
+        self::STATUS_CLOSED,
+        self::STATUS_ARCHIVED,
+    ];
+
+    protected $fillable = [
         'user_id',
         'category_id',
         'project_name',
@@ -23,7 +34,6 @@ protected $fillable = [
         'image',
         'attachment',
         'status',
-        'archive_status',
     ];
 
     public function owner(): BelongsTo
@@ -51,33 +61,65 @@ protected $fillable = [
         return $this->hasOne(Workspace::class, 'project_id');
     }
 
-public function review()
+    public function review()
     {
         return $this->hasOne(Review::class);
     }
 
-/**
+    // ─── STATUS HELPERS ────────────────────────────────────────────
+
+    public function isOpen(): bool
+    {
+        return $this->status === self::STATUS_OPEN;
+    }
+
+    public function isClosed(): bool
+    {
+        return $this->status === self::STATUS_CLOSED;
+    }
+
+    /**
+     * Apakah project masuk arsip?
+     */
+    public function isArchived(): bool
+    {
+        return $this->status === self::STATUS_ARCHIVED;
+    }
+
+    /**
+     * Label bahasa Indonesia untuk ditampilkan di UI.
+     * Value database TETAP: open / closed / archived.
+     */
+    public static function statusLabel(?string $status): string
+    {
+        return match ($status) {
+            self::STATUS_OPEN     => 'Open',
+            self::STATUS_CLOSED   => 'Tutup',
+            self::STATUS_ARCHIVED => 'Arsip',
+            default               => 'Open',
+        };
+    }
+
+    /**
      * Apakah project masih menerima penawaran baru?
      *
      * Source of truth (backend):
-     * - archive_status harus 'active' (belum diarsip/nonaktif).
-     * - Status harus 'Open' (belum ditutup oleh Company).
+     * - Status harus 'open' (belum ditutup oleh Company / belum diarsip).
      * - Belum memiliki Workspace (freelancer belum dipilih / pekerjaan belum berjalan).
      *
-     * Project 'Closed' TIDAK otomatis dianggap selesai.
+     * Project 'closed' TIDAK otomatis dianggap selesai.
      * 'Selesai' hanya ditentukan oleh Workspace.status === 'Selesai'.
      */
     public function acceptsOffers(): bool
     {
-        return $this->archive_status === 'active'
-            && $this->status === 'Open'
+        return $this->status === self::STATUS_OPEN
             && !$this->workspace()->exists();
     }
 
     /**
      * Apakah project sudah benar-benar selesai?
      * Sumber kebenaran: Workspace dengan status 'Selesai'.
-     * Project 'Closed' saja BUKAN berarti selesai.
+     * Project 'closed' saja BUKAN berarti selesai.
      */
     public function isCompleted(): bool
     {
@@ -87,45 +129,29 @@ public function review()
     }
 
     /**
-     * Apakah project sedang aktif (belum diarsip/nonaktif)?
-     */
-    public function isArchived(): bool
-    {
-        return $this->archive_status === 'archived';
-    }
-
-    /**
-     * Apakah project dalam keadaan nonaktif?
-     */
-    public function isInactive(): bool
-    {
-        return $this->archive_status === 'inactive';
-    }
-
-    /**
-     * Arsipkan project (hanya mengubah archive_status, TIDAK mengubah Workspace).
+     * Arsipkan project (hanya mengubah status menjadi 'archived', TIDAK mengubah Workspace).
      */
     public function archive(): bool
     {
-        return $this->update(['archive_status' => 'archived']);
+        return $this->update(['status' => self::STATUS_ARCHIVED]);
     }
 
     /**
-     * Aktifkan kembali project secara administratif.
+     * Aktifkan kembali project secara administratif (status menjadi 'open').
      *
-     * HANYA mengubah archive_status menjadi 'active'.
+     * HANYA mengubah status menjadi 'open'.
      * TIDAK menghidupkan kembali Workspace/kontrak lama.
      */
     public function activate(): bool
     {
-        return $this->update(['archive_status' => 'active']);
+        return $this->update(['status' => self::STATUS_OPEN]);
     }
 
     /**
-     * Nonaktifkan project (tidak menerima penawaran baru).
+     * Tutup / nonaktifkan project (status menjadi 'closed', tidak menerima penawaran baru).
      */
     public function deactivate(): bool
     {
-        return $this->update(['archive_status' => 'inactive']);
+        return $this->update(['status' => self::STATUS_CLOSED]);
     }
 }

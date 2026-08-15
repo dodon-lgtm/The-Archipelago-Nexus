@@ -15,54 +15,85 @@ use Illuminate\View\View;
 class ProjectBrowseController extends Controller
 {
     public function index(Request $request): View
-{
-    $search = $request->query('search');
-    $categoryId = $request->query('category_id');
+    {
+        $search = $request->query('search');
+        // Dukung dua nama parameter: 'category' (halaman /proyek) dan 'category_id' (halaman /projects).
+        $category = $request->query('category') ?? $request->query('category_id');
+        $budget = $request->query('budget');
+        $sort = $request->query('sort', 'terbaru');
 
-    $query = Project::with('category')->latest();
+        $query = Project::with('category');
 
-    if ($search) {
-        $query->where('project_name', 'like', "%{$search}%");
-    }
+        // 1. Pencarian berdasarkan nama proyek.
+        if ($search) {
+            $query->where('project_name', 'like', "%{$search}%");
+        }
 
-    if ($categoryId) {
-        $query->where('category_id', $categoryId);
-    }
+        // 2. Filter kategori (kolom category_id yang sudah ada).
+        if ($category) {
+            $query->where('category_id', $category);
+        }
 
-// Hanya tampilkan proyek yang masih menerima penawaran:
-    // archive_status = active, status Open, DAN belum memiliki workspace.
-    $query->where('archive_status', 'active')
-        ->where('status', 'Open')
-        ->whereDoesntHave('workspace');
+        // 3. Filter budget (whitelist rentang nominal).
+        $budgetRanges = [
+            'under-1m' => fn ($q) => $q->where('budget', '<', 1_000_000),
+            '1m-5m'    => fn ($q) => $q->whereBetween('budget', [1_000_000, 5_000_000]),
+            'above-5m' => fn ($q) => $q->where('budget', '>', 5_000_000),
+        ];
+        if (isset($budgetRanges[$budget])) {
+            $budgetRanges[$budget]($query);
+        }
 
-    $projects = $query->paginate(10)->withQueryString();
+        // 4. Sorting (whitelist; input user tidak pernah dipakai langsung di orderBy).
+        $sortOptions = [
+            'terbaru'       => fn ($q) => $q->latest(),
+            'deadline'      => fn ($q) => $q->orderByRaw('deadline IS NULL, deadline ASC'),
+            'budget-tinggi' => fn ($q) => $q->orderByRaw('budget IS NULL, budget DESC'),
+            'budget-rendah' => fn ($q) => $q->orderByRaw('budget IS NULL, budget ASC'),
+        ];
+        if (isset($sortOptions[$sort])) {
+            $sortOptions[$sort]($query);
+        } else {
+            $query->latest();
+        }
 
-    $categories = Category::orderBy('name')->get();
+        // Hanya tampilkan proyek yang masih menerima penawaran:
+        // status 'open' DAN belum memiliki workspace.
+        $query->where('status', Project::STATUS_OPEN)
+            ->whereDoesntHave('workspace');
 
-    $latestApplications = Penawaran::with('project')
-        ->where('freelancer_id', Auth::id())
-        ->latest()
-        ->take(4)
-        ->get();
+        $projects = $query->paginate(10)->withQueryString();
 
-    if ($request->route()->named('freelancer.proyek')) {
-        return view('freelancer.proyek', compact(
+        $categories = Category::orderBy('name')->get();
+
+        $latestApplications = Penawaran::with('project')
+            ->where('freelancer_id', Auth::id())
+            ->latest()
+            ->take(4)
+            ->get();
+
+        if ($request->route()->named('freelancer.proyek')) {
+            return view('freelancer.proyek', compact(
+                'projects',
+                'categories',
+                'search',
+                'category',
+                'budget',
+                'sort',
+                'latestApplications'
+            ));
+        }
+
+        return view('freelancer.projects.index', compact(
             'projects',
             'categories',
             'search',
-            'categoryId',
+            'category',
+            'budget',
+            'sort',
             'latestApplications'
         ));
     }
-
-    return view('freelancer.projects.index', compact(
-        'projects',
-        'categories',
-        'search',
-        'categoryId',
-        'latestApplications'
-    ));
-}
 
 public function show(Project $project): View
     {

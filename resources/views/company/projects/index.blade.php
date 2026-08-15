@@ -200,8 +200,15 @@
                 <div class="reveal reveal-3 space-y-3">
                     @forelse ($projects as $project)
                         @php
-                            $status = $project->status ?? 'Open';
-                            $isOpen = strtolower($status) === 'open';
+                            $status = $project->status ?? 'open';
+                            $isOpen = $status === 'open';
+                            $statusBadge = match($status) {
+                                'open' => 'bg-emerald-50 text-emerald-700 border-emerald-200/60',
+                                'closed' => 'bg-rose-50 text-rose-700 border-rose-200/60',
+                                'archived' => 'bg-slate-100 text-slate-600 border-slate-200',
+                                default => 'bg-slate-100 text-slate-600 border-slate-200',
+                            };
+                            $statusLabel = \App\Models\Project::statusLabel($status);
                         @endphp
                         
                         <a href="{{ route('company.projects.show', $project) }}" 
@@ -268,9 +275,9 @@
                                 {{-- Status Kanan & Aksi --}}
                                 <div class="flex items-center justify-between md:justify-end gap-3 pt-3 md:pt-0 border-t md:border-t-0 border-slate-100">
                                     <div class="flex flex-wrap items-center gap-1.5">
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-xl border dark:bg-slate-800 {{ $isOpen ? 'bg-emerald-50 text-emerald-700 border-emerald-200/60' : 'bg-slate-100 text-slate-600 border-slate-200' }}">
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-xl border dark:bg-slate-800 {{ $statusBadge }}">
                                             <span class="w-1.5 h-1.5 rounded-full {{ $isOpen ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400' }}"></span>
-                                            {{ $status }}
+                                            {{ $statusLabel }}
                                         </span>
 
                                         @php
@@ -332,7 +339,7 @@
         </main>
 
         {{-- FOOTER --}}
-        @include('navbar.footer')
+      
 
     </div>
 

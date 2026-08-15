@@ -17,7 +17,17 @@ class DashboardController extends Controller
         $search = $request->search;
         $categoryId = $request->category_id;
 
-        $query = Project::with('category')->latest();
+        // Pekerjaan Terbaru: HANYA proyek berstatus 'open' DAN belum memiliki freelancer terpilih.
+        // - Closed / Archived otomatis terbuang oleh filter status di bawah.
+        // - Freelancer "sudah dipilih" ditandai dengan adanya record Workspace di tabel
+        //   `project_workspaces` (dibuat saat Company menekan Pilih/Terima di selectFreelancer).
+        //   Proyek dengan workspace apa pun (aktif / menunggu bayar / selesai) tidak boleh
+        //   lagi tampil sebagai pekerjaan yang tersedia; freelancer terpilih mengaksesnya
+        //   lewat halaman Workspace, bukan lewat Pekerjaan Terbaru.
+        $query = Project::with('category', 'owner')
+            ->where('status', Project::STATUS_OPEN)
+            ->whereDoesntHave('workspace')
+            ->latest();
 
         if ($search) {
             $query->where('project_name', 'like', "%$search%");

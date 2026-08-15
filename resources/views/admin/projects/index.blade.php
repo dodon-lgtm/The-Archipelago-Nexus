@@ -17,8 +17,9 @@
                 <label class="text-xs font-semibold text-slate-600 mb-1 block">Filter Status</label>
                 <select name="status" class="w-full rounded-xl border-blue-100 bg-[#f6f9ff] px-4 py-2.5 text-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none">
                     <option value="">Semua Status</option>
-                    <option value="Open" @selected(request('status') == 'Open')>Open</option>
-                    <option value="Closed" @selected(request('status') == 'Closed')>Closed</option>
+                    <option value="open" @selected(request('status') == 'open')>Open</option>
+                    <option value="closed" @selected(request('status') == 'closed')>Tutup</option>
+                    <option value="archived" @selected(request('status') == 'archived')>Arsip</option>
                 </select>
             </div>
             <div class="w-48">
@@ -65,8 +66,8 @@
                             <td class="px-5 py-4 text-right font-semibold text-slate-700">{{ $project->budget ? 'Rp ' . number_format($project->budget) : '—' }}</td>
                             <td class="px-5 py-4 text-center">
                                 <span class="text-xs px-2.5 py-1 rounded-full font-semibold
-                                    @if($project->status == 'Open') bg-emerald-50 text-emerald-600
-                                    @else bg-blue-50 text-slate-600 @endif">{{ $project->status }}</span>
+                                    @if(($project->status ?? 'open') == 'open') bg-emerald-50 text-emerald-600
+                                    @else bg-blue-50 text-slate-600 @endif">{{ \App\Models\Project::statusLabel($project->status ?? 'open') }}</span>
                             </td>
                             <td class="px-5 py-4 text-center text-xs text-slate-500">{{ $project->created_at->format('d M Y') }}</td>
                             <td class="px-5 py-4 text-right">

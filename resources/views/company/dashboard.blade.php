@@ -380,15 +380,21 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                                 @endif
                                             </div>
                                         </div>
-                                        <span class="inline-flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full shrink-0
-                                            @if($project->status == 'Open') bg-emerald-50 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-900
-                                            @elseif($project->status == 'Closed') bg-rose-50 dark:bg-rose-900/40 text-rose-600 dark:text-rose-300 border border-rose-200/60 dark:border-rose-900
-                                            @else bg-blue-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-blue-100 dark:border-slate-800 @endif
-                                        ">
-                                            @if($project->status == 'Open')
+                                        @php
+                                            $projStatus = $project->status ?? 'open';
+                                            $statusBadge = match($projStatus) {
+                                                'open' => 'bg-emerald-50 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-900',
+                                                'closed' => 'bg-rose-50 dark:bg-rose-900/40 text-rose-600 dark:text-rose-300 border border-rose-200/60 dark:border-rose-900',
+                                                'archived' => 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700',
+                                                default => 'bg-blue-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-blue-100 dark:border-slate-800',
+                                            };
+                                            $statusLabel = \App\Models\Project::statusLabel($projStatus);
+                                        @endphp
+                                        <span class="inline-flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full shrink-0 {{ $statusBadge }}">
+                                            @if($projStatus === 'open')
                                                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
                                             @endif
-                                            {{ $project->status ?? 'Draft' }}
+                                            {{ $statusLabel }}
                                         </span>
                                     </div>
                                     @endforeach

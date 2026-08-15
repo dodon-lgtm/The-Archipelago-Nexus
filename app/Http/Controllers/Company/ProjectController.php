@@ -20,12 +20,13 @@ use Illuminate\Support\Facades\Auth;
 
 class ProjectController extends Controller
 {
-public function index(): View
+    public function index(): View
     {
-        // Hanya project aktif (belum diarsip/nonaktif) yang tampil di halaman utama.
+        // Hanya project berstatus open / closed yang tampil di halaman utama.
+        // Project 'archived' masuk ke halaman arsip.
         $projects = Project::with('workspace')
             ->where('user_id', Auth::id())
-            ->where('archive_status', 'active')
+            ->whereIn('status', [Project::STATUS_OPEN, Project::STATUS_CLOSED])
             ->latest()
             ->paginate(10);
 
@@ -33,13 +34,13 @@ public function index(): View
     }
 
     /**
-     * Halaman Arsip Proyek — menampilkan project yang diarsipkan / nonaktif.
+     * Halaman Arsip Proyek — menampilkan project yang diarsipkan.
      */
     public function archiveIndex(): View
     {
         $archivedProjects = Project::query()
             ->where('user_id', Auth::id())
-            ->whereIn('archive_status', ['archived', 'inactive'])
+            ->where('status', Project::STATUS_ARCHIVED)
             ->with(['workspace', 'penawarans'])
             ->latest()
             ->paginate(10);
@@ -48,9 +49,9 @@ public function index(): View
     }
 
     /**
-     * ARSIPKAN project (archive_status = 'archived').
+     * ARSIPKAN project (status = 'archived').
      *
-     * Aksi administratif murni: hanya mengubah projects.archive_status.
+     * Aksi administratif murni: hanya mengubah projects.status.
      * TIDAK mengubah Workspace / kontrak lama.
      * Setiap project boleh diarsipkan (source of truth di backend).
      */
@@ -72,7 +73,7 @@ public function index(): View
     }
 
     /**
-     * AKTIFKAN KEMBALI (archive_status = 'active').
+     * AKTIFKAN KEMBALI (status = 'open').
      *
      * HANYA mengeluarkan project dari arsip secara administratif.
      * Tidak menghidupkan kembali Workspace/kontrak lama.
@@ -81,7 +82,7 @@ public function index(): View
     {
         $this->authorizeCompanyProject($project);
 
-        if (!$project->isArchived() && !$project->isInactive()) {
+        if (!$project->isArchived()) {
             return redirect()
                 ->route('company.projects.index')
                 ->with('error', 'Proyek sudah berstatus aktif.');
@@ -103,7 +104,7 @@ public function index(): View
     }
 
     /**
-     * NONAKTIFKAN (archive_status = 'inactive').
+     * NONAKTIFKAN / TUTUP (status = 'closed').
      *
      * Project tidak menerima penawaran baru. Tidak mengubah Workspace.
      */
@@ -111,17 +112,17 @@ public function index(): View
     {
         $this->authorizeCompanyProject($project);
 
-        if ($project->isInactive()) {
+        if ($project->isClosed()) {
             return redirect()
                 ->route('company.projects.show', $project)
-                ->with('error', 'Proyek sudah berstatus nonaktif.');
+                ->with('error', 'Proyek sudah berstatus Tutup.');
         }
 
         $project->deactivate();
 
         return redirect()
             ->route('company.projects.show', $project)
-            ->with('success', 'Proyek berhasil dinonaktifkan.');
+            ->with('success', 'Proyek berhasil ditutup.');
     }
 
     public function create(): View
@@ -168,7 +169,7 @@ public function index(): View
         }
     }
 
-public function show(Project $project): View
+    public function show(Project $project): View
     {
         $this->authorizeCompanyProject($project);
         $project->load(['penawarans.freelancer', 'workspace']);
@@ -205,12 +206,11 @@ public function show(Project $project): View
         $lock = $this->workflowLock($project);
 
         // Field yang TIDAK boleh diubah ketika sudah memasuki alur terikat.
+        // Status ikut terkunci lewat sini (mis. proyek sedang dikerjakan / selesai),
+        // sehingga perubahan status dari form hanya dipakai bila memang diizinkan.
         foreach ($lock['locked'] as $field) {
             unset($data[$field]);
         }
-
-        // Status tidak boleh diubah lewat form edit (khusus via aksi "Tutup Project").
-        unset($data['status']);
 
         // ── File upload (image / attachment) ────────────────────────────────
         if ($request->hasFile('image')) {
@@ -232,21 +232,28 @@ public function show(Project $project): View
      * TUTUP PROYEK — menghentikan penerimaan penawaran baru.
      *
      * Hanya berlaku jika:
-     * - Status masih 'Open'.
+     * - Status masih 'open'.
      * - Belum memiliki Workspace (pekerjaan belum berjalan).
      * - Belum selesai (Workspace.status = Selesai).
      *
-     * 'Closed' BUKAN berarti proyek selesai. Proyek dianggap selesai
+     * 'closed' BUKAN berarti proyek selesai. Proyek dianggap selesai
      * hanya ketika Workspace.status = 'Selesai'.
      */
     public function close(Project $project): RedirectResponse
     {
         $this->authorizeCompanyProject($project);
 
-        if ($project->status !== 'Open') {
+        // Jika proyek sudah berstatus closed, arahkan kembali ke halaman detail/show proyek
+        if ($project->isClosed()) {
             return redirect()
                 ->route('company.projects.show', $project)
-                ->with('error', 'Hanya proyek berstatus Open yang dapat ditutup.');
+                ->with('error', 'Proyek ini memang sudah berstatus Tutup.');
+        }
+
+        if (!$project->isOpen()) {
+            return redirect()
+                ->route('company.projects.show', $project)
+                ->with('error', 'Hanya proyek berstatus Open yang dapat ditutup. Status saat ini: ' . Project::statusLabel($project->status));
         }
 
         if ($project->workspace()->exists()) {
@@ -261,7 +268,7 @@ public function show(Project $project): View
                 ->with('error', 'Proyek sudah selesai.');
         }
 
-        $project->update(['status' => 'Closed']);
+        $project->update(['status' => Project::STATUS_CLOSED]);
 
         return redirect()
             ->route('company.projects.show', $project)
@@ -301,19 +308,19 @@ public function show(Project $project): View
         if ($hasOffers) {
             return [
                 'locked' => [
-                    'budget', 'deadline', 'status',
+                    'budget', 'deadline',
                 ],
                 'note' => 'Proyek sudah menerima penawaran. Budget dan deadline tidak dapat diubah.',
             ];
         }
 
         return [
-            'locked' => [ 'status' ],
+            'locked' => [],
             'note' => 'Semua field dapat diubah.',
         ];
     }
 
-public function destroy(Project $project): RedirectResponse
+    public function destroy(Project $project): RedirectResponse
     {
         $this->authorizeCompanyProject($project);
 
@@ -336,7 +343,7 @@ public function destroy(Project $project): RedirectResponse
             ->with('success', 'Proyek berhasil dihapus.');
     }
 
-public function selectFreelancer(Project $project, Penawaran $penawaran): RedirectResponse
+    public function selectFreelancer(Project $project, Penawaran $penawaran): RedirectResponse
     {
         $this->authorizeCompanyProject($project);
 

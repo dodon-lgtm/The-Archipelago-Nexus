@@ -54,8 +54,7 @@ Route::post('/register', [RegisterController::class, 'register']);
 // ──────────────────────────────────────────────
 Route::get('/', function () {
     $recentProjects = \App\Models\Project::with(['category', 'owner'])
-        ->where('archive_status', 'active')
-        ->where('status', 'Open')
+        ->where('status', 'open')
         ->latest()
         ->take(6)
         ->get();
@@ -164,7 +163,7 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])
             $userId = Auth::id();
 
             $totalProjects = \App\Models\Project::where('user_id', $userId)->count();
-            $activeProjects = \App\Models\Project::where('user_id', $userId)->where('status', 'Open')->count();
+            $activeProjects = \App\Models\Project::where('user_id', $userId)->where('status', 'open')->count();
             $recentProjects = \App\Models\Project::where('user_id', $userId)->latest()->take(5)->get();
 
             $activeFreelancers = \App\Models\Penawaran::whereHas('project', function ($q) use ($userId) {

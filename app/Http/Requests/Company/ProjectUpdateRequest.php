@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Company;
 
+use App\Models\Project;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ProjectUpdateRequest extends FormRequest
 {
@@ -37,7 +39,7 @@ class ProjectUpdateRequest extends FormRequest
 
             'attachment' => ['nullable', 'mimes:pdf,doc,docx,zip,rar', 'max:10240'],
 
-            'status' => ['nullable', 'in:Open,Closed'],
+            'status' => ['nullable', Rule::in(Project::STATUSES)],
         ];
     }
 }

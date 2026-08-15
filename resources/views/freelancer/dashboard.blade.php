@@ -270,12 +270,12 @@
             {{-- GRID UTAMA: KIRI (Proyek) & KANAN (Lamaran) --}}
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
 
-                {{-- KIRI: Rekomendasi Pekerjaan (2 Kolom) --}}
+                {{-- KIRI: Pekerjaan Terbaru (2 Kolom) --}}
                 <div class="reveal reveal-6 lg:col-span-2 space-y-6">
                     <div class="flex justify-between items-center">
                         <h2 class="text-xl font-black text-slate-800 dark:text-white flex items-center gap-3">
                             <span class="section-accent h-6"></span>
-                            Rekomendasi Pekerjaan
+                            Pekerjaan Terbaru
                         </h2>
                         <a href="{{ route('freelancer.projects.index') }}" class="text-blue-600 dark:text-blue-400 font-semibold text-sm hover:text-blue-700 dark:hover:text-blue-400 transition flex items-center gap-1 group">
                             Lihat Semua <i class="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
@@ -284,7 +284,7 @@
 
                     <div class="space-y-4">
                         @forelse($projects ?? [] as $project)
-                            <div class="job-card bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between shadow-sm transition-colors duration-300">
+                            <div class="job-card bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between gap-4 shadow-sm transition-colors duration-300">
                                 <div class="flex items-center gap-4 min-w-0">
                                     <div class="job-thumb w-16 h-16 rounded-xl overflow-hidden shrink-0 bg-blue-50 dark:bg-slate-800">
                                         <img src="{{ $project->image ? asset('storage/'.$project->image) : asset('images/no-image.png') }}" class="w-16 h-16 object-cover" alt="Thumb">
@@ -295,11 +295,28 @@
                                             <i class="fa-solid fa-tag text-[9px] text-blue-400 dark:text-slate-500"></i>
                                             {{ $project->category->name ?? '-' }}
                                         </p>
+                                        @if($project->owner && $project->owner->name)
+                                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 inline-flex items-center gap-1">
+                                                <i class="fa-regular fa-building text-[9px] text-blue-400 dark:text-slate-500"></i>
+                                                {{ $project->owner->name }}
+                                            </p>
+                                        @endif
+                                        @if($project->project_description)
+                                            <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1 mt-1">
+                                                {{ \Illuminate\Support\Str::limit($project->project_description, 70) }}
+                                            </p>
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="text-right shrink-0 pl-3">
                                     <p class="font-bold text-blue-600 dark:text-blue-400 text-xs">Rp {{ number_format($project->budget,0,',','.') }}</p>
-                                    <a href="{{ route('freelancer.projects.show',$project) }}" class="text-[10px] font-semibold bg-blue-50 dark:bg-slate-800 hover:bg-blue-600 dark:hover:bg-slate-800 hover:text-white dark:hover:text-blue-400 text-slate-600 dark:text-slate-300 px-3 py-1.5 rounded-lg mt-2 inline-block transition-colors duration-300">Detail</a>
+                                    @if($project->deadline)
+                                        <p class="text-[10px] text-slate-400 dark:text-slate-400 mt-1 inline-flex items-center gap-1">
+                                            <i class="fa-regular fa-calendar-alt text-[9px]"></i>
+                                            {{ \Carbon\Carbon::parse($project->deadline)->isoFormat('D MMM YYYY') }}
+                                        </p>
+                                    @endif
+                                    <a href="{{ route('freelancer.projects.show',$project) }}" class="text-[10px] font-semibold bg-blue-50 dark:bg-slate-800 hover:bg-blue-600 dark:hover:bg-slate-800 hover:text-white dark:hover:text-blue-400 text-slate-600 dark:text-slate-300 px-3 py-1.5 rounded-lg mt-2 inline-block transition-colors duration-300">Lihat Detail</a>
                                 </div>
                             </div>
                         @empty
@@ -379,7 +396,7 @@
 
             </div>
 
-            @include('navbar.footer')
+          
 
         </main>
     </div>

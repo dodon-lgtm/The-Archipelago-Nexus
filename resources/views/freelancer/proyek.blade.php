@@ -133,8 +133,88 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                     </div>
                 </div>
 
+                {{-- FILTER CARD --}}
+                @php
+                    $hasFilter = request('search') || request('category') || request('budget') || request('sort');
+                @endphp
+                <div class="bg-white dark:bg-slate-900 rounded-2xl border border-blue-100/80 dark:border-slate-800 shadow-sm p-5 sm:p-6 mb-8">
+                    <form method="GET" action="{{ route('freelancer.proyek') }}" class="flex flex-col lg:flex-row gap-4 lg:items-end">
+                        {{-- Search --}}
+                        <div class="flex-1 min-w-0">
+                            <label for="filter-search" class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
+                                Cari Proyek
+                            </label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                    <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                                </span>
+                                <input type="text" id="filter-search" name="search" value="{{ request('search') }}"
+                                       placeholder="Cari proyek..."
+                                       class="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-blue-100 dark:border-slate-700 focus:ring-2 focus:ring-blue-100 outline-none dark:bg-slate-800 dark:text-white dark:placeholder:text-slate-500">
+                            </div>
+                        </div>
+
+                        {{-- Category --}}
+                        <div class="lg:w-56">
+                            <label for="filter-category" class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
+                                Kategori
+                            </label>
+                            <select id="filter-category" name="category"
+                                    class="w-full px-4 py-2.5 text-sm rounded-xl border border-blue-100 dark:border-slate-700 focus:ring-2 focus:ring-blue-100 outline-none cursor-pointer dark:bg-slate-800 dark:text-white">
+                                <option value="">Semua Kategori</option>
+                                @foreach($categories as $cat)
+                                    <option value="{{ $cat->id }}" @selected((string)request('category') === (string)$cat->id)>{{ $cat->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        {{-- Budget --}}
+                        <div class="lg:w-56">
+                            <label for="filter-budget" class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
+                                Budget
+                            </label>
+                            <select id="filter-budget" name="budget"
+                                    class="w-full px-4 py-2.5 text-sm rounded-xl border border-blue-100 dark:border-slate-700 focus:ring-2 focus:ring-blue-100 outline-none cursor-pointer dark:bg-slate-800 dark:text-white">
+                                <option value="">Semua Budget</option>
+                                <option value="under-1m" @selected(request('budget') === 'under-1m')>Di bawah Rp1.000.000</option>
+                                <option value="1m-5m" @selected(request('budget') === '1m-5m')>Rp1.000.000 – Rp5.000.000</option>
+                                <option value="above-5m" @selected(request('budget') === 'above-5m')>Di atas Rp5.000.000</option>
+                            </select>
+                        </div>
+
+                        {{-- Sort --}}
+                        <div class="lg:w-56">
+                            <label for="filter-sort" class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
+                                Urutkan
+                            </label>
+                            <select id="filter-sort" name="sort"
+                                    class="w-full px-4 py-2.5 text-sm rounded-xl border border-blue-100 dark:border-slate-700 focus:ring-2 focus:ring-blue-100 outline-none cursor-pointer dark:bg-slate-800 dark:text-white">
+                                <option value="terbaru" @selected(request('sort', 'terbaru') === 'terbaru')>Terbaru</option>
+                                <option value="deadline" @selected(request('sort') === 'deadline')>Deadline Terdekat</option>
+                                <option value="budget-tinggi" @selected(request('sort') === 'budget-tinggi')>Budget Tertinggi</option>
+                                <option value="budget-rendah" @selected(request('sort') === 'budget-rendah')>Budget Terendah</option>
+                            </select>
+                        </div>
+
+                        {{-- Buttons --}}
+                        <div class="flex items-center gap-2 shrink-0">
+                            <button type="submit"
+                                    class="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-sm font-semibold rounded-xl shadow-sm shadow-blue-500/20 transition-all duration-200 cursor-pointer">
+                                <i class="fa-solid fa-filter text-xs"></i> Filter
+                            </button>
+                            @if($hasFilter)
+                                <a href="{{ route('freelancer.proyek') }}"
+                                   class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-sm font-semibold rounded-xl transition-all duration-200">
+                                    <i class="fa-solid fa-rotate-left text-xs"></i> Reset
+                                </a>
+                            @endif
+                        </div>
+                    </form>
+                </div>
+
                 {{-- Project Grid --}}
                 @if($projects->count() > 0)
+                
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                         @foreach($projects as $project)
                             <div class="group bg-white dark:bg-slate-900 rounded-2xl border border-blue-100/80 dark:border-slate-800 shadow-sm hover:shadow-xl hover:border-blue-200 dark:hover:border-slate-700 hover:-translate-y-1.5 transition-all duration-300 ease-out overflow-hidden flex flex-col justify-between">
@@ -239,22 +319,36 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                     {{-- Empty State --}}
                     <div class="bg-white dark:bg-slate-900 rounded-3xl border border-blue-100/80 dark:border-slate-800 p-12 text-center max-w-lg mx-auto my-8 shadow-xs">
                         <div class="w-20 h-20 rounded-2xl bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto mb-6 shadow-inner">
-                            <i class="fa-solid fa-briefcase text-3xl"></i>
+                            <i class="fa-solid {{ $hasFilter ? 'fa-magnifying-glass' : 'fa-briefcase' }} text-3xl"></i>
                         </div>
-                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Belum Ada Proyek</h3>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">
+                            {{ $hasFilter ? 'Tidak Ada Proyek yang Cocok' : 'Belum Ada Proyek' }}
+                        </h3>
                         <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-6">
-                            Saat ini belum ada proyek terbaru yang dipublikasikan. Silakan kembali lagi nanti untuk melihat proyek-proyek terbaru dari perusahaan.
+                            @if($hasFilter)
+                                Tidak ada proyek yang sesuai dengan filter Anda. Coba ubah kata kunci pencarian atau hapus sebagian filter.
+                            @else
+                                Saat ini belum ada proyek terbaru yang dipublikasikan. Silakan kembali lagi nanti untuk melihat proyek-proyek terbaru dari perusahaan.
+                            @endif
                         </p>
-                        <a href="{{ route('freelancer.dashboard') }}" 
-                           class="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white text-sm font-semibold rounded-xl transition-all duration-200 shadow-sm">
-                            <i class="fa-solid fa-arrow-left text-xs"></i>
-                            Kembali ke Dashboard
-                        </a>
+                        <div class="flex items-center justify-center gap-3 flex-wrap">
+                            @if($hasFilter)
+                                <a href="{{ route('freelancer.proyek') }}"
+                                   class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-all duration-200 shadow-sm">
+                                    <i class="fa-solid fa-rotate-left text-xs"></i> Reset Filter
+                                </a>
+                            @endif
+                            <a href="{{ route('freelancer.dashboard') }}"
+                               class="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white text-sm font-semibold rounded-xl transition-all duration-200 shadow-sm">
+                                <i class="fa-solid fa-arrow-left text-xs"></i>
+                                Kembali ke Dashboard
+                            </a>
+                        </div>
                     </div>
                 @endif
 
                 <div class="mt-16">
-                    @include('navbar.footer')
+                   
                 </div>
             </div>
 

@@ -513,8 +513,8 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
                                     <span
                                         class="absolute top-3 right-3 px-3 py-1 text-[11px] font-bold rounded-full shadow-xs backdrop-blur-md
-                                        {{ $project->status === 'Open' ? 'bg-emerald-500/90 text-white' : 'bg-slate-700/80 text-white' }}">
-                                        {{ $project->status }}
+                                        {{ ($project->status ?? 'open') === 'open' ? 'bg-emerald-500/90 text-white' : 'bg-slate-700/80 text-white' }}">
+                                        {{ \App\Models\Project::statusLabel($project->status ?? 'open') }}
                                     </span>
                                 </div>
 

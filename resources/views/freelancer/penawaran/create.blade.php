@@ -315,7 +315,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                         Status
                                     </p>
                                     <span class="bg-blue-50 dark:bg-slate-800 border border-blue-200 dark:border-slate-700 text-blue-600 dark:text-blue-400 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest shadow-sm">
-                                        {{ $project->status }}
+                                        {{ \App\Models\Project::statusLabel($project->status ?? 'open') }}
                                     </span>
                                 </div>
 
