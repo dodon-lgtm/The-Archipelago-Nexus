@@ -34,9 +34,7 @@
 </head>
 <body>
 
-    <div class="no-print">
-        <button onclick="window.print()" class="btn-print">🖨 Cetak / Simpan PDF</button>
-    </div>
+   
 
     <div class="header">
         <h2>LAPORAN REKAPITULASI PEMBAYARAN</h2>

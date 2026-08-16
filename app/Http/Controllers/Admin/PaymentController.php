@@ -10,6 +10,7 @@ use App\Services\NotificationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -18,22 +19,36 @@ class PaymentController extends Controller
     /**
      * Display a listing of all payments.
      */
-    public function index(): View
-    {
-        $payments = Payment::with([
-            'workspace.project',
-            'company',
-            'freelancer',
-        ])
-            ->latest()
-            ->paginate(15);
+    public function index(Request $request): View
+{
+    $query = Payment::with([
+        'workspace.project',
+        'company',
+        'freelancer',
+    ])->latest();
 
-        return view('admin.payments.index', compact('payments'));
+    if ($request->filled('status')) {
+
+        switch ($request->status) {
+
+            case 'paid':
+                $query->where('status', 'paid');
+                break;
+
+            case 'waiting_verification':
+                $query->where('status', 'waiting_verification');
+                break;
+
+            case 'rejected':
+                $query->where('status', 'rejected');
+                break;
+        }
     }
 
-    /**
-     * Display the specified payment.
-     */
+    $payments = $query->paginate(15)->withQueryString();
+
+    return view('admin.payments.index', compact('payments'));
+}
     public function show(Payment $payment): View
     {
         $payment->load([
@@ -49,14 +64,17 @@ class PaymentController extends Controller
     /**
      * Verify payment (approve).
      */
-    public function verify(Request $request, Payment $payment): RedirectResponse
-    {
+    public function verify(
+        Request $request,
+        Payment $payment
+    ): RedirectResponse {
         // Pastikan status payment adalah waiting_verification
-        if ($payment->status !== 'waiting_verification') {
-            return redirect()
-                ->route('admin.payments.show', $payment)
-                ->with('error', 'Status pembayaran tidak dalam status menunggu verifikasi.');
-        }
+       
+        if (!in_array($payment->status, ['waiting_verification', 'pending'])) {
+    return redirect()
+        ->route('admin.payments.show', $payment)
+        ->with('error', 'Status pembayaran tidak dalam status menunggu verifikasi.');
+}
 
         $workspace = $payment->workspace;
 
@@ -68,7 +86,9 @@ class PaymentController extends Controller
         ]);
 
         // Update workspace status menjadi Selesai
-        $workspace->update(['status' => 'Selesai']);
+        $workspace->update([
+            'status' => 'Selesai',
+        ]);
 
         // System message
         Message::create([
@@ -83,8 +103,21 @@ class PaymentController extends Controller
             user: $payment->freelancer_id,
             type: 'payment.verified',
             title: 'Pembayaran Diverifikasi',
-            message: 'Pembayaran untuk proyek "' . ($workspace->project->project_name ?? '') . '" telah diverifikasi. Saldo sebesar Rp ' . number_format($payment->freelancer_receive, 0, ',', '.') . ' telah diterima.',
-            redirect: route('freelancer.workspaces.show', $workspace),
+            message:
+                'Pembayaran untuk proyek "' .
+                ($workspace->project->project_name ?? '') .
+                '" telah diverifikasi. Saldo sebesar Rp ' .
+                number_format(
+                    $payment->freelancer_receive,
+                    0,
+                    ',',
+                    '.'
+                ) .
+                ' telah diterima.',
+            redirect: route(
+                'freelancer.workspaces.show',
+                $workspace
+            ),
             senderId: Auth::id(),
             paymentId: $payment->id,
             workspaceId: $workspace->id,
@@ -95,8 +128,14 @@ class PaymentController extends Controller
             user: $payment->company_id,
             type: 'payment.verified',
             title: 'Pembayaran Diverifikasi',
-            message: 'Pembayaran untuk proyek "' . ($workspace->project->project_name ?? '') . '" berhasil diverifikasi oleh Admin. Status workspace telah menjadi Selesai.',
-            redirect: route('company.workspaces.show', $workspace),
+            message:
+                'Pembayaran untuk proyek "' .
+                ($workspace->project->project_name ?? '') .
+                '" berhasil diverifikasi oleh Admin. Status workspace telah menjadi Selesai.',
+            redirect: route(
+                'company.workspaces.show',
+                $workspace
+            ),
             senderId: Auth::id(),
             paymentId: $payment->id,
             workspaceId: $workspace->id,
@@ -104,23 +143,32 @@ class PaymentController extends Controller
 
         return redirect()
             ->route('admin.payments.show', $payment)
-            ->with('success', 'Pembayaran berhasil diverifikasi. Status workspace telah menjadi Selesai.');
+            ->with(
+                'success',
+                'Pembayaran berhasil diverifikasi. Status workspace telah menjadi Selesai.'
+            );
     }
 
     /**
      * Reject payment.
      */
-    public function reject(Request $request, Payment $payment): RedirectResponse
-    {
+    public function reject(
+        Request $request,
+        Payment $payment
+    ): RedirectResponse {
         // Pastikan status payment adalah waiting_verification
-        if ($payment->status !== 'waiting_verification') {
-            return redirect()
-                ->route('admin.payments.show', $payment)
-                ->with('error', 'Status pembayaran tidak dalam status menunggu verifikasi.');
-        }
+      if (!in_array($payment->status, ['waiting_verification', 'pending'])) {
+    return redirect()
+        ->route('admin.payments.show', $payment)
+        ->with('error', 'Status pembayaran tidak dalam status menunggu verifikasi.');
+}
 
         $request->validate([
-            'admin_note' => ['nullable', 'string', 'max:2000'],
+            'admin_note' => [
+                'nullable',
+                'string',
+                'max:2000',
+            ],
         ]);
 
         $workspace = $payment->workspace;
@@ -134,12 +182,17 @@ class PaymentController extends Controller
         ]);
 
         // Update workspace status kembali ke Menunggu Pembayaran
-        $workspace->update(['status' => 'Menunggu Pembayaran']);
+        $workspace->update([
+            'status' => 'Menunggu Pembayaran',
+        ]);
 
         // System message
         $messageText = 'Pembayaran ditolak Admin.';
+
         if ($request->filled('admin_note')) {
-            $messageText .= "\n\nAlasan:\n" . $request->admin_note;
+            $messageText .=
+                "\n\nAlasan:\n" .
+                $request->admin_note;
         }
 
         Message::create([
@@ -154,8 +207,19 @@ class PaymentController extends Controller
             user: $payment->company_id,
             type: 'payment.rejected',
             title: 'Pembayaran Ditolak',
-            message: 'Pembayaran untuk proyek "' . ($workspace->project->project_name ?? '') . '" ditolak oleh Admin. Silakan upload ulang bukti pembayaran.' . ($request->filled('admin_note') ? "\n\nAlasan: " . $request->admin_note : ''),
-            redirect: route('company.workspaces.show', $workspace),
+            message:
+                'Pembayaran untuk proyek "' .
+                ($workspace->project->project_name ?? '') .
+                '" ditolak oleh Admin. Silakan upload ulang bukti pembayaran.' .
+                (
+                    $request->filled('admin_note')
+                        ? "\n\nAlasan: " . $request->admin_note
+                        : ''
+                ),
+            redirect: route(
+                'company.workspaces.show',
+                $workspace
+            ),
             senderId: Auth::id(),
             paymentId: $payment->id,
             workspaceId: $workspace->id,
@@ -166,8 +230,14 @@ class PaymentController extends Controller
             user: $payment->freelancer_id,
             type: 'payment.rejected',
             title: 'Pembayaran Ditolak',
-            message: 'Pembayaran untuk proyek "' . ($workspace->project->project_name ?? '') . '" ditolak oleh Admin. Menunggu perusahaan mengupload ulang bukti pembayaran.',
-            redirect: route('freelancer.workspaces.show', $workspace),
+            message:
+                'Pembayaran untuk proyek "' .
+                ($workspace->project->project_name ?? '') .
+                '" ditolak oleh Admin. Menunggu perusahaan mengupload ulang bukti pembayaran.',
+            redirect: route(
+                'freelancer.workspaces.show',
+                $workspace
+            ),
             senderId: Auth::id(),
             paymentId: $payment->id,
             workspaceId: $workspace->id,
@@ -175,7 +245,10 @@ class PaymentController extends Controller
 
         return redirect()
             ->route('admin.payments.show', $payment)
-            ->with('success', 'Pembayaran ditolak. Perusahaan dapat mengupload ulang bukti pembayaran.');
+            ->with(
+                'success',
+                'Pembayaran ditolak. Perusahaan dapat mengupload ulang bukti pembayaran.'
+            );
     }
 
     /**
@@ -190,32 +263,131 @@ class PaymentController extends Controller
             'verifier',
         ])->findOrFail($id);
 
-        if (class_exists('Barryvdh\DomPDF\Facade\Pdf')) {
-            $pdf = Pdf::loadView('admin.payments.pdf_single', compact('payment'));
-            return $pdf->download('struk-pembayaran-' . $payment->id . '.pdf');
+        /*
+        |--------------------------------------------------------------------------
+        | KEAMANAN CETAK STRUK
+        |--------------------------------------------------------------------------
+        | Struk satuan hanya boleh dicetak jika pembayaran sudah dibayar.
+        |--------------------------------------------------------------------------
+        */
+
+        if (!in_array(
+            strtolower($payment->status),
+            [
+                'paid',
+                'dibayar',
+                'selesai',
+            ]
+        )) {
+            return redirect()
+                ->route('admin.payments.index')
+                ->with(
+                    'error',
+                    'Struk hanya dapat dicetak untuk transaksi yang sudah dibayar.'
+                );
         }
 
-        return view('admin.payments.pdf_single', compact('payment'));
+        if (class_exists('Barryvdh\DomPDF\Facade\Pdf')) {
+            $pdf = Pdf::loadView(
+                'admin.payments.pdf_single',
+                compact('payment')
+            );
+
+            return $pdf->download(
+                'struk-pembayaran-' .
+                $payment->id .
+                '.pdf'
+            );
+        }
+
+        return view(
+            'admin.payments.pdf_single',
+            compact('payment')
+        );
     }
 
     /**
-     * Export seluruh laporan pembayaran ke PDF / View.
+     * Export laporan pembayaran ke PDF berdasarkan filter status.
      */
-    public function exportPdfAll()
+    public function exportPdfAll(Request $request)
     {
-        $payments = Payment::with([
+        $query = Payment::with([
             'workspace.project',
             'company',
             'freelancer',
-        ])->latest()->get();
+        ]);
 
-        if (class_exists('Barryvdh\DomPDF\Facade\Pdf')) {
-           // Ubah admin.payments.pdf_all menjadi admin.payments.pdf-all
-$pdf = Pdf::loadView('admin.payments.pdf-all', compact('payments'));
+        /*
+        |--------------------------------------------------------------------------
+        | FILTER PDF
+        |--------------------------------------------------------------------------
+        */
 
-return view('admin.payments.pdf-all', compact('payments'));
+        if ($request->filled('status')) {
+            $status = strtolower($request->status);
+
+            // Dibayar
+            if ($status === 'paid') {
+                $query->whereIn(
+                    DB::raw('LOWER(status)'),
+                    [
+                        'paid',
+                        'dibayar',
+                        'selesai',
+                    ]
+                );
+            }
+
+            // Pending
+            elseif ($status === 'pending') {
+                $query->whereIn(
+                    DB::raw('LOWER(status)'),
+                    [
+                        'pending',
+                        'waiting_verification',
+                    ]
+                );
+            }
+
+            // Ditolak
+            elseif ($status === 'rejected') {
+                $query->whereIn(
+                    DB::raw('LOWER(status)'),
+                    [
+                        'rejected',
+                        'ditolak',
+                    ]
+                );
+            }
         }
 
-        return view('admin.payments.pdf_all', compact('payments'));
+        $payments = $query
+            ->latest()
+            ->get();
+
+        $filename =
+            'laporan-pembayaran-' .
+            ($request->status ?? 'semua') .
+            '.pdf';
+
+        /*
+        |--------------------------------------------------------------------------
+        | GENERATE PDF ASLI
+        |--------------------------------------------------------------------------
+        */
+
+        if (class_exists('Barryvdh\DomPDF\Facade\Pdf')) {
+            $pdf = Pdf::loadView(
+                'admin.payments.pdf-all',
+                compact('payments')
+            );
+
+            return $pdf->download($filename);
+        }
+
+        return view(
+            'admin.payments.pdf-all',
+            compact('payments')
+        );
     }
 }
