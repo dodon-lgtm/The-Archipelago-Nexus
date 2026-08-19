@@ -6,6 +6,10 @@
     <title>Lamaran Saya - ApexForge Labs</title>
     @vite('resources/css/app.css')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    {{-- SweetAlert2 CDN --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -232,11 +236,11 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                         </a>
                                     @endif
                                     @if($item->status === 'Menunggu')
-                                        <form action="{{ route('freelancer.penawaran.destroy', $item) }}" method="POST"
-                                              onsubmit="return confirm('Batalkan Penawaran? Anda yakin ingin membatalkan penawaran ini? Setelah dibatalkan, Anda dapat mengirim penawaran baru pada proyek ini.');">
+                                        <form id="delete-form-{{ $item->id }}" action="{{ route('freelancer.penawaran.destroy', $item) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit"
+                                            <button type="button"
+                                                    onclick="confirmCancel('delete-form-{{ $item->id }}')"
                                                     class="inline-flex items-center gap-2 px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold rounded-xl transition-colors duration-200 border border-red-200">
                                                 <i class="fa-solid fa-ban text-[10px]"></i>
                                                 Batalkan Penawaran
@@ -280,6 +284,30 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
         </main>
     </div>
 </div>
+
+{{-- SweetAlert2 Confirmation Script --}}
+<script>
+    function confirmCancel(formId) {
+        Swal.fire({
+            title: 'Batalkan Penawaran?',
+            text: 'Anda yakin ingin membatalkan penawaran ini? Setelah dibatalkan, Anda dapat mengirim penawaran baru pada proyek ini.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#2563eb',
+            cancelButtonColor: '#94a3b8',
+            confirmButtonText: 'Ya, Batalkan',
+            cancelButtonText: 'Tidak',
+            customClass: {
+                popup: 'rounded-3xl',
+                title: 'text-slate-900 font-bold',
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById(formId).submit();
+            }
+        });
+    }
+</script>
 
 </body>
 </html>

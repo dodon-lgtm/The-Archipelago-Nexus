@@ -129,6 +129,9 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
     <div class="fixed inset-0 pointer-events-none hologram-grid-blue z-0"></div>
     <div class="fixed top-[-20%] right-[-10%] w-[50rem] h-[50rem] bg-gradient-to-bl from-blue-100/40 to-transparent rounded-full blur-[100px] pointer-events-none z-0"></div>
 
+    {{-- TOAST NOTIFICATION CONTAINER (Modern Floating Notifications) --}}
+    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-3 pointer-events-none"></div>
+
     {{-- SIDEBAR --}}
     <div class="relative z-10 flex">
         @include('navbar.navigasi')
@@ -158,16 +161,6 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                     <h1 class="text-3xl font-black text-blue-950 tracking-tight">Buat Proyek Baru</h1>
                     <p class="text-sm font-semibold text-blue-400 mt-1">Jelaskan kebutuhan proyek Anda dan temukan freelancer terbaik untuk membantu mewujudkannya.</p>
                 </div>
-
-                {{-- SUCCESS MESSAGE --}}
-                @if(session('success'))
-                    <div class="overflow-hidden relative bg-blue-50 border border-blue-200 p-4 rounded-2xl flex items-center gap-4 shadow-sm">
-                        <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(59,130,246,0.4)]">
-                            <i class="fa-solid fa-check text-white text-sm"></i>
-                        </div>
-                        <div class="font-bold text-blue-900 text-sm">{{ session('success') }}</div>
-                    </div>
-                @endif
 
                 {{-- FORM CARD --}}
                 <div class="glass-card rounded-3xl relative overflow-hidden">
@@ -280,18 +273,14 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                             </div>
 
                             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                {{-- Budget (Auto-format JS implemented here) --}}
+                                {{-- Budget --}}
                                 <div>
                                     <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2">Budget (Rp) <span class="text-blue-500">*</span></label>
                                     <div class="relative">
                                         <div class="absolute inset-y-0 left-0 flex items-center pl-5 pointer-events-none">
                                             <span class="text-blue-400 font-bold text-sm">Rp</span>
                                         </div>
-                                        
-                                        {{-- Hidden input holds actual integer value --}}
                                         <input type="hidden" name="budget" id="real_budget" value="{{ old('budget') }}">
-                                        
-                                        {{-- Display input for formatted styling --}}
                                         <input type="text" id="display_budget"
                                             class="w-full pl-12 pr-5 py-3.5 bg-blue-50/50 border @error('budget') border-blue-500 ring-2 ring-blue-500/20 @else border-blue-100 @enderror rounded-xl text-sm font-bold text-blue-950 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 focus:bg-white transition-all placeholder:text-blue-300 placeholder:font-medium"
                                             placeholder="5000000" required>
@@ -397,14 +386,50 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
     </div>
 
-    {{-- Script untuk auto-format input angka --}}
+    {{-- Script untuk auto-format input angka & Sistem Modern Toast Notification --}}
     <script>
+        // Fungsi untuk memunculkan Toast Notification secara modern
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-blue-950/95 text-white' : 'bg-red-600/95 text-white';
+            const icon = type === 'success' ? 'fa-check-circle text-blue-400' : 'fa-exclamation-circle text-red-200';
+
+            toast.className = `pointer-events-auto flex items-center gap-3 px-5 py-4 rounded-2xl shadow-2xl backdrop-blur-xl border border-white/10 transform translate-x-10 opacity-0 transition-all duration-500 ${bgColor}`;
+            toast.innerHTML = `
+                <i class="fa-solid ${icon} text-lg"></i>
+                <span class="text-xs font-bold tracking-tight">${message}</span>
+            `;
+
+            container.appendChild(toast);
+
+            // Efek masuk
+            setTimeout(() => {
+                toast.classList.remove('translate-x-10', 'opacity-0');
+            }, 10);
+
+            // Efek keluar otomatis setelah 4 detik
+            setTimeout(() => {
+                toast.classList.add('translate-x-10', 'opacity-0');
+                setTimeout(() => toast.remove(), 500);
+            }, 4000);
+        }
+
+        // Panggil otomatis jika ada session success dari Laravel
+        @if(session('success'))
+            document.addEventListener('DOMContentLoaded', function() {
+                showToast("{{ session('success') }}", 'success');
+            });
+        @endif
+
+        // Format angka budget secara real-time
         document.addEventListener('DOMContentLoaded', function() {
             const displayInput = document.getElementById('display_budget');
             const realInput = document.getElementById('real_budget');
 
             if (displayInput && realInput) {
-                // Format on initial load if there's an old value from validation error
                 if (realInput.value) {
                     let initialValue = realInput.value.replace(/[^0-9]/g, '');
                     if (initialValue !== '') {
@@ -412,7 +437,6 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                     }
                 }
 
-                // Format dynamically while typing
                 displayInput.addEventListener('input', function(e) {
                     let rawValue = this.value.replace(/[^0-9]/g, '');
                     realInput.value = rawValue;
