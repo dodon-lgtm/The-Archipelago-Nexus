@@ -43,7 +43,22 @@ class AuthController extends Controller
             );
         }
 
-        return view('auth.login');
+                // =========================================================
+        // AMBIL DATA KEBIJAKAN AKTIF (untuk modal syarat/login)
+        // =========================================================
+        // Dokumen kebijakan ditampilkan secara dinamis pada modal login.
+        // Bungkus try/catch agar login tidak gagal bila migrasi belum pernah
+        // dijalankan (mis. environment lokasi baru).
+        try {
+            $policies = \App\Models\Policy::query()
+                ->where('is_active', true)
+                ->orderBy('id')
+                ->get();
+        } catch (\Throwable $e) {
+            $policies = collect();
+        }
+
+        return view('auth.login', compact('policies'));
     }
 
 

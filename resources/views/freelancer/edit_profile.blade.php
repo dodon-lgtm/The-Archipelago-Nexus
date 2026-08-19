@@ -11,8 +11,12 @@
         @else
             const profileThemeUserId = 'guest';
         @endauth
-        const profileThemeKey = 'theme_user_' + profileThemeUserId;
-        if (localStorage.getItem(profileThemeKey) === 'dark') {
+        // Baca dari semua kunci tema aplikasi agar dark mode selalu aktif.
+        const storedTheme =
+            localStorage.getItem('theme_user_' + profileThemeUserId)
+            || localStorage.getItem('theme')
+            || localStorage.getItem('apexforge_theme');
+        if (storedTheme === 'dark') {
             document.documentElement.classList.add('dark');
         }
     </script>

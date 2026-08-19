@@ -274,7 +274,6 @@
                 </div>
                 <span class="font-extrabold text-base sm:text-xl tracking-tight text-slate-900 dark:text-white group-hover:text-blue-600 transition">
                     ApexForge Labs
-
                 </span>
             </a>
 
@@ -335,7 +334,6 @@
                     <i class="fa-solid fa-bars text-xl"></i>
                 </button>
             </div>
-
         </div>
 
         <!-- Mobile Menu -->
@@ -348,105 +346,50 @@
 
             <div class="pt-3 border-t border-blue-50 dark:border-slate-800">
                 @auth
-
                     <div class="flex items-center gap-2 pb-3">
-
-                        <div
-                            class="w-8 h-8 rounded-full bg-blue-100
-                            text-blue-600 font-bold
-                            flex items-center justify-center text-xs">
-
+                        <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 font-bold flex items-center justify-center text-xs">
                             {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-
                         </div>
                         <span class="font-bold text-sm text-slate-900 dark:text-white">{{ Auth::user()->name }}</span>
                     </div>
 
-
                     @if (Auth::user()->role === 'freelancer')
-
-                        <a href="{{ route('freelancer.dashboard') }}"
-                            class="block px-4 py-2.5 text-sm font-bold
-                            text-white bg-blue-600 rounded-xl
-                            text-center mb-2">
-
+                        <a href="{{ route('freelancer.dashboard') }}" class="block px-4 py-2.5 text-sm font-bold text-white bg-blue-600 rounded-xl text-center mb-2">
                             <i class="fa-solid fa-gauge-high mr-1.5"></i>
                             Dashboard Freelancer
-
                         </a>
-
-
                     @elseif(Auth::user()->role === 'company')
-
-                        <a href="{{ route('company.dashboard') }}"
-                            class="block px-4 py-2.5 text-sm font-bold
-                            text-white bg-blue-600 rounded-xl
-                            text-center mb-2">
-
+                        <a href="{{ route('company.dashboard') }}" class="block px-4 py-2.5 text-sm font-bold text-white bg-blue-600 rounded-xl text-center mb-2">
                             <i class="fa-solid fa-building mr-1.5"></i>
                             Dashboard Perusahaan
-
                         </a>
-
-
                     @elseif(Auth::user()->role === 'admin')
-
-                        <a href="{{ route('admin.dashboard') }}"
-                            class="block px-4 py-2.5 text-sm font-bold
-                            text-white bg-blue-600 rounded-xl
-                            text-center mb-2">
-
+                        <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2.5 text-sm font-bold text-white bg-blue-600 rounded-xl text-center mb-2">
                             <i class="fa-solid fa-shield-halved mr-1.5"></i>
                             Dashboard Admin
-
                         </a>
-
                     @endif
 
-
                     <!-- MOBILE LOGOUT -->
-
-                    <form
-                        method="POST"
-                        action="{{ route('logout') }}">
-
+                    <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit" class="w-full text-center px-4 py-2 text-sm font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl">
                             <i class="fa-solid fa-right-from-bracket mr-2"></i>Logout
                         </button>
-
                     </form>
-
-
                 @else
-
                     <div class="grid grid-cols-2 gap-2">
                         <a href="{{ route('login') }}" class="block px-4 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-200 bg-blue-50 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-center rounded-xl">
                             Masuk
-
                         </a>
-
-                        <a href="{{ route('register') }}"
-                            class="block px-4 py-2.5 text-sm
-                            font-bold text-white
-                            bg-blue-600 hover:bg-blue-700
-                            text-center rounded-xl">
-
+                        <a href="{{ route('register') }}" class="block px-4 py-2.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 text-center rounded-xl">
                             Daftar
-
                         </a>
-
                     </div>
-
                 @endauth
-
             </div>
-
         </div>
-
     </header>
-
-
 
     <!-- ============================================================ -->
     <!-- 2. HERO -->
@@ -456,12 +399,10 @@
             <div class="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
                 <!-- Left Text -->
                 <div class="lg:col-span-7 space-y-6 sm:space-y-8">
-
                     <div>
                         <span class="inline-flex items-center gap-2 px-3.5 py-1.5 bg-blue-100/80 dark:bg-blue-900/40 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 text-xs font-bold rounded-full tracking-wide">
                             <i class="fa-solid fa-sparkles text-blue-500"></i> Marketplace Freelance #1 di Indonesia
                         </span>
-
                     </div>
 
                     <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 dark:text-white leading-[1.15] tracking-tight">
@@ -478,16 +419,12 @@
                     <div class="flex flex-wrap items-center gap-3 sm:gap-4">
                         <a href="{{ route('register') }}" class="inline-flex items-center gap-2.5 px-7 py-3.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold rounded-2xl shadow-lg shadow-blue-500/25 transition-all">
                             <i class="fa-solid fa-magnifying-glass text-xs"></i>
-
                             Cari Proyek
-
                         </a>
                         <a href="{{ route('register') }}" class="inline-flex items-center gap-2.5 px-7 py-3.5 bg-white dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 font-bold rounded-2xl border border-blue-100 dark:border-slate-700 shadow-xs transition-all">
                             <i class="fa-solid fa-plus-circle text-blue-600 dark:text-blue-400 text-xs"></i>
                             Publikasikan Proyek
-
                         </a>
-
                     </div>
 
                     <div class="flex items-center gap-4 pt-4 border-t border-blue-100/60 dark:border-slate-800">
@@ -501,9 +438,7 @@
                             Dipercaya oleh <strong class="text-slate-900 dark:text-white font-extrabold">100+</strong> Perusahaan &
                             <strong class="text-slate-900 dark:text-white font-extrabold">500+</strong> Freelancer
                         </p>
-
                     </div>
-
                 </div>
 
                 <!-- Right Hero Card / Visual -->
@@ -511,22 +446,9 @@
                     <div class="relative bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border border-blue-100/80 dark:border-slate-700 rounded-3xl shadow-2xl p-4 w-full max-w-sm sm:max-w-md flex flex-col gap-3">
                         <div class="flex items-center justify-between pb-2 border-b border-blue-50 dark:border-slate-700/50 px-1">
                             <div class="flex gap-1.5">
-
-                                <span
-                                    class="w-2.5 h-2.5
-                                    bg-rose-400 rounded-full">
-                                </span>
-
-                                <span
-                                    class="w-2.5 h-2.5
-                                    bg-amber-400 rounded-full">
-                                </span>
-
-                                <span
-                                    class="w-2.5 h-2.5
-                                    bg-emerald-400 rounded-full">
-                                </span>
-
+                                <span class="w-2.5 h-2.5 bg-rose-400 rounded-full"></span>
+                                <span class="w-2.5 h-2.5 bg-amber-400 rounded-full"></span>
+                                <span class="w-2.5 h-2.5 bg-emerald-400 rounded-full"></span>
                             </div>
                             <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Labs Hub</span>
                         </div>
@@ -541,37 +463,26 @@
                             <div class="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 font-bold">
                                 <i class="fa-solid fa-circle-check text-lg"></i>
                             </div>
-
                             <div>
                                 <p class="text-[10px] text-slate-400 dark:text-slate-400 font-bold uppercase">Status Platform</p>
                                 <p class="text-xs font-extrabold text-slate-900 dark:text-white">25+ Proyek Aktif</p>
                             </div>
-
                         </div>
 
                         <div class="absolute -top-3 -right-3 sm:-top-4 sm:-right-4 bg-white/95 dark:bg-slate-800/95 backdrop-blur-md border border-blue-100/80 dark:border-slate-700 rounded-2xl shadow-xl p-3 flex items-center gap-3">
                             <div class="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-900/50 text-amber-500 dark:text-amber-400 flex items-center justify-center shrink-0 font-bold">
                                 <i class="fa-solid fa-star text-lg"></i>
                             </div>
-
                             <div>
                                 <p class="text-[10px] text-slate-400 dark:text-slate-400 font-bold uppercase">Kepuasan</p>
                                 <p class="text-xs font-extrabold text-slate-900 dark:text-white">4.9 / 5.0 Rating</p>
                             </div>
-
                         </div>
-
                     </div>
-
                 </div>
-
             </div>
-
         </div>
-
     </section>
-
-
 
     <!-- ============================================================ -->
     <!-- 3. STATISTIK -->
@@ -581,29 +492,24 @@
             <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-blue-100/80 dark:border-slate-700 p-5 sm:p-6 text-center transition">
                 <div class="w-12 h-12 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-2xl flex items-center justify-center mx-auto mb-3">
                     <i class="fa-solid fa-briefcase text-xl"></i>
-
                 </div>
                 <p class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
                     {{ number_format($totalProjects, 0, ',', '.') }}
-
                 </p>
                 <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium mt-1">Total Proyek</p>
             </div>
             <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-blue-100/80 dark:border-slate-700 p-5 sm:p-6 text-center transition">
                 <div class="w-12 h-12 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-2xl flex items-center justify-center mx-auto mb-3">
                     <i class="fa-solid fa-user-tie text-xl"></i>
-
                 </div>
                 <p class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
                     {{ number_format($totalFreelancers, 0, ',', '.') }}
-
                 </p>
                 <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium mt-1">Freelancer Berbakat</p>
             </div>
             <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-blue-100/80 dark:border-slate-700 p-5 sm:p-6 text-center transition">
                 <div class="w-12 h-12 bg-sky-50 dark:bg-sky-900/30 text-sky-600 dark:text-sky-400 rounded-2xl flex items-center justify-center mx-auto mb-3">
                     <i class="fa-solid fa-building text-xl"></i>
-
                 </div>
                 <p class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
                     {{ number_format($totalCompanies, 0, ',', '.') }}
@@ -613,50 +519,29 @@
             <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-blue-100/80 dark:border-slate-700 p-5 sm:p-6 text-center transition">
                 <div class="w-12 h-12 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-2xl flex items-center justify-center mx-auto mb-3">
                     <i class="fa-solid fa-circle-check text-xl"></i>
-
                 </div>
                 <p class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
                     {{ number_format($totalProjectsCompleted, 0, ',', '.') }}
                 </p>
                 <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium mt-1">Proyek Selesai</p>
             </div>
-
         </div>
-
     </section>
-
-
 
     <!-- ============================================================ -->
     <!-- 4. KATEGORI -->
     <!-- ============================================================ -->
-
-    <section
-        id="categories"
-        class="scroll-offset
-        max-w-7xl mx-auto
-        px-4 sm:px-6 lg:px-8
-        py-16 sm:py-24">
-
+    <section id="categories" class="scroll-offset max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
         <div class="text-center mb-10 sm:mb-14">
             <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs font-bold rounded-full uppercase tracking-wider mb-3">
                 Kategori
-
             </span>
             <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">Jelajahi Kategori Proyek</h2>
             <p class="text-slate-500 dark:text-slate-400 mt-2 max-w-lg mx-auto text-sm sm:text-base">Temukan pekerjaan atau talenta spesifik sesuai kebutuhan industri Anda</p>
         </div>
 
-
         @if ($categories->count() > 0)
-
-            <div
-                class="grid grid-cols-2
-                sm:grid-cols-3
-                md:grid-cols-4
-                lg:grid-cols-6
-                gap-4">
-
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
                 @foreach ($categories as $category)
                     <a href="{{ route('login') }}" class="group bg-white dark:bg-slate-800 border border-blue-100/80 dark:border-slate-700 rounded-2xl p-5 text-center hover:border-blue-300 dark:hover:border-blue-500 transition-all flex flex-col items-center">
                         <div class="w-12 h-12 bg-blue-50 dark:bg-slate-700 text-blue-600 dark:text-blue-400 rounded-2xl flex items-center justify-center mb-3 group-hover:bg-blue-600 group-hover:text-white transition duration-200">
@@ -664,25 +549,16 @@
                         </div>
                         <span class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 group-hover:text-blue-600 dark:hover:text-blue-400 transition line-clamp-1">
                             {{ $category->name }}
-
                         </span>
-
                     </a>
-
                 @endforeach
-
             </div>
-
         @else
             <div class="text-center py-12 bg-white dark:bg-slate-800 rounded-3xl border border-blue-100/80 dark:border-slate-700">
                 <p class="text-slate-400 dark:text-slate-500 font-medium">Belum ada kategori tersedia saat ini.</p>
             </div>
-
         @endif
-
     </section>
-
-
 
     <!-- ============================================================ -->
     <!-- 5. PROYEK TERBARU -->
@@ -692,22 +568,14 @@
             <div class="text-center mb-10 sm:mb-14">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs font-bold rounded-full uppercase tracking-wider mb-3">
                     Proyek Terbaru
-
                 </span>
                 <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">Peluang Kerja Terbaru</h2>
                 <p class="text-slate-500 dark:text-slate-400 mt-2 max-w-lg mx-auto text-sm sm:text-base">Gunakan keahlian Anda untuk memenangkan proyek freelance berkualitas</p>
             </div>
 
-
             @if ($recentProjects->count() > 0)
-
                 <!-- PROJECT GRID -->
-
-                <div
-                    class="grid sm:grid-cols-2
-                    lg:grid-cols-3
-                    gap-6 sm:gap-8">
-
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                     @foreach ($recentProjects as $project)
                         <a href="{{ route('projects.public.show', $project) }}" class="group block">
                             <div class="group bg-[#f6f9ff]/50 dark:bg-slate-800/60 hover:bg-white dark:hover:bg-slate-800 border border-blue-100/80 dark:border-slate-700/80 rounded-2xl overflow-hidden shadow-xs hover:shadow-xl transition flex flex-col justify-between">
@@ -763,1071 +631,307 @@
                                                 <i class="fa-regular fa-calendar text-slate-400 mr-1"></i>{{ \Carbon\Carbon::parse($project->deadline)->format('d M Y') }}
                                             </span>
                                         </div>
-
                                     @endif
                                 </div>
-
                             </div>
                         </a>
                     @endforeach
-
                 </div>
 
-
                 <!-- SEE ALL PROJECT -->
-
                 <div class="text-center mt-12">
                     <a href="{{ route('login') }}" class="inline-flex items-center gap-2 px-8 py-3.5 bg-slate-900 dark:bg-blue-600 hover:bg-slate-800 dark:hover:bg-blue-700 text-white font-bold rounded-2xl shadow-md transition">
                         Lihat Semua Proyek
-
-                        <i
-                            class="fa-solid
-                            fa-arrow-right text-xs">
-                        </i>
-
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
                     </a>
-
                 </div>
-
-
             @else
-
                 <!-- EMPTY -->
-
                 <div class="text-center py-12">
                     <div class="w-16 h-16 bg-blue-50 dark:bg-slate-800 text-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-3">
                         <i class="fa-solid fa-briefcase text-2xl"></i>
                     </div>
                     <p class="text-slate-500 dark:text-slate-400 font-medium">Belum ada proyek terbaru saat ini.</p>
                 </div>
-
             @endif
-
-        </div>
-
-    </section>
-
-
-
-    <!-- ============================================================ -->
-    <!-- 6. UNTUK FREELANCER -->
-    <!-- ============================================================ -->
-
-    <!-- ============================================================ -->
-<!-- 6. UNTUK FREELANCER (Hanya tampil jika belum login / role freelancer) -->
-<!-- ============================================================ -->
-@auth
-    @if(Auth::user()->role == 'freelancer' || Auth::user()->role == 'admin')
-        <section
-            id="freelancer"
-            class="scroll-offset
-            max-w-7xl mx-auto
-            px-4 sm:px-6 lg:px-8
-            py-16 sm:py-24">
-
-            <div
-                class="grid lg:grid-cols-2
-                gap-12 items-center">
-
-
-                <div class="space-y-6">
-
-                    <span
-                        class="inline-flex items-center gap-1.5
-                        px-3 py-1
-                        bg-emerald-100
-                        text-emerald-700
-                        text-xs font-bold
-                        rounded-full uppercase
-                        tracking-wider">
-
-                        Untuk Freelancer
-
-    <section id="freelancer" class="scroll-offset max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
-        <div class="grid lg:grid-cols-2 gap-12 items-center">
-            <div class="space-y-6">
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 text-xs font-bold rounded-full uppercase tracking-wider">
-                    Untuk Freelancer
-                </span>
-                <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white leading-tight tracking-tight">
-                    Kembangkan Karir Freelance <span class="text-emerald-600 dark:text-emerald-400">Anda</span>
-                </h2>
-                <p class="text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
-                    Bergabunglah bersama ribuan talenta digital Indonesia dan mulailah menghasilkan pendapatan dari proyek-proyek menarik.
-                </p>
-
-                <div class="grid sm:grid-cols-2 gap-4 pt-2">
-                    <div class="p-4 bg-white dark:bg-slate-800 border border-blue-100/80 dark:border-slate-700 rounded-2xl shadow-xs">
-                        <div class="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-2 font-bold">
-                            <i class="fa-solid fa-magnifying-glass text-xs"></i>
-                        </div>
-                        <h4 class="font-bold text-sm text-slate-900 dark:text-white">Temukan Proyek</h4>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Akses ratusan proyek sesuai spesialisasi utama Anda.</p>
-                    </div>
-                    <div class="p-4 bg-white dark:bg-slate-800 border border-blue-100/80 dark:border-slate-700 rounded-2xl shadow-xs">
-                        <div class="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-2 font-bold">
-                            <i class="fa-solid fa-paper-plane text-xs"></i>
-                        </div>
-                        <h4 class="font-bold text-sm text-slate-900 dark:text-white">Kirim Penawaran</h4>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Ajukan proposal menarik langsung ke perusahaan.</p>
-                    </div>
-                </div>
-
-                <div class="pt-2">
-                    <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-7 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl shadow-md transition">
-                        <i class="fa-solid fa-user-plus text-xs"></i>
-                        Daftar Sebagai Freelancer
-                    </a>
-                </div>
-            </div>
-
-            <div class="relative h-[340px] sm:h-[420px] rounded-3xl overflow-hidden shadow-2xl border border-blue-100/60 dark:border-slate-700">
-                <img src="{{ asset('images/beranda.png') }}" alt="Freelancer Workspace" class="w-full h-full object-cover">
-                <div class="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent"></div>
-                <div class="absolute bottom-6 left-6 right-6">
-                    <div class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md rounded-2xl p-4 border border-white/20 dark:border-slate-700 shadow-lg">
-                        <p class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">"Sistem kerja yang transparan memudahkan saya mendapat klien tetap!"</p>
-                        <p class="text-[11px] text-slate-500 dark:text-slate-400 font-semibold mt-1">— Freelancer Aktif Labs</p>
-                    </div>
-                </div>
-            </div>
         </div>
     </section>
 
     <!-- ============================================================ -->
-    <!-- 7. UNTUK PERUSAHAAN -->
+    <!-- 6. UNTUK FREELANCER & 7. UNTUK PERUSAHAAN (AUTH / GUEST) -->
     <!-- ============================================================ -->
-    <section id="company" class="scroll-offset bg-white dark:bg-slate-900 py-16 sm:py-24 border-y border-blue-100/60 dark:border-slate-800 transition-colors duration-300">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid lg:grid-cols-2 gap-12 items-center">
-
-                <div class="relative h-[340px] sm:h-[420px] rounded-3xl overflow-hidden shadow-xl border border-blue-100/80 dark:border-slate-700 order-2 lg:order-1">
-                    <img src="{{ asset('images/image.png') }}" alt="Perusahaan" class="w-full h-full object-cover">
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent"></div>
-
-                    <div class="absolute bottom-6 left-6 right-6">
-                        <div class="bg-white/95 dark:bg-slate-800/95 backdrop-blur-md rounded-2xl p-4 border border-blue-100/80 dark:border-slate-700 shadow-lg">
-                            <p class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">"Kualitas talenta di platform ini sangat memuaskan dan tepat waktu."</p>
-                            <p class="text-[11px] text-blue-600 dark:text-blue-400 font-semibold mt-1">— Partner Mitra Perusahaan</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="space-y-6 order-1 lg:order-2">
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs font-bold rounded-full uppercase tracking-wider">
-                        Untuk Perusahaan
-                    </span>
-
-                    <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white leading-tight tracking-tight">
-                        Temukan Talenta Terbaik <span class="text-blue-600 dark:text-blue-400">Untuk Bisnis Anda</span>
-                    </h2>
-
-                    <p class="text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
-                        Selesaikan pekerjaan digital bisnis Anda lebih cepat dengan dukungan tim profesional independen yang terverifikasi.
-                    </p>
-
-                    <div class="pt-2">
-                        <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-7 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-md transition">
-                            <i class="fa-solid fa-building text-xs"></i>
-                            Daftar Sebagai Perusahaan
-                        </a>
-                    </div>
-
-                </div>
-
-
-                <!-- IMAGE -->
-
-                <div
-                    class="relative
-                    h-[340px] sm:h-[420px]
-                    rounded-3xl
-                    overflow-hidden
-                    shadow-2xl
-                    border border-blue-100/60">
-
-                    <img
-                        src="{{ asset('images/beranda.png') }}"
-                        alt="Freelancer Workspace"
-                        class="w-full h-full object-cover">
-
-                    <div
-                        class="absolute inset-0
-                        bg-gradient-to-t
-                        from-slate-950/70
-                        via-transparent
-                        to-transparent">
-                    </div>
-
-
-                    <div
-                        class="absolute
-                        bottom-6 left-6 right-6">
-
-                        <div
-                            class="bg-white/90
-                            backdrop-blur-md
-                            rounded-2xl p-4
-                            border border-white/20
-                            shadow-lg">
-
-                            <p
-                                class="text-xs sm:text-sm
-                                font-bold text-slate-900">
-
-                                "Sistem kerja yang transparan
-                                memudahkan saya mendapat klien tetap!"
-
-                            </p>
-
-                            <p
-                                class="text-[11px]
-                                text-slate-500
-                                font-semibold mt-1">
-
-                                — Freelancer Aktif Labs
-
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-    @endif
-@else
-    <!-- Jika belum login, tampilkan section Freelancer standar -->
-    <section
-        id="freelancer"
-        class="scroll-offset
-        max-w-7xl mx-auto
-        px-4 sm:px-6 lg:px-8
-        py-16 sm:py-24">
-
-        <div
-            class="grid lg:grid-cols-2
-            gap-12 items-center">
-
-
-            <div class="space-y-6">
-
-                <span
-                    class="inline-flex items-center gap-1.5
-                    px-3 py-1
-                    bg-emerald-100
-                    text-emerald-700
-                    text-xs font-bold
-                    rounded-full uppercase
-                    tracking-wider">
-
-                    Untuk Freelancer
-
-                </span>
-
-
-                <h2
-                    class="text-3xl sm:text-4xl
-                    font-extrabold text-slate-900
-                    leading-tight tracking-tight">
-
-                    Kembangkan Karir Freelance
-
-                    <span class="text-emerald-600">
-                        Anda
-                    </span>
-
-                </h2>
-
-
-                <p
-                    class="text-slate-600
-                    leading-relaxed
-                    font-medium">
-
-                    Bergabunglah bersama ribuan talenta
-                    digital Indonesia dan mulailah
-                    menghasilkan pendapatan dari
-                    proyek-proyek menarik.
-
-                </p>
-
-
-                <div
-                    class="grid sm:grid-cols-2 gap-4 pt-2">
-
-
-                    <div
-                        class="p-4 bg-white
-                        border border-blue-100/80
-                        rounded-2xl shadow-xs">
-
-                        <div
-                            class="w-8 h-8 rounded-xl
-                            bg-emerald-50
-                            text-emerald-600
-                            flex items-center
-                            justify-center
-                            mb-2 font-bold">
-
-                            <i
-                                class="fa-solid
-                                fa-magnifying-glass text-xs">
-                            </i>
-
-                        </div>
-
-                        <h4
-                            class="font-bold text-sm
-                            text-slate-900">
-
-                            Temukan Proyek
-
-                        </h4>
-
-                        <p
-                            class="text-xs
-                            text-slate-500 mt-1">
-
-                            Akses ratusan proyek
-                            sesuai spesialisasi utama Anda.
-
-                        </p>
-
-                    </div>
-
-
-                    <div
-                        class="p-4 bg-white
-                        border border-blue-100/80
-                        rounded-2xl shadow-xs">
-
-                        <div
-                            class="w-8 h-8 rounded-xl
-                            bg-emerald-50
-                            text-emerald-600
-                            flex items-center
-                            justify-center
-                            mb-2 font-bold">
-
-                            <i
-                                class="fa-solid
-                                fa-paper-plane text-xs">
-                            </i>
-
-                        </div>
-
-                        <h4
-                            class="font-bold text-sm
-                            text-slate-900">
-
-                            Kirim Penawaran
-
-                        </h4>
-
-                        <p
-                            class="text-xs
-                            text-slate-500 mt-1">
-
-                            Ajukan proposal menarik
-                            langsung ke perusahaan.
-
-                        </p>
-
-                    </div>
-
-
-                    <div
-                        class="p-4 bg-white
-                        border border-blue-100/80
-                        rounded-2xl shadow-xs">
-
-                        <div
-                            class="w-8 h-8 rounded-xl
-                            bg-emerald-50
-                            text-emerald-600
-                            flex items-center
-                            justify-center
-                            mb-2 font-bold">
-
-                            <i
-                                class="fa-solid
-                                fa-shield-halved text-xs">
-                            </i>
-
-                        </div>
-
-                        <h4
-                            class="font-bold text-sm
-                            text-slate-900">
-
-                            Sistem Aman
-
-                        </h4>
-
-                        <p
-                            class="text-xs
-                            text-slate-500 mt-1">
-
-                            Pembayaran terjamin melalui
-                            alur proyek yang transparan.
-
-                        </p>
-
-                    </div>
-
-
-                    <div
-                        class="p-4 bg-white
-                        border border-blue-100/80
-                        rounded-2xl shadow-xs">
-
-                        <div
-                            class="w-8 h-8 rounded-xl
-                            bg-emerald-50
-                            text-emerald-600
-                            flex items-center
-                            justify-center
-                            mb-2 font-bold">
-
-                            <i
-                                class="fa-solid
-                                fa-star text-xs">
-                            </i>
-
-                        </div>
-
-                        <h4
-                            class="font-bold text-sm
-                            text-slate-900">
-
-                            Bangun Reputasi
-
-                        </h4>
-
-                        <p
-                            class="text-xs
-                            text-slate-500 mt-1">
-
-                            Dapatkan ulasan positif
-                            untuk meningkatkan tarif Anda.
-
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="pt-2">
-                    <a
-                        href="{{ route('register') }}"
-                        class="inline-flex items-center gap-2
-                        px-7 py-3.5
-                        bg-emerald-600
-                        hover:bg-emerald-700
-                        text-white font-bold
-                        rounded-2xl
-                        shadow-md
-                        shadow-emerald-500/20
-                        transition hover:shadow-lg">
-
-                        <i class="fa-solid fa-user-plus text-xs"></i>
-                        Daftar Sebagai Freelancer
-
-                    </a>
-                </div>
-
-            </div>
-
-
-            <!-- IMAGE -->
-
-            <div
-                class="relative
-                h-[340px] sm:h-[420px]
-                rounded-3xl
-                overflow-hidden
-                shadow-2xl
-                border border-blue-100/60">
-
-                <img
-                    src="{{ asset('images/beranda.png') }}"
-                    alt="Freelancer Workspace"
-                    class="w-full h-full object-cover">
-
-                <div
-                    class="absolute inset-0
-                    bg-gradient-to-t
-                    from-slate-950/70
-                    via-transparent
-                    to-transparent">
-                </div>
-
-
-                <div
-                    class="absolute
-                    bottom-6 left-6 right-6">
-
-                    <div
-                        class="bg-white/90
-                        backdrop-blur-md
-                        rounded-2xl p-4
-                        border border-white/20
-                        shadow-lg">
-
-                        <p
-                            class="text-xs sm:text-sm
-                            font-bold text-slate-900">
-
-                            "Sistem kerja yang transparan
-                            memudahkan saya mendapat klien tetap!"
-
-                        </p>
-
-                        <p
-                            class="text-[11px]
-                            text-slate-500
-                            font-semibold mt-1">
-
-                            — Freelancer Aktif Labs
-
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-@endauth
-
-
-
-<!-- ============================================================ -->
-<!-- 7. UNTUK PERUSAHAAN (Hanya tampil jika belum login / role company) -->
-<!-- ============================================================ -->
-@auth
-    @if(Auth::user()->role == 'company' || Auth::user()->role == 'admin')
-        <section
-            id="company"
-            class="scroll-offset
-            bg-white py-16 sm:py-24
-            border-y border-blue-100/60">
-
-            <div
-                class="max-w-7xl mx-auto
-                px-4 sm:px-6 lg:px-8">
-
-                <div
-                    class="grid lg:grid-cols-2
-                    gap-12 items-center">
-
-
-                    <!-- IMAGE -->
-
-                    <div
-                        class="relative
-                        h-[340px] sm:h-[420px]
-                        rounded-3xl
-                        overflow-hidden
-                        shadow-xl
-                        border border-blue-100/80
-                        order-2 lg:order-1">
-
-                        <img
-                            src="{{ asset('images/image.png') }}"
-                            alt="Perusahaan"
-                            class="w-full h-full object-cover">
-
-                        <div
-                            class="absolute inset-0
-                            bg-gradient-to-t
-                            from-slate-900/60
-                            via-transparent
-                            to-transparent">
-                        </div>
-
-
-                        <div
-                            class="absolute
-                            bottom-6 left-6 right-6">
-
-                            <div
-                                class="bg-white/95
-                                backdrop-blur-md
-                                rounded-2xl p-4
-                                border border-blue-100/80
-                                shadow-lg">
-
-                                <p
-                                    class="text-xs sm:text-sm
-                                    font-bold text-slate-900">
-
-                                    "Kualitas talenta di platform ini
-                                    sangat memuaskan dan tepat waktu."
-
-                                </p>
-
-                                <p
-                                    class="text-[11px]
-                                    text-blue-600
-                                    font-semibold mt-1">
-
-                                    — Partner Mitra Perusahaan
-
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- TEXT -->
-
-                    <div
-                        class="space-y-6
-                        order-1 lg:order-2">
-
-                        <span
-                            class="inline-flex items-center gap-1.5
-                            px-3 py-1
-                            bg-blue-100 text-blue-700
-                            text-xs font-bold
-                            rounded-full uppercase
-                            tracking-wider">
-
-                            Untuk Perusahaan
-
+    @auth
+        @if(Auth::user()->role == 'freelancer' || Auth::user()->role == 'admin')
+            <section id="freelancer" class="scroll-offset max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+                <div class="grid lg:grid-cols-2 gap-12 items-center">
+                    <div class="space-y-6">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 text-xs font-bold rounded-full uppercase tracking-wider">
+                            Untuk Freelancer
                         </span>
-
-
-                        <h2
-                            class="text-3xl sm:text-4xl
-                            font-extrabold
-                            text-slate-900
-                            leading-tight
-                            tracking-tight">
-
-                            Temukan Talenta Terbaik
-
-                            <span class="text-blue-600">
-                                Untuk Bisnis Anda
-                            </span>
-
+                        <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white leading-tight tracking-tight">
+                            Kembangkan Karir Freelance <span class="text-emerald-600 dark:text-emerald-400">Anda</span>
                         </h2>
-
-
-                        <p
-                            class="text-slate-600
-                            leading-relaxed
-                            font-medium">
-
-                            Selesaikan pekerjaan digital
-                            bisnis Anda lebih cepat dengan
-                            dukungan tim profesional independen
-                            yang terverifikasi.
-
+                        <p class="text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
+                            Bergabunglah bersama ribuan talenta digital Indonesia dan mulailah menghasilkan pendapatan dari proyek-proyek menarik.
                         </p>
 
-
-                        <div class="space-y-3 pt-2">
-
-
-                            <div
-                                class="flex items-center gap-3.5
-                                p-3.5 rounded-2xl
-                                bg-[#f6f9ff]
-                                border border-blue-100/80
-                                shadow-xs">
-
-                                <div
-                                    class="w-9 h-9 rounded-xl
-                                    bg-blue-100
-                                    text-blue-600
-                                    flex items-center
-                                    justify-center
-                                    shrink-0 font-bold">
-
-                                    <i
-                                        class="fa-solid fa-plus text-xs">
-                                    </i>
-
+                        <div class="grid sm:grid-cols-2 gap-4 pt-2">
+                            <div class="p-4 bg-white dark:bg-slate-800 border border-blue-100/80 dark:border-slate-700 rounded-2xl shadow-xs">
+                                <div class="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-2 font-bold">
+                                    <i class="fa-solid fa-magnifying-glass text-xs"></i>
                                 </div>
-
-                                <div>
-
-                                    <h4
-                                        class="font-bold text-sm
-                                        text-slate-900">
-
-                                        Publikasikan Proyek Mudah
-
-                                    </h4>
-
-                                    <p
-                                        class="text-xs
-                                        text-slate-500 mt-0.5">
-
-                                        Tentukan kriteria,
-                                        budget, dan batas waktu
-                                        proyek Anda.
-
-                                    </p>
-
-                                </div>
-
+                                <h4 class="font-bold text-sm text-slate-900 dark:text-white">Temukan Proyek</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Akses ratusan proyek sesuai spesialisasi utama Anda.</p>
                             </div>
 
-
-                            <div
-                                class="flex items-center gap-3.5
-                                p-3.5 rounded-2xl
-                                bg-[#f6f9ff]
-                                border border-blue-100/80
-                                shadow-xs">
-
-                                <div
-                                    class="w-9 h-9 rounded-xl
-                                    bg-blue-100
-                                    text-blue-600
-                                    flex items-center
-                                    justify-center
-                                    shrink-0 font-bold">
-
-                                    <i
-                                        class="fa-solid
-                                        fa-layer-group text-xs">
-                                    </i>
-
+                            <div class="p-4 bg-white dark:bg-slate-800 border border-blue-100/80 dark:border-slate-700 rounded-2xl shadow-xs">
+                                <div class="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-2 font-bold">
+                                    <i class="fa-solid fa-paper-plane text-xs"></i>
                                 </div>
-
-                                <div>
-
-                                    <h4
-                                        class="font-bold text-sm
-                                        text-slate-900">
-
-                                        Workspace Terintegrasi
-
-                                    </h4>
-
-                                    <p
-                                        class="text-xs
-                                        text-slate-500 mt-0.5">
-
-                                        Pantau kemajuan pekerjaan
-                                        secara real-time di satu tempat.
-
-                                    </p>
-
-                                </div>
-
+                                <h4 class="font-bold text-sm text-slate-900 dark:text-white">Kirim Penawaran</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Ajukan proposal menarik langsung ke perusahaan.</p>
                             </div>
 
+                            <div class="p-4 bg-white dark:bg-slate-800 border border-blue-100/80 dark:border-slate-700 rounded-2xl shadow-xs">
+                                <div class="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-2 font-bold">
+                                    <i class="fa-solid fa-shield-halved text-xs"></i>
+                                </div>
+                                <h4 class="font-bold text-sm text-slate-900 dark:text-white">Sistem Aman</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Pembayaran terjamin melalui alur proyek yang transparan.</p>
+                            </div>
+
+                            <div class="p-4 bg-white dark:bg-slate-800 border border-blue-100/80 dark:border-slate-700 rounded-2xl shadow-xs">
+                                <div class="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-2 font-bold">
+                                    <i class="fa-solid fa-star text-xs"></i>
+                                </div>
+                                <h4 class="font-bold text-sm text-slate-900 dark:text-white">Bangun Reputasi</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Dapatkan ulasan positif untuk meningkatkan tarif Anda.</p>
+                            </div>
                         </div>
-
 
                         <div class="pt-2">
-                            <a
-                                href="{{ route('company.projects.create') }}" 
-                                class="inline-flex items-center gap-2
-                                px-7 py-3.5
-                                bg-blue-600
-                                hover:bg-blue-700
-                                active:bg-blue-800
-                                text-white font-bold
-                                rounded-2xl
-                                shadow-md
-                                shadow-blue-500/20
-                                transition-all duration-200">
-
-                                <i class="fa-solid fa-circle-plus text-xs"></i>
-                                Publikasikan Proyek Sekarang
-
+                            <a href="{{ url('/freelancer/projects') }}" class="inline-flex items-center gap-2 px-7 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl shadow-md shadow-emerald-500/20 transition hover:shadow-lg">
+                                <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                                Cari Proyek Sekarang
                             </a>
                         </div>
+                    </div>
 
+                    <div class="relative h-[340px] sm:h-[420px] rounded-3xl overflow-hidden shadow-2xl border border-blue-100/60 dark:border-slate-700">
+                        <img src="{{ asset('images/beranda.png') }}" alt="Freelancer Workspace" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent"></div>
+                        <div class="absolute bottom-6 left-6 right-6">
+                            <div class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md rounded-2xl p-4 border border-white/20 dark:border-slate-700 shadow-lg">
+                                <p class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">"Sistem kerja yang transparan memudahkan saya mendapat klien tetap!"</p>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 font-semibold mt-1">— Freelancer Aktif Labs</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
+            </section>
+        @endif
 
-            </div>
-
-        </section>
-    @endif
-@else
-    <!-- Jika belum login, tampilkan section Company standar -->
-    <section
-        id="company"
-        class="scroll-offset
-        bg-white py-16 sm:py-24
-        border-y border-blue-100/60">
-
-        <div
-            class="max-w-7xl mx-auto
-            px-4 sm:px-6 lg:px-8">
-
-            <div
-                class="grid lg:grid-cols-2
-                gap-12 items-center">
-
-
-                <!-- IMAGE -->
-
-                <div
-                    class="relative
-                    h-[340px] sm:h-[420px]
-                    rounded-3xl
-                    overflow-hidden
-                    shadow-xl
-                    border border-blue-100/80
-                    order-2 lg:order-1">
-
-                    <img
-                        src="{{ asset('images/image.png') }}"
-                        alt="Perusahaan"
-                        class="w-full h-full object-cover">
-
-                    <div
-                        class="absolute inset-0
-                        bg-gradient-to-t
-                        from-slate-900/60
-                        via-transparent
-                        to-transparent">
-                    </div>
-
-
-                    <div
-                        class="absolute
-                        bottom-6 left-6 right-6">
-
-                        <div
-                            class="bg-white/95
-                            backdrop-blur-md
-                            rounded-2xl p-4
-                            border border-blue-100/80
-                            shadow-lg">
-
-                            <p
-                                class="text-xs sm:text-sm
-                                font-bold text-slate-900">
-
-                                "Kualitas talenta di platform ini
-                                sangat memuaskan dan tepat waktu."
-
-                            </p>
-
-                            <p
-                                class="text-[11px]
-                                text-blue-600
-                                font-semibold mt-1">
-
-                                — Partner Mitra Perusahaan
-
-                            </p>
-
+        @if(Auth::user()->role == 'company' || Auth::user()->role == 'admin')
+            <section id="company" class="scroll-offset bg-white dark:bg-slate-900 py-16 sm:py-24 border-y border-blue-100/60 dark:border-slate-800 transition-colors duration-300">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid lg:grid-cols-2 gap-12 items-center">
+                        <!-- IMAGE -->
+                        <div class="relative h-[340px] sm:h-[420px] rounded-3xl overflow-hidden shadow-xl border border-blue-100/80 dark:border-slate-700 order-2 lg:order-1">
+                            <img src="{{ asset('images/image.png') }}" alt="Perusahaan" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent"></div>
+                            <div class="absolute bottom-6 left-6 right-6">
+                                <div class="bg-white/95 dark:bg-slate-800/95 backdrop-blur-md rounded-2xl p-4 border border-blue-100/80 dark:border-slate-700 shadow-lg">
+                                    <p class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">"Kualitas talenta di platform ini sangat memuaskan dan tepat waktu."</p>
+                                    <p class="text-[11px] text-blue-600 dark:text-blue-400 font-semibold mt-1">— Partner Mitra Perusahaan</p>
+                                </div>
+                            </div>
                         </div>
 
+                        <!-- TEXT -->
+                        <div class="space-y-6 order-1 lg:order-2">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs font-bold rounded-full uppercase tracking-wider">
+                                Untuk Perusahaan
+                            </span>
+
+                            <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white leading-tight tracking-tight">
+                                Temukan Talenta Terbaik <span class="text-blue-600 dark:text-blue-400">Untuk Bisnis Anda</span>
+                            </h2>
+
+                            <p class="text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
+                                Selesaikan pekerjaan digital bisnis Anda lebih cepat dengan dukungan tim profesional independen yang terverifikasi.
+                            </p>
+
+                            <div class="space-y-3 pt-2">
+                                <div class="flex items-center gap-3.5 p-3.5 rounded-2xl bg-[#f6f9ff] dark:bg-slate-800 border border-blue-100/80 dark:border-slate-700 shadow-xs">
+                                    <div class="w-9 h-9 rounded-xl bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 font-bold">
+                                        <i class="fa-solid fa-plus text-xs"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-sm text-slate-900 dark:text-white">Publikasikan Proyek Mudah</h4>
+                                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Tentukan kriteria, budget, dan batas waktu proyek Anda.</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center gap-3.5 p-3.5 rounded-2xl bg-[#f6f9ff] dark:bg-slate-800 border border-blue-100/80 dark:border-slate-700 shadow-xs">
+                                    <div class="w-9 h-9 rounded-xl bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 font-bold">
+                                        <i class="fa-solid fa-layer-group text-xs"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-sm text-slate-900 dark:text-white">Workspace Terintegrasi</h4>
+                                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Pantau kemajuan pekerjaan secara real-time di satu tempat.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="pt-2">
+                                <a href="{{ route('company.projects.create') }}" class="inline-flex items-center gap-2 px-7 py-3.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold rounded-2xl shadow-md shadow-blue-500/20 transition-all duration-200">
+                                    <i class="fa-solid fa-circle-plus text-xs"></i>
+                                    Publikasikan Proyek Sekarang
+                                </a>
+                            </div>
+                        </div>
                     </div>
-
                 </div>
-
-
-                <!-- TEXT -->
-
-                <div
-                    class="space-y-6
-                    order-1 lg:order-2">
-
-                    <span
-                        class="inline-flex items-center gap-1.5
-                        px-3 py-1
-                        bg-blue-100 text-blue-700
-                        text-xs font-bold
-                        rounded-full uppercase
-                        tracking-wider">
-
-                        Untuk Perusahaan
-
+            </section>
+        @endif
+    @else
+        <!-- Jika belum login (GUEST), tampilkan section Freelancer & Company standar -->
+        <section id="freelancer" class="scroll-offset max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="space-y-6">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 text-xs font-bold rounded-full uppercase tracking-wider">
+                        Untuk Freelancer
                     </span>
-
-
-                    <h2
-                        class="text-3xl sm:text-4xl
-                        font-extrabold
-                        text-slate-900
-                        leading-tight
-                        tracking-tight">
-
-                        Temukan Talenta Terbaik
-
-                        <span class="text-blue-600">
-                            Untuk Bisnis Anda
-                        </span>
-
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white leading-tight tracking-tight">
+                        Kembangkan Karir Freelance <span class="text-emerald-600 dark:text-emerald-400">Anda</span>
                     </h2>
-
-
-                    <p
-                        class="text-slate-600
-                        leading-relaxed
-                        font-medium">
-
-                        Selesaikan pekerjaan digital
-                        bisnis Anda lebih cepat dengan
-                        dukungan tim profesional independen
-                        yang terverifikasi.
-
+                    <p class="text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
+                        Bergabunglah bersama ribuan talenta digital Indonesia dan mulailah menghasilkan pendapatan dari proyek-proyek menarik.
                     </p>
 
-
-                    <div class="space-y-3 pt-2">
-
-
-                        <div
-                            class="flex items-center gap-3.5
-                            p-3.5 rounded-2xl
-                            bg-[#f6f9ff]
-                            border border-blue-100/80
-                            shadow-xs">
-
-                            <div
-                                class="w-9 h-9 rounded-xl
-                                bg-blue-100
-                                text-blue-600
-                                flex items-center
-                                justify-center
-                                shrink-0 font-bold">
-
-                                <i
-                                    class="fa-solid fa-plus text-xs">
-                                </i>
-
+                    <div class="grid sm:grid-cols-2 gap-4 pt-2">
+                        <div class="p-4 bg-white dark:bg-slate-800 border border-blue-100/80 dark:border-slate-700 rounded-2xl shadow-xs">
+                            <div class="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-2 font-bold">
+                                <i class="fa-solid fa-magnifying-glass text-xs"></i>
                             </div>
-
-                            <div>
-
-                                <h4
-                                    class="font-bold text-sm
-                                    text-slate-900">
-
-                                    Publikasikan Proyek Mudah
-
-                                </h4>
-
-                                <p
-                                    class="text-xs
-                                    text-slate-500 mt-0.5">
-
-                                    Tentukan kriteria,
-                                    budget, dan batas waktu
-                                    proyek Anda.
-
-                                </p>
-
-                            </div>
-
+                            <h4 class="font-bold text-sm text-slate-900 dark:text-white">Temukan Proyek</h4>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Akses ratusan proyek sesuai spesialisasi utama Anda.</p>
                         </div>
 
-
-                        <div
-                            class="flex items-center gap-3.5
-                            p-3.5 rounded-2xl
-                            bg-[#f6f9ff]
-                            border border-blue-100/80
-                            shadow-xs">
-
-                            <div
-                                class="w-9 h-9 rounded-xl
-                                bg-blue-100
-                                text-blue-600
-                                flex items-center
-                                justify-center
-                                shrink-0 font-bold">
-
-                                <i
-                                    class="fa-solid
-                                    fa-layer-group text-xs">
-                                </i>
-
+                        <div class="p-4 bg-white dark:bg-slate-800 border border-blue-100/80 dark:border-slate-700 rounded-2xl shadow-xs">
+                            <div class="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-2 font-bold">
+                                <i class="fa-solid fa-paper-plane text-xs"></i>
                             </div>
-
-                            <div>
-
-                                <h4
-                                    class="font-bold text-sm
-                                    text-slate-900">
-
-                                    Workspace Terintegrasi
-
-                                </h4>
-
-                                <p
-                                    class="text-xs
-                                    text-slate-500 mt-0.5">
-
-                                    Pantau kemajuan pekerjaan
-                                    secara real-time di satu tempat.
-
-                                </p>
-
-                            </div>
-
+                            <h4 class="font-bold text-sm text-slate-900 dark:text-white">Kirim Penawaran</h4>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Ajukan proposal menarik langsung ke perusahaan.</p>
                         </div>
 
+                        <div class="p-4 bg-white dark:bg-slate-800 border border-blue-100/80 dark:border-slate-700 rounded-2xl shadow-xs">
+                            <div class="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-2 font-bold">
+                                <i class="fa-solid fa-shield-halved text-xs"></i>
+                            </div>
+                            <h4 class="font-bold text-sm text-slate-900 dark:text-white">Sistem Aman</h4>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Pembayaran terjamin melalui alur proyek yang transparan.</p>
+                        </div>
+
+                        <div class="p-4 bg-white dark:bg-slate-800 border border-blue-100/80 dark:border-slate-700 rounded-2xl shadow-xs">
+                            <div class="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-2 font-bold">
+                                <i class="fa-solid fa-star text-xs"></i>
+                            </div>
+                            <h4 class="font-bold text-sm text-slate-900 dark:text-white">Bangun Reputasi</h4>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Dapatkan ulasan positif untuk meningkatkan tarif Anda.</p>
+                        </div>
                     </div>
-
 
                     <div class="pt-2">
-                        <a
-                            href="{{ route('register') }}"
-                            class="inline-flex items-center gap-2
-                            px-7 py-3.5
-                            bg-blue-600
-                            hover:bg-blue-700
-                            active:bg-blue-800
-                            text-white font-bold
-                            rounded-2xl
-                            shadow-md
-                            shadow-blue-500/20
-                            transition-all duration-200">
-
-                            <i class="fa-solid fa-building text-xs"></i>
-                            Daftar Sebagai Perusahaan
-
+                        <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-7 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl shadow-md shadow-emerald-500/20 transition hover:shadow-lg">
+                            <i class="fa-solid fa-user-plus text-xs"></i>
+                            Daftar Sebagai Freelancer
                         </a>
                     </div>
+                </div>
 
+                <div class="relative h-[340px] sm:h-[420px] rounded-3xl overflow-hidden shadow-2xl border border-blue-100/60 dark:border-slate-700">
+                    <img src="{{ asset('images/beranda.png') }}" alt="Freelancer Workspace" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent"></div>
+                    <div class="absolute bottom-6 left-6 right-6">
+                        <div class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md rounded-2xl p-4 border border-white/20 dark:border-slate-700 shadow-lg">
+                            <p class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">"Sistem kerja yang transparan memudahkan saya mendapat klien tetap!"</p>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400 font-semibold mt-1">— Freelancer Aktif Labs</p>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </section>
 
-        </div>
+        <section id="company" class="scroll-offset bg-white dark:bg-slate-900 py-16 sm:py-24 border-y border-blue-100/60 dark:border-slate-800 transition-colors duration-300">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid lg:grid-cols-2 gap-12 items-center">
+                    <div class="relative h-[340px] sm:h-[420px] rounded-3xl overflow-hidden shadow-xl border border-blue-100/80 dark:border-slate-700 order-2 lg:order-1">
+                        <img src="{{ asset('images/image.png') }}" alt="Perusahaan" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent"></div>
+                        <div class="absolute bottom-6 left-6 right-6">
+                            <div class="bg-white/95 dark:bg-slate-800/95 backdrop-blur-md rounded-2xl p-4 border border-blue-100/80 dark:border-slate-700 shadow-lg">
+                                <p class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">"Kualitas talenta di platform ini sangat memuaskan dan tepat waktu."</p>
+                                <p class="text-[11px] text-blue-600 dark:text-blue-400 font-semibold mt-1">— Partner Mitra Perusahaan</p>
+                            </div>
+                        </div>
+                    </div>
 
-    </section>
-@endauth
+                    <div class="space-y-6 order-1 lg:order-2">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs font-bold rounded-full uppercase tracking-wider">
+                            Untuk Perusahaan
+                        </span>
 
+                        <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white leading-tight tracking-tight">
+                            Temukan Talenta Terbaik <span class="text-blue-600 dark:text-blue-400">Untuk Bisnis Anda</span>
+                        </h2>
+
+                        <p class="text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
+                            Selesaikan pekerjaan digital bisnis Anda lebih cepat dengan dukungan tim profesional independen yang terverifikasi.
+                        </p>
+
+                        <div class="space-y-3 pt-2">
+                            <div class="flex items-center gap-3.5 p-3.5 rounded-2xl bg-[#f6f9ff] dark:bg-slate-800 border border-blue-100/80 dark:border-slate-700 shadow-xs">
+                                <div class="w-9 h-9 rounded-xl bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 font-bold">
+                                    <i class="fa-solid fa-plus text-xs"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-sm text-slate-900 dark:text-white">Publikasikan Proyek Mudah</h4>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Tentukan kriteria, budget, dan batas waktu proyek Anda.</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-3.5 p-3.5 rounded-2xl bg-[#f6f9ff] dark:bg-slate-800 border border-blue-100/80 dark:border-slate-700 shadow-xs">
+                                <div class="w-9 h-9 rounded-xl bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 font-bold">
+                                    <i class="fa-solid fa-layer-group text-xs"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-sm text-slate-900 dark:text-white">Workspace Terintegrasi</h4>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Pantau kemajuan pekerjaan secara real-time di satu tempat.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-2">
+                            <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-7 py-3.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold rounded-2xl shadow-md shadow-blue-500/20 transition-all duration-200">
+                                <i class="fa-solid fa-building text-xs"></i>
+                                Daftar Sebagai Perusahaan
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    @endauth
 
     <!-- ============================================================ -->
     <!-- 8. CARA KERJA -->
     <!-- ============================================================ -->
-
-    <section
-        class="max-w-7xl mx-auto
-        px-4 sm:px-6 lg:px-8
-        py-16 sm:py-24">
-
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
         <div class="text-center mb-12">
             <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs font-bold rounded-full uppercase tracking-wider mb-3">
                 Cara Kerja
-
             </span>
             <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">Bagaimana Cara Kerjanya?</h2>
             <p class="text-slate-500 dark:text-slate-400 mt-2 max-w-lg mx-auto text-sm sm:text-base">Mulai kolaborasi Anda hanya dalam 4 langkah sederhana</p>
@@ -1854,249 +958,77 @@
                 <h3 class="font-bold text-base text-slate-900 dark:text-white">Selesai & Review</h3>
                 <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">Serahkan hasil pekerjaan dan berikan penilaian hasil kerja.</p>
             </div>
-
         </div>
-
     </section>
-
-
 
     <!-- ============================================================ -->
     <!-- 9. FINAL CTA -->
     <!-- ============================================================ -->
     <section class="relative overflow-hidden py-16 sm:py-20 my-8 mx-4 sm:mx-8 lg:mx-auto max-w-7xl rounded-3xl bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 text-white shadow-2xl">
         <div class="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto">
-            <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight">Siap Memulai Perjalanan Anda?</h2>
-            <p class="text-blue-100 mt-4 text-sm sm:text-base leading-relaxed">Bergabunglah bersama ribuan talenta digital dan perusahaan di platform ApexForge Labs sekarang juga.</p>
-            <div class="flex flex-wrap justify-center gap-4 mt-8">
-                <a href="{{ route('register') }}" class="px-8 py-3.5 bg-white text-blue-700 hover:bg-blue-50 font-extrabold rounded-2xl shadow-lg transition">Daftar Gratis Sekarang</a>
-                <a href="{{ route('login') }}" class="px-8 py-3.5 bg-blue-500/30 hover:bg-blue-500/40 text-white font-bold rounded-2xl border border-blue-400/30 transition">Masuk Akun</a>
-            </div>
+            @auth
+                <!-- TAMPILAN USER SUDAH LOGIN -->
+                <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight">
+                    Selamat Datang Kembali,
+                    <span class="text-blue-100">
+                        {{ Auth::user()->name }}
+                    </span> 👋
+                </h2>
 
+                <p class="text-blue-100 mt-4 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto">
+                    Senang melihat Anda kembali di
+                    <strong class="text-white">ApexForge Labs</strong>.
+                    Lanjutkan perjalanan Anda dan temukan peluang baru hari ini.
+                </p>
 
-            <h2
-                class="text-3xl sm:text-4xl
-                lg:text-5xl
-                font-extrabold
-                tracking-tight">
+                <!-- BUTTON USER LOGIN -->
+                <div class="flex flex-wrap justify-center gap-4 mt-8">
+                    @if (Auth::user()->role === 'freelancer')
+                        <a href="{{ route('freelancer.dashboard') }}" class="inline-flex items-center gap-2 px-8 py-3.5 bg-white text-blue-700 hover:bg-blue-50 font-extrabold rounded-2xl shadow-lg transition hover:-translate-y-0.5">
+                            <i class="fa-solid fa-gauge-high"></i>
+                            Buka Dashboard
+                        </a>
+                        <a href="{{ url('/freelancer/projects') }}" class="inline-flex items-center gap-2 px-8 py-3.5 bg-blue-500/30 hover:bg-blue-500/40 text-white font-bold rounded-2xl border border-blue-400/30 transition hover:-translate-y-0.5">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            Cari Proyek
+                        </a>
+                    @elseif (Auth::user()->role === 'company')
+                        <a href="{{ route('company.dashboard') }}" class="inline-flex items-center gap-2 px-8 py-3.5 bg-white text-blue-700 hover:bg-blue-50 font-extrabold rounded-2xl shadow-lg transition hover:-translate-y-0.5">
+                            <i class="fa-solid fa-gauge-high"></i>
+                            Buka Dashboard
+                        </a>
+                        <a href="{{ route('company.dashboard') }}" class="inline-flex items-center gap-2 px-8 py-3.5 bg-blue-500/30 hover:bg-blue-500/40 text-white font-bold rounded-2xl border border-blue-400/30 transition hover:-translate-y-0.5">
+                            <i class="fa-solid fa-plus"></i>
+                            Kelola Proyek
+                        </a>
+                    @elseif (Auth::user()->role === 'admin')
+                        <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center gap-2 px-8 py-3.5 bg-white text-blue-700 hover:bg-blue-50 font-extrabold rounded-2xl shadow-lg transition hover:-translate-y-0.5">
+                            <i class="fa-solid fa-shield-halved"></i>
+                            Buka Dashboard Admin
+                        </a>
+                    @endif
+                </div>
+            @else
+                <!-- TAMPILAN USER BELUM LOGIN -->
+                <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight">
+                    Siap Memulai Perjalanan Anda?
+                </h2>
 
-                Selamat Datang Kembali,
-                <span class="text-blue-100">
-                    {{ Auth::user()->name }}
-                </span> 👋
+                <p class="text-blue-100 mt-4 text-sm sm:text-base leading-relaxed">
+                    Bergabunglah bersama ribuan talenta digital dan perusahaan di platform ApexForge Labs sekarang juga.
+                </p>
 
-            </h2>
-
-
-            <p
-                class="text-blue-100
-                mt-4
-                text-sm sm:text-base
-                leading-relaxed
-                max-w-2xl mx-auto">
-
-                Senang melihat Anda kembali di
-                <strong class="text-white">
-                    ApexForge Labs
-                </strong>.
-                Lanjutkan perjalanan Anda dan temukan
-                peluang baru hari ini.
-
-            </p>
-
-
-            <!-- BUTTON USER LOGIN -->
-
-            <div
-                class="flex flex-wrap
-                justify-center
-                gap-4 mt-8">
-
-                @if (Auth::user()->role === 'freelancer')
-
-                    <a
-                        href="{{ route('freelancer.dashboard') }}"
-                        class="inline-flex items-center gap-2
-                        px-8 py-3.5
-                        bg-white
-                        text-blue-700
-                        hover:bg-blue-50
-                        font-extrabold
-                        rounded-2xl
-                        shadow-lg
-                        transition
-                        hover:-translate-y-0.5">
-
-                        <i class="fa-solid fa-gauge-high"></i>
-
-                        Buka Dashboard
-
+                <div class="flex flex-wrap justify-center gap-4 mt-8">
+                    <a href="{{ route('register') }}" class="px-8 py-3.5 bg-white text-blue-700 hover:bg-blue-50 font-extrabold rounded-2xl shadow-lg transition hover:-translate-y-0.5">
+                        Daftar Gratis Sekarang
                     </a>
-
-                    <a
-                        href="{{ url('/freelancer/projects') }}"
-                        class="inline-flex items-center gap-2
-                        px-8 py-3.5
-                        bg-blue-500/30
-                        hover:bg-blue-500/40
-                        text-white
-                        font-bold
-                        rounded-2xl
-                        border border-blue-400/30
-                        transition
-                        hover:-translate-y-0.5">
-
-                        <i class="fa-solid fa-magnifying-glass"></i>
-
-                        Cari Proyek
-
+                    <a href="{{ route('login') }}" class="px-8 py-3.5 bg-blue-500/30 hover:bg-blue-500/40 text-white font-bold rounded-2xl border border-blue-400/30 transition hover:-translate-y-0.5">
+                        Masuk Akun
                     </a>
-
-
-                @elseif (Auth::user()->role === 'company')
-
-                    <a
-                        href="{{ route('company.dashboard') }}"
-                        class="inline-flex items-center gap-2
-                        px-8 py-3.5
-                        bg-white
-                        text-blue-700
-                        hover:bg-blue-50
-                        font-extrabold
-                        rounded-2xl
-                        shadow-lg
-                        transition
-                        hover:-translate-y-0.5">
-
-                        <i class="fa-solid fa-gauge-high"></i>
-
-                        Buka Dashboard
-
-                    </a>
-
-                    <a
-                        href="{{ route('company.dashboard') }}"
-                        class="inline-flex items-center gap-2
-                        px-8 py-3.5
-                        bg-blue-500/30
-                        hover:bg-blue-500/40
-                        text-white
-                        font-bold
-                        rounded-2xl
-                        border border-blue-400/30
-                        transition
-                        hover:-translate-y-0.5">
-
-                        <i class="fa-solid fa-plus"></i>
-
-                        Kelola Proyek
-
-                    </a>
-
-
-                @elseif (Auth::user()->role === 'admin')
-
-                    <a
-                        href="{{ route('admin.dashboard') }}"
-                        class="inline-flex items-center gap-2
-                        px-8 py-3.5
-                        bg-white
-                        text-blue-700
-                        hover:bg-blue-50
-                        font-extrabold
-                        rounded-2xl
-                        shadow-lg
-                        transition
-                        hover:-translate-y-0.5">
-
-                        <i class="fa-solid fa-shield-halved"></i>
-
-                        Buka Dashboard Admin
-
-                    </a>
-
-                @endif
-
-            </div>
-
-
-        @else
-
-            <!-- ================================================= -->
-            <!-- USER BELUM LOGIN -->
-            <!-- ================================================= -->
-
-            <h2
-                class="text-3xl sm:text-4xl
-                lg:text-5xl
-                font-extrabold
-                tracking-tight">
-
-                Siap Memulai Perjalanan Anda?
-
-            </h2>
-
-
-            <p
-                class="text-blue-100
-                mt-4
-                text-sm sm:text-base
-                leading-relaxed">
-
-                Bergabunglah bersama ribuan talenta
-                digital dan perusahaan di platform
-                ApexForge Labs sekarang juga.
-
-            </p>
-
-
-            <div
-                class="flex flex-wrap
-                justify-center
-                gap-4 mt-8">
-
-                <a
-                    href="{{ route('register') }}"
-                    class="px-8 py-3.5
-                    bg-white
-                    text-blue-700
-                    hover:bg-blue-50
-                    font-extrabold
-                    rounded-2xl
-                    shadow-lg
-                    transition
-                    hover:-translate-y-0.5">
-
-                    Daftar Gratis Sekarang
-
-                </a>
-
-
-                <a
-                    href="{{ route('login') }}"
-                    class="px-8 py-3.5
-                    bg-blue-500/30
-                    hover:bg-blue-500/40
-                    text-white
-                    font-bold
-                    rounded-2xl
-                    border border-blue-400/30
-                    transition
-                    hover:-translate-y-0.5">
-
-                    Masuk Akun
-
-                </a>
-
-            </div>
-
-        @endauth
-
-    </div>
-
-</section>
-
-
+                </div>
+            @endauth
+        </div>
+    </section>
 
     <!-- ============================================================ -->
     <!-- 10. FOOTER -->
@@ -2143,93 +1075,32 @@
                 </div>
             </div>
 
+            <!-- COPYRIGHT -->
             <div class="pt-6 border-t border-blue-50 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-medium text-slate-500 dark:text-slate-400">
                 <p>&copy; 2026 ApexForge Labs. Hak Cipta Dilindungi.</p>
-            </div>
-
-
-            <!-- COPYRIGHT -->
-
-            <div
-                class="pt-6
-                border-t border-blue-50
-                flex flex-col
-                sm:flex-row
-                items-center
-                justify-between
-                gap-4
-                text-xs
-                font-medium
-                text-slate-500">
-
-                <p>
-                    &copy; 2026 ApexForge Labs.
-                    Hak Cipta Dilindungi.
-                </p>
-
-                <div
-                    class="flex items-center gap-4">
-
-                    <a
-                        href="{{ route('login') }}"
-                        class="hover:text-blue-600 transition">
-
-                        Privasi
-
-                    </a>
-
-                    <a
-                        href="{{ route('login') }}"
-                        class="hover:text-blue-600 transition">
-
-                        Ketentuan
-
-                    </a>
-
+                <div class="flex items-center gap-4">
+                    <a href="{{ route('login') }}" class="hover:text-blue-600 dark:hover:text-blue-400 transition">Privasi</a>
+                    <a href="{{ route('login') }}" class="hover:text-blue-600 dark:hover:text-blue-400 transition">Ketentuan</a>
                 </div>
-
             </div>
-
         </div>
-
     </footer>
-
-
 
     <!-- ============================================================ -->
     <!-- MOBILE MENU SCRIPT -->
     <!-- ============================================================ -->
-
     <script>
-
-        document
-            .getElementById('mobile-menu-btn')
-            ?.addEventListener('click', function () {
-
-                const menu =
-                    document.getElementById('mobile-menu');
-
-                menu.classList.toggle('hidden');
-
-            });
-
+        document.getElementById('mobile-menu-btn')?.addEventListener('click', function () {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
 
         // Tutup mobile menu ketika link diklik
-
-        document
-            .querySelectorAll('#mobile-menu a')
-            .forEach(function (link) {
-
-                link.addEventListener('click', function () {
-
-                    document
-                        .getElementById('mobile-menu')
-                        ?.classList.add('hidden');
-
-                });
-
+        document.querySelectorAll('#mobile-menu a').forEach(function (link) {
+            link.addEventListener('click', function () {
+                document.getElementById('mobile-menu')?.classList.add('hidden');
             });
-
+        });
     </script>
 
     <!-- Dark Mode Toggle Script -->
@@ -2243,10 +1114,8 @@
                 const isDark = htmlElement.classList.contains('dark');
                 toggleIcons.forEach(icon => {
                     if (isDark) {
-                        // Jika mode saat ini Dark, tampilkan ikon Sun ☀️ untuk beralih ke Light
                         icon.className = 'darkModeIcon fa-solid fa-sun text-amber-400 text-lg';
                     } else {
-                        // Jika mode saat ini Light, tampilkan ikon Moon 🌙 untuk beralih ke Dark
                         icon.className = 'darkModeIcon fa-solid fa-moon text-slate-600 text-lg';
                     }
                 });

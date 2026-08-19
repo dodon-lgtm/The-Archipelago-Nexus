@@ -279,7 +279,21 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                  {{-- Separator --}}
                  <div class="pt-4 mt-4 border-t border-blue-50"></div>
 
-                 {{-- Back to Home --}}
+                  {{-- Pengaturan --}}
+                  <a href="{{ route('admin.policies.index') }}"
+                      class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all
+                    {{ request()->routeIs('admin.policies.*')
+                        ? 'bg-blue-50 text-blue-700 font-bold shadow-sm border border-blue-100'
+                        : 'text-slate-600 hover:bg-blue-50 hover:text-slate-800' }}"
+                      data-tooltip="Kebijakan &amp; Privasi">
+                      <i class="fa-solid fa-shield-halved w-5 text-center"></i>
+                      <span class="text-sm">Kebijakan &amp; Privasi</span>
+                  </a>
+
+                  {{-- Separator --}}
+                  <div class="pt-4 mt-4 border-t border-blue-50"></div>
+
+{{-- Back to Home --}}
                  <a href="{{ url('/') }}"
                      class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-slate-500 hover:bg-blue-50 hover:text-slate-700"
                      data-tooltip="Kembali ke Website">

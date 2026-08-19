@@ -25,6 +25,7 @@
     use App\Http\Controllers\Admin\ReportController as AdminReportController;
     use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
     use App\Http\Controllers\Admin\WithdrawalController as AdminWithdrawalController;
+    use App\Http\Controllers\Admin\PolicyController as AdminPolicyController;
 
     // ─── COMPANY CONTROLLERS ─────────────────────────
     use App\Http\Controllers\Company\ProjectController as CompanyProjectController;
@@ -44,121 +45,92 @@
     use App\Http\Controllers\Freelancer\WithdrawalController as FreelancerWithdrawalController;
 
 
-// ================================================================
-// AUTH / GUEST
-// ================================================================
+    // ──────────────────────────────────────────────
+    // AUTH / GUEST
+    // ──────────────────────────────────────────────
 
-Route::get('/login', [AuthController::class, 'showLogin'])
-    ->name('login');
+    Route::get('/login', [AuthController::class, 'showLogin'])
+        ->name('login');
 
-Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/login', [AuthController::class, 'login']);
 
-Route::post('/logout', [AuthController::class, 'logout'])
-    ->name('logout')
-    ->middleware('auth');
+    Route::post('/logout', [AuthController::class, 'logout'])
+        ->name('logout')
+        ->middleware('auth');
 
-Route::get('/register', [RegisterController::class, 'showRegister'])
-    ->name('register');
+    Route::get('/register', [RegisterController::class, 'showRegister'])
+        ->name('register');
 
-Route::post('/register', [RegisterController::class, 'register']);
-
-
-// ================================================================
-// LANDING PAGE
-// BISA DIAKSES TANPA LOGIN
-// ================================================================
-
-Route::get('/', function () {
-
-    $recentProjects = \App\Models\Project::with(['category', 'owner'])
-        ->where('archive_status', 'active')
-        ->where('status', 'Open')
-        ->latest()
-        ->take(6)
-        ->get();
-
-    $categories = \App\Models\Category::orderBy('name')->get();
-
-    $totalProjects = \App\Models\Project::count();
-
-    $totalFreelancers = \App\Models\User::where(
-        'role',
-        'freelancer'
-    )->count();
-
-    $totalCompanies = \App\Models\User::where(
-        'role',
-        'company'
-    )->count();
-
-    /*
-    |--------------------------------------------------------------------------
-    | Proyek selesai dihitung dari Workspace.status = Selesai
-    |--------------------------------------------------------------------------
-    */
-    $totalProjectsCompleted = \App\Models\Workspace::where(
-        'status',
-        'Selesai'
-    )->count();
-
-    return view('landingpage', compact(
-        'recentProjects',
-        'categories',
-        'totalProjects',
-        'totalFreelancers',
-        'totalCompanies',
-        'totalProjectsCompleted'
-    ));
-
-})->name('landing');
+    Route::post('/register', [RegisterController::class, 'register']);
 
 
-// ================================================================
-// DETAIL PROJECT PUBLIC
-// BISA DILIHAT TANPA LOGIN
-//
-// URL:
-// /freelancer/projects/1
-//
-// PENTING:
-// Route ini sengaja diletakkan DI LUAR middleware auth.
-// ================================================================
+    // ──────────────────────────────────────────────
+    // PUSAT BANTUAN (PUBLIC)
+    // ──────────────────────────────────────────────
 
-Route::get('/freelancer/projects/{project}', [
-    ProjectBrowseController::class,
-    'show'
-])->name('freelancer.projects.show');
+    Route::get('/pusat-bantuan', [
+        App\Http\Controllers\HelpCenterController::class,
+        'index'
+    ])->name('help.index');
+
+    Route::post('/pusat-bantuan/kontak', [
+        App\Http\Controllers\HelpCenterController::class,
+        'storeContact'
+    ])->name('help.contact');
 
 
-// ================================================================
-// FREELANCER ROUTES
-// WAJIB LOGIN + ROLE FREELANCER
-// ================================================================
+    // ──────────────────────────────────────────────
+    // LANDING PAGE
+    // ──────────────────────────────────────────────
 
-Route::middleware(['auth', 'ensureFreelancer'])
-    ->prefix('freelancer')
-    ->name('freelancer.')
-    ->group(function () {
+    Route::get('/', function () {
 
-        // ========================================================
-        // DASHBOARD
-        // ========================================================
+        $recentProjects = \App\Models\Project::with(['category', 'owner'])
+            ->whereIn('status', ['open', 'OPEN', 'Open'])
+            ->latest('created_at')
+            ->take(6)
+            ->get();
 
-        Route::get('/dashboard', [
-            FreelancerDashboardController::class,
-            'index'
-        ])->name('dashboard');
+        $categories = \App\Models\Category::orderBy('name')->get();
+
+        $totalProjects = \App\Models\Project::count();
+
+        $totalFreelancers = \App\Models\User::where('role', 'freelancer')->count();
+
+        $totalCompanies = \App\Models\User::where('role', 'company')->count();
+
+        $totalProjectsCompleted = \App\Models\Workspace::where('status', 'Selesai')->count();
+
+        return view('landingpage', compact(
+            'recentProjects',
+            'categories',
+            'totalProjects',
+            'totalFreelancers',
+            'totalCompanies',
+            'totalProjectsCompleted'
+        ));
+
+    })->name('landing');
 
 
-        // ========================================================
-        // PROJECT BROWSING
-        // WAJIB LOGIN
-        // ========================================================
+    // ──────────────────────────────────────────────
+    // PUBLIC PROJECT DETAIL
+    // ──────────────────────────────────────────────
 
-        Route::get('/projects', [
-            ProjectBrowseController::class,
-            'index'
-        ])->name('projects.index');
+    Route::get('/proyek/{project}', [
+        ProjectBrowseController::class,
+        'publicShow'
+    ])->name('projects.public.show');
+
+
+    // ──────────────────────────────────────────────
+    // FREELANCER ROUTES
+    // ──────────────────────────────────────────────
+
+    Route::middleware(['auth', 'ensureFreelancer'])
+        ->prefix('freelancer')
+        ->name('freelancer.')
+        ->group(function () {
 
             // Dashboard
             Route::get('/dashboard', [
@@ -304,202 +276,33 @@ Route::middleware(['auth', 'ensureFreelancer'])
         });
 
 
-        // ========================================================
-        // PENAWARAN
-        // WAJIB LOGIN
-        // ========================================================
+    // ──────────────────────────────────────────────
+    // COMPANY ROUTES
+    // ──────────────────────────────────────────────
 
-        Route::get('/projects/{project}/penawaran', [
-            ProjectBrowseController::class,
-            'create'
-        ])->name('penawaran.create');
+    Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])
+        ->prefix('company')
+        ->name('company.')
+        ->group(function () {
 
-        Route::post('/projects/{project}/penawaran', [
-            ProjectBrowseController::class,
-            'store'
-        ])->name('penawaran.store');
+            // Dashboard
+            Route::get('/dashboard', function () {
+                $userId = Auth::id();
 
+                $totalProjects = \App\Models\Project::where('user_id', $userId)->count();
 
-        // ========================================================
-        // LAMARAN
-        // ========================================================
+                $activeProjects = \App\Models\Project::where('user_id', $userId)
+                    ->where('status', 'open')
+                    ->count();
 
-        Route::get('/lamaran', [
-            ProjectOfferController::class,
-            'index'
-        ])->name('lamaran');
+                $recentProjects = \App\Models\Project::where('user_id', $userId)
+                    ->latest()
+                    ->take(5)
+                    ->get();
 
-
-        // ========================================================
-        // BATALKAN PENAWARAN
-        // ========================================================
-
-        Route::delete('/penawaran/{penawaran}', [
-            ProjectOfferController::class,
-            'destroy'
-        ])->name('penawaran.destroy');
-
-
-        // ========================================================
-        // SAVED PROJECTS
-        // ========================================================
-
-        Route::get('/simpan', [
-            SavedProjectController::class,
-            'index'
-        ])->name('saved-projects.index');
-
-        Route::post('/projects/{project}/simpan', [
-            SavedProjectController::class,
-            'store'
-        ])->name('saved-projects.store');
-
-        Route::delete('/projects/{project}/simpan', [
-            SavedProjectController::class,
-            'destroy'
-        ])->name('saved-projects.destroy');
-
-
-        // ========================================================
-        // WORKSPACE
-        // ========================================================
-
-        Route::get('/workspaces', [
-            WorkspaceController::class,
-            'freelancerIndex'
-        ])->name('workspaces.index');
-
-        Route::get('/workspaces/{workspace}', [
-            WorkspaceController::class,
-            'show'
-        ])->name('workspaces.show');
-
-        Route::post('/workspaces/{workspace}/message', [
-            WorkspaceController::class,
-            'sendMessage'
-        ])->name('workspaces.message');
-
-        Route::post('/workspaces/{workspace}/progress', [
-            WorkspaceController::class,
-            'updateProgress'
-        ])->name('workspaces.progress');
-
-
-        // ========================================================
-        // SUBMISSIONS
-        // ========================================================
-
-        Route::post('/workspaces/{workspace}/submissions', [
-            ProjectSubmissionController::class,
-            'store'
-        ])->name('workspaces.submissions.store');
-
-
-        // ========================================================
-        // PROFILE FREELANCER
-        // ========================================================
-
-        Route::get('/profile', [
-            FreelancerProfilController::class,
-            'profile'
-        ])->name('profile');
-
-        Route::get('/profile/edit', [
-            FreelancerProfilController::class,
-            'editProfile'
-        ])->name('profile.edit');
-
-        Route::post('/profile/update', [
-            FreelancerProfilController::class,
-            'updateProfile'
-        ])->name('profile.update');
-
-
-        // ========================================================
-        // PENDAPATAN
-        // ========================================================
-
-        Route::get('/pendapatan', [
-            FreelancerPendapatanController::class,
-            'index'
-        ])->name('pendapatan.index');
-
-
-        // ========================================================
-        // REPORTS FREELANCER
-        // ========================================================
-
-        Route::get('/reports', [
-            FreelancerReportController::class,
-            'index'
-        ])->name('reports.index');
-
-        Route::get('/reports/create', [
-            FreelancerReportController::class,
-            'create'
-        ])->name('reports.create');
-
-        Route::post('/reports', [
-            FreelancerReportController::class,
-            'store'
-        ])->name('reports.store');
-
-        Route::get('/reports/{report}', [
-            FreelancerReportController::class,
-            'show'
-        ])->name('reports.show');
-
-        Route::post('/reports/{report}/evidence', [
-            FreelancerReportController::class,
-            'uploadEvidence'
-        ])->name('reports.evidence');
-    });
-
-
-// ================================================================
-// COMPANY ROUTES
-// WAJIB LOGIN + COMPANY
-// ================================================================
-
-Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])
-    ->prefix('company')
-    ->name('company.')
-    ->group(function () {
-
-        // ========================================================
-        // DASHBOARD COMPANY
-        // ========================================================
-
-        Route::get('/dashboard', function () {
-
-            $userId = Auth::id();
-
-            $totalProjects = \App\Models\Project::where(
-                'user_id',
-                $userId
-            )->count();
-
-            $activeProjects = \App\Models\Project::where(
-                'user_id',
-                $userId
-            )
-                ->where('status', 'Open')
-                ->count();
-
-            $recentProjects = \App\Models\Project::where(
-                'user_id',
-                $userId
-            )
-                ->latest()
-                ->take(5)
-                ->get();
-
-            $activeFreelancers = \App\Models\Penawaran::whereHas(
-                'project',
-                function ($q) use ($userId) {
+                $activeFreelancers = \App\Models\Penawaran::whereHas('project', function ($q) use ($userId) {
                     $q->where('user_id', $userId);
-                }
-            )
+                })
                 ->where('status', 'Diterima')
                 ->count();
 
@@ -509,432 +312,345 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])
                     ->where('status', 'paid')
                     ->sum('amount');
 
-            $incomingProposals = \App\Models\Penawaran::whereHas(
-                'project',
-                function ($q) use ($userId) {
+                $incomingProposals = \App\Models\Penawaran::whereHas('project', function ($q) use ($userId) {
                     $q->where('user_id', $userId);
-                }
-            )
+                })
                 ->with(['project', 'freelancer'])
                 ->latest()
                 ->take(10)
                 ->get();
 
-            return view(
-                'company.dashboard',
-                compact(
+                return view('company.dashboard', compact(
                     'totalProjects',
                     'activeProjects',
                     'activeFreelancers',
                     'totalSpending',
                     'recentProjects',
                     'incomingProposals'
-                )
-            );
+                ));
 
-        })->name('dashboard');
+            })->name('dashboard');
 
+            // Projects CRUD
+            Route::get('/projects', [
+                CompanyProjectController::class,
+                'index'
+            ])->name('projects.index');
 
-        // ========================================================
-        // PROJECT CRUD COMPANY
-        // ========================================================
+            Route::get('/projects/archive', [
+                CompanyProjectController::class,
+                'archiveIndex'
+            ])->name('projects.archive');
 
-        Route::get('/projects', [
-            CompanyProjectController::class,
-            'index'
-        ])->name('projects.index');
+            Route::get('/projects/create', [
+                CompanyProjectController::class,
+                'create'
+            ])->name('projects.create');
 
-        Route::get('/projects/archive', [
-            CompanyProjectController::class,
-            'archiveIndex'
-        ])->name('projects.archive');
+            Route::post('/projects', [
+                CompanyProjectController::class,
+                'store'
+            ])->name('projects.store');
 
-        Route::get('/projects/create', [
-            CompanyProjectController::class,
-            'create'
-        ])->name('projects.create');
+            Route::get('/projects/{project}', [
+                CompanyProjectController::class,
+                'show'
+            ])->name('projects.show');
 
-        Route::post('/projects', [
-            CompanyProjectController::class,
-            'store'
-        ])->name('projects.store');
+            Route::get('/projects/{project}/edit', [
+                CompanyProjectController::class,
+                'edit'
+            ])->name('projects.edit');
 
-        Route::get('/projects/{project}', [
-            CompanyProjectController::class,
-            'show'
-        ])->name('projects.show');
+            Route::put('/projects/{project}', [
+                CompanyProjectController::class,
+                'update'
+            ])->name('projects.update');
 
-        Route::get('/projects/{project}/edit', [
-            CompanyProjectController::class,
-            'edit'
-        ])->name('projects.edit');
+            Route::post('/projects/{project}/close', [
+                CompanyProjectController::class,
+                'close'
+            ])->name('projects.close');
 
-        Route::put('/projects/{project}', [
-            CompanyProjectController::class,
-            'update'
-        ])->name('projects.update');
+            Route::post('/projects/{project}/archive', [
+                CompanyProjectController::class,
+                'archive'
+            ])->name('projects.archive-project');
 
-        Route::post('/projects/{project}/close', [
-            CompanyProjectController::class,
-            'close'
-        ])->name('projects.close');
+            Route::post('/projects/{project}/activate', [
+                CompanyProjectController::class,
+                'activate'
+            ])->name('projects.activate');
 
-        Route::post('/projects/{project}/archive', [
-            CompanyProjectController::class,
-            'archive'
-        ])->name('projects.archive-project');
+            Route::post('/projects/{project}/deactivate', [
+                CompanyProjectController::class,
+                'deactivate'
+            ])->name('projects.deactivate');
 
-        Route::post('/projects/{project}/activate', [
-            CompanyProjectController::class,
-            'activate'
-        ])->name('projects.activate');
+            Route::delete('/projects/{project}', [
+                CompanyProjectController::class,
+                'destroy'
+            ])->name('projects.destroy');
 
-        Route::post('/projects/{project}/deactivate', [
-            CompanyProjectController::class,
-            'deactivate'
-        ])->name('projects.deactivate');
+            // Review
+            Route::get('/client/project/{project}/review', [
+                ReviewController::class,
+                'create'
+            ])->name('client.review.create');
 
-        Route::delete('/projects/{project}', [
-            CompanyProjectController::class,
-            'destroy'
-        ])->name('projects.destroy');
+            Route::post('/client/project/{project}/review', [
+                ReviewController::class,
+                'store'
+            ])->name('client.review.store');
 
-
-        // ========================================================
-        // REVIEW CLIENT
-        // ========================================================
-
-        Route::get('/client/project/{project}/review', [
-            ReviewController::class,
-            'create'
-        ])->name('client.review.create');
-
-        Route::post('/client/project/{project}/review', [
-            ReviewController::class,
-            'store'
-        ])->name('client.review.store');
-
-
-        // ========================================================
-        // SELECT FREELANCER
-        // ========================================================
-
-        Route::post(
-            '/projects/{project}/penawaran/{penawaran}/select',
-            [
+            // Select Freelancer
+            Route::post('/projects/{project}/penawaran/{penawaran}/select', [
                 CompanyProjectController::class,
                 'selectFreelancer'
-            ]
-        )->name('projects.penawaran.select');
+            ])->name('projects.penawaran.select');
 
+            // Workspace
+            Route::get('/workspaces', [
+                WorkspaceController::class,
+                'companyIndex'
+            ])->name('workspaces.index');
 
-        // ========================================================
-        // WORKSPACE COMPANY
-        // ========================================================
+            Route::get('/workspaces/{workspace}', [
+                WorkspaceController::class,
+                'show'
+            ])->name('workspaces.show');
 
-        Route::get('/workspaces', [
-            WorkspaceController::class,
-            'companyIndex'
-        ])->name('workspaces.index');
+            Route::post('/workspaces/{workspace}/message', [
+                WorkspaceController::class,
+                'sendMessage'
+            ])->name('workspaces.message');
 
-        Route::get('/workspaces/{workspace}', [
-            WorkspaceController::class,
-            'show'
-        ])->name('workspaces.show');
+            // Freelancer Profile
+            Route::get('/freelancer-profile/{id}', [
+                FreelancerProfilController::class,
+                'profile'
+            ])->name('freelancer.profile');
 
-        Route::post('/workspaces/{workspace}/message', [
-            WorkspaceController::class,
-            'sendMessage'
-        ])->name('workspaces.message');
-
-
-        // ========================================================
-        // PROFILE FREELANCER
-        // READ ONLY COMPANY
-        // ========================================================
-
-        Route::get('/freelancer-profile/{id}', [
-            FreelancerProfilController::class,
-            'profile'
-        ])->name('freelancer.profile');
-
-
-        // ========================================================
-        // SUBMISSIONS
-        // ========================================================
-
-        Route::post(
-            '/workspaces/{workspace}/submissions/{submission}/accept',
-            [
+            // Submissions
+            Route::post('/workspaces/{workspace}/submissions/{submission}/accept', [
                 ProjectSubmissionController::class,
                 'accept'
-            ]
-        )->name('workspaces.submissions.accept');
+            ])->name('workspaces.submissions.accept');
 
-        Route::post(
-            '/workspaces/{workspace}/submissions/{submission}/revision',
-            [
+            Route::post('/workspaces/{workspace}/submissions/{submission}/revision', [
                 ProjectSubmissionController::class,
                 'requestRevision'
-            ]
-        )->name('workspaces.submissions.revision');
+            ])->name('workspaces.submissions.revision');
 
-
-        // ========================================================
-        // PAYMENT
-        // ========================================================
-
-        Route::get(
-            '/workspaces/{workspace}/payment/gateway',
-            [
+            // Payments (Company)
+            Route::get('/payments', [
                 CompanyPaymentController::class,
-                'showGateway'
-            ]
-        )->name('payments.gateway');
+                'index'
+            ])->name('payments.index');
 
-        Route::get(
-            '/workspaces/{workspace}/payment/upload',
-            [
+            Route::post('/workspaces/{workspace}/payments/upload', [
                 CompanyPaymentController::class,
-                'showUploadForm'
-            ]
-        )->name('payments.upload-form');
+                'upload'
+            ])->name('payments.upload');
 
-        Route::post(
-            '/workspaces/{workspace}/payment/upload',
-            [
-                CompanyPaymentController::class,
-                'uploadProof'
-            ]
-        )->name('payments.upload');
+            // Profile
+            Route::get('/profile', [
+                CompanyProfilController::class,
+                'profile'
+            ])->name('profile');
 
+            Route::get('/profile/edit', [
+                CompanyProfilController::class,
+                'editProfile'
+            ])->name('profile.edit');
 
-        // ========================================================
-        // PROFILE COMPANY
-        // ========================================================
+            Route::post('/profile/update', [
+                CompanyProfilController::class,
+                'updateProfile'
+            ])->name('profile.update');
 
-        Route::get('/profile', [
-            CompanyProfilController::class,
-            'profile'
-        ])->name('profile');
+            // Reports
+            Route::get('/reports', [
+                CompanyReportController::class,
+                'index'
+            ])->name('reports.index');
 
-        Route::get('/profile/edit', [
-            CompanyProfilController::class,
-            'editProfile'
-        ])->name('profile.edit');
+            Route::get('/reports/create', [
+                CompanyReportController::class,
+                'create'
+            ])->name('reports.create');
 
-        Route::post('/profile/update', [
-            CompanyProfilController::class,
-            'updateProfile'
-        ])->name('profile.update');
+            Route::post('/reports', [
+                CompanyReportController::class,
+                'store'
+            ])->name('reports.store');
 
+            Route::get('/reports/{report}', [
+                CompanyReportController::class,
+                'show'
+            ])->name('reports.show');
 
-        // ========================================================
-        // REPORTS COMPANY
-        // ========================================================
-
-        Route::get('/reports', [
-            CompanyReportController::class,
-            'index'
-        ])->name('reports.index');
-
-        Route::get('/reports/create', [
-            CompanyReportController::class,
-            'create'
-        ])->name('reports.create');
-
-        Route::post('/reports', [
-            CompanyReportController::class,
-            'store'
-        ])->name('reports.store');
-
-        Route::get('/reports/{report}', [
-            CompanyReportController::class,
-            'show'
-        ])->name('reports.show');
-
-        Route::post('/reports/{report}/evidence', [
-            CompanyReportController::class,
-            'uploadEvidence'
-        ])->name('reports.evidence');
-    });
+            Route::post('/reports/{report}/evidence', [
+                CompanyReportController::class,
+                'uploadEvidence'
+            ])->name('reports.evidence');
+        });
 
 
-// ================================================================
-// ADMIN ROUTES
-// WAJIB LOGIN + ADMIN
-// ================================================================
+    // ──────────────────────────────────────────────
+    // ADMIN ROUTES
+    // ──────────────────────────────────────────────
 
-Route::middleware(['auth', 'ensureAdmin'])
-    ->prefix('admin')
-    ->name('admin.')
-    ->group(function () {
+    Route::middleware(['auth', 'ensureAdmin'])
+        ->prefix('admin')
+        ->name('admin.')
+        ->group(function () {
 
-        // ========================================================
-        // DASHBOARD
-        // ========================================================
+            // Dashboard
+            Route::get('/dashboard', [
+                AdminDashboardController::class,
+                'index'
+            ])->name('dashboard');
 
-        Route::get('/dashboard', [
-            AdminDashboardController::class,
-            'index'
-        ])->name('dashboard');
+            // Users
+            Route::get('/users', [
+                AdminUserController::class,
+                'index'
+            ])->name('users.index');
 
+            Route::get('/users/{user}', [
+                AdminUserController::class,
+                'show'
+            ])->name('users.show');
 
-        // ========================================================
-        // USERS
-        // ========================================================
+            Route::post('/users/{user}/update-role', [
+                AdminUserController::class,
+                'updateRole'
+            ])->name('users.update-role');
 
-        Route::get('/users', [
-            AdminUserController::class,
-            'index'
-        ])->name('users.index');
+            Route::delete('/users/{user}', [
+                AdminUserController::class,
+                'destroy'
+            ])->name('users.destroy');
 
-        Route::get('/users/{user}', [
-            AdminUserController::class,
-            'show'
-        ])->name('users.show');
+            // Categories
+            Route::get('/categories', [
+                AdminCategoryController::class,
+                'index'
+            ])->name('categories.index');
 
-        Route::post('/users/{user}/update-role', [
-            AdminUserController::class,
-            'updateRole'
-        ])->name('users.update-role');
+            Route::post('/categories', [
+                AdminCategoryController::class,
+                'store'
+            ])->name('categories.store');
 
-        Route::delete('/users/{user}', [
-            AdminUserController::class,
-            'destroy'
-        ])->name('users.destroy');
+            Route::put('/categories/{category}', [
+                AdminCategoryController::class,
+                'update'
+            ])->name('categories.update');
 
+            Route::delete('/categories/{category}', [
+                AdminCategoryController::class,
+                'destroy'
+            ])->name('categories.destroy');
 
-        // ========================================================
-        // CATEGORIES
-        // ========================================================
+            // Policies (Kebijakan & Privasi)
+            Route::get('/policies', [
+                AdminPolicyController::class,
+                'index'
+            ])->name('policies.index');
 
-        Route::get('/categories', [
-            AdminCategoryController::class,
-            'index'
-        ])->name('categories.index');
+            Route::get('/policies/{policy}/edit', [
+                AdminPolicyController::class,
+                'edit'
+            ])->name('policies.edit');
 
-        Route::post('/categories', [
-            AdminCategoryController::class,
-            'store'
-        ])->name('categories.store');
+            Route::put('/policies/{policy}', [
+                AdminPolicyController::class,
+                'update'
+            ])->name('policies.update');
 
-        Route::put('/categories/{category}', [
-            AdminCategoryController::class,
-            'update'
-        ])->name('categories.update');
+            // Projects
+            Route::get('/projects', [
+                AdminProjectController::class,
+                'index'
+            ])->name('projects.index');
 
-        Route::delete('/categories/{category}', [
-            AdminCategoryController::class,
-            'destroy'
-        ])->name('categories.destroy');
+            Route::get('/projects/{project}', [
+                AdminProjectController::class,
+                'show'
+            ])->name('projects.show');
 
+            Route::delete('/projects/{project}', [
+                AdminProjectController::class,
+                'destroy'
+            ])->name('projects.destroy');
 
-        // ========================================================
-        // PROJECTS
-        // ========================================================
+            // Penawarans
+            Route::get('/penawarans', [
+                AdminPenawaranController::class,
+                'index'
+            ])->name('penawarans.index');
 
-        Route::get('/projects', [
-            AdminProjectController::class,
-            'index'
-        ])->name('projects.index');
+            Route::get('/penawarans/{penawaran}', [
+                AdminPenawaranController::class,
+                'show'
+            ])->name('penawarans.show');
 
-        Route::get('/projects/{project}', [
-            AdminProjectController::class,
-            'show'
-        ])->name('projects.show');
+            // Hasil Pekerjaan
+            Route::get('/hasil-pekerjaan', [
+                AdminHasilPekerjaanController::class,
+                'index'
+            ])->name('hasil-pekerjaan.index');
 
-        Route::delete('/projects/{project}', [
-            AdminProjectController::class,
-            'destroy'
-        ])->name('projects.destroy');
+            Route::get('/hasil-pekerjaan/{workspace}', [
+                AdminHasilPekerjaanController::class,
+                'show'
+            ])->name('hasil-pekerjaan.show');
 
+            // Reports
+            Route::get('/reports', [
+                AdminReportController::class,
+                'index'
+            ])->name('reports.index');
 
-        // ========================================================
-        // PENAWARANS
-        // ========================================================
+            Route::get('/reports/{report}', [
+                AdminReportController::class,
+                'show'
+            ])->name('reports.show');
 
-        Route::get('/penawarans', [
-            AdminPenawaranController::class,
-            'index'
-        ])->name('penawarans.index');
+            Route::post('/reports/{report}/update-status', [
+                AdminReportController::class,
+                'updateStatus'
+            ])->name('reports.update-status');
 
-        Route::get('/penawarans/{penawaran}', [
-            AdminPenawaranController::class,
-            'show'
-        ])->name('penawarans.show');
+            Route::post('/reports/{report}/destroy-project', [
+                AdminReportController::class,
+                'destroyProject'
+            ])->name('reports.destroy-project');
 
+            Route::post('/reports/{report}/destroy-penawaran', [
+                AdminReportController::class,
+                'destroyPenawaran'
+            ])->name('reports.destroy-penawaran');
 
-        // ========================================================
-        // HASIL PEKERJAAN
-        // ========================================================
+            // Company Account Requests
+            Route::get('/company-account-requests', [
+                CompanyAccountRequestAdminController::class,
+                'index'
+            ])->name('company-account-requests.index');
 
-        Route::get('/hasil-pekerjaan', [
-            AdminHasilPekerjaanController::class,
-            'index'
-        ])->name('hasil-pekerjaan.index');
+            Route::get('/company-account-requests/{request}', [
+                CompanyAccountRequestAdminController::class,
+                'show'
+            ])->name('company-account-requests.show');
 
-        Route::get('/hasil-pekerjaan/{workspace}', [
-            AdminHasilPekerjaanController::class,
-            'show'
-        ])->name('hasil-pekerjaan.show');
-
-
-        // ========================================================
-        // REPORTS ADMIN
-        // ========================================================
-
-        Route::get('/reports', [
-            AdminReportController::class,
-            'index'
-        ])->name('reports.index');
-
-        Route::get('/reports/{report}', [
-            AdminReportController::class,
-            'show'
-        ])->name('reports.show');
-
-        Route::post('/reports/{report}/update-status', [
-            AdminReportController::class,
-            'updateStatus'
-        ])->name('reports.update-status');
-
-        Route::post('/reports/{report}/destroy-project', [
-            AdminReportController::class,
-            'destroyProject'
-        ])->name('reports.destroy-project');
-
-        Route::post('/reports/{report}/destroy-penawaran', [
-            AdminReportController::class,
-            'destroyPenawaran'
-        ])->name('reports.destroy-penawaran');
-
-
-        // ========================================================
-        // COMPANY ACCOUNT REQUEST
-        // ========================================================
-
-        Route::get('/company-account-requests', [
-            CompanyAccountRequestAdminController::class,
-            'index'
-        ])->name('company-account-requests.index');
-
-        Route::get('/company-account-requests/{request}', [
-            CompanyAccountRequestAdminController::class,
-            'show'
-        ])->name('company-account-requests.show');
-
-        Route::post(
-            '/company-account-requests/{companyRequest}/approve',
-            [
+            Route::post('/company-account-requests/{companyRequest}/approve', [
                 CompanyAccountRequestAdminController::class,
                 'approve'
-            ]
-        )->name('company-account-requests.approve');
+            ])->name('company-account-requests.approve');
 
-        Route::post(
-            '/company-account-requests/{companyRequest}/reject',
-            [
+            Route::post('/company-account-requests/{companyRequest}/reject', [
                 CompanyAccountRequestAdminController::class,
                 'reject'
             ])->name('company-account-requests.reject');
@@ -998,81 +714,77 @@ Route::middleware(['auth', 'ensureAdmin'])
         });
 
 
-        // ========================================================
-        // PAYMENTS ADMIN
-        // ========================================================
+    // ──────────────────────────────────────────────
+    // REPORTS (AUTH ONLY)
+    // ──────────────────────────────────────────────
 
-        Route::get('/payments', [
-            AdminPaymentController::class,
-            'index'
-        ])->name('payments.index');
+    Route::middleware('auth')
+        ->prefix('reports')
+        ->name('reports.')
+        ->group(function () {
 
-        Route::get('/payments/{payment}', [
-            AdminPaymentController::class,
-            'show'
-        ])->name('payments.show');
+            Route::get('/create', [
+                ReportController::class,
+                'create'
+            ])->name('create');
 
-        Route::post('/payments/{payment}/verify', [
-            AdminPaymentController::class,
-            'verify'
-        ])->name('payments.verify');
+            Route::post('/', [
+                ReportController::class,
+                'store'
+            ])->name('store');
 
-        Route::post('/payments/{payment}/reject', [
-            AdminPaymentController::class,
-            'reject'
-        ])->name('payments.reject');
-    });
-
-
-// ================================================================
-// REPORTS
-// WAJIB LOGIN
-// ================================================================
-
-Route::middleware('auth')
-    ->prefix('reports')
-    ->name('reports.')
-    ->group(function () {
-
-        Route::get('/create', [
-            ReportController::class,
-            'create'
-        ])->name('create');
-
-        Route::post('/', [
-            ReportController::class,
-            'store'
-        ])->name('store');
-
-        Route::post('/{report}/evidence', [
-            ReportController::class,
-            'uploadEvidence'
-        ])->name('evidence');
-    });
+            Route::post('/{report}/evidence', [
+                ReportController::class,
+                'uploadEvidence'
+            ])->name('evidence');
+        });
 
 
-// ================================================================
-// NOTIFICATIONS
-// WAJIB LOGIN
-// ================================================================
+    // ──────────────────────────────────────────────
+    // NOTIFICATIONS (AUTH ONLY)
+    // ──────────────────────────────────────────────
 
-Route::middleware('auth')
-    ->prefix('notifications')
-    ->name('notifications.')
-    ->group(function () {
+    Route::middleware('auth')
+        ->prefix('notifications')
+        ->name('notifications.')
+        ->group(function () {
 
-        Route::get('/', [
-            NotificationController::class,
-            'index'
-        ])->name('index');
+            Route::get('/', [
+                NotificationController::class,
+                'index'
+            ])->name('index');
 
-        Route::post('/{notification}/read', [
-            NotificationController::class,
-            'markRead'
-        ])->name('mark-read');
+            Route::post('/{notification}/read', [
+                NotificationController::class,
+                'markRead'
+            ])->name('mark-read');
 
-        Route::post('/mark-all-read', [
-            NotificationController::class,
-            'markAllRead'
-        ])->name('mark-all-read');
+            Route::post('/mark-all-read', [
+                NotificationController::class,
+                'markAllRead'
+            ])->name('mark-all-read');
+        });
+
+
+    // ──────────────────────────────────────────────
+    // PASSWORD SETTINGS
+    // ──────────────────────────────────────────────
+
+    Route::middleware('auth')->group(function () {
+
+        Route::post('/settings/password/verify', [
+            PasswordController::class,
+            'verifyCurrentPassword'
+        ])->name('settings.password.verify');
+
+        Route::post('/settings/password/update', [
+            PasswordController::class,
+            'updatePassword'
+        ])->name('settings.password.update');
+
+        Route::post('/password/update', [
+            PasswordController::class,
+            'update'
+        ])->name('password.update');
+
     });

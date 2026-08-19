@@ -318,7 +318,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                 </div>
 
                 <!-- TOMBOL LOGIN -->
-                <button type="submit" class="w-full py-2.5 mt-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-blue-600/20 transition transform active:scale-[0.98] flex items-center justify-center gap-2 group">
+                <button type="submit" id="loginSubmit" disabled class="w-full py-2.5 mt-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-blue-600/20 transition transform active:scale-[0.98] flex items-center justify-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-blue-600 disabled:hover:to-indigo-600 disabled:active:scale-100 disabled:shadow-none">
                     <i class="fa-solid fa-right-to-bracket group-hover:translate-x-0.5 transition-transform"></i>
                     Masuk
                 </button>
@@ -345,6 +345,33 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
             </form>
 
+            <!-- PERSETUJUAN KEBIJAKAN & PRIVASI -->
+            <div class="space-y-1 relative z-10 mt-1">
+                <label for="agreePolicy" class="flex items-start gap-2.5 cursor-pointer select-none group">
+                    <input
+                        id="agreePolicy"
+                        type="checkbox"
+                        name="agree_policy"
+                        value="1"
+                        class="mt-0.5 w-4 h-4 rounded border-slate-600 bg-slate-800 text-blue-600 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer"
+                    >
+                    <span class="text-[11px] text-slate-400 leading-relaxed group-hover:text-slate-300 transition-colors">
+                        Saya menyetujui
+                        <button
+                            type="button"
+                            id="openPolicyModal"
+                            class="inline text-blue-400 font-semibold hover:text-blue-300 hover:underline transition-colors"
+                        >
+                            Kebijakan &amp; Privasi
+                        </button>
+                    </span>
+                </label>
+                <p id="agreeHint" class="hidden text-[10px] text-amber-400/90 flex items-center gap-1 ml-6">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span>Centang persetujuan ini terlebih dahulu untuk masuk.</span>
+                </p>
+            </div>
+
             <!-- REGISTER -->
             <div class="text-center text-xs text-slate-400 pt-2 relative z-10">
                 Belum punya akun?
@@ -356,6 +383,137 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
         </div>
 
     </div>
+
+<!-- ================= MODAL KEBIJAKAN & PRIVASI ================= -->
+<div id="policyModal" class="hidden fixed inset-0 z-[999] items-center justify-center p-3 sm:p-4" role="dialog" aria-modal="true" aria-labelledby="policyModalTitle">
+    <div id="policyBackdrop" class="absolute inset-0 bg-slate-900/70 backdrop-blur-sm"></div>
+
+    <div class="relative w-full max-w-2xl max-h-[85vh] bg-white dark:bg-slate-900 rounded-2xl shadow-2xl shadow-slate-900/40 border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col transition-transform duration-300 scale-95" id="policyModalBox">
+
+        <!-- Header Modal -->
+        <div class="px-5 sm:px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-gradient-to-r from-blue-600/10 via-transparent to-transparent">
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="w-9 h-9 rounded-xl bg-blue-600/10 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-file-shield text-sm"></i>
+                </div>
+                <div class="min-w-0">
+                    <h3 id="policyModalTitle" class="text-sm font-black text-slate-900 dark:text-white truncate">Kebijakan &amp; Privasi</h3>
+                    <p class="text-[10px] text-slate-400 truncate">Kebijakan Privasi &amp; Kebijakan Penggunaan</p>
+                </div>
+            </div>
+            <button type="button" id="closePolicyModal" aria-label="Tutup modal" class="w-8 h-8 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center justify-center transition-colors shrink-0">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- Body Modal (scrollable) -->
+<div class="flex-1 overflow-y-auto px-5 sm:px-6 py-5 space-y-6 text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+
+    @forelse ($policies as $policy)
+        <section>
+            <div class="flex items-center gap-2 mb-2.5">
+                @if ($policy->key === \App\Models\Policy::KEY_PRIVACY)
+                    <i class="fa-solid fa-shield-halved text-blue-600 dark:text-blue-400 text-sm"></i>
+                @elseif ($policy->key === \App\Models\Policy::KEY_USAGE)
+                    <i class="fa-solid fa-list-check text-emerald-600 dark:text-emerald-400 text-sm"></i>
+                @else
+                    <i class="fa-solid fa-file-text text-slate-500 dark:text-slate-400 text-sm"></i>
+                @endif
+                <h4 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wide">
+                    {{ $policy->title }}
+                </h4>
+            </div>
+            <div class="space-y-3">
+                @foreach (preg_split('/\r\n|\r|\n/', $policy->content) as $paragraph)
+                    @php($text = trim($paragraph))
+                    @if ($text !== '')
+                        <p>{!! nl2br(e($text)) !!}</p>
+                    @endif
+                @endforeach
+            </div>
+        </section>
+    @empty
+        <p class="text-slate-400">Tidak ada dokumen kebijakan yang tersedia saat ini.</p>
+    @endforelse
+
+</div>
+<!-- Footer Modal -->
+        <div class="px-5 sm:px-6 py-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-2.5">
+            <button type="button" id="closePolicyModalBtn" class="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-lg shadow-blue-600/20 transition transform active:scale-[0.98]">
+                Tutup
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var agreeCheckbox = document.getElementById('agreePolicy');
+    var loginSubmit   = document.getElementById('loginSubmit');
+    var agreeHint     = document.getElementById('agreeHint');
+
+    var policyModal    = document.getElementById('policyModal');
+    var policyBackdrop = document.getElementById('policyBackdrop');
+    var policyBox      = document.getElementById('policyModalBox');
+    var openPolicy     = document.getElementById('openPolicyModal');
+
+    // 1) Ceklis wajib -> aktifkan/nonaktifkan tombol login
+    function syncLoginButton() {
+        var checked = agreeCheckbox && agreeCheckbox.checked;
+        if (loginSubmit) {
+            loginSubmit.disabled = !checked;
+        }
+        if (agreeHint) {
+            agreeHint.classList.toggle('hidden', !!checked);
+        }
+    }
+    if (agreeCheckbox) {
+        agreeCheckbox.addEventListener('change', syncLoginButton);
+    }
+    // Mulai dengan tombol login nonaktif (checkbox belum dicentang).
+    syncLoginButton();
+
+    // 2) Buka modal
+    function openModal() {
+        if (!policyModal) return;
+        policyModal.classList.remove('hidden');
+        policyModal.classList.add('flex');
+        // animasi masuk
+        requestAnimationFrame(function () {
+            if (policyBox) policyBox.classList.remove('scale-95');
+            policyBox && policyBox.classList.add('scale-100');
+        });
+        document.body.style.overflow = 'hidden';
+    }
+
+    // 3) Tutup modal
+    function closeModal() {
+        if (!policyModal) return;
+        if (policyBox) {
+            policyBox.classList.remove('scale-100');
+            policyBox.classList.add('scale-95');
+        }
+        policyModal.classList.add('hidden');
+        policyModal.classList.remove('flex');
+        document.body.style.overflow = '';
+    }
+
+    if (openPolicy) openPolicy.addEventListener('click', function (e) {
+        // Mencegah klik tombol ikut men-toggle checkbox (tombol ada di dalam <label>).
+        e.preventDefault();
+        e.stopPropagation();
+        openModal();
+    });
+    var closeBtns = document.querySelectorAll('#closePolicyModal, #closePolicyModalBtn');
+    closeBtns.forEach(function (btn) { btn.addEventListener('click', closeModal); });
+    if (policyBackdrop) policyBackdrop.addEventListener('click', closeModal);
+
+    // 4) Tutup dengan tombol ESC
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeModal();
+    });
+});
+</script>
 
 </body>
 </html>

@@ -272,7 +272,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                         <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-6">
                             Anda belum pernah membuat laporan aduan. Jika Anda menemukan penyalahgunaan sistem, pengguna mencurigakan, atau kendala transaksi, silakan sampaikan melalui tombol di bawah.
                         </p>
-                        <a href="{{ route('freelancer.reports.create') }}"
+                        <a href="{{ route('reports.create') }}"
                            class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-all duration-200 shadow-sm shadow-blue-500/20">
                             <i class="fa-solid fa-plus text-xs"></i>
                             Buat Laporan Baru
