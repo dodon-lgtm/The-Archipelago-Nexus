@@ -323,20 +323,33 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                     </div>
 
                     {{-- TOTAL PENGELUARAN --}}
-                    <div class="reveal reveal-5 stat-card bg-white dark:bg-slate-900 border border-blue-100/80 dark:border-slate-800 rounded-2xl p-5 sm:p-6 shadow-sm relative overflow-hidden transition-colors duration-300">
-                        <div class="flex items-center justify-between">
-                            <div class="space-y-1">
-                                <p class="text-xs font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider">Total Pengeluaran</p>
-                                <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight mt-1">Rp <span data-count="{{ $totalSpending }}">0</span></h3>
-                            </div>
-                            <div class="stat-icon w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-rose-50 dark:bg-rose-900/40 text-rose-600 dark:text-rose-300 flex items-center justify-center text-xl shadow-inner border border-rose-100/50 dark:border-rose-900">
-                                <i class="fa-solid fa-wallet"></i>
-                            </div>
-                        </div>
-                        <div class="mt-4 flex items-center gap-1.5 text-xs font-semibold text-rose-600 dark:text-rose-300 bg-rose-50/60 dark:bg-rose-900/40 w-fit px-2.5 py-1 rounded-lg">
-                            <i class="fa-solid fa-arrow-trend-up"></i> Investasi Proyek
-                        </div>
-                    </div>
+                    @php
+    $val = (float) ($totalSpending ?? 0);
+    if ($val >= 1_000_000_000) {
+        // Jika >= 1 Miliar, tampil singkat (contoh: Rp 1.5M)
+        $formattedSpending = 'Rp ' . (rtrim(rtrim(number_format($val / 1_000_000_000, 2, '.', ''), '0'), '.') . 'M');
+    } else {
+        // Jika < 1 Miliar, tampil standar titik (contoh: Rp 150.000.000)
+        $formattedSpending = 'Rp ' . number_format($val, 0, ',', '.');
+    }
+@endphp
+
+<div class="reveal reveal-5 stat-card bg-white dark:bg-slate-900 border border-blue-100/80 dark:border-slate-800 rounded-2xl p-5 sm:p-6 shadow-sm relative overflow-hidden transition-colors duration-300">
+    <div class="flex items-center justify-between">
+        <div class="space-y-1 min-w-0">
+            <p class="text-xs font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider">Total Pengeluaran</p>
+            <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight mt-1 whitespace-nowrap truncate">
+                {{ $formattedSpending }}
+            </h3>
+        </div>
+        <div class="stat-icon w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-rose-50 dark:bg-rose-900/40 text-rose-600 dark:text-rose-300 flex items-center justify-center text-xl shadow-inner border border-rose-100/50 dark:border-rose-900 shrink-0 ml-2">
+            <i class="fa-solid fa-wallet"></i>
+        </div>
+    </div>
+    <div class="mt-4 flex items-center gap-1.5 text-xs font-semibold text-rose-600 dark:text-rose-300 bg-rose-50/60 dark:bg-rose-900/40 w-fit px-2.5 py-1 rounded-lg">
+        <i class="fa-solid fa-arrow-trend-up"></i> Investasi Proyek
+    </div>
+</div>
 
                 </div>
 

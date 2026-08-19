@@ -6,11 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\Payment;
 use App\Models\Message;
 use App\Models\Workspace;
+use App\Services\EscrowService;
 use App\Services\NotificationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -78,17 +80,29 @@ class PaymentController extends Controller
 
         $workspace = $payment->workspace;
 
-        // Update payment
-        $payment->update([
-            'status' => 'paid',
-            'verified_by' => Auth::id(),
-            'verified_at' => now(),
-        ]);
+        // Update payment + tahan dana (escrow) + unlock workspace dalam SATU transaction
+        try {
+            DB::transaction(function () use ($payment, $workspace) {
+                // Update payment
+                $payment->update([
+                    'status' => 'paid',
+                    'verified_by' => Auth::id(),
+                    'verified_at' => now(),
+                ]);
 
-        // Update workspace status menjadi Selesai
-        $workspace->update([
-            'status' => 'Selesai',
-        ]);
+// Dana otomatis DITAHAN (escrow) — belum menjadi pendapatan freelancer.
+                app(EscrowService::class)->hold($payment, null, Auth::id());
+
+                // Update workspace status menjadi Sedang Dikerjakan
+                $workspace->update(['status' => 'Sedang Dikerjakan']);
+            });
+        } catch (\Exception $e) {
+            Log::error('Gagal verifikasi payment #' . $payment->id . ': ' . $e->getMessage());
+
+            return redirect()
+                ->route('admin.payments.show', $payment)
+                ->with('error', 'Gagal memverifikasi pembayaran: ' . $e->getMessage());
+        }
 
         // System message
         Message::create([
@@ -103,21 +117,8 @@ class PaymentController extends Controller
             user: $payment->freelancer_id,
             type: 'payment.verified',
             title: 'Pembayaran Diverifikasi',
-            message:
-                'Pembayaran untuk proyek "' .
-                ($workspace->project->project_name ?? '') .
-                '" telah diverifikasi. Saldo sebesar Rp ' .
-                number_format(
-                    $payment->freelancer_receive,
-                    0,
-                    ',',
-                    '.'
-                ) .
-                ' telah diterima.',
-            redirect: route(
-                'freelancer.workspaces.show',
-                $workspace
-            ),
+message: 'Pembayaran untuk proyek "' . ($workspace->project->project_name ?? '') . '" telah diverifikasi. Dana sebesar Rp ' . number_format($payment->freelancer_receive, 0, ',', '.') . ' sedang ditahan (escrow) dan akan dirilis ke Anda setelah proyek selesai.',
+            redirect: route('freelancer.workspaces.show', $workspace),
             senderId: Auth::id(),
             paymentId: $payment->id,
             workspaceId: $workspace->id,
@@ -128,14 +129,8 @@ class PaymentController extends Controller
             user: $payment->company_id,
             type: 'payment.verified',
             title: 'Pembayaran Diverifikasi',
-            message:
-                'Pembayaran untuk proyek "' .
-                ($workspace->project->project_name ?? '') .
-                '" berhasil diverifikasi oleh Admin. Status workspace telah menjadi Selesai.',
-            redirect: route(
-                'company.workspaces.show',
-                $workspace
-            ),
+message: 'Pembayaran untuk proyek "' . ($workspace->project->project_name ?? '') . '" berhasil diverifikasi oleh Admin. Status workspace telah menjadi Sedang Dikerjakan.',
+            redirect: route('company.workspaces.show', $workspace),
             senderId: Auth::id(),
             paymentId: $payment->id,
             workspaceId: $workspace->id,
@@ -143,10 +138,7 @@ class PaymentController extends Controller
 
         return redirect()
             ->route('admin.payments.show', $payment)
-            ->with(
-                'success',
-                'Pembayaran berhasil diverifikasi. Status workspace telah menjadi Selesai.'
-            );
+->with('success', 'Pembayaran berhasil diverifikasi. Dana otomatis ditahan (escrow) dan workspace telah menjadi Sedang Dikerjakan.');
     }
 
     /**

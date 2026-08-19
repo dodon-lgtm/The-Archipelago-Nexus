@@ -7,11 +7,14 @@ use App\Models\Payment;
 use App\Models\Workspace;
 use App\Models\Message;
 use App\Models\User;
+use App\Services\EscrowService;
 use App\Services\NotificationService;
 use App\Services\ProfileCompletionService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class PaymentController extends Controller
@@ -26,13 +29,6 @@ class PaymentController extends Controller
             abort(403, 'Hanya perusahaan yang dapat mengakses halaman ini.');
         }
 
-        // Pastikan status workspace adalah Menunggu Pembayaran
-        if ($workspace->status !== 'Menunggu Pembayaran') {
-            return redirect()
-                ->route('company.workspaces.show', $workspace)
-                ->with('error', 'Workspace tidak dalam status Menunggu Pembayaran.');
-        }
-
         $payment = $workspace->payment;
 
         if (!$payment) {
@@ -41,7 +37,9 @@ class PaymentController extends Controller
                 ->with('error', 'Data pembayaran tidak ditemukan.');
         }
 
-        // Simulasi murni UI - tidak ada proses backend atau perubahan database.
+        // Halaman Payment Gate menjadi gerbang pembayaran resmi.
+        // Seluruh status payment (pending / waiting_verification / paid / rejected)
+        // ditangani langsung di dalam view gateway.
         return view('company.payments.gateway', compact('workspace', 'payment'));
     }
 
@@ -171,5 +169,203 @@ class PaymentController extends Controller
         return redirect()
             ->route('company.workspaces.show', $workspace)
             ->with('success', 'Bukti pembayaran berhasil dikirim. Menunggu verifikasi admin.');
+    }
+
+    /**
+     * Create Midtrans Snap Token for automated payment.
+     */
+    public function createMidtransTransaction(Request $request, Workspace $workspace)
+    {
+        // 1. Authorization: Pastikan company yang login adalah pemilik workspace
+        if ((int) $workspace->company_id !== (int) Auth::id()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Hanya perusahaan pemilik workspace yang dapat melakukan pembayaran.'
+            ], 403);
+        }
+
+        // 2. Cek status workspace
+        if ($workspace->status !== 'Menunggu Pembayaran') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Workspace tidak dalam status Menunggu Pembayaran.'
+            ], 422);
+        }
+
+        // 3. Ambil record Payment
+        $payment = $workspace->payment;
+        if (!$payment) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data pembayaran tidak ditemukan.'
+            ], 404);
+        }
+
+        // 4. Pastikan pembayaran belum paid
+        if ($payment->status === 'paid') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Pembayaran sudah lunas / diverifikasi.'
+            ], 422);
+        }
+
+        // 5. Validasi nominal amount dari database
+        if (!$payment->amount || (float) $payment->amount <= 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Nominal pembayaran tidak valid.'
+            ], 422);
+        }
+
+        // 6. Buat Snap Token menggunakan MidtransService
+        try {
+            $midtransService = app(\App\Services\MidtransService::class);
+
+            // Order ID unik per-attempt; dicatat agar webhook bisa memvalidasi & audit trail lengkap.
+            $orderId = $midtransService->buildOrderId($payment);
+
+            \App\Models\MidtransAttempt::create([
+                'payment_id' => $payment->id,
+                'order_id' => $orderId,
+                'status' => 'created',
+            ]);
+
+            $snapToken = $midtransService->createSnapToken($payment, $workspace, $orderId);
+
+            return response()->json([
+                'success' => true,
+                'snap_token' => $snapToken,
+            ]);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Midtrans Snap Token Error [Workspace #' . $workspace->id . ', Payment #' . $payment->id . ']: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal membuat token pembayaran Midtrans. Silakan coba lagi.',
+            ], 500);
+        }
+    }
+
+    /**
+     * ── TEMPORARY / TESTING FLOW ──────────────────────────────────────────
+     * Konfirmasi pembayaran dari sisi backend (tanpa menunggu webhook Midtrans).
+     *
+     * PERINGATAN: Ini adalah FLOW SEMENTARA untuk TESTING saja.
+     * Hanya aktif bila config('services.midtrans.temporary_confirmation') = true
+     * (env PAYMENT_TEMPORARY_CONFIRMATION=true).
+     *
+     * Setelah webhook Midtrans diperbaiki, matikan flag ini dan kembalikan
+     * kepercayaan konfirmasi pembayaran ke webhook resmi Midtrans.
+     *
+     * Keamanan:
+     * - Wajib authenticated (dijamin oleh route group 'auth').
+     * - Hanya Company pemilik workspace.
+     * - Amount diambil dari database ($payment->amount), TIDAK dari browser.
+     * - Tidak menerima company_id / freelancer_id / status dari browser.
+     * - Idempotent: payment yang sudah paid tidak diproses ulang.
+     * - Atomic: payment paid + escrow hold + workspace unlock dalam satu transaction.
+     */
+    public function confirmPayment(Request $request, Workspace $workspace)
+    {
+        // 1. Flag temporary flow harus aktif
+        if (!(bool) config('services.midtrans.temporary_confirmation', false)) {
+            abort(404, 'Temporary payment confirmation tidak aktif.');
+        }
+
+        // 2. Authorization: hanya Company pemilik workspace
+        if ((int) $workspace->company_id !== (int) Auth::id()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Hanya perusahaan pemilik workspace yang dapat mengonfirmasi pembayaran.'
+            ], 403);
+        }
+
+        // 3. Verifikasi payment terkait workspace
+        $payment = $workspace->payment;
+        if (!$payment) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data pembayaran tidak ditemukan.'
+            ], 404);
+        }
+
+        // 4. Pastikan payment belum paid (idempotent)
+        if ($payment->status === 'paid') {
+            Log::info('Temporary payment confirmation: sudah paid, tidak diproses ulang', [
+                'workspace_id' => $workspace->id,
+                'payment_id' => $payment->id,
+                'invoice_number' => $payment->invoice_number,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'redirect_url' => route('company.workspaces.show', $workspace),
+                'message' => 'Pembayaran sudah selesai sebelumnya.',
+            ]);
+        }
+
+        // 5. Jangan izinkan konfirmasi pada workspace yang sudah selesai/diproses
+        if (in_array($workspace->status, ['Selesai', 'Menunggu Review'], true)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Workspace sudah berada dalam status yang tidak dapat dikonfirmasi pembayaran.'
+            ], 422);
+        }
+
+        Log::info('Temporary payment confirmation started', [
+            'workspace_id' => $workspace->id,
+            'payment_id' => $payment->id,
+            'invoice_number' => $payment->invoice_number,
+            'old_payment_status' => $payment->status,
+            'old_workspace_status' => $workspace->status,
+        ]);
+
+        // 6. Proses atomik: paid -> escrow held -> workspace dibuka
+        try {
+            DB::transaction(function () use ($payment, $workspace) {
+                // Payment menjadi paid (amount dari database)
+                $payment->update([
+                    'status' => 'paid',
+                    'payment_method' => $payment->payment_method ?? 'Midtrans',
+                    'verified_at' => $payment->verified_at ?? now(),
+                ]);
+
+                // Escrow: dana ditahan oleh platform/admin (bukan langsung ke freelancer)
+                app(EscrowService::class)->hold(
+                    $payment,
+                    'Dana ditahan (escrow) setelah pembayaran dikonfirmasi (temporary flow).',
+                    Auth::id()
+                );
+
+                // Workspace dibuka
+                $workspace->update(['status' => 'Sedang Dikerjakan']);
+            });
+        } catch (\Exception $e) {
+            Log::error('Temporary payment confirmation failed', [
+                'workspace_id' => $workspace->id,
+                'payment_id' => $payment->id,
+                'invoice_number' => $payment->invoice_number,
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengonfirmasi pembayaran: ' . $e->getMessage(),
+            ], 500);
+        }
+
+        Log::info('Temporary payment confirmation completed', [
+            'workspace_id' => $workspace->id,
+            'payment_id' => $payment->id,
+            'invoice_number' => $payment->invoice_number,
+            'new_payment_status' => $payment->fresh()->status,
+            'new_workspace_status' => $workspace->fresh()->status,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'redirect_url' => route('company.workspaces.show', $workspace),
+            'message' => 'Pembayaran berhasil dikonfirmasi. Workspace telah dibuka.',
+        ]);
     }
 }

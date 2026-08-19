@@ -8,6 +8,8 @@ use App\Models\User;
 use App\Models\Project;
 use App\Models\Penawaran;
 use App\Models\Workspace;
+use App\Models\Payment;
+use App\Services\EscrowService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -58,6 +60,22 @@ class ReportService
 
             // 5. Simpan lampiran/bukti (opsional).
             $this->storeAttachments($report, $data['attachments'] ?? null);
+
+            // 5b. Hubungkan laporan dengan payment terkait dan tandai dana held
+            //     sebagai DISPUTED — TANPA memindahkan dana (dana tetap tertahan
+            //     sampai Admin memutuskan release/refund/split).
+            if (!empty($data['workspace_id'])) {
+                $workspace = Workspace::find($data['workspace_id']);
+                $payment = $workspace?->payment;
+
+                if ($payment) {
+                    $report->update(['payment_id' => $payment->id]);
+
+                    if ($payment->status === 'paid' && $payment->funds_status === Payment::FUNDS_HELD) {
+                        app(EscrowService::class)->dispute($payment, 'Report #' . $report->id, Auth::id());
+                    }
+                }
+            }
 
             // 6. Notifikasi admin hanya untuk report yang benar-benar baru.
             $this->notifyAdmins($report);

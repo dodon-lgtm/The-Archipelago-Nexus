@@ -123,6 +123,7 @@ class Report extends Model
         'project_id',
         'penawaran_id',
         'workspace_id',
+        'payment_id',
         'target',
         'subject',
         'description',
@@ -161,6 +162,11 @@ class Report extends Model
     public function workspace(): BelongsTo
     {
         return $this->belongsTo(Workspace::class, 'workspace_id');
+    }
+
+    public function payment(): BelongsTo
+    {
+        return $this->belongsTo(Payment::class, 'payment_id');
     }
 
     /**

@@ -8,6 +8,7 @@ use App\Http\Requests\Company\ProjectUpdateRequest;
 use App\Models\Penawaran;
 use App\Models\Project;
 use App\Models\Workspace;
+use App\Models\Payment;
 use App\Models\ProgressHistory;
 use App\Models\Message;
 use App\Services\NotificationService;
@@ -413,37 +414,73 @@ class ProjectController extends Controller
                 ->where('status', 'Menunggu')
                 ->update(['status' => 'Ditolak']);
 
-            // Buat Workspace untuk project
-            // `stages` diinisialisasi sejak awal agar workspace tidak terjebak pada
-            // fallback stageList() yang hanya 1 tahap (['Analisis Kebutuhan']).
-            // Tanpa stages, stage_order awal (1) terhitung sebagai tahap terakhir
-            // => progress langsung 100% padahal pekerjaan belum dimulai.
+// Hitung biaya pembayaran berdasarkan harga penawaran
+            $amount = (float) $penawaran->harga_penawaran;
+            $platformFee = round($amount * 5 / 100, 2);
+            $freelancerReceive = $amount - $platformFee;
+
+            // Generate invoice number unik per tanggal
+            $date = now()->format('Ymd');
+            $lastInvoice = Payment::whereDate('created_at', now()->toDateString())
+                ->orderBy('id', 'desc')
+                ->first();
+
+            if ($lastInvoice) {
+                $lastNumber = (int) substr($lastInvoice->invoice_number, -4);
+                $newNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
+            } else {
+                $newNumber = '0001';
+            }
+
+            $invoiceNumber = 'INV-' . $date . '-' . $newNumber;
+
+            // Buat Workspace untuk project dengan status Menunggu Pembayaran
+            // `stages` diinisialisasi sejak awal agar workspace memiliki daftar tahap yang valid
             $workspace = Workspace::create([
                 'project_id' => $project->id,
                 'company_id' => Auth::id(),
                 'freelancer_id' => $penawaran->freelancer_id,
-                'status' => 'Sedang Dikerjakan',
+                'status' => 'Menunggu Pembayaran',
                 'stages' => ['Analisis Kebutuhan', 'Desain', 'Backend', 'Frontend', 'Testing'],
+            ]);
+
+            // Buat record Payment awal dengan status pending
+            Payment::create([
+                'workspace_id' => $workspace->id,
+                'company_id' => Auth::id(),
+                'freelancer_id' => $penawaran->freelancer_id,
+                'invoice_number' => $invoiceNumber,
+                'amount' => $amount,
+                'platform_fee' => $platformFee,
+                'freelancer_receive' => $freelancerReceive,
+                'status' => 'pending',
             ]);
 
             // Buat Progress History pertama (tanda "freelancer dipilih").
             // stage_order = 0 => pekerjaan BELUM dimulai => progress 0%.
-            // (currentProgress()/show() mengembalikan 0 saat stage_order <= 0.)
-            // Freelancer baru naik persentase setelah mengerjakan tahap.
             ProgressHistory::create([
                 'workspace_id' => $workspace->id,
                 'stage' => 'Dipilih',
                 'stage_order' => 0,
                 'progress' => 0,
-                'description' => 'Freelancer dipilih oleh perusahaan.',
+                'description' => 'Freelancer dipilih oleh perusahaan. Menunggu pembayaran awal.',
                 'updated_by' => Auth::id(),
             ]);
+        
 
             // Buat System Message pertama
             Message::create([
                 'workspace_id' => $workspace->id,
                 'sender_id' => Auth::id(),
-                'message' => 'Perusahaan telah memilih freelancer dan workspace proyek telah dibuat.',
+                'message' => 'Perusahaan telah memilih freelancer. Workspace dibuat dengan status Menunggu Pembayaran.',
+                'type' => 'system',
+            ]);
+
+            // System message untuk invoice
+            Message::create([
+                'workspace_id' => $workspace->id,
+                'sender_id' => Auth::id(),
+                'message' => 'Invoice ' . $invoiceNumber . ' telah diterbitkan. Silakan perusahaan menyelesaikan pembayaran.',
                 'type' => 'system',
             ]);
 
@@ -452,7 +489,7 @@ class ProjectController extends Controller
                 user: $penawaran->freelancer_id,
                 type: 'offer.accepted',
                 title: 'Penawaran Diterima',
-                message: 'Selamat! Penawaran Anda untuk proyek "' . $project->project_name . '" telah diterima. Workspace proyek telah dibuat.',
+                message: 'Selamat! Penawaran Anda untuk proyek "' . $project->project_name . '" telah diterima. Menunggu pembayaran dari perusahaan sebelum pengerjaan proyek dimulai.',
                 redirect: route('freelancer.workspaces.show', $workspace),
                 senderId: Auth::id(),
                 penawaranId: $penawaran->id,
@@ -482,8 +519,8 @@ class ProjectController extends Controller
             DB::commit();
 
             return redirect()
-                ->route('company.projects.show', $project)
-                ->with('success', 'Freelancer berhasil dipilih. Workspace proyek telah dibuat.');
+                ->route('company.payments.gateway', $workspace)
+                ->with('success', 'Freelancer berhasil dipilih. Silakan selesaikan pembayaran untuk memulai proyek.');
 
         } catch (\Exception $e) {
             DB::rollBack();

@@ -122,12 +122,17 @@ class User extends Authenticatable
         return $this->hasMany(Payment::class, 'verified_by');
     }
 
+    public function walletLedgers(): HasMany
+    {
+        return $this->hasMany(WalletLedger::class, 'user_id');
+    }
+
     public function withdrawals(): HasMany
     {
         return $this->hasMany(Withdrawal::class, 'user_id');
     }
 
-        public function companyRequest()
+    public function companyRequest()
     {
         return $this->hasOne(CompanyAccountRequest::class, 'company_email', 'email');
     }

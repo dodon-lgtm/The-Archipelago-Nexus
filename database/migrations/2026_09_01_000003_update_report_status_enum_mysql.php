@@ -33,12 +33,15 @@ return new class extends Migration
             ->where('status', 'diproses')
             ->update(['status' => 'ditinjau']);
 
-        // 2. Alter enum kolom status (MySQL)
+                // 2. Alter enum kolom status (MySQL). MySQL-only; pada SQLite (test in-memory)
+        //    dilewati agar kolom 'status' hasil create migration tetap dipakai sebagai string.
         $enum = ['menunggu', 'ditinjau', 'menunggu-bukti', 'selesai', 'ditolak'];
 
-        DB::statement(
-            "ALTER TABLE reports MODIFY COLUMN status ENUM('" . implode("','", $enum) . "') NOT NULL DEFAULT 'menunggu'"
-        );
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement(
+                "ALTER TABLE reports MODIFY COLUMN status ENUM('" . implode("','", $enum) . "') NOT NULL DEFAULT 'menunggu'"
+            );
+        }
     }
 
     public function down(): void
@@ -48,11 +51,13 @@ return new class extends Migration
             ->whereIn('status', ['ditinjau', 'menunggu-bukti'])
             ->update(['status' => 'diproses']);
 
-        // Kembalikan enum lama
+                // Kembalikan enum lama (MySQL-only)
         $enum = ['menunggu', 'diproses', 'selesai', 'ditolak'];
 
-        DB::statement(
-            "ALTER TABLE reports MODIFY COLUMN status ENUM('" . implode("','", $enum) . "') NOT NULL DEFAULT 'menunggu'"
-        );
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement(
+                "ALTER TABLE reports MODIFY COLUMN status ENUM('" . implode("','", $enum) . "') NOT NULL DEFAULT 'menunggu'"
+            );
+        }
     }
 };

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Freelancer;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Freelancer\WithdrawalStoreRequest;
+use App\Models\Payment;
 use App\Models\Withdrawal;
 use App\Services\WithdrawalService;
 use Illuminate\Support\Facades\Auth;
@@ -13,10 +14,14 @@ class PendapatanController extends Controller
 {
     /**
      * Display a listing of the freelancer's revenue/earnings.
+     *
+     * Pendapatan hanya dihitung dari dana yang SUDAH DIRELEASE (funds_status
+     * released / released_partial). Payment yang hanya berstatus 'paid' tetapi
+     * masih HELD belum menjadi pendapatan yang dapat ditarik.
      */
     public function index(WithdrawalService $withdrawalService): View
     {
-        $payments = \App\Models\Payment::with([
+        $payments = Payment::with([
             'workspace.project',
             'company',
         ])
@@ -24,13 +29,25 @@ class PendapatanController extends Controller
             ->latest()
             ->paginate(15);
 
-        $totalEarned = \App\Models\Payment::where('freelancer_id', Auth::id())
-            ->where('status', 'paid')
+        // Saldo tersedia = dana yang sudah dirilis (release penuh / sebagian)
+        $totalEarned = Payment::where('freelancer_id', Auth::id())
+            ->whereIn('funds_status', [Payment::FUNDS_RELEASED, Payment::FUNDS_RELEASED_PARTIAL])
+            ->sum('released_amount');
+
+        // Dana tertahan = sudah dibayar company tetapi belum dirilis (held / disputed)
+        $totalHeld = Payment::where('freelancer_id', Auth::id())
+            ->whereIn('funds_status', [Payment::FUNDS_HELD, Payment::FUNDS_DISPUTED])
             ->sum('freelancer_receive');
 
-        $totalPending = \App\Models\Payment::where('freelancer_id', Auth::id())
+        // Menunggu pembayaran = belum dibayar company
+        $totalPending = Payment::where('freelancer_id', Auth::id())
             ->whereIn('status', ['pending', 'waiting_verification'])
             ->sum('freelancer_receive');
+
+// Dana yang direfund ke company (informasi)
+        $totalRefunded = Payment::where('freelancer_id', Auth::id())
+            ->whereIn('funds_status', [Payment::FUNDS_REFUNDED, Payment::FUNDS_REFUNDED_PARTIAL])
+            ->sum('refunded_amount');
 
         // ── Saldo & riwayat penarikan ──────────────────────────────
         $withdrawals = Withdrawal::with('processedBy')
@@ -55,7 +72,9 @@ class PendapatanController extends Controller
         return view('freelancer.pendapatan.index', compact(
             'payments',
             'totalEarned',
+            'totalHeld',
             'totalPending',
+            'totalRefunded',
             'withdrawals',
             'availableBalance',
             'heldBalance',

@@ -7,25 +7,32 @@ use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
-    public function up(): void
+        public function up(): void
     {
-        // First, modify the enum to add new statuses
-        DB::statement("ALTER TABLE project_workspaces MODIFY COLUMN status ENUM(
-            'Sedang Dikerjakan',
-            'Menunggu Revisi',
-            'Menunggu Pembayaran',
-            'Menunggu Verifikasi Admin',
-            'Selesai'
-        ) DEFAULT 'Sedang Dikerjakan'");
+        // ENUM modification via RAW "ALTER TABLE ... MODIFY COLUMN" hanya didukung
+        // olehMySQL. Pada driver SQLite (lingkungan test in-memory) statement ini
+        // akan gagal; kolom 'status' yang diciptakan migration create tetap dipakai
+        // sebagai string, sehingga perilaku aplikasi tidak berubah.
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE project_workspaces MODIFY COLUMN status ENUM(
+                'Sedang Dikerjakan',
+                'Menunggu Revisi',
+                'Menunggu Pembayaran',
+                'Menunggu Verifikasi Admin',
+                'Selesai'
+            ) DEFAULT 'Sedang Dikerjakan'");
+        }
     }
 
     public function down(): void
     {
-        DB::statement("ALTER TABLE project_workspaces MODIFY COLUMN status ENUM(
-            'Sedang Dikerjakan',
-            'Menunggu Revisi',
-            'Selesai'
-        ) DEFAULT 'Sedang Dikerjakan'");
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE project_workspaces MODIFY COLUMN status ENUM(
+                'Sedang Dikerjakan',
+                'Menunggu Revisi',
+                'Selesai'
+            ) DEFAULT 'Sedang Dikerjakan'");
+        }
     }
 };
 

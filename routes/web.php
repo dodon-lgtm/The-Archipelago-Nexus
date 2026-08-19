@@ -1,18 +1,18 @@
-    <?php
+<?php
 
-    use Illuminate\Support\Facades\Route;
-    use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
-    // ─── GENERAL CONTROLLERS ─────────────────────────
-    use App\Http\Controllers\AuthController;
-    use App\Http\Controllers\RegisterController;
-    use App\Http\Controllers\NotificationController;
-    use App\Http\Controllers\WorkspaceController;
-    use App\Http\Controllers\ProjectSubmissionController;
-    use App\Http\Controllers\review\ReviewController;
-    use App\Http\Controllers\ReportController;
-    use App\Http\Controllers\PasswordController;
-    use App\Http\Controllers\Freelancer\ProjectController;
+// ─── GENERAL CONTROLLERS ─────────────────────────
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\WorkspaceController;
+use App\Http\Controllers\ProjectSubmissionController;
+use App\Http\Controllers\review\ReviewController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\PasswordController;
+use App\Http\Controllers\Freelancer\ProjectController;
 
     // ─── ADMIN CONTROLLERS ───────────────────────────
     use App\Http\Controllers\Admin\CompanyAccountRequestAdminController;
@@ -26,23 +26,27 @@
     use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
     use App\Http\Controllers\Admin\WithdrawalController as AdminWithdrawalController;
     use App\Http\Controllers\Admin\PolicyController as AdminPolicyController;
+// ─── ADMIN CONTROLLERS ───────────────────────────
 
-    // ─── COMPANY CONTROLLERS ─────────────────────────
-    use App\Http\Controllers\Company\ProjectController as CompanyProjectController;
-    use App\Http\Controllers\Company\ProfilController as CompanyProfilController;
-    use App\Http\Controllers\Company\PaymentController as CompanyPaymentController;
-    use App\Http\Controllers\Company\ReportController as CompanyReportController;
+use App\Http\Controllers\Admin\ResolutionController as AdminResolutionController;
+// use App\Http\Controllers\Admin\WithdrawalController as AdminWithdrawalController;
 
-    // ─── FREELANCER CONTROLLERS ──────────────────────
-    use App\Http\Controllers\Freelancer\PendapatanController as FreelancerPendapatanController;
-    use App\Http\Controllers\Freelancer\ReportController as FreelancerReportController;
-    use App\Http\Controllers\Freelancer\DashboardController as FreelancerDashboardController;
-    use App\Http\Controllers\Freelancer\ProjectBrowseController;
-    use App\Http\Controllers\Freelancer\ProjectProposalController;
-    use App\Http\Controllers\Freelancer\SavedProjectController;
-    use App\Http\Controllers\Freelancer\ProjectOfferController;
-    use App\Http\Controllers\Freelancer\ProfilController as FreelancerProfilController;
-    use App\Http\Controllers\Freelancer\WithdrawalController as FreelancerWithdrawalController;
+// ─── COMPANY CONTROLLERS ─────────────────────────
+use App\Http\Controllers\Company\ProjectController as CompanyProjectController;
+use App\Http\Controllers\Company\ProfilController as CompanyProfilController;
+use App\Http\Controllers\Company\PaymentController as CompanyPaymentController;
+use App\Http\Controllers\Company\ReportController as CompanyReportController;
+
+// ─── FREELANCER CONTROLLERS ──────────────────────
+use App\Http\Controllers\Freelancer\PendapatanController as FreelancerPendapatanController;
+use App\Http\Controllers\Freelancer\ReportController as FreelancerReportController;
+use App\Http\Controllers\Freelancer\DashboardController as FreelancerDashboardController;
+use App\Http\Controllers\Freelancer\ProjectBrowseController;
+use App\Http\Controllers\Freelancer\ProjectProposalController;
+use App\Http\Controllers\Freelancer\SavedProjectController;
+use App\Http\Controllers\Freelancer\ProjectOfferController;
+use App\Http\Controllers\Freelancer\ProfilController as FreelancerProfilController;
+use App\Http\Controllers\Freelancer\WithdrawalController as FreelancerWithdrawalController;
 
 
     // ──────────────────────────────────────────────
@@ -63,10 +67,15 @@
 
     Route::post('/register', [RegisterController::class, 'register']);
 
+Route::post('/login/google', [AuthController::class, 'handleGoogleCallback'])->name('login.google');
+
 
     // ──────────────────────────────────────────────
     // PUSAT BANTUAN (PUBLIC)
     // ──────────────────────────────────────────────
+// ================================================================
+// LANDING PAGE (BISA DIAKSES TANPA LOGIN)
+// ================================================================
 
     Route::get('/pusat-bantuan', [
         App\Http\Controllers\HelpCenterController::class,

@@ -19,86 +19,84 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
     </style>
-<style>
+    <style>
+        /* ApexForge Labs — Unified UI System */
+        :root{
+            --af-primary:#2563eb;
+            --af-primary-dark:#1d4ed8;
+            --af-primary-soft:#eff6ff;
+            --af-sky:#38bdf8;
+            --af-ink:#0f172a;
+            --af-muted:#64748b;
+            --af-border:#dbeafe;
+            --af-surface:#ffffff;
+            --af-page:#f6f9ff;
+        }
+        html{scroll-behavior:smooth}
+        body{
+            font-family:'Plus Jakarta Sans',sans-serif;
+            background:
+                radial-gradient(circle at 10% -10%,rgba(56,189,248,.10),transparent 30%),
+                radial-gradient(circle at 100% 0%,rgba(37,99,235,.08),transparent 28%),
+                var(--af-page);
+        }
+        ::selection{background:rgba(37,99,235,.18);color:#0f172a}
+        ::-webkit-scrollbar{width:7px;height:7px}
+        ::-webkit-scrollbar-track{background:rgba(241,245,249,.7)}
+        ::-webkit-scrollbar-thumb{background:rgba(37,99,235,.22);border-radius:999px}
+        ::-webkit-scrollbar-thumb:hover{background:rgba(37,99,235,.38)}
 
-/* ApexForge Labs — Unified UI System */
-:root{
-    --af-primary:#2563eb;
-    --af-primary-dark:#1d4ed8;
-    --af-primary-soft:#eff6ff;
-    --af-sky:#38bdf8;
-    --af-ink:#0f172a;
-    --af-muted:#64748b;
-    --af-border:#dbeafe;
-    --af-surface:#ffffff;
-    --af-page:#f6f9ff;
-}
-html{scroll-behavior:smooth}
-body{
-    font-family:'Plus Jakarta Sans',sans-serif;
-    background:
-        radial-gradient(circle at 10% -10%,rgba(56,189,248,.10),transparent 30%),
-        radial-gradient(circle at 100% 0%,rgba(37,99,235,.08),transparent 28%),
-        var(--af-page);
-}
-::selection{background:rgba(37,99,235,.18);color:#0f172a}
-::-webkit-scrollbar{width:7px;height:7px}
-::-webkit-scrollbar-track{background:rgba(241,245,249,.7)}
-::-webkit-scrollbar-thumb{background:rgba(37,99,235,.22);border-radius:999px}
-::-webkit-scrollbar-thumb:hover{background:rgba(37,99,235,.38)}
-
-input,select,textarea{
-    border-color:var(--af-border)!important;
-    background:rgba(255,255,255,.92);
-    transition:border-color .2s ease,box-shadow .2s ease,background .2s ease;
-}
-input:focus,select:focus,textarea:focus{
-    border-color:rgba(37,99,235,.55)!important;
-    box-shadow:0 0 0 4px rgba(37,99,235,.09)!important;
-    outline:none!important;
-}
-button,a,[role="button"]{transition:all .2s ease}
-button:focus-visible,a:focus-visible,[role="button"]:focus-visible{
-    outline:2px solid rgba(37,99,235,.55);
-    outline-offset:2px;
-}
-table{border-collapse:separate;border-spacing:0}
-thead th{
-    background:rgba(239,246,255,.72)!important;
-    color:#334155;
-    font-weight:700;
-}
-tbody tr{transition:background .18s ease}
-tbody tr:hover{background:rgba(239,246,255,.48)}
-[class*="bg-blue-600"]{
-    box-shadow:0 8px 22px -12px rgba(37,99,235,.72);
-}
-[class*="bg-blue-600"]:hover{
-    box-shadow:0 12px 28px -12px rgba(37,99,235,.78);
-    transform:translateY(-1px);
-}
-.glass-panel,.glass-card,.glass-surface{
-    background:rgba(255,255,255,.72);
-    border:1px solid rgba(219,234,254,.85);
-    backdrop-filter:blur(18px);
-    -webkit-backdrop-filter:blur(18px);
-    box-shadow:0 18px 50px -32px rgba(30,64,175,.32);
-}
-.apex-page-glow{
-    position:fixed;inset:auto -10rem -12rem auto;width:28rem;height:28rem;
-    background:rgba(56,189,248,.09);filter:blur(70px);border-radius:999px;
-    pointer-events:none;z-index:-1;
-}
-@media (max-width:767px){
-    main{padding-left:1rem!important;padding-right:1rem!important}
-    table{min-width:680px}
-    .overflow-x-auto{-webkit-overflow-scrolling:touch}
-}
-@media (prefers-reduced-motion:reduce){
-    *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
-}
-
-</style>
+        input,select,textarea{
+            border-color:var(--af-border)!important;
+            background:rgba(255,255,255,.92);
+            transition:border-color .2s ease,box-shadow .2s ease,background .2s ease;
+        }
+        input:focus,select:focus,textarea:focus{
+            border-color:rgba(37,99,235,.55)!important;
+            box-shadow:0 0 0 4px rgba(37,99,235,.09)!important;
+            outline:none!important;
+        }
+        button,a,[role="button"]{transition:all .2s ease}
+        button:focus-visible,a:focus-visible,[role="button"]:focus-visible{
+            outline:2px solid rgba(37,99,235,.55);
+            outline-offset:2px;
+        }
+        table{border-collapse:separate;border-spacing:0}
+        thead th{
+            background:rgba(239,246,255,.72)!important;
+            color:#334155;
+            font-weight:700;
+        }
+        tbody tr{transition:background .18s ease}
+        tbody tr:hover{background:rgba(239,246,255,.48)}
+        [class*="bg-blue-600"]{
+            box-shadow:0 8px 22px -12px rgba(37,99,235,.72);
+        }
+        [class*="bg-blue-600"]:hover{
+            box-shadow:0 12px 28px -12px rgba(37,99,235,.78);
+            transform:translateY(-1px);
+        }
+        .glass-panel,.glass-card,.glass-surface{
+            background:rgba(255,255,255,.72);
+            border:1px solid rgba(219,234,254,.85);
+            backdrop-filter:blur(18px);
+            -webkit-backdrop-filter:blur(18px);
+            box-shadow:0 18px 50px -32px rgba(30,64,175,.32);
+        }
+        .apex-page-glow{
+            position:fixed;inset:auto -10rem -12rem auto;width:28rem;height:28rem;
+            background:rgba(56,189,248,.09);filter:blur(70px);border-radius:999px;
+            pointer-events:none;z-index:-1;
+        }
+        @media (max-width:767px){
+            main{padding-left:1rem!important;padding-right:1rem!important}
+            table{min-width:680px}
+            .overflow-x-auto{-webkit-overflow-scrolling:touch}
+        }
+        @media (prefers-reduced-motion:reduce){
+            *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+        }
+    </style>
 </head>
 <body class="bg-[#f6f9ff] dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-300">
 
@@ -113,7 +111,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
         <main class="flex-1 overflow-y-auto p-8">
             <div class="max-w-7xl mx-auto space-y-6">
 
-{{-- Header --}}
+                {{-- Header --}}
                 <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div>
                         <h1 class="text-2xl font-extrabold text-slate-800 dark:text-white">Pendapatan Saya</h1>
@@ -121,7 +119,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                     </div>
 
                     {{-- Tombol Tarik Dana (hanya jika saldo tersedia > 0) --}}
-                    @if((float) $availableBalance > 0)
+                    @if((float) ($availableBalance ?? 0) > 0)
                         <button type="button" onclick="openWithdrawModal()"
                             class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl text-sm font-semibold hover:shadow-lg hover:shadow-emerald-500/30 hover:-translate-y-0.5 active:translate-y-0 transition-all">
                             <i class="fa-solid fa-money-bill-transfer"></i>
@@ -131,45 +129,63 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                 </div>
 
                 {{-- Stat Cards --}}
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+
+                    {{-- Kartu 1: Saldo Tersedia --}}
                     <div class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl shadow-sm p-5 transition-colors duration-300">
                         <div class="flex items-center gap-4">
-                            <div class="w-14 h-14 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center">
+                            <div class="w-14 h-14 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center shrink-0">
                                 <i class="fa-solid fa-wallet text-emerald-600 dark:text-emerald-300 text-xl"></i>
                             </div>
                             <div class="min-w-0">
                                 <p class="text-xs text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider">Saldo Tersedia</p>
-                                <h3 class="text-2xl font-black text-emerald-600 dark:text-emerald-300 truncate">Rp {{ number_format($availableBalance, 0, ',', '.') }}</h3>
+                                <h3 class="text-2xl font-black text-emerald-600 dark:text-emerald-300 truncate">Rp {{ number_format($availableBalance ?? 0, 0, ',', '.') }}</h3>
                             </div>
                         </div>
                     </div>
 
+                    {{-- Kartu 2: Saldo Tertahan (Escrow) --}}
                     <div class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl shadow-sm p-5 transition-colors duration-300">
                         <div class="flex items-center gap-4">
-                            <div class="w-14 h-14 rounded-xl bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center">
-                                <i class="fa-solid fa-lock text-amber-600 dark:text-amber-300 text-xl"></i>
+                            <div class="w-14 h-14 rounded-xl bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-clock text-amber-600 dark:text-amber-300 text-xl"></i>
                             </div>
                             <div class="min-w-0">
                                 <p class="text-xs text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider">Saldo Tertahan</p>
-                                <h3 class="text-2xl font-black text-amber-600 dark:text-amber-300 truncate">Rp {{ number_format($heldBalance, 0, ',', '.') }}</h3>
-                                @if((float) $totalPending > 0)
-                                    <p class="text-[10px] text-slate-400 dark:text-slate-400 mt-1">+ Rp {{ number_format($totalPending, 0, ',', '.') }} menunggu pembayaran proyek</p>
+                                <h3 class="text-2xl font-black text-amber-600 dark:text-amber-300 truncate">Rp {{ number_format($heldBalance ?? 0, 0, ',', '.') }}</h3>
+                                @if((float) ($totalPending ?? 0) > 0)
+                                    <p class="text-[10px] text-slate-400 dark:text-slate-400 mt-1 truncate">+ Rp {{ number_format($totalPending, 0, ',', '.') }} menunggu pembayaran</p>
                                 @endif
                             </div>
                         </div>
                     </div>
 
+                    {{-- Kartu 3: Total Pendapatan --}}
                     <div class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl shadow-sm p-5 transition-colors duration-300">
                         <div class="flex items-center gap-4">
-                            <div class="w-14 h-14 rounded-xl bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center">
+                            <div class="w-14 h-14 rounded-xl bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center shrink-0">
                                 <i class="fa-solid fa-sack-dollar text-blue-600 dark:text-blue-300 text-xl"></i>
                             </div>
                             <div class="min-w-0">
                                 <p class="text-xs text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider">Total Pendapatan</p>
-                                <h3 class="text-2xl font-black text-blue-600 dark:text-blue-300 truncate">Rp {{ number_format($totalEarned, 0, ',', '.') }}</h3>
+                                <h3 class="text-2xl font-black text-blue-600 dark:text-blue-300 truncate">Rp {{ number_format($totalEarned ?? 0, 0, ',', '.') }}</h3>
                             </div>
                         </div>
                     </div>
+
+                    {{-- Kartu 4: Direfund ke Company --}}
+                    <div class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl shadow-sm p-5 transition-colors duration-300">
+                        <div class="flex items-center gap-4">
+                            <div class="w-14 h-14 rounded-xl bg-red-100 dark:bg-red-900/40 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-rotate-left text-red-600 dark:text-red-300 text-xl"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-xs text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider">Direfund ke Company</p>
+                                <h3 class="text-2xl font-black text-red-600 dark:text-red-300 truncate">Rp {{ number_format($totalRefunded ?? 0, 0, ',', '.') }}</h3>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
                 {{-- Flash Messages --}}
@@ -191,7 +207,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                         <h2 class="font-bold text-slate-800 dark:text-white">Riwayat Pendapatan</h2>
                     </div>
 
-                    @if($payments->count() > 0)
+                    @if(isset($payments) && $payments->count() > 0)
                         <div class="divide-y divide-slate-50 dark:divide-slate-800">
                             @foreach($payments as $payment)
                                 @php
@@ -218,6 +234,11 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                                 <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border {{ $sc }}">
                                                     {{ $sl }}
                                                 </span>
+                                                @if($payment->funds_status !== 'not_applicable')
+                                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border {{ $payment->funds_status_color }}">
+                                                        {{ $payment->funds_status_label }}
+                                                    </span>
+                                                @endif
                                             </div>
                                             <p class="text-sm font-semibold text-slate-800 dark:text-white mt-1 truncate">
                                                 {{ $payment->workspace->project->project_name ?? '-' }}
@@ -231,10 +252,16 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                         </div>
                                         <div class="text-right shrink-0">
                                             <p class="text-sm font-bold text-slate-800 dark:text-white">Rp {{ number_format($payment->amount, 0, ',', '.') }}</p>
-                                            @if($payment->status === 'paid')
+                                            @if($payment->funds_status === 'released' || $payment->funds_status === 'released_partial')
                                                 <p class="text-xs font-semibold text-emerald-600 dark:text-emerald-300 mt-1">
-                                                    <i class="fa-solid fa-check-circle"></i> Diterima: Rp {{ number_format($payment->freelancer_receive, 0, ',', '.') }}
+                                                    <i class="fa-solid fa-check-circle"></i> Dirilis: Rp {{ number_format($payment->released_amount, 0, ',', '.') }}
                                                 </p>
+                                            @elseif($payment->isFundsHeld())
+                                                <p class="text-xs font-semibold text-amber-600 dark:text-amber-300 mt-1">
+                                                    <i class="fa-solid fa-lock"></i> Ditahan: Rp {{ number_format($payment->freelancer_receive, 0, ',', '.') }}
+                                                </p>
+                                            @elseif($payment->funds_status === 'refunded' || $payment->funds_status === 'refunded_partial')
+                                                <p class="text-xs text-red-500 dark:text-red-300 mt-1">Direfund: Rp {{ number_format($payment->refunded_amount, 0, ',', '.') }}</p>
                                             @elseif($payment->status === 'rejected')
                                                 <p class="text-xs text-red-500 dark:text-red-300 mt-1">Pembayaran ditolak</p>
                                             @else
@@ -270,14 +297,14 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                 <div class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden transition-colors duration-300">
                     <div class="px-6 py-5 border-b border-blue-50 dark:border-slate-800 flex items-center justify-between">
                         <h2 class="font-bold text-slate-800 dark:text-white">Riwayat Penarikan</h2>
-                        @if((float) $withdrawnBalance > 0)
+                        @if((float) ($withdrawnBalance ?? 0) > 0)
                             <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">
                                 Total ditarik: <span class="text-emerald-600 dark:text-emerald-300 font-bold">Rp {{ number_format($withdrawnBalance, 0, ',', '.') }}</span>
                             </span>
                         @endif
                     </div>
 
-                    @if($withdrawals->count() > 0)
+                    @if(isset($withdrawals) && $withdrawals->count() > 0)
                         <div class="divide-y divide-slate-50 dark:divide-slate-800">
                             @foreach($withdrawals as $wd)
                                 <div class="px-4 sm:px-6 py-4 hover:bg-[#f6f9ff]/50 dark:hover:bg-slate-800/50 transition">
@@ -351,14 +378,12 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                     @endif
                 </div>
 
-</div>
+            </div>
         </main>
     </div>
 </div>
 
-{{-- ============================================================
-     MODAL TARIK DANA
-============================================================ --}}
+{{-- MODAL TARIK DANA --}}
 <div id="withdrawModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
     <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl shadow-emerald-900/20 w-full max-w-lg overflow-hidden ring-1 ring-black/[.04] dark:ring-white/5 transition-colors duration-300 max-h-[92vh] overflow-y-auto">
 
@@ -394,7 +419,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                     </div>
                     <div>
                         <p class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Saldo Tersedia</p>
-                        <p class="text-base font-black text-emerald-600 dark:text-emerald-300 leading-none mt-0.5" id="modalAvailableBalance">Rp {{ number_format($availableBalance, 0, ',', '.') }}</p>
+                        <p class="text-base font-black text-emerald-600 dark:text-emerald-300 leading-none mt-0.5" id="modalAvailableBalance">Rp {{ number_format($availableBalance ?? 0, 0, ',', '.') }}</p>
                     </div>
                 </div>
                 <span class="text-[9px] font-bold px-2.5 py-1 bg-amber-50 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 rounded-full border border-amber-200 dark:border-amber-900 shrink-0">Simulasi</span>
@@ -437,7 +462,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                         </label>
                     </div>
 
-                    {{-- Pilih bank / e-wallet: kartu metode dengan logo --}}
+                    {{-- Pilih bank / e-wallet --}}
                     <div id="bankCardsGroup" class="grid grid-cols-3 sm:grid-cols-4 gap-2">
                         @php
                             $bankOptions = ['BCA', 'BRI', 'BNI', 'Mandiri', 'BTN', 'CIMB Niaga', 'BSI', 'Danamon', 'Permata', 'Mayapada', 'Jago'];
@@ -501,7 +526,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                             <label for="account_name" class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1.5">Nama Pemilik Rekening</label>
                             <div class="relative">
                                 <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"><i class="fa-solid fa-user text-xs"></i></span>
-                                <input type="text" name="account_name" id="account_name" value="{{ old('account_name', Auth::user()->name) }}" maxlength="255"
+                                <input type="text" name="account_name" id="account_name" value="{{ old('account_name', Auth::user()->name ?? '') }}" maxlength="255"
                                        placeholder="Nama sesuai rekening/e-wallet"
                                        class="w-full pl-10 pr-3.5 py-2.5 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-xl text-sm text-slate-700 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/40 focus:border-emerald-400">
                             </div>
@@ -546,7 +571,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                     </div>
 
                     <p id="amountHint" class="text-[10px] text-slate-400 dark:text-slate-500 mt-2.5">
-                        Minimal penarikan Rp {{ number_format($minWithdraw, 0, ',', '.') }} dan tidak boleh melebihi saldo tersedia.
+                        Minimal penarikan Rp {{ number_format($minWithdraw ?? 0, 0, ',', '.') }} dan tidak boleh melebihi saldo tersedia.
                     </p>
 
                     {{-- Progress bar --}}
@@ -613,8 +638,8 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 </div>
 
 <script>
-    const availableBalance = {{ (float) $availableBalance }};
-    const minWithdraw = {{ (int) $minWithdraw }};
+    const availableBalance = {{ (float) ($availableBalance ?? 0) }};
+    const minWithdraw = {{ (int) ($minWithdraw ?? 0) }};
     const withdrawModal = document.getElementById('withdrawModal');
 
     function openWithdrawModal() {
@@ -660,7 +685,8 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
     }
 
     function syncMethod() {
-        const method = document.querySelector('input[name="method"]:checked').value;
+        const checkedMethod = document.querySelector('input[name="method"]:checked');
+        const method = checkedMethod ? checkedMethod.value : 'bank';
         const isEwallet = method === 'ewallet';
 
         bankCardsGroup.classList.toggle('hidden', isEwallet);
@@ -702,8 +728,6 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
     let amountState = 'empty'; // empty | ok | error
 
     function updateAmountState() {
-        // Nilai input terformat Rupiah ("50.000"); parse dari digit murni
-        // agar tidak salah baca (JS menganggap titik sebagai desimal).
         const digits = getDigits(amountInput.value);
         const value = digits ? Number(digits) : 0;
         const pct = availableBalance > 0 ? Math.min(100, Math.round((value / availableBalance) * 100)) : 0;
@@ -731,7 +755,6 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
         amountHint.className = 'text-[10px] mt-2.5 ' +
             (state === 'error' ? 'text-red-500 dark:text-red-400' : 'text-slate-400 dark:text-slate-500');
 
-        // Preview: nominal penarikan, pajak admin 5%, nominal diterima, sisa saldo.
         const fee = value > 0 ? Math.round(value * 0.05) : 0;
         const received = value - fee;
 
@@ -789,4 +812,3 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
 </body>
 </html>
-

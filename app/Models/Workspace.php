@@ -130,6 +130,11 @@ class Workspace extends Model
         return $this->hasOne(Payment::class, 'workspace_id');
     }
 
+    public function walletLedgers(): HasMany
+    {
+        return $this->hasMany(WalletLedger::class, 'workspace_id');
+    }
+
     public function rating()
     {
         return $this->hasOne(Review::class, 'workspace_id');

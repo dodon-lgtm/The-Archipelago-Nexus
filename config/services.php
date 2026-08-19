@@ -35,4 +35,33 @@ return [
         ],
     ],
 
+    'google' => [
+    'client_id' => env('GOOGLE_CLIENT_ID'),
+    'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+    ],
+
+    'midtrans' => [
+        'server_key' => env('MIDTRANS_SERVER_KEY'),
+        'client_key' => env('MIDTRANS_CLIENT_KEY'),
+        'is_production' => env('MIDTRANS_IS_PRODUCTION', false),
+
+        /*
+        |--------------------------------------------------------------------------
+        | TEMPORARY / TESTING FLOW — Payment Confirmation
+        |--------------------------------------------------------------------------
+        |
+        | PERINGATAN: Ini adalah FLOW SEMENTARA untuk keperluan TESTING.
+        | Saat PAYMENT_TEMPORARY_CONFIRMATION=true, Company dapat mengonfirmasi
+        | pembayaran dari halaman gateway melalui endpoint backend yang sah,
+        | sehingga workspace terbuka TANPA menunggu webhook Midtrans.
+        |
+        | Setelah webhook Midtrans diperbaiki, set variabel ini menjadi false
+        | (atau hapus) agar sistem kembali mempercayai webhook resmi Midtrans
+        | sebagai sumber konfirmasi pembayaran.
+        |
+        | JANGAN aktifkan di production.
+        */
+        'temporary_confirmation' => env('PAYMENT_TEMPORARY_CONFIRMATION', false),
+    ],
+
 ];
