@@ -531,6 +531,8 @@ document.addEventListener('DOMContentLoaded', function () {
         if (e.key === 'Escape') closeModal();
     });
 });
+</script>
+
 <script>
     // Callback fungsi saat user berhasil login Google
     function handleGoogleLogin(response) {
