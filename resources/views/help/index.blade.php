@@ -902,35 +902,26 @@
                     </div>
 
 
-                    {{-- WHATSAPP --}}
-                    <div class="shrink-0">
+                  {{-- WHATSAPP --}}
+<div class="shrink-0">
+    {{-- =================================================
+        GANTI NOMOR WHATSAPP DI SINI
+        Gunakan angka murni tanpa +, spasi, atau -
+        Contoh: 6285759396439
+    ================================================== --}}
+    <a
+        href="https://wa.me/0838279024778"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="w-full lg:w-auto inline-flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-white dark:bg-slate-800 dark:text-blue-300 font-extrabold shadow-lg hover:-translate-y-1 hover:shadow-xl transition-all duration-300"
+    >
+        <i class="fa-brands fa-whatsapp text-2xl"></i>
 
-                        {{-- =================================================
-                            GANTI NOMOR WHATSAPP DI SINI
-                            Contoh:
-                            081234567890
-                            menjadi:
-                            6281234567890
-                        ================================================== --}}
-                        <a
-                            href="https://wa.me/628XXXXXXXXXX"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="w-full lg:w-auto inline-flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-white dark:bg-slate-800 dark:text-blue-300 font-extrabold shadow-lg hover:-translate-y-1 hover:shadow-xl transition-all duration-300"
-                        >
-                            <i class="fa-brands fa-whatsapp text-2xl"></i>
-
-                            <span>
-                                Hubungi Kami via WhatsApp
-                            </span>
-                        </a>
-
-
-                        <p class="text-xs text-blue-100 text-center mt-3">
-                            Kami siap membantu menjawab pertanyaanmu
-                        </p>
-
-                    </div>
+        <span>
+            Hubungi Kami via WhatsApp
+        </span>
+    </a>
+</div>
 
                 </div>
 

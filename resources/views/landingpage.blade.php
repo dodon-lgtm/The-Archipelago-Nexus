@@ -1078,10 +1078,10 @@
             <!-- COPYRIGHT -->
             <div class="pt-6 border-t border-blue-50 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-medium text-slate-500 dark:text-slate-400">
                 <p>&copy; 2026 ApexForge Labs. Hak Cipta Dilindungi.</p>
-                <div class="flex items-center gap-4">
+                {{-- <div class="flex items-center gap-4">
                     <a href="{{ route('login') }}" class="hover:text-blue-600 dark:hover:text-blue-400 transition">Privasi</a>
                     <a href="{{ route('login') }}" class="hover:text-blue-600 dark:hover:text-blue-400 transition">Ketentuan</a>
-                </div>
+                </div> --}}
             </div>
         </div>
     </footer>
