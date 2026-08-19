@@ -154,4 +154,5 @@ class Project extends Model
     {
         return $this->update(['status' => self::STATUS_CLOSED]);
     }
+    
 }

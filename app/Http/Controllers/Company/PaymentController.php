@@ -368,4 +368,8 @@ class PaymentController extends Controller
             'message' => 'Pembayaran berhasil dikonfirmasi. Workspace telah dibuka.',
         ]);
     }
+    public function gateway(Workspace $workspace)
+{
+    return view('company.payments.gateway', compact('workspace'));
+}
 }

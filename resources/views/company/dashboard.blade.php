@@ -129,87 +129,84 @@
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* ApexForge Labs — Unified UI System */
+        :root{
+            --af-primary:#2563eb;
+            --af-primary-dark:#1d4ed8;
+            --af-primary-soft:#eff6ff;
+            --af-sky:#38bdf8;
+            --af-ink:#0f172a;
+            --af-muted:#64748b;
+            --af-border:#dbeafe;
+            --af-surface:#ffffff;
+            --af-page:#f6f9ff;
+        }
+        html{scroll-behavior:smooth}
+        body{
+            font-family:'Plus Jakarta Sans',sans-serif;
+            background:
+                radial-gradient(circle at 10% -10%,rgba(56,189,248,.10),transparent 30%),
+                radial-gradient(circle at 100% 0%,rgba(37,99,235,.08),transparent 28%),
+                var(--af-page);
+        }
+        ::selection{background:rgba(37,99,235,.18);color:#0f172a}
+        ::-webkit-scrollbar{width:7px;height:7px}
+        ::-webkit-scrollbar-track{background:rgba(241,245,249,.7)}
+        ::-webkit-scrollbar-thumb{background:rgba(37,99,235,.22);border-radius:999px}
+        ::-webkit-scrollbar-thumb:hover{background:rgba(37,99,235,.38)}
+
+        input,select,textarea{
+            border-color:var(--af-border)!important;
+            background:rgba(255,255,255,.92);
+            transition:border-color .2s ease,box-shadow .2s ease,background .2s ease;
+        }
+        input:focus,select:focus,textarea:focus{
+            border-color:rgba(37,99,235,.55)!important;
+            box-shadow:0 0 0 4px rgba(37,99,235,.09)!important;
+            outline:none!important;
+        }
+        button,a,[role="button"]{transition:all .2s ease}
+        button:focus-visible,a:focus-visible,[role="button"]:focus-visible{
+            outline:2px solid rgba(37,99,235,.55);
+            outline-offset:2px;
+        }
+        table{border-collapse:separate;border-spacing:0}
+        thead th{
+            background:rgba(239,246,255,.72)!important;
+            color:#334155;
+            font-weight:700;
+        }
+        tbody tr{transition:background .18s ease}
+        tbody tr:hover{background:rgba(239,246,255,.48)}
+        [class*="bg-blue-600"]{
+            box-shadow:0 8px 22px -12px rgba(37,99,235,.72);
+        }
+        [class*="bg-blue-600"]:hover{
+            box-shadow:0 12px 28px -12px rgba(37,99,235,.78);
+            transform:translateY(-1px);
+        }
+        .glass-panel,.glass-card,.glass-surface{
+            background:rgba(255,255,255,.72);
+            border:1px solid rgba(219,234,254,.85);
+            backdrop-filter:blur(18px);
+            -webkit-backdrop-filter:blur(18px);
+            box-shadow:0 18px 50px -32px rgba(30,64,175,.32);
+        }
+        .apex-page-glow{
+            position:fixed;inset:auto -10rem -12rem auto;width:28rem;height:28rem;
+            background:rgba(56,189,248,.09);filter:blur(70px);border-radius:999px;
+            pointer-events:none;z-index:-1;
+        }
+        @media (max-width:767px){
+            main{padding-left:1rem!important;padding-right:1rem!important}
+            table{min-width:680px}
+            .overflow-x-auto{-webkit-overflow-scrolling:touch}
+        }
+        @media (prefers-reduced-motion:reduce){
+            *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+        }
     </style>
-<style>
-
-/* ApexForge Labs — Unified UI System */
-:root{
-    --af-primary:#2563eb;
-    --af-primary-dark:#1d4ed8;
-    --af-primary-soft:#eff6ff;
-    --af-sky:#38bdf8;
-    --af-ink:#0f172a;
-    --af-muted:#64748b;
-    --af-border:#dbeafe;
-    --af-surface:#ffffff;
-    --af-page:#f6f9ff;
-}
-html{scroll-behavior:smooth}
-body{
-    font-family:'Plus Jakarta Sans',sans-serif;
-    background:
-        radial-gradient(circle at 10% -10%,rgba(56,189,248,.10),transparent 30%),
-        radial-gradient(circle at 100% 0%,rgba(37,99,235,.08),transparent 28%),
-        var(--af-page);
-}
-::selection{background:rgba(37,99,235,.18);color:#0f172a}
-::-webkit-scrollbar{width:7px;height:7px}
-::-webkit-scrollbar-track{background:rgba(241,245,249,.7)}
-::-webkit-scrollbar-thumb{background:rgba(37,99,235,.22);border-radius:999px}
-::-webkit-scrollbar-thumb:hover{background:rgba(37,99,235,.38)}
-
-input,select,textarea{
-    border-color:var(--af-border)!important;
-    background:rgba(255,255,255,.92);
-    transition:border-color .2s ease,box-shadow .2s ease,background .2s ease;
-}
-input:focus,select:focus,textarea:focus{
-    border-color:rgba(37,99,235,.55)!important;
-    box-shadow:0 0 0 4px rgba(37,99,235,.09)!important;
-    outline:none!important;
-}
-button,a,[role="button"]{transition:all .2s ease}
-button:focus-visible,a:focus-visible,[role="button"]:focus-visible{
-    outline:2px solid rgba(37,99,235,.55);
-    outline-offset:2px;
-}
-table{border-collapse:separate;border-spacing:0}
-thead th{
-    background:rgba(239,246,255,.72)!important;
-    color:#334155;
-    font-weight:700;
-}
-tbody tr{transition:background .18s ease}
-tbody tr:hover{background:rgba(239,246,255,.48)}
-[class*="bg-blue-600"]{
-    box-shadow:0 8px 22px -12px rgba(37,99,235,.72);
-}
-[class*="bg-blue-600"]:hover{
-    box-shadow:0 12px 28px -12px rgba(37,99,235,.78);
-    transform:translateY(-1px);
-}
-.glass-panel,.glass-card,.glass-surface{
-    background:rgba(255,255,255,.72);
-    border:1px solid rgba(219,234,254,.85);
-    backdrop-filter:blur(18px);
-    -webkit-backdrop-filter:blur(18px);
-    box-shadow:0 18px 50px -32px rgba(30,64,175,.32);
-}
-.apex-page-glow{
-    position:fixed;inset:auto -10rem -12rem auto;width:28rem;height:28rem;
-    background:rgba(56,189,248,.09);filter:blur(70px);border-radius:999px;
-    pointer-events:none;z-index:-1;
-}
-@media (max-width:767px){
-    main{padding-left:1rem!important;padding-right:1rem!important}
-    table{min-width:680px}
-    .overflow-x-auto{-webkit-overflow-scrolling:touch}
-}
-@media (prefers-reduced-motion:reduce){
-    *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
-}
-
-</style>
 </head>
 
 <body class="bg-surface dark:bg-slate-900 text-slate-800 dark:text-white min-h-screen flex font-sans antialiased selection:bg-brand selection:text-white transition-colors duration-300">
@@ -217,12 +214,12 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
     {{-- SIDEBAR --}}
     @include('navbar.navigasi')
 
-    {{-- AREA KANAN (MAIN CONTENT) - Menggunakan w-full agar melebar penuh --}}
+    {{-- AREA KANAN (MAIN CONTENT) --}}
     <div class="flex-1 flex flex-col min-h-screen w-full overflow-hidden">
 
         @include('navbar.nav')
 
-        {{-- KONTEN UTAMA - max-w-none & w-full agar mengisi seluruh ruang kosong kanan --}}
+        {{-- KONTEN UTAMA --}}
         <main class="flex-1 w-full overflow-y-auto p-4 sm:p-6 lg:p-8">
 
             <div class="w-full mx-auto space-y-6">
@@ -270,8 +267,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                     </div>
                 </div>
 
-
-                {{-- STATISTIK GRID - Menggunakan w-full & grid responsif tanpa batasan lebar tengah --}}
+                {{-- STATISTIK GRID --}}
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 w-full">
 
                     {{-- TOTAL PROYEK --}}
@@ -324,37 +320,34 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
                     {{-- TOTAL PENGELUARAN --}}
                     @php
-    $val = (float) ($totalSpending ?? 0);
-    if ($val >= 1_000_000_000) {
-        // Jika >= 1 Miliar, tampil singkat (contoh: Rp 1.5M)
-        $formattedSpending = 'Rp ' . (rtrim(rtrim(number_format($val / 1_000_000_000, 2, '.', ''), '0'), '.') . 'M');
-    } else {
-        // Jika < 1 Miliar, tampil standar titik (contoh: Rp 150.000.000)
-        $formattedSpending = 'Rp ' . number_format($val, 0, ',', '.');
-    }
-@endphp
+                        $val = (float) ($totalSpending ?? 0);
+                        if ($val >= 1_000_000_000) {
+                            $formattedSpending = 'Rp ' . (rtrim(rtrim(number_format($val / 1_000_000_000, 2, '.', ''), '0'), '.') . 'M');
+                        } else {
+                            $formattedSpending = 'Rp ' . number_format($val, 0, ',', '.');
+                        }
+                    @endphp
 
-<div class="reveal reveal-5 stat-card bg-white dark:bg-slate-900 border border-blue-100/80 dark:border-slate-800 rounded-2xl p-5 sm:p-6 shadow-sm relative overflow-hidden transition-colors duration-300">
-    <div class="flex items-center justify-between">
-        <div class="space-y-1 min-w-0">
-            <p class="text-xs font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider">Total Pengeluaran</p>
-            <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight mt-1 whitespace-nowrap truncate">
-                {{ $formattedSpending }}
-            </h3>
-        </div>
-        <div class="stat-icon w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-rose-50 dark:bg-rose-900/40 text-rose-600 dark:text-rose-300 flex items-center justify-center text-xl shadow-inner border border-rose-100/50 dark:border-rose-900 shrink-0 ml-2">
-            <i class="fa-solid fa-wallet"></i>
-        </div>
-    </div>
-    <div class="mt-4 flex items-center gap-1.5 text-xs font-semibold text-rose-600 dark:text-rose-300 bg-rose-50/60 dark:bg-rose-900/40 w-fit px-2.5 py-1 rounded-lg">
-        <i class="fa-solid fa-arrow-trend-up"></i> Investasi Proyek
-    </div>
-</div>
+                    <div class="reveal reveal-5 stat-card bg-white dark:bg-slate-900 border border-blue-100/80 dark:border-slate-800 rounded-2xl p-5 sm:p-6 shadow-sm relative overflow-hidden transition-colors duration-300">
+                        <div class="flex items-center justify-between">
+                            <div class="space-y-1 min-w-0">
+                                <p class="text-xs font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider">Total Pengeluaran</p>
+                                <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight mt-1 whitespace-nowrap truncate">
+                                    {{ $formattedSpending }}
+                                </h3>
+                            </div>
+                            <div class="stat-icon w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-rose-50 dark:bg-rose-900/40 text-rose-600 dark:text-rose-300 flex items-center justify-center text-xl shadow-inner border border-rose-100/50 dark:border-rose-900 shrink-0 ml-2">
+                                <i class="fa-solid fa-wallet"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center gap-1.5 text-xs font-semibold text-rose-600 dark:text-rose-300 bg-rose-50/60 dark:bg-rose-900/40 w-fit px-2.5 py-1 rounded-lg">
+                            <i class="fa-solid fa-arrow-trend-up"></i> Investasi Proyek
+                        </div>
+                    </div>
 
                 </div>
 
-
-                {{-- GRID UTAMA: PROYEK & PROPOSAL (Memenuhi layar secara penuh) --}}
+                {{-- GRID UTAMA: PROYEK & PROPOSAL --}}
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
 
                     {{-- KARTU PROYEK ANDA --}}
@@ -427,7 +420,6 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                         </div>
                     </div>
 
-
                     {{-- KARTU PROPOSAL MASUK --}}
                     <div class="reveal reveal-7 bg-white dark:bg-slate-900 border border-blue-100/85 dark:border-slate-800 rounded-3xl p-5 sm:p-6 lg:p-7 shadow-sm flex flex-col justify-between w-full transition-colors duration-300">
                         <div>
@@ -446,27 +438,27 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                             </div>
 
                             @if($incomingProposals->count() > 0)
-                                <div class="space-y-3">
-                                    @foreach($incomingProposals as $proposal)
-                                    <div class="modern-row flex items-center justify-between p-4 bg-[#f6f9ff]/70 dark:bg-slate-950/70 rounded-2xl border border-blue-50 dark:border-slate-800">
-                                        <div class="min-w-0 flex-1 pr-4">
-                                            <h4 class="text-sm font-bold text-slate-800 dark:text-white truncate">
-                                                {{ $proposal->freelancer->name ?? 'Freelancer' }}
-                                            </h4>
-                                            <div class="flex flex-wrap items-center gap-3 mt-1.5 text-xs font-medium text-slate-400 dark:text-slate-400">
-                                                <span class="truncate max-w-[140px]"><i class="fa-regular fa-file-lines mr-1"></i>{{ $proposal->project->project_name ?? '-' }}</span>
-                                                <span class="text-slate-600 dark:text-slate-300 font-semibold"><i class="fa-regular fa-money-bill-1 mr-1 text-slate-400 dark:text-slate-400"></i>Rp {{ number_format($proposal->harga_penawaran, 0, ',', '.') }}</span>
-                                                <span><i class="fa-regular fa-clock mr-1 text-slate-400 dark:text-slate-400"></i>{{ $proposal->estimasi_hari }} hari</span>
+                                <div class="space-y-3 max-h-[400px] overflow-y-auto pr-1">
+                                    @foreach($incomingProposals->take(5) as $proposal)
+                                        <div class="modern-row flex items-center justify-between p-4 bg-[#f6f9ff]/70 dark:bg-slate-950/70 rounded-2xl border border-blue-50 dark:border-slate-800">
+                                            <div class="min-w-0 flex-1 pr-4">
+                                                <h4 class="text-sm font-bold text-slate-800 dark:text-white truncate">
+                                                    {{ $proposal->freelancer->name ?? 'Freelancer' }}
+                                                </h4>
+                                                <div class="flex flex-wrap items-center gap-3 mt-1.5 text-xs font-medium text-slate-400 dark:text-slate-400">
+                                                    <span class="truncate max-w-[140px]"><i class="fa-regular fa-file-lines mr-1"></i>{{ $proposal->project->project_name ?? '-' }}</span>
+                                                    <span class="text-slate-600 dark:text-slate-300 font-semibold"><i class="fa-regular fa-money-bill-1 mr-1 text-slate-400 dark:text-slate-400"></i>Rp {{ number_format($proposal->harga_penawaran, 0, ',', '.') }}</span>
+                                                    <span><i class="fa-regular fa-clock mr-1 text-slate-400 dark:text-slate-400"></i>{{ $proposal->estimasi_hari }} hari</span>
+                                                </div>
                                             </div>
+                                            <span class="inline-flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full shrink-0
+                                                @if($proposal->status == 'Menunggu') bg-amber-50 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 border border-amber-200/60 dark:border-amber-900
+                                                @elseif($proposal->status == 'Diterima') bg-emerald-50 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-900
+                                                @else bg-rose-50 dark:bg-rose-900/40 text-rose-600 dark:text-rose-300 border border-rose-200/60 dark:border-rose-900 @endif
+                                            ">
+                                                {{ $proposal->status }}
+                                            </span>
                                         </div>
-                                        <span class="inline-flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full shrink-0
-                                            @if($proposal->status == 'Menunggu') bg-amber-50 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 border border-amber-200/60 dark:border-amber-900
-                                            @elseif($proposal->status == 'Diterima') bg-emerald-50 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-900
-                                            @else bg-rose-50 dark:bg-rose-900/40 text-rose-600 dark:text-rose-300 border border-rose-200/60 dark:border-rose-900 @endif
-                                        ">
-                                            {{ $proposal->status }}
-                                        </span>
-                                    </div>
                                     @endforeach
                                 </div>
                             @else
@@ -487,9 +479,6 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
         </main>
 
-        {{-- FOOTER --}}
-     
-
     </div>
 
     <script>
@@ -502,7 +491,6 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                 
                 function step(now) {
                     const progress = Math.min((now - start) / duration, 1);
-                    // Easing cubic out for professional feel
                     const eased = 1 - Math.pow(1 - progress, 3);
                     
                     const currentVal = Math.round(target * eased);

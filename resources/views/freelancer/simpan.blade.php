@@ -1,248 +1,408 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Proyek Tersimpan - ApexForge Labs</title>
+
+    {{-- Script Inisialisasi Dark Mode --}}
     <script>
-        if (localStorage.getItem('theme') === 'dark') {
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
         }
     </script>
+
+    <title>Proyek Tersimpan | ApexForge Labs</title>
+
     @vite('resources/css/app.css')
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    {{-- SweetAlert2 CDN --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif']
+                    },
+                    colors: {
+                        brand: {
+                            DEFAULT: '#2563EB',
+                            dark: '#1D4ED8',
+                            light: '#EFF6FF',
+                        },
+                        surface: '#F8FAFC'
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        /* =========================================
+        ENTRANCE ANIMATIONS & EFFECTS
+        ========================================= */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .reveal {
+            opacity: 0;
+            animation: fadeInUp .65s cubic-bezier(.16,1,.3,1) forwards;
+        }
+
+        .reveal-1 { animation-delay: .05s; }
+        .reveal-2 { animation-delay: .1s; }
+        .reveal-3 { animation-delay: .15s; }
+
+        @keyframes meshGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .animate-mesh {
+            background-size: 200% 200%;
+            animation: meshGradient 12s ease infinite;
+        }
+
+        /* =========================================
+        CARD & HOVER EFFECTS
+        ========================================= */
+        .modern-row {
+            transition: all .3s cubic-bezier(.16,1,.3,1);
+        }
+
+        .modern-row:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 32px -10px rgba(37, 99, 235, 0.15);
+        }
+
+        .dark .modern-row:hover {
+            box-shadow: 0 16px 32px -10px rgba(0, 0, 0, 0.7);
+        }
+
+        /* SHIMMER BUTTON */
+        .btn-shimmer {
+            position: relative;
+            overflow: hidden;
+            isolation: isolate;
+        }
+
+        .btn-shimmer::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,.3), transparent);
+            transform: skewX(-20deg);
+            transition: left .7s ease;
+        }
+
+        .btn-shimmer:hover::after {
+            left: 150%;
+        }
+
+        /* CUSTOM SCROLLBAR */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .dark ::-webkit-scrollbar-track { background: #0f172a; }
+        .dark ::-webkit-scrollbar-thumb { background: #334155; }
+        .dark ::-webkit-scrollbar-thumb:hover { background: #475569; }
     </style>
-<style>
-
-/* ApexForge Labs — Unified UI System */
-:root{
-    --af-primary:#2563eb;
-    --af-primary-dark:#1d4ed8;
-    --af-primary-soft:#eff6ff;
-    --af-sky:#38bdf8;
-    --af-ink:#0f172a;
-    --af-muted:#64748b;
-    --af-border:#dbeafe;
-    --af-surface:#ffffff;
-    --af-page:#f6f9ff;
-}
-html{scroll-behavior:smooth}
-body{
-    font-family:'Plus Jakarta Sans',sans-serif;
-    background:
-        radial-gradient(circle at 10% -10%,rgba(56,189,248,.10),transparent 30%),
-        radial-gradient(circle at 100% 0%,rgba(37,99,235,.08),transparent 28%),
-        var(--af-page);
-}
-::selection{background:rgba(37,99,235,.18);color:#0f172a}
-::-webkit-scrollbar{width:7px;height:7px}
-::-webkit-scrollbar-track{background:rgba(241,245,249,.7)}
-::-webkit-scrollbar-thumb{background:rgba(37,99,235,.22);border-radius:999px}
-::-webkit-scrollbar-thumb:hover{background:rgba(37,99,235,.38)}
-
-input,select,textarea{
-    border-color:var(--af-border)!important;
-    background:rgba(255,255,255,.92);
-    transition:border-color .2s ease,box-shadow .2s ease,background .2s ease;
-}
-input:focus,select:focus,textarea:focus{
-    border-color:rgba(37,99,235,.55)!important;
-    box-shadow:0 0 0 4px rgba(37,99,235,.09)!important;
-    outline:none!important;
-}
-button,a,[role="button"]{transition:all .2s ease}
-button:focus-visible,a:focus-visible,[role="button"]:focus-visible{
-    outline:2px solid rgba(37,99,235,.55);
-    outline-offset:2px;
-}
-table{border-collapse:separate;border-spacing:0}
-thead th{
-    background:rgba(239,246,255,.72)!important;
-    color:#334155;
-    font-weight:700;
-}
-tbody tr{transition:background .18s ease}
-tbody tr:hover{background:rgba(239,246,255,.48)}
-[class*="bg-blue-600"]{
-    box-shadow:0 8px 22px -12px rgba(37,99,235,.72);
-}
-[class*="bg-blue-600"]:hover{
-    box-shadow:0 12px 28px -12px rgba(37,99,235,.78);
-    transform:translateY(-1px);
-}
-.glass-panel,.glass-card,.glass-surface{
-    background:rgba(255,255,255,.72);
-    border:1px solid rgba(219,234,254,.85);
-    backdrop-filter:blur(18px);
-    -webkit-backdrop-filter:blur(18px);
-    box-shadow:0 18px 50px -32px rgba(30,64,175,.32);
-}
-.apex-page-glow{
-    position:fixed;inset:auto -10rem -12rem auto;width:28rem;height:28rem;
-    background:rgba(56,189,248,.09);filter:blur(70px);border-radius:999px;
-    pointer-events:none;z-index:-1;
-}
-@media (max-width:767px){
-    main{padding-left:1rem!important;padding-right:1rem!important}
-    table{min-width:680px}
-    .overflow-x-auto{-webkit-overflow-scrolling:touch}
-}
-@media (prefers-reduced-motion:reduce){
-    *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
-}
-
-</style>
 </head>
-<body class="bg-[#f6f9ff] dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-300">
 
-<div class="flex h-screen overflow-hidden">
+<body class="bg-surface dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex font-sans antialiased selection:bg-brand selection:text-white transition-colors duration-300">
 
-    {{-- Sidebar --}}
-    @include('navbar.navigasi')
+    <div class="flex h-screen w-full overflow-hidden">
 
-    {{-- Main Content --}}
-    <div class="flex-1 flex flex-col overflow-hidden">
+        {{-- Sidebar --}}
+        @include('navbar.navigasi')
 
-        {{-- Top Navbar --}}
-        <div class="sticky top-0 z-40 bg-white dark:bg-slate-900 border-b dark:border-slate-800">
-            @include('navbar.nav')
-        </div>
+        {{-- Main Content Container --}}
+        <div class="flex-1 flex flex-col min-h-screen w-full overflow-hidden">
 
-        <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
-
-            {{-- Header --}}
-            <div class="mb-8">
-                <h1 class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white">Proyek Tersimpan</h1>
-                <p class="text-slate-500 dark:text-slate-400 mt-2 text-sm sm:text-base">Kumpulan proyek yang telah kamu simpan untuk dilamar nanti.</p>
+            {{-- Top Navbar --}}
+            <div class="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-100 dark:border-slate-800/80">
+                @include('navbar.nav')
             </div>
 
-            {{-- Daftar Proyek Tersimpan --}}
-            @if($savedProjects->count() > 0)
-                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-6">
-                    @foreach($savedProjects as $saved)
-                        @php $project = $saved->project; @endphp
-                        @if($project)
-                        <div class="group bg-white dark:bg-slate-900 rounded-2xl border border-blue-100 dark:border-slate-800 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-in-out overflow-hidden flex flex-col">
+            <main class="flex-1 w-full overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6">
 
-                            {{-- Image --}}
-                            <div class="relative h-44 sm:h-48 overflow-hidden bg-blue-50 dark:bg-slate-800">
-                                @if($project->image)
-                                    <img src="{{ asset('storage/'.$project->image) }}"
-                                         alt="{{ $project->project_name }}"
-                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                                @else
-                                    <div class="w-full h-full flex items-center justify-center text-slate-300 dark:text-slate-600">
-                                        <i class="fa-solid fa-image text-5xl"></i>
-                                    </div>
-                                @endif
+                {{-- =================================================
+                    HERO HEADER
+                ================================================== --}}
+                <div class="reveal reveal-1 relative overflow-hidden rounded-3xl shadow-xl shadow-blue-600/10 border border-blue-500/20 dark:border-blue-500/30 w-full">
+                    
+                    {{-- Mesh Gradient Overlay --}}
+                    <div class="absolute inset-0 animate-mesh bg-gradient-to-r from-blue-700 via-brand to-blue-600 dark:from-slate-900 dark:via-blue-900 dark:to-slate-900"></div>
 
-                                {{-- Saved Badge --}}
-                                <span class="absolute top-3 left-3 inline-flex items-center gap-1 px-3 py-1.5 bg-blue-500 text-white text-[10px] font-bold rounded-full shadow-lg">
-                                    <i class="fa-solid fa-bookmark text-[10px]"></i>
-                                    Tersimpan
-                                </span>
+                    {{-- Decorative Blobs --}}
+                    <div class="absolute -top-20 -right-20 w-72 h-72 bg-white/10 dark:bg-blue-500/10 rounded-full blur-2xl pointer-events-none"></div>
+                    <div class="absolute -bottom-24 -left-20 w-80 h-80 bg-blue-400/20 dark:bg-indigo-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+                    {{-- Dot Pattern --}}
+                    <div class="absolute inset-0 opacity-[0.08] dark:opacity-[0.12] pointer-events-none"
+                        style="background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 20px 20px;">
+                    </div>
+
+                    <div class="relative p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+                        <div class="space-y-2">
+                            <div class="inline-flex items-center gap-2 bg-white/10 dark:bg-white/5 backdrop-blur-md px-3.5 py-1.5 rounded-full text-white text-xs font-semibold ring-1 ring-white/20 shadow-inner">
+                                <i class="fa-solid fa-bookmark text-xs text-blue-200 dark:text-blue-300"></i>
+                                Koleksi Favorit
                             </div>
-
-                            {{-- Content --}}
-                            <div class="p-5 flex flex-col flex-1">
-
-                                {{-- Category --}}
-                                @if($project->category && $project->category->name)
-                                    <span class="text-[11px] font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-slate-800 px-2.5 py-1 rounded-full w-fit mb-3">
-                                        {{ $project->category->name }}
-                                    </span>
-                                @endif
-
-                                {{-- Project Name --}}
-                                <h3 class="text-base font-bold text-slate-900 dark:text-white leading-snug mb-2 line-clamp-2">
-                                    {{ $project->project_name }}
-                                </h3>
-
-                                {{-- Company / Owner --}}
-                                @if($project->owner && $project->owner->name)
-                                    <p class="text-xs text-slate-400 dark:text-slate-400 flex items-center gap-1.5 mb-3">
-                                        <i class="fa-regular fa-building"></i>
-                                        {{ $project->owner->name }}
-                                    </p>
-                                @endif
-
-                                {{-- Spacer --}}
-                                <div class="flex-1"></div>
-
-                                {{-- Budget --}}
-                                <div class="flex items-center justify-between border-t border-blue-50 dark:border-slate-800 pt-4 mt-2">
-                                    <div>
-                                        <p class="text-[10px] text-slate-400 dark:text-slate-400 font-medium uppercase tracking-wider">Budget</p>
-                                        <p class="text-sm font-bold text-blue-600 dark:text-blue-400">Rp {{ number_format($project->budget, 0, ',', '.') }}</p>
-                                    </div>
-                                    <div class="text-right">
-                                        <p class="text-[10px] text-slate-400 dark:text-slate-400 font-medium uppercase tracking-wider">Disimpan</p>
-                                        <p class="text-xs font-semibold text-slate-600 dark:text-slate-300">
-                                            {{ $saved->created_at->isoFormat('D MMM') }}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                {{-- Buttons --}}
-                                <div class="mt-4 grid grid-cols-2 gap-2">
-                                    <a href="{{ route('freelancer.projects.show', $project) }}"
-                                       class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-xl transition-colors duration-200">
-                                        <i class="fa-solid fa-eye text-xs"></i>
-                                        Lihat Detail
-                                    </a>
-
-                                    <form action="{{ route('freelancer.saved-projects.destroy', $project) }}" method="POST"
-                                          onsubmit="return confirm('Hapus proyek ini dari daftar tersimpan?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit"
-                                                class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-red-300 dark:border-red-900 text-red-600 dark:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/40 text-xs font-semibold rounded-xl transition-colors duration-200">
-                                            <i class="fa-solid fa-bookmark-slash text-xs"></i>
-                                            Batalkan
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
+                            <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                                Proyek Tersimpan
+                            </h1>
+                            <p class="text-blue-100/90 dark:text-slate-300 text-sm max-w-xl font-medium leading-relaxed">
+                                Kumpulan proyek pilihan yang kamu simpan untuk ditinjau ulang atau dilamar di lain waktu.
+                            </p>
                         </div>
-                        @endif
-                    @endforeach
+
+                        <div class="flex items-center gap-3 shrink-0">
+                            @if($savedProjects->count() > 0)
+                                <div class="inline-flex items-center gap-2.5 bg-white/10 dark:bg-white/5 backdrop-blur-md px-4 py-3 rounded-2xl text-white text-xs font-bold ring-1 ring-white/20 shadow-inner">
+                                    <i class="fa-solid fa-layer-group text-blue-200 dark:text-blue-300"></i>
+                                    <span>Total: {{ $savedProjects->count() }} Proyek</span>
+                                </div>
+                            @endif
+
+                            <a href="{{ route('freelancer.proyek') }}"
+                               class="btn-shimmer inline-flex items-center gap-2 bg-white dark:bg-slate-900 text-brand dark:text-blue-400 hover:bg-[#f6f9ff] dark:hover:bg-slate-800 border border-transparent dark:border-slate-800 px-5 py-3 rounded-2xl text-sm font-bold shadow-lg shadow-black/5 transition">
+                                <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                                <span>Cari Proyek Lain</span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
 
-                {{-- Pagination --}}
-                @if(method_exists($savedProjects, 'links'))
-                    <div class="mt-10">
-                        {{ $savedProjects->links() }}
+
+                {{-- =================================================
+                    FLASH MESSAGES
+                ================================================== --}}
+                @if(session('success'))
+                    <div class="reveal reveal-2 flex items-center justify-between gap-3 px-5 py-4 bg-emerald-50/95 dark:bg-emerald-950/50 backdrop-blur-md border border-emerald-200 dark:border-emerald-800/60 text-emerald-800 dark:text-emerald-300 text-sm font-medium rounded-2xl shadow-lg shadow-emerald-500/5">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-9 h-9 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-sm shadow-emerald-500/30">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wide">Berhasil</p>
+                                <span class="block truncate">{{ session('success') }}</span>
+                            </div>
+                        </div>
                     </div>
                 @endif
 
-            @else
-                {{-- Empty State --}}
-                <div class="flex flex-col items-center justify-center py-20 px-4">
-                    <div class="w-24 h-24 rounded-full bg-blue-50 dark:bg-slate-800 flex items-center justify-center mb-6">
-                        <i class="fa-regular fa-bookmark text-4xl text-slate-300 dark:text-slate-600"></i>
+                @if(session('error'))
+                    <div class="reveal reveal-2 flex items-center justify-between gap-3 px-5 py-4 bg-rose-50/95 dark:bg-rose-950/50 backdrop-blur-md border border-rose-200 dark:border-rose-800/60 text-rose-800 dark:text-rose-300 text-sm font-medium rounded-2xl shadow-lg shadow-rose-500/5">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-9 h-9 rounded-xl bg-rose-500 text-white flex items-center justify-center shrink-0 shadow-sm shadow-rose-500/30">
+                                <i class="fa-solid fa-xmark"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-xs font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wide">Terjadi Kesalahan</p>
+                                <span class="block truncate">{{ session('error') }}</span>
+                            </div>
+                        </div>
                     </div>
-                    <h3 class="text-xl font-bold text-slate-700 dark:text-white mb-2">Belum Ada Proyek Tersimpan</h3>
-                    <p class="text-sm text-slate-400 dark:text-slate-400 text-center max-w-md">
-                        Kamu belum menyimpan proyek apa pun. Simpan proyek yang menarik agar mudah ditemukan kembali.
-                    </p>
-                    <a href="{{ route('freelancer.proyek') }}"
-                       class="mt-6 inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-colors duration-200">
-                        <i class="fa-solid fa-search text-xs"></i>
-                        Cari Proyek
-                    </a>
-                </div>
-            @endif
+                @endif
 
-            {{-- Footer --}}
-            @include('navbar.footer')
 
-        </main>
+                {{-- =================================================
+                    GRID PROYEK TERSIMPAN
+                ================================================== --}}
+                @if($savedProjects->count() > 0)
+                    <div class="reveal reveal-3 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                        @foreach($savedProjects as $saved)
+                            @php $project = $saved->project; @endphp
+                            @if($project)
+                                <div class="modern-row group bg-white dark:bg-slate-900 border border-blue-100/80 dark:border-slate-800/80 rounded-2xl overflow-hidden shadow-sm flex flex-col justify-between relative">
+                                    
+                                    {{-- Status Indicator Line --}}
+                                    <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-brand z-10"></div>
+
+                                    <div>
+                                        {{-- Thumbnail Image Container --}}
+                                        <div class="relative h-48 w-full overflow-hidden bg-slate-100 dark:bg-slate-800/60">
+                                            @if($project->image)
+                                                <img src="{{ asset('storage/'.$project->image) }}"
+                                                     alt="{{ $project->project_name }}"
+                                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out">
+                                            @else
+                                                <div class="w-full h-full flex flex-col items-center justify-center text-slate-400 dark:text-slate-600 gap-2">
+                                                    <i class="fa-regular fa-image text-3xl"></i>
+                                                    <span class="text-xs font-semibold">Tanpa Gambar</span>
+                                                </div>
+                                            @endif
+
+                                            {{-- Gradient Overlay --}}
+                                            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/20 to-transparent"></div>
+
+                                            {{-- Badge Tersimpan --}}
+                                            <span class="absolute top-3 left-4 inline-flex items-center gap-1.5 px-3 py-1 bg-brand/90 backdrop-blur-md text-white text-[11px] font-bold rounded-full shadow-lg shadow-brand/20">
+                                                <i class="fa-solid fa-bookmark text-[10px]"></i>
+                                                Tersimpan
+                                            </span>
+                                        </div>
+
+                                        {{-- Content Section --}}
+                                        <div class="p-5 space-y-3.5 pl-6">
+                                            {{-- Category & Owner --}}
+                                            <div class="flex flex-wrap items-center gap-2">
+                                                @if($project->category && $project->category->name)
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950/60 border border-blue-100 dark:border-blue-900/60 text-brand dark:text-blue-300 text-[11px] font-bold">
+                                                        {{ $project->category->name }}
+                                                    </span>
+                                                @endif
+
+                                                @if($project->owner && $project->owner->name)
+                                                    <span class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5 font-medium truncate">
+                                                        <i class="fa-regular fa-building text-slate-400 dark:text-slate-500"></i>
+                                                        {{ $project->owner->name }}
+                                                    </span>
+                                                @endif
+                                            </div>
+
+                                            {{-- Project Title --}}
+                                            <h3 class="text-base font-bold text-slate-800 dark:text-white group-hover:text-brand dark:group-hover:text-blue-400 transition-colors leading-snug line-clamp-2">
+                                                {{ $project->project_name }}
+                                            </h3>
+                                        </div>
+                                    </div>
+
+                                    {{-- Footer Stats & Actions --}}
+                                    <div class="px-5 pb-5 pl-6 space-y-4">
+                                        {{-- Price & Date Meta Info --}}
+                                        <div class="pt-3.5 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
+                                            <div class="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-100 dark:border-emerald-900/60 px-3 py-1.5 rounded-xl">
+                                                <p class="text-[9px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Budget</p>
+                                                <p class="text-xs sm:text-sm font-extrabold text-emerald-700 dark:text-emerald-300">
+                                                    Rp {{ number_format($project->budget ?? 0, 0, ',', '.') }}
+                                                </p>
+                                            </div>
+
+                                            <div class="text-right">
+                                                <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400">Disimpan Pada</p>
+                                                <p class="text-xs font-semibold text-slate-600 dark:text-slate-300 mt-0.5">
+                                                    {{ optional($saved->created_at)->isoFormat('D MMM YYYY') ?? '-' }}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        {{-- Action Buttons --}}
+                                        <div class="grid grid-cols-2 gap-2.5">
+                                            <a href="{{ route('freelancer.projects.show', $project) }}"
+                                               class="btn-shimmer inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 bg-brand hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-md shadow-brand/20 transition">
+                                                <span>Detail</span>
+                                                <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                                            </a>
+
+                                            <form id="remove-form-{{ $project->id }}" action="{{ route('freelancer.saved-projects.destroy', $project) }}" method="POST" class="inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="button"
+                                                        onclick="confirmRemove('remove-form-{{ $project->id }}')"
+                                                        class="w-full inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/50 text-rose-600 dark:text-rose-300 text-xs font-bold rounded-xl border border-rose-200 dark:border-rose-800/60 transition">
+                                                    <i class="fa-solid fa-trash-can text-[10px]"></i>
+                                                    <span>Hapus</span>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            @endif
+                        @endforeach
+                    </div>
+
+                    {{-- Pagination --}}
+                    @if(method_exists($savedProjects, 'links'))
+                        <div class="pt-4 flex justify-center">
+                            <div class="bg-white dark:bg-slate-900 border border-blue-100/80 dark:border-slate-800 rounded-2xl shadow-sm px-4 py-2">
+                                {{ $savedProjects->links() }}
+                            </div>
+                        </div>
+                    @endif
+
+                @else
+                    {{-- =================================================
+                        EMPTY STATE
+                    ================================================== --}}
+                    <div class="reveal reveal-2 bg-white dark:bg-slate-900 border border-blue-100/80 dark:border-slate-800 rounded-3xl p-12 text-center shadow-sm">
+                        <div class="w-16 h-16 mx-auto mb-4 bg-blue-50 dark:bg-slate-800 text-brand dark:text-blue-400 rounded-2xl flex items-center justify-center text-2xl shadow-inner border border-blue-100/50 dark:border-slate-700/50">
+                            <i class="fa-regular fa-bookmark"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-slate-800 dark:text-white">
+                            Belum Ada Proyek Tersimpan
+                        </h3>
+                        <p class="text-xs text-slate-400 dark:text-slate-400 mt-1 max-w-xs mx-auto">
+                            Kamu belum menyimpan proyek apa pun. Jelajahi katalog proyek dan simpan yang sesuai dengan keahlianmu.
+                        </p>
+                        <a href="{{ route('freelancer.proyek') }}"
+                           class="btn-shimmer inline-flex items-center gap-2 mt-5 px-5 py-2.5 bg-brand dark:bg-blue-600 text-white rounded-xl text-xs font-bold shadow-md shadow-brand/20 transition">
+                            <i class="fa-solid fa-magnifying-glass text-[10px]"></i>
+                            Cari Proyek Sekarang
+                        </a>
+                    </div>
+                @endif
+
+                {{-- Footer --}}
+                @include('navbar.footer')
+
+            </main>
+        </div>
     </div>
-</div>
+
+    {{-- SweetAlert2 Confirmation Script --}}
+    <script>
+        function confirmRemove(formId) {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+
+            Swal.fire({
+                title: 'Hapus Proyek Tersimpan?',
+                text: 'Proyek ini akan dihapus dari daftar simpanan Anda.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#94a3b8',
+                confirmButtonText: 'Ya, Hapus',
+                cancelButtonText: 'Batal',
+                background: isDarkMode ? '#0f172a' : '#ffffff',
+                color: isDarkMode ? '#f8fafc' : '#0f172a',
+                customClass: {
+                    popup: 'rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl',
+                    title: 'text-slate-900 dark:text-white font-extrabold',
+                    confirmButton: 'rounded-xl font-bold px-5 py-2.5',
+                    cancelButton: 'rounded-xl font-bold px-5 py-2.5'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById(formId).submit();
+                }
+            });
+        }
+    </script>
 
 </body>
 </html>
-

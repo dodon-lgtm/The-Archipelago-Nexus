@@ -3,6 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    {{-- Script Inisialisasi Dark Mode --}}
+    <script>
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+
     <title>Laporan Saya | ApexForge Labs</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -12,6 +22,7 @@
 
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
@@ -71,6 +82,13 @@
             border-color: rgba(37, 99, 235, 0.25);
         }
 
+        /* Support Hover Background untuk Dark Mode */
+        .dark .modern-row:hover {
+            background-color: #1e293b;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            border-color: rgba(59, 130, 246, 0.4);
+        }
+
         /* ---- Shimmer Button Effect ---- */
         .btn-shimmer {
             position: relative;
@@ -92,15 +110,19 @@
             left: 150%;
         }
 
-        /* Scrollbar Halus */
+        /* Scrollbar Halus Light & Dark */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        .dark ::-webkit-scrollbar-track { background: #0f172a; }
+        .dark ::-webkit-scrollbar-thumb { background: #334155; }
+        .dark ::-webkit-scrollbar-thumb:hover { background: #475569; }
     </style>
 </head>
 
-<body class="bg-surface dark:bg-slate-950 text-slate-800 dark:text-white min-h-screen flex font-sans antialiased selection:bg-brand selection:text-white">
+<body class="bg-surface dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex font-sans antialiased selection:bg-brand selection:text-white transition-colors duration-300">
 
     {{-- SIDEBAR --}}
     @include('navbar.navigasi')
@@ -114,32 +136,32 @@
             <div class="w-full mx-auto space-y-6">
 
                 {{-- HERO BANNER HEADER --}}
-                <div class="reveal reveal-1 relative overflow-hidden rounded-3xl shadow-xl shadow-blue-600/10 border border-blue-500/20 w-full">
-                    <div class="absolute inset-0 animate-mesh bg-gradient-to-r from-blue-700 via-brand to-blue-600"></div>
+                <div class="reveal reveal-1 relative overflow-hidden rounded-3xl shadow-xl shadow-blue-600/10 border border-blue-500/20 dark:border-blue-500/30 w-full">
+                    <div class="absolute inset-0 animate-mesh bg-gradient-to-r from-blue-700 via-brand to-blue-600 dark:from-slate-900 dark:via-blue-900 dark:to-slate-900"></div>
                     
                     {{-- Ambient Decorative Blobs --}}
-                    <div class="blob absolute -top-20 -right-20 w-72 h-72 bg-white/10 rounded-full blur-2xl"></div>
-                    <div class="blob absolute -bottom-24 -left-20 w-80 h-80 bg-blue-400/20 rounded-full blur-2xl" style="animation-delay: 2s;"></div>
+                    <div class="blob absolute -top-20 -right-20 w-72 h-72 bg-white/10 dark:bg-blue-500/10 rounded-full blur-2xl"></div>
+                    <div class="blob absolute -bottom-24 -left-20 w-80 h-80 bg-blue-400/20 dark:bg-indigo-500/10 rounded-full blur-2xl" style="animation-delay: 2s;"></div>
                     
                     {{-- Dot Pattern Overlay --}}
-                    <div class="absolute inset-0 opacity-[0.07]" style="background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 20px 20px;"></div>
+                    <div class="absolute inset-0 opacity-[0.07] dark:opacity-[0.12]" style="background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 20px 20px;"></div>
 
                     <div class="relative p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
                         <div class="space-y-2">
-                            <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-3.5 py-1.5 rounded-full text-white text-xs font-semibold ring-1 ring-white/20 shadow-inner">
-                                <i class="fa-solid fa-flag text-xs text-blue-200"></i>
+                            <div class="inline-flex items-center gap-2 bg-white/10 dark:bg-white/5 backdrop-blur-md px-3.5 py-1.5 rounded-full text-white text-xs font-semibold ring-1 ring-white/20 shadow-inner">
+                                <i class="fa-solid fa-flag text-xs text-blue-200 dark:text-blue-300"></i>
                                 Pusat Bantuan & Laporan
                             </div>
                             <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
                                 Laporan Saya
                             </h1>
-                            <p class="text-blue-100/90 text-sm max-w-xl font-medium leading-relaxed">
+                            <p class="text-blue-100/90 dark:text-slate-300 text-sm max-w-xl font-medium leading-relaxed">
                                 Pantau dan kelola laporan masalah atau kendala yang telah Anda ajukan ke administrator.
                             </p>
                         </div>
 
                         <div class="flex flex-wrap items-center gap-3 shrink-0">
-                            <a href="{{ route('reports.create') }}" class="btn-shimmer inline-flex items-center gap-2 bg-white dark:bg-slate-900 text-brand hover:bg-[#f6f9ff] dark:hover:bg-slate-800 px-5 py-3 rounded-2xl text-sm font-bold shadow-lg shadow-black/5 transition">
+                            <a href="{{ route('reports.create') }}" class="btn-shimmer inline-flex items-center gap-2 bg-white dark:bg-slate-900 text-brand dark:text-blue-400 hover:bg-[#f6f9ff] dark:hover:bg-slate-800 border border-transparent dark:border-slate-800 px-5 py-3 rounded-2xl text-sm font-bold shadow-lg shadow-black/5 transition">
                                 <i class="fa-solid fa-plus text-xs"></i>
                                 <span>Buat Laporan Baru</span>
                             </a>
@@ -149,28 +171,28 @@
 
                 {{-- FLASH MESSAGES --}}
                 @if(session('success'))
-                    <div class="reveal reveal-1 flex items-center justify-between gap-3 px-5 py-4 bg-emerald-50/80 dark:bg-emerald-900/40 backdrop-blur-md border border-emerald-200/60 dark:border-emerald-900 text-emerald-800 dark:text-emerald-300 text-sm font-medium rounded-2xl shadow-sm">
+                    <div class="reveal reveal-1 flex items-center justify-between gap-3 px-5 py-4 bg-emerald-50/80 dark:bg-emerald-950/50 backdrop-blur-md border border-emerald-200/60 dark:border-emerald-800/60 text-emerald-800 dark:text-emerald-300 text-sm font-medium rounded-2xl shadow-sm">
                         <div class="flex items-center gap-3 min-w-0">
                             <div class="w-8 h-8 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-sm shadow-emerald-500/30">
                                 <i class="fa-solid fa-check text-xs"></i>
                             </div>
                             <span class="truncate">{{ session('success') }}</span>
                         </div>
-                        <button onclick="this.parentElement.remove()" class="text-emerald-500 dark:text-emerald-300 hover:text-emerald-700 dark:hover:text-emerald-300 p-1">
+                        <button onclick="this.parentElement.remove()" class="text-emerald-500 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-200 p-1">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
                     </div>
                 @endif
 
                 @if(session('error'))
-                    <div class="reveal reveal-1 flex items-center justify-between gap-3 px-5 py-4 bg-rose-50/80 dark:bg-red-900/40 backdrop-blur-md border border-rose-200/60 dark:border-red-900 text-rose-800 dark:text-red-300 text-sm font-medium rounded-2xl shadow-sm">
+                    <div class="reveal reveal-1 flex items-center justify-between gap-3 px-5 py-4 bg-rose-50/80 dark:bg-rose-950/50 backdrop-blur-md border border-rose-200/60 dark:border-rose-800/60 text-rose-800 dark:text-rose-300 text-sm font-medium rounded-2xl shadow-sm">
                         <div class="flex items-center gap-3 min-w-0">
                             <div class="w-8 h-8 rounded-xl bg-rose-500 text-white flex items-center justify-center shrink-0 shadow-sm shadow-rose-500/30">
                                 <i class="fa-solid fa-xmark text-xs"></i>
                             </div>
                             <span class="truncate">{{ session('error') }}</span>
                         </div>
-                        <button onclick="this.parentElement.remove()" class="text-rose-500 dark:text-red-300 hover:text-rose-700 dark:hover:text-red-300 p-1">
+                        <button onclick="this.parentElement.remove()" class="text-rose-500 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-200 p-1">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
                     </div>
@@ -190,11 +212,11 @@
                         @foreach($reports as $report)
                             @php
                                 $statusBg = match($report->status) {
-                                    'menunggu' => 'bg-amber-50 dark:bg-yellow-900/40 text-amber-700 dark:text-yellow-300 border-amber-200 dark:border-yellow-900',
-                                    'ditinjau' => 'bg-blue-50 dark:bg-slate-800 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-slate-700',
-                                    'menunggu-bukti' => 'bg-violet-50 dark:bg-purple-900/40 text-violet-700 dark:text-purple-300 border-violet-200 dark:border-purple-900',
-                                    'selesai' => 'bg-emerald-50 dark:bg-green-900/40 text-emerald-700 dark:text-green-300 border-emerald-200 dark:border-green-900',
-                                    default => 'bg-rose-50 dark:bg-red-900/40 text-rose-700 dark:text-red-300 border-rose-200 dark:border-red-900',
+                                    'menunggu' => 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/60',
+                                    'ditinjau' => 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800/60',
+                                    'menunggu-bukti' => 'bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300 border-violet-200 dark:border-violet-800/60',
+                                    'selesai' => 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/60',
+                                    default => 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800/60',
                                 };
 
                                 $accentBg = match($report->status) {
@@ -214,13 +236,13 @@
                                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pl-2">
                                     {{-- Left Information --}}
                                     <div class="flex items-start gap-4 min-w-0 flex-1">
-                                        <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-slate-800 text-brand border border-blue-100 dark:border-slate-800 flex items-center justify-center shrink-0 text-lg shadow-inner group-hover:bg-brand group-hover:text-white transition-colors duration-300">
+                                        <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-slate-800 text-brand dark:text-blue-400 border border-blue-100 dark:border-slate-700/60 flex items-center justify-center shrink-0 text-lg shadow-inner group-hover:bg-brand group-hover:text-white dark:group-hover:bg-blue-600 transition-colors duration-300">
                                             <i class="fa-solid fa-shield-halved"></i>
                                         </div>
 
                                         <div class="min-w-0 flex-1">
                                             <div class="flex flex-wrap items-center gap-2">
-                                                <h3 class="text-base font-bold text-slate-800 dark:text-white group-hover:text-brand transition-colors truncate">
+                                                <h3 class="text-base font-bold text-slate-800 dark:text-white group-hover:text-brand dark:group-hover:text-blue-400 transition-colors truncate">
                                                     {{ $report->subject }}
                                                 </h3>
                                                 <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold border {{ $statusBg }}">
@@ -234,30 +256,30 @@
                                             </p>
 
                                             <div class="mt-3 flex flex-wrap items-center gap-2 text-xs font-semibold">
-                                                <span class="inline-flex items-center gap-1.5 text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-800 px-2.5 py-1 rounded-lg">
+                                                <span class="inline-flex items-center gap-1.5 text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/50 border border-blue-100 dark:border-blue-900/60 px-2.5 py-1 rounded-lg">
                                                     <i class="fa-solid fa-tag text-[10px]"></i>
                                                     {{ \App\Models\Report::categoryLabel($report->category) }}
                                                 </span>
 
-                                                <span class="inline-flex items-center gap-1.5 text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 px-2.5 py-1 rounded-lg">
+                                                <span class="inline-flex items-center gap-1.5 text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 px-2.5 py-1 rounded-lg">
                                                     <i class="fa-regular fa-calendar text-[10px]"></i>
                                                     {{ $report->created_at->format('d M Y') }}
                                                 </span>
 
                                                 @if($report->reportedUser)
-                                                    <span class="inline-flex items-center gap-1.5 text-orange-700 dark:text-orange-300 bg-orange-50 dark:bg-orange-900/40 border border-orange-100 dark:border-orange-900 px-2.5 py-1 rounded-lg">
+                                                    <span class="inline-flex items-center gap-1.5 text-orange-700 dark:text-orange-300 bg-orange-50 dark:bg-orange-950/50 border border-orange-100 dark:border-orange-900/60 px-2.5 py-1 rounded-lg">
                                                         <i class="fa-solid fa-user text-[10px]"></i>
                                                         {{ $report->reportedUser->name }}
                                                     </span>
                                                 @endif
 
                                                 @if($report->workspace)
-                                                    <span class="inline-flex items-center gap-1.5 text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/40 border border-indigo-100 dark:border-indigo-900 px-2.5 py-1 rounded-lg">
+                                                    <span class="inline-flex items-center gap-1.5 text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-100 dark:border-indigo-900/60 px-2.5 py-1 rounded-lg">
                                                         <i class="fa-solid fa-layer-group text-[10px]"></i>
                                                         {{ \Illuminate\Support\Str::limit($report->workspace->project->project_name ?? 'Workspace', 30) }}
                                                     </span>
                                                 @elseif($report->project)
-                                                    <span class="inline-flex items-center gap-1.5 text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/40 border border-indigo-100 dark:border-indigo-900 px-2.5 py-1 rounded-lg">
+                                                    <span class="inline-flex items-center gap-1.5 text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-100 dark:border-indigo-900/60 px-2.5 py-1 rounded-lg">
                                                         <i class="fa-solid fa-folder text-[10px]"></i>
                                                         {{ \Illuminate\Support\Str::limit($report->project->project_name, 30) }}
                                                     </span>
@@ -269,7 +291,7 @@
                                     {{-- Right Action Button --}}
                                     <div class="flex items-center justify-end shrink-0 pt-3 md:pt-0 border-t md:border-t-0 border-slate-100 dark:border-slate-800">
                                         <a href="{{ route('company.reports.show', $report) }}"
-                                           class="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-bold bg-brand/10 dark:bg-blue-900/40 text-brand dark:text-blue-300 hover:bg-brand hover:text-white rounded-xl transition-all duration-200">
+                                           class="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-bold bg-brand/10 dark:bg-blue-500/20 text-brand dark:text-blue-300 hover:bg-brand hover:text-white dark:hover:bg-blue-600 dark:hover:text-white rounded-xl transition-all duration-200">
                                             <span>Lihat Detail</span>
                                             <i class="fa-solid fa-arrow-right text-[10px]"></i>
                                         </a>
@@ -290,12 +312,12 @@
                 @else
                     {{-- EMPTY STATE --}}
                     <div class="reveal reveal-3 bg-white dark:bg-slate-900 border border-blue-100/80 dark:border-slate-800 rounded-3xl p-12 text-center shadow-sm">
-                        <div class="w-14 h-14 mx-auto mb-3 bg-blue-50 dark:bg-slate-800 text-slate-400 dark:text-slate-400 rounded-2xl flex items-center justify-center text-xl shadow-inner">
+                        <div class="w-14 h-14 mx-auto mb-3 bg-blue-50 dark:bg-slate-800 text-slate-400 dark:text-slate-400 rounded-2xl flex items-center justify-center text-xl shadow-inner border border-blue-100/50 dark:border-slate-700/50">
                             <i class="fa-solid fa-flag"></i>
                         </div>
                         <h3 class="text-sm font-bold text-slate-700 dark:text-white">Belum Ada Laporan</h3>
                         <p class="text-xs text-slate-400 dark:text-slate-400 mt-1 max-w-xs mx-auto">Anda belum membuat laporan apa pun. Jika menemukan masalah, silakan buat laporan baru.</p>
-                        <a href="{{ route('reports.create') }}" class="btn-shimmer inline-flex items-center gap-2 mt-4 px-4 py-2.5 bg-brand text-white rounded-xl text-xs font-bold shadow-md shadow-brand/20">
+                        <a href="{{ route('reports.create') }}" class="btn-shimmer inline-flex items-center gap-2 mt-4 px-4 py-2.5 bg-brand dark:bg-blue-600 text-white rounded-xl text-xs font-bold shadow-md shadow-brand/20">
                             <i class="fa-solid fa-plus text-[10px]"></i> Buat Laporan Baru
                         </a>
                     </div>
@@ -303,9 +325,6 @@
 
             </div>
         </main>
-
-        {{-- FOOTER --}}
-       
 
     </div>
 
