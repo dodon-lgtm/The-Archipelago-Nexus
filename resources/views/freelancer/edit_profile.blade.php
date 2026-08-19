@@ -6,7 +6,13 @@
     <title>Edit Profil Freelancer - Modern Dashboard</title>
 
     <script>
-        if (localStorage.getItem('theme') === 'dark') {
+        @auth
+            const profileThemeUserId = "{{ Auth::id() }}";
+        @else
+            const profileThemeUserId = 'guest';
+        @endauth
+        const profileThemeKey = 'theme_user_' + profileThemeUserId;
+        if (localStorage.getItem(profileThemeKey) === 'dark') {
             document.documentElement.classList.add('dark');
         }
     </script>
@@ -302,10 +308,115 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
     *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
 }
 
+/* ================= DARK MODE EDIT PROFIL FREELANCER ================= */
+/* Mengikuti sistem dark mode aplikasi: class .dark pada <html> (key theme_user_{id}). */
+.dark{
+    --af-page:#020617;
+    --af-surface:#0f172a;
+    --af-ink:#f1f5f9;
+    --af-muted:#94a3b8;
+    --af-border:#1e293b;
+    --bg-color:#020617;
+    --card-bg:rgba(15,23,42,.85);
+    --text-main:#f1f5f9;
+    --text-muted:#94a3b8;
+    --border-color:rgba(51,65,85,.6);
+}
+.dark body{
+    background-color:#020617;
+}
+.dark .page-title{
+    color:#f1f5f9;
+}
+.dark .page-subtitle{
+    color:#94a3b8;
+}
+.dark .card-custom{
+    background:rgba(15,23,42,.9);
+    box-shadow:0 10px 30px -5px rgba(0,0,0,.4);
+}
+.dark .card-header-custom{
+    background:linear-gradient(135deg,rgba(30,41,59,.8) 0%,rgba(15,23,42,.5) 100%);
+}
+.dark .form-label{
+    color:#e2e8f0;
+}
+.dark .form-control,
+.dark .form-select{
+    background-color:#0f172a!important;
+    color:#e2e8f0!important;
+    border-color:rgba(51,65,85,.7)!important;
+}
+.dark .form-control:focus,
+.dark .form-select:focus{
+    background-color:#1e293b!important;
+    color:#f1f5f9!important;
+}
+.dark input::placeholder,
+.dark textarea::placeholder{
+    color:#64748b;
+}
+.dark .btn-secondary-custom{
+    background:rgba(15,23,42,.85);
+    border-color:rgba(51,65,85,.7);
+    color:#cbd5e1;
+}
+.dark .btn-secondary-custom:hover{
+    background:#1e293b;
+    color:#fff;
+}
+.dark .btn-outline-custom{
+    border-color:rgba(56,189,248,.5);
+    color:#38bdf8;
+}
+.dark .btn-outline-custom:hover{
+    background:var(--primary-gradient);
+    color:#fff;
+    border-color:transparent;
+}
+.dark .alert-success{
+    background-color:rgba(6,78,59,.55)!important;
+    border-color:rgba(6,78,59,.8)!important;
+    color:#a7f3d0!important;
+}
+.dark .alert-danger{
+    background-color:rgba(127,29,29,.55)!important;
+    border-color:rgba(127,29,29,.8)!important;
+    color:#fecaca!important;
+}
+.dark .profile-preview{
+    border-color:#1e293b;
+}
+.dark thead th{
+    background:rgba(30,41,59,.6)!important;
+    color:#e2e8f0;
+}
+.dark input[type="file"]::file-selector-button{
+    background:#1e293b;
+    color:#38bdf8;
+}
+.dark input[type="file"]::file-selector-button:hover{
+    background:#334155;
+}
+
 </style>
 </head>
 
-<body class="bg-[#f6f9ff] dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-300">
+<body class="bg-[#f6f9ff] dark:bg-slate-950 text-slate-800 dark:text-white antialiased flex transition-colors duration-300">
+
+{{-- SIDEBAR FREELANCER (sama dengan halaman Freelancer lain) --}}
+@include('navbar.navigasi')
+
+{{-- AREA KANAN --}}
+<div class="flex-1 flex flex-col min-w-0">
+
+    {{-- TOP NAVBAR FREELANCER (sama dengan halaman Freelancer lain) --}}
+    <div class="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-b border-blue-100/80 dark:border-slate-800 shadow-xs">
+        @include('navbar.nav')
+    </div>
+
+    <main class="flex-1 px-4 sm:px-6 lg:px-8 py-8">
+        <div class="max-w-7xl mx-auto">
 
 <div class="container">
 
@@ -479,7 +590,10 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
     </form>
 
-</div>
+            </div>{{-- /.container --}}
+        </main>
+    </div>{{-- /.area kanan --}}
+</div>{{-- /.layout --}}
 
 <!-- JavaScript untuk Live Preview Foto dan Nama File CV -->
 <script>

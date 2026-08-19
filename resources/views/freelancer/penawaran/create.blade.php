@@ -245,6 +245,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                 </div>
 
                                 <button
+                                    type="submit"
                                     class="btn-shimmer w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-10 py-3.5 rounded-xl text-sm font-bold shadow-[0_5px_15px_rgba(37,99,235,0.3)] transition-all flex items-center justify-center gap-2">
 
                                     <i class="fa fa-paper-plane"></i>

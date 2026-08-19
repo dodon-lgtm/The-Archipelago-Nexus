@@ -122,6 +122,11 @@ class User extends Authenticatable
         return $this->hasMany(Payment::class, 'verified_by');
     }
 
+    public function withdrawals(): HasMany
+    {
+        return $this->hasMany(Withdrawal::class, 'user_id');
+    }
+
         public function companyRequest()
     {
         return $this->hasOne(CompanyAccountRequest::class, 'company_email', 'email');

@@ -24,6 +24,7 @@
     use App\Http\Controllers\Admin\HasilPekerjaanController as AdminHasilPekerjaanController;
     use App\Http\Controllers\Admin\ReportController as AdminReportController;
     use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
+    use App\Http\Controllers\Admin\WithdrawalController as AdminWithdrawalController;
 
     // ─── COMPANY CONTROLLERS ─────────────────────────
     use App\Http\Controllers\Company\ProjectController as CompanyProjectController;
@@ -31,15 +32,16 @@
     use App\Http\Controllers\Company\PaymentController as CompanyPaymentController;
     use App\Http\Controllers\Company\ReportController as CompanyReportController;
 
-// ─── FREELANCER CONTROLLERS ──────────────────────
-use App\Http\Controllers\Freelancer\PendapatanController as FreelancerPendapatanController;
-use App\Http\Controllers\Freelancer\ReportController as FreelancerReportController;
-use App\Http\Controllers\Freelancer\DashboardController as FreelancerDashboardController;
-use App\Http\Controllers\Freelancer\ProjectBrowseController;
-use App\Http\Controllers\Freelancer\ProjectProposalController;
-use App\Http\Controllers\Freelancer\SavedProjectController;
-use App\Http\Controllers\Freelancer\ProjectOfferController;
-use App\Http\Controllers\Freelancer\ProfilController as FreelancerProfilController;
+    // ─── FREELANCER CONTROLLERS ──────────────────────
+    use App\Http\Controllers\Freelancer\PendapatanController as FreelancerPendapatanController;
+    use App\Http\Controllers\Freelancer\ReportController as FreelancerReportController;
+    use App\Http\Controllers\Freelancer\DashboardController as FreelancerDashboardController;
+    use App\Http\Controllers\Freelancer\ProjectBrowseController;
+    use App\Http\Controllers\Freelancer\ProjectProposalController;
+    use App\Http\Controllers\Freelancer\SavedProjectController;
+    use App\Http\Controllers\Freelancer\ProjectOfferController;
+    use App\Http\Controllers\Freelancer\ProfilController as FreelancerProfilController;
+    use App\Http\Controllers\Freelancer\WithdrawalController as FreelancerWithdrawalController;
 
 
 // ================================================================
@@ -158,10 +160,148 @@ Route::middleware(['auth', 'ensureFreelancer'])
             'index'
         ])->name('projects.index');
 
-        Route::get('/proyek', [
-            ProjectBrowseController::class,
-            'index'
-        ])->name('proyek');
+            // Dashboard
+            Route::get('/dashboard', [
+                FreelancerDashboardController::class,
+                'index'
+            ])->name('dashboard');
+
+            // Projects Browsing
+            Route::get('/projects', [
+                ProjectBrowseController::class,
+                'index'
+            ])->name('projects.index');
+
+            Route::get('/proyek', [
+                ProjectBrowseController::class,
+                'index'
+            ])->name('proyek');
+
+            Route::get('/projects/{project}', [
+                ProjectBrowseController::class,
+                'show'
+            ])->name('projects.show');
+
+            // Penawaran
+            Route::get('/projects/{project}/penawaran', [
+                ProjectBrowseController::class,
+                'create'
+            ])->name('penawaran.create');
+
+            Route::post('/projects/{project}/penawaran', [
+                ProjectBrowseController::class,
+                'store'
+            ])->name('penawaran.store');
+
+            // Lamaran List
+            Route::get('/lamaran', [
+                ProjectOfferController::class,
+                'index'
+            ])->name('lamaran');
+
+            // Batalkan Penawaran
+            Route::delete('/penawaran/{penawaran}', [
+                ProjectOfferController::class,
+                'destroy'
+            ])->name('penawaran.destroy');
+
+            // Saved Projects
+            Route::get('/simpan', [
+                SavedProjectController::class,
+                'index'
+            ])->name('saved-projects.index');
+
+            Route::post('/projects/{project}/simpan', [
+                SavedProjectController::class,
+                'store'
+            ])->name('saved-projects.store');
+
+            Route::delete('/projects/{project}/simpan', [
+                SavedProjectController::class,
+                'destroy'
+            ])->name('saved-projects.destroy');
+
+            // Workspace
+            Route::get('/workspaces', [
+                WorkspaceController::class,
+                'freelancerIndex'
+            ])->name('workspaces.index');
+
+            Route::get('/workspaces/{workspace}', [
+                WorkspaceController::class,
+                'show'
+            ])->name('workspaces.show');
+
+            Route::post('/workspaces/{workspace}/message', [
+                WorkspaceController::class,
+                'sendMessage'
+            ])->name('workspaces.message');
+
+            Route::post('/workspaces/{workspace}/progress', [
+                WorkspaceController::class,
+                'updateProgress'
+            ])->name('workspaces.progress');
+
+            // Submissions
+            Route::post('/workspaces/{workspace}/submissions', [
+                ProjectSubmissionController::class,
+                'store'
+            ])->name('workspaces.submissions.store');
+
+            // Profile
+            Route::get('/profile', [
+                FreelancerProfilController::class,
+                'profile'
+            ])->name('profile');
+
+            Route::get('/profile/edit', [
+                FreelancerProfilController::class,
+                'editProfile'
+            ])->name('profile.edit');
+
+            Route::post('/profile/update', [
+                FreelancerProfilController::class,
+                'updateProfile'
+            ])->name('profile.update');
+
+            // Pendapatan
+            Route::get('/pendapatan', [
+                FreelancerPendapatanController::class,
+                'index'
+            ])->name('pendapatan.index');
+
+            // Penarikan Dana
+            Route::post('/withdrawals', [
+                FreelancerWithdrawalController::class,
+                'store'
+            ])->name('withdrawals.store');
+
+            // Reports
+            Route::get('/reports', [
+                FreelancerReportController::class,
+                'index'
+            ])->name('reports.index');
+
+            Route::get('/reports/create', [
+                FreelancerReportController::class,
+                'create'
+            ])->name('reports.create');
+
+            Route::post('/reports', [
+                FreelancerReportController::class,
+                'store'
+            ])->name('reports.store');
+
+            Route::get('/reports/{report}', [
+                FreelancerReportController::class,
+                'show'
+            ])->name('reports.show');
+
+            Route::post('/reports/{report}/evidence', [
+                FreelancerReportController::class,
+                'uploadEvidence'
+            ])->name('reports.evidence');
+        });
 
 
         // ========================================================
@@ -363,14 +503,11 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])
                 ->where('status', 'Diterima')
                 ->count();
 
-            $totalSpending = \App\Models\Penawaran::whereHas(
-                'project',
-                function ($q) use ($userId) {
-                    $q->where('user_id', $userId);
-                }
-            )
-                ->where('status', 'Diterima')
-                ->sum('harga_penawaran');
+                // Total pengeluaran = jumlah pembayaran yang BENAR-BENAR dibayar (status 'paid').
+                // Proyek dengan pembayaran Ditolak / gagal TIDAK dihitung.
+                $totalSpending = (float) \App\Models\Payment::where('company_id', $userId)
+                    ->where('status', 'paid')
+                    ->sum('amount');
 
             $incomingProposals = \App\Models\Penawaran::whereHas(
                 'project',
@@ -800,8 +937,65 @@ Route::middleware(['auth', 'ensureAdmin'])
             [
                 CompanyAccountRequestAdminController::class,
                 'reject'
-            ]
-        )->name('company-account-requests.reject');
+            ])->name('company-account-requests.reject');
+
+            // Payments (Admin)
+            Route::get('/payments', [
+                AdminPaymentController::class,
+                'index'
+            ])->name('payments.index');
+
+            Route::get('/payments/export-pdf', [
+                AdminPaymentController::class,
+                'exportPdfAll'
+            ])->name('payments.pdf.all');
+
+            Route::get('/payments/{payment}/export-pdf', [
+                AdminPaymentController::class,
+                'exportPdfSingle'
+            ])->name('payments.pdf.single');
+
+            Route::get('/payments/{payment}', [
+                AdminPaymentController::class,
+                'show'
+            ])->name('payments.show');
+
+            Route::post('/payments/{payment}/verify', [
+                AdminPaymentController::class,
+                'verify'
+            ])->name('payments.verify');
+
+            Route::post('/payments/{payment}/reject', [
+                AdminPaymentController::class,
+                'reject'
+            ])->name('payments.reject');
+
+            // Withdrawals (Penarikan Dana)
+            Route::get('/withdrawals', [
+                AdminWithdrawalController::class,
+                'index'
+            ])->name('withdrawals.index');
+
+            Route::get('/withdrawals/{withdrawal}', [
+                AdminWithdrawalController::class,
+                'show'
+            ])->name('withdrawals.show');
+
+            Route::post('/withdrawals/{withdrawal}/process', [
+                AdminWithdrawalController::class,
+                'process'
+            ])->name('withdrawals.process');
+
+            Route::post('/withdrawals/{withdrawal}/approve', [
+                AdminWithdrawalController::class,
+                'approve'
+            ])->name('withdrawals.approve');
+
+            Route::post('/withdrawals/{withdrawal}/reject', [
+                AdminWithdrawalController::class,
+                'reject'
+            ])->name('withdrawals.reject');
+        });
 
 
         // ========================================================

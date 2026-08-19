@@ -29,6 +29,20 @@ class AuthController extends Controller
             );
         }
 
+        // Simpan tujuan awal (intended destination) ke session
+        // memakai mekanisme bawaan Laravel (session key "url.intended"
+        // yang dibaca oleh redirect()->intended()).
+        //
+        // URL hanya diterima jika merupakan URL internal aplikasi,
+        // sehingga tidak membuka open redirect vulnerability.
+        $redirect = $request->input('redirect');
+        if (is_safe_internal_url($redirect)) {
+            $request->session()->put(
+                'url.intended',
+                $redirect
+            );
+        }
+
         return view('auth.login');
     }
 
@@ -162,12 +176,28 @@ class AuthController extends Controller
 
 
         // =========================================================
-        // LOGIN BIASA
+        // LOGIN DARI FLOW KIRIM PENAWARAN (redirect/intended)
         // =========================================================
         //
-        // Kalau tidak ada session tujuan penawaran,
-        // user diarahkan ke dashboard berdasarkan role.
+        // Kalau user datang dari:
         //
+        // Detail Proyek → Kirim Penawaran → Login
+        //
+        // maka showLogin() sudah menyimpan URL tujuan ke
+        // session "url.intended". Setelah login sebagai freelancer,
+        // redirect()->intended() mengembalikan user ke tujuan awal.
+        //
+        // Hanya freelancer yang boleh diarahkan ulang ke tujuan ini.
+        // Company/admin tetap ke dashboard masing-masing agar tidak
+        // tersesat ke halaman yang hanya boleh diakses freelancer.
+        //
+        if ($user->role !== 'freelancer') {
+            $request->session()->forget('url.intended');
+
+            return redirect(
+                $this->redirectPathByRole($user)
+            );
+        }
 
         return redirect()->intended(
             $this->redirectPathByRole($user)

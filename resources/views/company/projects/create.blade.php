@@ -51,7 +51,7 @@
             box-shadow: 0 20px 50px -10px rgba(30, 58, 138, 0.1);
         }
     </style>
-<style>
+    <style>
 
 /* ApexForge Labs — Unified UI System */
 :root{
@@ -89,6 +89,25 @@ input:focus,select:focus,textarea:focus{
     box-shadow:0 0 0 4px rgba(37,99,235,.09)!important;
     outline:none!important;
 }
+
+/* FIX DARK MODE OVERRIDES FOR INPUTS & FILE PICKER */
+.dark input, .dark select, .dark textarea {
+    background: rgba(30, 41, 59, 0.7) !important;
+    border-color: rgba(51, 65, 85, 0.8) !important;
+    color: #ffffff !important;
+}
+.dark input[type="file"] {
+    background: transparent !important;
+    color: #94a3b8 !important;
+}
+.dark select option {
+    background-color: #0f172a !important;
+    color: #ffffff !important;
+}
+.dark input[type="date"] {
+    color-scheme: dark;
+}
+
 button,a,[role="button"]{transition:all .2s ease}
 button:focus-visible,a:focus-visible,[role="button"]:focus-visible{
     outline:2px solid rgba(37,99,235,.55);
@@ -130,7 +149,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
     *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
 }
 
-</style>
+    </style>
 </head>
 <body class="bg-white text-blue-950 min-h-screen flex relative antialiased dark:bg-slate-900 dark:text-white transition-colors duration-300">
 
@@ -172,7 +191,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                 </div>
 
                 {{-- FORM CARD --}}
-                <div class="glass-card rounded-3xl relative overflow-hidden dark:bg-slate-900 dark:border-slate-800">
+                <div class="glass-card rounded-3xl relative overflow-hidden dark:bg-slate-900/90 dark:border-slate-800">
                     
                     {{-- Decorative top line --}}
                     <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 via-blue-600 to-blue-400"></div>
@@ -182,7 +201,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
                         {{-- VALIDATION ERRORS (Global) --}}
                         @if ($errors->any())
-                            <div class="mb-8 overflow-hidden relative bg-white border-2 border-blue-600 p-5 rounded-2xl shadow-[0_0_20px_rgba(59,130,246,0.15)] flex items-start gap-4 dark:bg-slate-900">
+                            <div class="mb-8 overflow-hidden relative bg-white border-2 border-blue-600 p-5 rounded-2xl shadow-[0_0_20px_rgba(59,130,246,0.15)] flex items-start gap-4 dark:bg-slate-900 dark:border-blue-500">
                                 <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 border border-blue-200 flex items-center justify-center shrink-0 dark:bg-slate-800 dark:text-blue-400 dark:border-slate-700">
                                     <i class="fa-solid fa-exclamation text-sm"></i>
                                 </div>
@@ -267,7 +286,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                         </div>
 
                         {{-- DIVIDER --}}
-                        <div class="h-px w-full bg-gradient-to-r from-transparent via-blue-100 to-transparent mb-8"></div>
+                        <div class="h-px w-full bg-gradient-to-r from-transparent via-blue-100 dark:via-slate-800 to-transparent mb-8"></div>
 
                         {{-- SECTION 2: ANGGARAN & WAKTU --}}
                         <div class="mb-8">
@@ -312,7 +331,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                         </div>
 
                         {{-- DIVIDER --}}
-                        <div class="h-px w-full bg-gradient-to-r from-transparent via-blue-100 to-transparent mb-8"></div>
+                        <div class="h-px w-full bg-gradient-to-r from-transparent via-blue-100 dark:via-slate-800 to-transparent mb-8"></div>
 
                         {{-- SECTION 3: DETAIL TAMBAHAN --}}
                         <div class="mb-8">
@@ -330,9 +349,9 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                 {{-- Gambar --}}
                                 <div>
                                     <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2 dark:text-blue-400">Gambar Proyek</label>
-                                    <div class="relative w-full border-2 border-dashed @error('image') border-blue-400 @else border-blue-200 @enderror rounded-xl bg-blue-50/30 hover:bg-blue-50/80 hover:border-blue-400 transition-colors duration-300 dark:bg-slate-800/30 dark:hover:bg-slate-800/80 dark:hover:border-slate-700">
+                                    <div class="relative w-full border-2 border-dashed @error('image') border-blue-400 @else border-blue-200 dark:border-slate-700 @enderror rounded-xl bg-blue-50/30 hover:bg-blue-50/80 hover:border-blue-400 transition-colors duration-300 dark:bg-slate-800/40 dark:hover:bg-slate-800/70 dark:hover:border-slate-600">
                                         <input type="file" name="image" accept="image/*" id="imageInput"
-                                            class="w-full px-5 py-4 text-sm text-blue-900 cursor-pointer dark:text-white file:cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-[10px] file:font-black file:uppercase file:tracking-wider file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:transition-colors focus:outline-none">
+                                            class="w-full px-5 py-4 text-sm cursor-pointer text-slate-600 dark:text-slate-300 file:cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-[10px] file:font-black file:uppercase file:tracking-wider file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:transition-colors focus:outline-none">
                                     </div>
                                     <p class="text-[10px] font-bold text-blue-400 mt-2 dark:text-slate-400">Format: JPG, PNG, WebP. Max 2MB.</p>
                                     @error('image')
@@ -343,9 +362,9 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                 {{-- Lampiran --}}
                                 <div>
                                     <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2 dark:text-blue-400">Lampiran (PDF/DOC)</label>
-                                    <div class="relative w-full border-2 border-dashed @error('attachment') border-blue-400 @else border-blue-200 @enderror rounded-xl bg-blue-50/30 hover:bg-blue-50/80 hover:border-blue-400 transition-colors duration-300 dark:bg-slate-800/30 dark:hover:bg-slate-800/80 dark:hover:border-slate-700">
+                                    <div class="relative w-full border-2 border-dashed @error('attachment') border-blue-400 @else border-blue-200 dark:border-slate-700 @enderror rounded-xl bg-blue-50/30 hover:bg-blue-50/80 hover:border-blue-400 transition-colors duration-300 dark:bg-slate-800/40 dark:hover:bg-slate-800/70 dark:hover:border-slate-600">
                                         <input type="file" name="attachment" accept=".pdf,.doc,.docx" id="attachmentInput"
-                                            class="w-full px-5 py-4 text-sm text-blue-900 cursor-pointer dark:text-white file:cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-[10px] file:font-black file:uppercase file:tracking-wider file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:transition-colors focus:outline-none">
+                                            class="w-full px-5 py-4 text-sm cursor-pointer text-slate-600 dark:text-slate-300 file:cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-[10px] file:font-black file:uppercase file:tracking-wider file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:transition-colors focus:outline-none">
                                     </div>
                                     <p class="text-[10px] font-bold text-blue-400 mt-2 dark:text-slate-400">Format: PDF, DOC, DOCX. Max 10MB.</p>
                                     @error('attachment')
@@ -356,7 +375,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                         </div>
 
                         {{-- DIVIDER --}}
-                        <div class="h-px w-full bg-gradient-to-r from-transparent via-blue-100 to-transparent mb-8"></div>
+                        <div class="h-px w-full bg-gradient-to-r from-transparent via-blue-100 dark:via-slate-800 to-transparent mb-8"></div>
 
                         {{-- SECTION 4: STATUS & SUBMIT --}}
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6 bg-blue-50/50 p-5 rounded-2xl border border-blue-100 dark:bg-slate-800/50 dark:border-slate-800">
@@ -392,7 +411,6 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
         </main>
 
         {{-- FOOTER --}}
-       
 
     </div>
 

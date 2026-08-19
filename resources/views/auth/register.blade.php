@@ -256,6 +256,14 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
                 <input type="hidden" name="is_company" id="is_company_input" value="{{ old('is_company', 0) }}">
 
+                @if(request()->filled('redirect'))
+                    <input
+                        type="hidden"
+                        name="redirect"
+                        value="{{ request('redirect') }}"
+                    >
+                @endif
+
                 <!-- Pesan Success -->
                 @if (session('success'))
                     <div class="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs flex items-center gap-2">
@@ -481,7 +489,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
             <!-- LOGIN -->
             <div class="text-center text-xs text-slate-400 pt-2 relative z-10">
                 Sudah punya akun?
-                <a href="{{ route('login') }}" class="text-blue-400 font-bold hover:text-blue-300 hover:underline ml-1 transition-colors">
+                <a href="{{ route('login', request()->filled('redirect') ? ['redirect' => request('redirect')] : []) }}" class="text-blue-400 font-bold hover:text-blue-300 hover:underline ml-1 transition-colors">
                     Masuk di sini
                 </a>
             </div>

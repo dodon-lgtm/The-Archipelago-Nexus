@@ -414,18 +414,27 @@ class ProjectController extends Controller
                 ->update(['status' => 'Ditolak']);
 
             // Buat Workspace untuk project
+            // `stages` diinisialisasi sejak awal agar workspace tidak terjebak pada
+            // fallback stageList() yang hanya 1 tahap (['Analisis Kebutuhan']).
+            // Tanpa stages, stage_order awal (1) terhitung sebagai tahap terakhir
+            // => progress langsung 100% padahal pekerjaan belum dimulai.
             $workspace = Workspace::create([
                 'project_id' => $project->id,
                 'company_id' => Auth::id(),
                 'freelancer_id' => $penawaran->freelancer_id,
                 'status' => 'Sedang Dikerjakan',
+                'stages' => ['Analisis Kebutuhan', 'Desain', 'Backend', 'Frontend', 'Testing'],
             ]);
 
-            // Buat Progress History pertama
+            // Buat Progress History pertama (tanda "freelancer dipilih").
+            // stage_order = 0 => pekerjaan BELUM dimulai => progress 0%.
+            // (currentProgress()/show() mengembalikan 0 saat stage_order <= 0.)
+            // Freelancer baru naik persentase setelah mengerjakan tahap.
             ProgressHistory::create([
                 'workspace_id' => $workspace->id,
                 'stage' => 'Dipilih',
-                'progress' => 5,
+                'stage_order' => 0,
+                'progress' => 0,
                 'description' => 'Freelancer dipilih oleh perusahaan.',
                 'updated_by' => Auth::id(),
             ]);

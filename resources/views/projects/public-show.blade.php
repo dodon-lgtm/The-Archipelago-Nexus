@@ -9,9 +9,14 @@
         DARK MODE
     ========================================================== --}}
     <script>
-        if (localStorage.getItem('theme') === 'dark') {
-            document.documentElement.classList.add('dark');
-        }
+        (function() {
+            const savedTheme = localStorage.getItem('apexforge_theme') || localStorage.getItem('theme') || localStorage.getItem('color-theme');
+            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
     </script>
 
     {{-- =========================================================
@@ -60,15 +65,20 @@
             background: rgba(37, 99, 235, 0.18);
             color: #0f172a;
         }
+
+        .dark ::selection {
+            background: rgba(59, 130, 246, 0.3);
+            color: #f8fafc;
+        }
     </style>
 </head>
 
-<body class="min-h-full text-slate-800 dark:text-slate-200 antialiased">
+<body class="min-h-full text-slate-800 dark:text-slate-200 antialiased bg-slate-50 dark:bg-slate-950 transition-colors">
 
     {{-- =========================================================
         NAVBAR PUBLIC
     ========================================================== --}}
-    <header class="sticky top-0 z-50 bg-white/85 dark:bg-slate-950/85 backdrop-blur-xl border-b border-blue-100/80 dark:border-slate-800">
+    <header class="sticky top-0 z-50 bg-white/85 dark:bg-slate-950/85 backdrop-blur-xl border-b border-blue-100/80 dark:border-slate-800 transition-colors">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="h-16 flex items-center justify-between">
 
@@ -86,30 +96,30 @@
                 {{-- NAVBAR RIGHT --}}
                 <div class="flex items-center gap-2 sm:gap-3">
                     {{-- THEME BUTTON --}}
-                    <button type="button" onclick="toggleTheme()" class="w-10 h-10 rounded-xl border border-blue-100 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800 transition" title="Ganti tema">
+                    <button type="button" onclick="toggleTheme()" class="w-10 h-10 rounded-xl border border-blue-100 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800 transition shadow-sm" title="Ganti tema">
                         <i id="themeIcon" class="fa-solid fa-moon"></i>
                     </button>
 
                     {{-- AUTH NAVIGATION --}}
                     @auth
                         @if(Auth::user()->role === 'freelancer')
-                            <a href="{{ route('freelancer.dashboard') }}" class="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold shadow-md shadow-blue-500/20">
+                            <a href="{{ route('freelancer.dashboard') }}" class="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold shadow-md shadow-blue-500/20 transition">
                                 <i class="fa-solid fa-gauge-high"></i> Dashboard
                             </a>
                         @elseif(Auth::user()->role === 'company')
-                            <a href="{{ route('company.dashboard') }}" class="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold">
+                            <a href="{{ route('company.dashboard') }}" class="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold transition">
                                 <i class="fa-solid fa-gauge-high"></i> Dashboard
                             </a>
                         @elseif(Auth::user()->role === 'admin')
-                            <a href="{{ route('admin.dashboard') }}" class="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold">
+                            <a href="{{ route('admin.dashboard') }}" class="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold transition">
                                 <i class="fa-solid fa-shield-halved"></i> Admin
                             </a>
                         @endif
                     @else
-                        <a href="{{ route('login') }}" class="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-blue-100 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800 text-sm font-bold">
+                        <a href="{{ route('login') }}" class="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-blue-100 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-800 text-sm font-bold transition">
                             <i class="fa-solid fa-right-to-bracket"></i> Masuk
                         </a>
-                        <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold shadow-md shadow-blue-500/20">
+                        <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold shadow-md shadow-blue-500/20 transition">
                             <i class="fa-solid fa-user-plus"></i> Daftar
                         </a>
                     @endauth
@@ -132,7 +142,7 @@
         </div>
 
         {{-- PROJECT CARD --}}
-        <section class="bg-white dark:bg-slate-900 rounded-3xl border border-blue-100/80 dark:border-slate-800 shadow-xl shadow-blue-900/5 overflow-hidden">
+        <section class="bg-white dark:bg-slate-900 rounded-3xl border border-blue-100/80 dark:border-slate-800 shadow-xl shadow-blue-900/5 dark:shadow-none overflow-hidden transition-colors">
 
             {{-- PROJECT IMAGE --}}
             <div class="relative w-full h-64 sm:h-80 lg:h-[420px] bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-slate-800 dark:to-slate-900">
@@ -153,7 +163,7 @@
                         $statusClasses = match ($status) {
                             'open' => 'bg-emerald-500 text-white',
                             'close', 'closed' => 'bg-amber-500 text-white',
-                            'archive', 'archived' => 'bg-slate-700 text-white',
+                            'archive', 'archived' => 'bg-slate-700 text-white dark:bg-slate-600',
                             default => 'bg-slate-500 text-white',
                         };
                         $statusLabel = match ($status) {
@@ -178,7 +188,7 @@
                     {{-- LEFT CONTENT --}}
                     <div class="lg:col-span-2">
                         @if($project->category)
-                            <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 text-blue-600 dark:text-blue-400 text-xs font-extrabold uppercase tracking-wide">
+                            <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 text-blue-600 dark:text-blue-400 text-xs font-extrabold uppercase tracking-wide">
                                 <i class="fa-solid fa-tag"></i> {{ $project->category->name }}
                             </span>
                         @endif
@@ -189,12 +199,12 @@
 
                         @if($project->owner)
                             <div class="mt-5 flex items-center gap-3">
-                                <div class="w-11 h-11 rounded-xl bg-blue-50 dark:bg-slate-800 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                                <div class="w-11 h-11 rounded-xl bg-blue-50 dark:bg-slate-800 border border-transparent dark:border-slate-700 flex items-center justify-center text-blue-600 dark:text-blue-400">
                                     <i class="fa-solid fa-building"></i>
                                 </div>
                                 <div>
-                                    <p class="text-[10px] uppercase tracking-widest font-bold text-slate-400">Dipublikasikan oleh</p>
-                                    <p class="text-sm font-extrabold text-slate-800 dark:text-white">{{ $project->owner->name }}</p>
+                                    <p class="text-[10px] uppercase tracking-widest font-bold text-slate-400 dark:text-slate-400">Dipublikasikan oleh</p>
+                                    <p class="text-sm font-extrabold text-slate-800 dark:text-slate-100">{{ $project->owner->name }}</p>
                                 </div>
                             </div>
                         @endif
@@ -224,8 +234,8 @@
 
                     {{-- RIGHT SIDEBAR --}}
                     <aside>
-                        <div class="lg:sticky lg:top-24 rounded-3xl bg-slate-50 dark:bg-slate-800/70 border border-blue-100 dark:border-slate-700 p-6">
-                            <p class="text-[10px] uppercase tracking-widest font-extrabold text-slate-400">Anggaran Proyek</p>
+                        <div class="lg:sticky lg:top-24 rounded-3xl bg-slate-50 dark:bg-slate-800/70 border border-blue-100 dark:border-slate-700 p-6 transition-colors">
+                            <p class="text-[10px] uppercase tracking-widest font-extrabold text-slate-400 dark:text-slate-400">Anggaran Proyek</p>
                             <p class="mt-2 text-2xl sm:text-3xl font-black text-blue-600 dark:text-blue-400">
                                 Rp {{ number_format($project->budget ?? 0, 0, ',', '.') }}
                             </p>
@@ -233,12 +243,12 @@
                             <div class="my-6 h-px bg-slate-200 dark:bg-slate-700"></div>
 
                             <div class="flex items-start gap-3 mb-5">
-                                <div class="w-10 h-10 rounded-xl bg-white dark:bg-slate-900 flex items-center justify-center text-blue-600 dark:text-blue-400 shadow-sm">
+                                <div class="w-10 h-10 rounded-xl bg-white dark:bg-slate-900 border border-transparent dark:border-slate-700/60 flex items-center justify-center text-blue-600 dark:text-blue-400 shadow-sm dark:shadow-none">
                                     <i class="fa-regular fa-calendar"></i>
                                 </div>
                                 <div>
-                                    <p class="text-[10px] uppercase tracking-widest font-bold text-slate-400">Deadline</p>
-                                    <p class="mt-1 text-sm font-extrabold text-slate-800 dark:text-white">
+                                    <p class="text-[10px] uppercase tracking-widest font-bold text-slate-400 dark:text-slate-400">Deadline</p>
+                                    <p class="mt-1 text-sm font-extrabold text-slate-800 dark:text-slate-100">
                                         @if($project->deadline)
                                             {{ \Carbon\Carbon::parse($project->deadline)->isoFormat('D MMMM YYYY') }}
                                         @else
@@ -249,12 +259,12 @@
                             </div>
 
                             <div class="flex items-start gap-3 mb-6">
-                                <div class="w-10 h-10 rounded-xl bg-white dark:bg-slate-900 flex items-center justify-center text-blue-600 dark:text-blue-400 shadow-sm">
+                                <div class="w-10 h-10 rounded-xl bg-white dark:bg-slate-900 border border-transparent dark:border-slate-700/60 flex items-center justify-center text-blue-600 dark:text-blue-400 shadow-sm dark:shadow-none">
                                     <i class="fa-regular fa-clock"></i>
                                 </div>
                                 <div>
-                                    <p class="text-[10px] uppercase tracking-widest font-bold text-slate-400">Dipublikasikan</p>
-                                    <p class="mt-1 text-sm font-extrabold text-slate-800 dark:text-white">
+                                    <p class="text-[10px] uppercase tracking-widest font-bold text-slate-400 dark:text-slate-400">Dipublikasikan</p>
+                                    <p class="mt-1 text-sm font-extrabold text-slate-800 dark:text-slate-100">
                                         {{ $project->created_at->diffForHumans() }}
                                     </p>
                                 </div>
@@ -265,7 +275,7 @@
                                 @auth
                                     @if(Auth::user()->role === 'freelancer')
                                         @if($hasOffered ?? false)
-                                            <div class="w-full px-5 py-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900 text-center">
+                                            <div class="w-full px-5 py-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900 text-center">
                                                 <div class="w-10 h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center mx-auto mb-3">
                                                     <i class="fa-solid fa-check"></i>
                                                 </div>
@@ -279,7 +289,7 @@
                                         @endif
                                     @else
                                         <div class="rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-4 text-center">
-                                            <div class="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-500 flex items-center justify-center mx-auto mb-3">
+                                            <div class="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 flex items-center justify-center mx-auto mb-3">
                                                 <i class="fa-solid fa-user-lock"></i>
                                             </div>
                                             <p class="text-xs font-bold text-slate-500 dark:text-slate-400">Hanya freelancer yang dapat mengirim penawaran.</p>
@@ -293,17 +303,17 @@
                                     <a href="{{ route('login', ['redirect' => $offerUrl]) }}" class="w-full inline-flex items-center justify-center gap-2 px-5 py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold shadow-lg shadow-blue-500/20 hover:-translate-y-0.5 transition-all">
                                         <i class="fa-solid fa-paper-plane"></i> Kirim Penawaran
                                     </a>
-                                    <p class="text-[11px] text-center text-slate-400 mt-3 leading-relaxed">
+                                    <p class="text-[11px] text-center text-slate-400 dark:text-slate-400 mt-3 leading-relaxed">
                                         Kamu perlu masuk atau membuat akun freelancer terlebih dahulu untuk mengirim penawaran.
                                     </p>
                                 @endauth
                             @else
                                 <div class="w-full px-5 py-4 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-center">
-                                    <div class="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-500 flex items-center justify-center mx-auto mb-3">
+                                    <div class="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 flex items-center justify-center mx-auto mb-3">
                                         <i class="fa-solid fa-lock"></i>
                                     </div>
                                     <p class="font-black text-slate-700 dark:text-slate-300">Penawaran Ditutup</p>
-                                    <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">Proyek ini sudah tidak menerima penawaran baru.</p>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Proyek ini sudah tidak menerima penawaran baru.</p>
                                 </div>
                             @endif
 
@@ -318,7 +328,7 @@
     {{-- =========================================================
         FOOTER
     ========================================================== --}}
-    <footer class="border-t border-blue-100 dark:border-slate-800 bg-white/70 dark:bg-slate-950/70 mt-8">
+    <footer class="border-t border-blue-100 dark:border-slate-800 bg-white/70 dark:bg-slate-950/70 mt-8 transition-colors">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div class="flex items-center gap-3">
@@ -327,10 +337,10 @@
                     </div>
                     <div>
                         <p class="text-sm font-black text-blue-950 dark:text-white">ApexForge Labs</p>
-                        <p class="text-[11px] text-slate-400">Marketplace Freelance Indonesia</p>
+                        <p class="text-[11px] text-slate-400 dark:text-slate-400">Marketplace Freelance Indonesia</p>
                     </div>
                 </div>
-                <p class="text-xs text-slate-400">© {{ date('Y') }} ApexForge Labs. Semua hak dilindungi.</p>
+                <p class="text-xs text-slate-400 dark:text-slate-400">© {{ date('Y') }} ApexForge Labs. Semua hak dilindungi.</p>
             </div>
         </div>
     </footer>
@@ -348,6 +358,7 @@
             const isDark = html.classList.contains('dark');
 
             localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            localStorage.setItem('apexforge_theme', isDark ? 'dark' : 'light');
 
             if (icon) {
                 icon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';

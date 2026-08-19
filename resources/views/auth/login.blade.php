@@ -230,7 +230,6 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
             value="{{ request('redirect') }}"
         >
     @endif
-                @csrf
 
                 <!-- Pesan Success -->
                 @if (session('success'))
@@ -349,7 +348,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
             <!-- REGISTER -->
             <div class="text-center text-xs text-slate-400 pt-2 relative z-10">
                 Belum punya akun?
-                <a href="{{ route('register') }}" class="text-blue-400 font-bold hover:text-blue-300 hover:underline ml-1 transition-colors">
+                <a href="{{ route('register', request()->filled('redirect') ? ['redirect' => request('redirect')] : []) }}" class="text-blue-400 font-bold hover:text-blue-300 hover:underline ml-1 transition-colors">
                     Daftar di sini
                 </a>
             </div>

@@ -169,10 +169,9 @@ class ProjectBrowseController extends Controller
             )
             ->exists();
 
-        $acceptsOffers = in_array(
-            strtolower($project->status ?? ''),
-            ['open']
-        );
+        // Konsisten dengan create()/store():
+        // gunakan acceptsOffers() dari model sebagai source of truth.
+        $acceptsOffers = $project->acceptsOffers();
 
         return view(
             'freelancer.projects.show',

@@ -8,14 +8,26 @@ use App\Models\CompanyAccountRequest;
 use App\Models\CompanyProfile;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class RegisterController extends Controller
 {
-    public function showRegister(): View
+    public function showRegister(Request $request): View
     {
+        // Pertahankan tujuan awal (intended destination) ketika user
+        // datang dari flow "Kirim Penawaran", sehingga tetap tersimpan
+        // melewati proses register sampai user login.
+        $redirect = $request->input('redirect');
+        if (is_safe_internal_url($redirect)) {
+            $request->session()->put(
+                'url.intended',
+                $redirect
+            );
+        }
+
         return view('auth.register');
     }
 
@@ -96,7 +108,16 @@ class RegisterController extends Controller
             'role'     => 'freelancer',
         ]);
 
-        return redirect()->route('login')
+        // Bawa kembali parameter redirect (jika ada dan aman) ke halaman
+        // login, sehingga user tetap kembali ke flow kirim penawaran
+        // setelah berhasil login. URL sudah divalidasi internal.
+        $loginParams = [];
+
+        if (is_safe_internal_url($request->input('redirect'))) {
+            $loginParams['redirect'] = $request->input('redirect');
+        }
+
+        return redirect()->route('login', $loginParams)
             ->with('success', 'Registrasi berhasil. Silakan login.');
     }
 }
