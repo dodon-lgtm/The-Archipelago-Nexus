@@ -1,127 +1,56 @@
-{{-- ApexForge Labs — Shared UI polish --}}
-<aside id="sidebar" class="w-64 bg-white/95 dark:bg-slate-900/95 backdrop-blur-3xl border-r border-blue-100 dark:border-slate-800 flex flex-col h-screen sticky top-0 shrink-0 z-30 shadow-[10px_0_40px_-10px_rgba(59,130,246,0.08)] transition-colors duration-300">
+{{-- ApexForge Labs — Shared UI --}}
+
+{{-- TOMBOL HAMBURGER MOBILE (FIXED & HIGH Z-INDEX) --}}
+<button type="button" id="mobileSidebarToggleBtn"
+    class="lg:hidden fixed top-3.5 left-4 z-[60] w-10 h-10 rounded-xl bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 text-blue-600 dark:text-blue-400 flex items-center justify-center shadow-lg hover:bg-blue-50 dark:hover:bg-slate-800 active:scale-95 transition-transform"
+    aria-label="Buka Navigasi Mobile">
+    <i class="fa-solid fa-bars text-lg"></i>
+</button>
+
+<aside id="sidebar" class="w-64 bg-white/95 dark:bg-slate-900/95 backdrop-blur-3xl border-r border-blue-100 dark:border-slate-800 flex flex-col h-screen sticky top-0 shrink-0 z-50 shadow-[10px_0_40px_-10px_rgba(59,130,246,0.08)] transition-colors duration-300">
 
     {{-- DECORATIVE RIGHT EDGE GLOW --}}
     <div class="absolute top-0 right-0 w-[1px] h-full bg-gradient-to-b from-transparent via-blue-400/30 to-transparent"></div>
 
-  {{-- LOGO SECTION --}}
-<div class="sidebar-logo-wrapper
-    h-[88px]
-    px-5
-    flex items-center
-    border-b border-blue-50 dark:border-slate-800
-    shrink-0
-    transition-all duration-300
-    relative">
+    {{-- LOGO SECTION --}}
+    <div class="sidebar-logo-wrapper h-[88px] px-5 flex items-center border-b border-blue-50 dark:border-slate-800 shrink-0 transition-all duration-300 relative">
 
-    {{-- Mobile hamburger --}}
-    <button id="mobileSidebarToggle"
-        class="sidebar-hamburger-mobile
-        w-10 h-10 rounded-xl
-        hover:bg-blue-50 dark:hover:bg-slate-800
-        flex items-center justify-center
-        shrink-0
-        transition-colors
-        text-blue-600 dark:text-blue-400">
+        {{-- Mobile hamburger (di dalam sidebar) --}}
+        <button type="button" id="mobileSidebarToggle"
+            class="sidebar-hamburger-mobile w-10 h-10 rounded-xl hover:bg-blue-50 dark:hover:bg-slate-800 flex items-center justify-center shrink-0 transition-colors text-blue-600 dark:text-blue-400">
+            <i class="fa-solid fa-bars text-lg"></i>
+        </button>
 
-        <i class="fa-solid fa-bars text-lg"></i>
-    </button>
-
-
-    {{-- LOGO --}}
-    <div class="sidebar-logo-container relative shrink-0">
-
-        {{-- Glow --}}
-        <div class="absolute inset-0
-            bg-blue-500 rounded-full
-            blur-[10px]
-            opacity-40
-            group-hover:opacity-60
-            transition-opacity duration-300">
+        {{-- LOGO --}}
+        <div class="sidebar-logo-container relative shrink-0">
+            <div class="absolute inset-0 bg-blue-500 rounded-full blur-[10px] opacity-40 group-hover:opacity-60 transition-opacity duration-300"></div>
+            <div class="relative w-10 h-10 rounded-full overflow-hidden border-2 border-white dark:border-slate-800 shadow-sm">
+                <img src="{{ asset('images/nexus.jpg') }}" alt="ApexForge Labs Logo" class="w-full h-full object-cover">
+            </div>
         </div>
 
-        {{-- Image --}}
-        <div class="relative
-            w-10 h-10
-            rounded-full
-            overflow-hidden
-            border-2 border-white dark:border-slate-800
-            shadow-sm">
-
-            <img
-                src="{{ asset('images/nexus.jpg') }}"
-                alt="ApexForge Labs Logo"
-                class="w-full h-full object-cover"
-            >
+        {{-- LOGO TEXT --}}
+        <div class="sidebar-logo-text ml-3 transition-all duration-300 overflow-hidden">
+            <h2 class="font-black text-[13px] leading-tight text-blue-950 dark:text-white whitespace-nowrap tracking-tight">
+                ApexForge<br>
+                <span class="text-blue-600 dark:text-blue-400">Labs</span>
+            </h2>
         </div>
+
+        {{-- DESKTOP TOGGLE --}}
+        <button type="button" id="sidebarToggle"
+            class="sidebar-toggle-desktop w-8 h-8 rounded-xl hover:bg-blue-50 dark:hover:bg-slate-800 flex items-center justify-center shrink-0 ml-auto transition-all duration-300 group border border-transparent hover:border-blue-100 dark:hover:border-slate-700">
+            <i class="sidebar-toggle-icon fa-solid fa-chevron-left text-blue-400 dark:text-slate-500 text-xs transition-transform duration-300"></i>
+        </button>
+
+        {{-- COLLAPSED TOGGLE --}}
+        <button type="button" id="sidebarToggleCollapsed"
+            class="sidebar-toggle-collapsed w-7 h-7 rounded-lg bg-white/90 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 items-center justify-center transition-all duration-300 shadow-sm group">
+            <i class="sidebar-toggle-icon fa-solid fa-chevron-right text-blue-400 dark:text-slate-400 text-[10px] transition-transform duration-300"></i>
+        </button>
+
     </div>
 
-
-    {{-- LOGO TEXT --}}
-    <div class="sidebar-logo-text
-        ml-3
-        transition-all duration-300
-        overflow-hidden">
-
-        <h2 class="font-black text-[13px]
-            leading-tight
-            text-blue-950 dark:text-white
-            whitespace-nowrap
-            tracking-tight">
-
-            ApexForge<br>
-
-            <span class="text-blue-600 dark:text-blue-400">
-                Labs
-            </span>
-        </h2>
-    </div>
-
-
-    {{-- DESKTOP TOGGLE --}}
-    <button id="sidebarToggle"
-        class="sidebar-toggle-desktop
-        w-8 h-8
-        rounded-xl
-        hover:bg-blue-50 dark:hover:bg-slate-800
-        flex items-center justify-center
-        shrink-0
-        ml-auto
-        transition-all duration-300
-        group
-        border border-transparent
-        hover:border-blue-100 dark:hover:border-slate-700">
-
-        <i class="sidebar-toggle-icon
-            fa-solid fa-chevron-left
-            text-blue-400 dark:text-slate-500
-            text-xs
-            transition-transform duration-300">
-        </i>
-    </button>
-
-
-    {{-- COLLAPSED TOGGLE --}}
-    <button id="sidebarToggleCollapsed"
-        class="sidebar-toggle-collapsed
-        w-7 h-7
-        rounded-lg
-        bg-white/90 dark:bg-slate-800
-        border border-blue-100 dark:border-slate-700
-        items-center justify-center
-        transition-all duration-300
-        shadow-sm
-        group">
-
-        <i class="sidebar-toggle-icon
-            fa-solid fa-chevron-right
-            text-blue-400 dark:text-slate-400
-            text-[10px]
-            transition-transform duration-300">
-        </i>
-    </button>
-
-</div>
     {{-- MENU NAVIGATION --}}
     <nav class="mt-6 px-4 space-y-1.5 flex-1 overflow-y-auto custom-sidebar-scroll relative z-10">
 
@@ -180,7 +109,7 @@
                     <span class="tracking-wide text-sm">Laporan</span>
                 </a>
 
-<div class="pt-4 pb-1">
+                <div class="pt-4 pb-1">
                     <div class="h-px w-full bg-gradient-to-r from-transparent via-blue-100 dark:via-slate-700 to-transparent"></div>
                 </div>
 
@@ -228,7 +157,7 @@
                     <span class="tracking-wide text-sm">Tambah Proyek</span>
                 </a>
 
-<a href="{{ route('company.projects.index') }}"
+                <a href="{{ route('company.projects.index') }}"
                    class="relative flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group
                    {{ request()->routeIs('company.projects.index') || request()->routeIs('company.projects.show') || request()->routeIs('company.projects.edit')
                        ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-[0_8px_20px_-6px_rgba(59,130,246,0.6)] font-bold'
@@ -268,7 +197,7 @@
                     <span class="tracking-wide text-sm">Laporan</span>
                 </a>
 
-<div class="pt-4 pb-1">
+                <div class="pt-4 pb-1">
                     <div class="h-px w-full bg-gradient-to-r from-transparent via-blue-100 dark:via-slate-700 to-transparent"></div>
                 </div>
 
@@ -376,6 +305,16 @@
                     <span class="tracking-wide text-sm">Verifikasi Company</span>
                 </a>
 
+                <a href="{{ route('admin.withdrawals.index') }}"
+                   class="relative flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group
+                   {{ request()->routeIs('admin.withdrawals.*')
+                       ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-[0_8px_20px_-6px_rgba(59,130,246,0.6)] font-bold'
+                       : 'text-blue-900/60 dark:text-slate-400 hover:bg-blue-50/80 dark:hover:bg-slate-800/80 hover:text-blue-700 dark:hover:text-blue-400 font-semibold' }}"
+                   data-tooltip="Penarikan Dana">
+                    <i class="fa-solid fa-money-bill-transfer w-5 text-center transition-transform group-hover:scale-110"></i>
+                    <span class="tracking-wide text-sm">Penarikan Dana</span>
+                </a>
+
             @endif
 
         @endauth
@@ -385,8 +324,6 @@
     {{-- SIDEBAR FOOTER --}}
     <div class="p-5 shrink-0 sidebar-footer-wrapper border-t border-blue-50 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 relative z-10">
         <div class="sidebar-footer-card rounded-[1.25rem] bg-gradient-to-br from-blue-600 to-blue-500 p-5 text-white overflow-hidden transition-all duration-300 relative shadow-[0_10px_25px_-5px_rgba(59,130,246,0.4)]">
-            
-            {{-- Holographic Inner Orbs --}}
             <div class="absolute -top-10 -right-10 w-24 h-24 bg-white/20 rounded-full blur-[20px]"></div>
             <div class="absolute -bottom-5 -left-5 w-16 h-16 bg-blue-300/30 rounded-full blur-[15px]"></div>
 
@@ -414,7 +351,7 @@
 </aside>
 
 {{-- MOBILE OVERLAY --}}
-<div id="sidebarOverlay" class="hidden fixed inset-0 bg-blue-950/40 backdrop-blur-sm z-20 lg:hidden transition-opacity duration-300"></div>
+<div id="sidebarOverlay" class="hidden fixed inset-0 bg-blue-950/40 backdrop-blur-sm z-40 lg:hidden transition-opacity duration-300"></div>
 
 {{-- CUSTOM CSS FOR SIDEBAR --}}
 <style>
@@ -429,7 +366,7 @@
         transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    /* ===== COLLAPSED STATE ===== */
+    /* ===== COLLAPSED STATE (DESKTOP) ===== */
     #sidebar.collapsed {
         width: 88px !important;
     }
@@ -445,7 +382,6 @@
         white-space: nowrap;
     }
     
-    /* Menu items in collapsed state (links + Bantuan button) */
     #sidebar.collapsed nav a,
     #sidebar.collapsed nav button[data-bantuan-toggle] {
         justify-content: center;
@@ -470,12 +406,10 @@
         display: none;
     }
 
-    /* Submenu Bantuan disembunyikan total saat collapsed (desktop) */
     #sidebar.collapsed .bantuan-submenu {
         display: none !important;
     }
     
-    /* Footer card in collapsed state */
     #sidebar.collapsed .sidebar-footer-card {
         opacity: 0;
         visibility: hidden;
@@ -490,15 +424,10 @@
         display: block !important;
     }
     
-    /* FIX IKON BERUBAH: Rotasi panah pada toggle saat sidebar collapsed */
     #sidebar.collapsed #sidebarToggle .sidebar-toggle-icon {
         transform: rotate(180deg);
     }
     
-   /* =========================================
-      COLLAPSED LOGO & TOGGLE POSITIONS
-   ========================================= */
-
     #sidebar.collapsed .sidebar-logo-wrapper {
         padding: 0;
         width: 88px;
@@ -526,7 +455,6 @@
         display: none !important;
     }
 
-    /* Tampilkan tombol buka sidebar khusus di state collapsed dengan posisi aman */
     #sidebar.collapsed .sidebar-toggle-collapsed {
         display: flex !important;
         position: absolute;
@@ -535,12 +463,11 @@
         z-index: 10;
     }
 
-    /* Sembunyikan tombol collapsed saat sidebar terbuka */
     #sidebar:not(.collapsed) .sidebar-toggle-collapsed {
         display: none !important;
     }
 
-    /* ===== HIGH-TECH GLASS TOOLTIP ON COLLAPSED HOVER ===== */
+    /* ===== TOOLTIP ON COLLAPSED ===== */
     #sidebar.collapsed nav a,
     #sidebar.collapsed nav button[data-bantuan-toggle] {
         position: relative;
@@ -555,7 +482,7 @@
         background: rgba(255, 255, 255, 0.95);
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
-        color: #1e3a8a; /* blue-900 */
+        color: #1e3a8a;
         padding: 8px 16px;
         border-radius: 12px;
         border: 1px solid rgba(59, 130, 246, 0.2);
@@ -585,7 +512,6 @@
         to { opacity: 1; transform: translate(0, -50%); }
     }
 
-    /* Tooltip in dark mode */
     html.dark #sidebar.collapsed nav a:hover::after {
         background: rgba(30, 41, 59, 0.95);
         color: #e2e8f0;
@@ -595,8 +521,12 @@
         border-right-color: rgba(30, 41, 59, 0.95);
     }
 
-    /* ===== MOBILE DRAWER ===== */
+    /* ===== MOBILE RESPONSIVE CONTROL ===== */
     @media (max-width: 1023px) {
+        #mobileSidebarToggleBtn {
+            display: flex !important;
+        }
+
         #sidebar {
             position: fixed !important;
             top: 0;
@@ -609,7 +539,7 @@
             border-right: 1px solid rgba(59, 130, 246, 0.15) !important;
         }
         #sidebar.mobile-open {
-            transform: translateX(0);
+            transform: translateX(0) !important;
         }
         #sidebar.collapsed {
             width: 300px !important;
@@ -671,7 +601,6 @@
         #sidebar.collapsed .sidebar-logo-wrapper > .sidebar-toggle-collapsed {
             display: none !important;
         }
-        /* Tooltip disabled on mobile */
         #sidebar.collapsed nav a:hover::after,
         #sidebar.collapsed nav a:hover::before,
         #sidebar.collapsed nav button[data-bantuan-toggle]:hover::after,
@@ -679,17 +608,17 @@
             display: none !important;
             content: none !important;
         }
-        /* Hide desktop-only toggle on mobile */
         .sidebar-toggle-desktop {
             display: none !important;
         }
-        /* Show mobile hamburger */
         .sidebar-hamburger-mobile {
             display: flex !important;
         }
     }
+
     @media (min-width: 1024px) {
-        .sidebar-hamburger-mobile {
+        .sidebar-hamburger-mobile,
+        #mobileSidebarToggleBtn {
             display: none !important;
         }
         .sidebar-toggle-desktop {
@@ -703,33 +632,38 @@
     document.addEventListener('DOMContentLoaded', function() {
         const toggleDesktop = document.getElementById('sidebarToggle');
         const toggleDesktopCollapsed = document.getElementById('sidebarToggleCollapsed');
-        const toggleMobile = document.getElementById('mobileSidebarToggle');
         const overlay = document.getElementById('sidebarOverlay');
         const sidebar = document.getElementById('sidebar');
         
-        // Helper to position tooltips correctly
-        function positionTooltips() {
-            if (!sidebar) return;
-            const links = sidebar.querySelectorAll('nav a, nav button[data-bantuan-toggle]');
-            const isCollapsed = sidebar.classList.contains('collapsed');
-            const isMobile = window.innerWidth < 1024;
-            
-            links.forEach(link => {
-                if (isCollapsed && !isMobile) {
-                    const rect = link.getBoundingClientRect();
-                    link.style.setProperty('--tooltip-top', (rect.top + rect.height/2) + 'px');
-                }
-            });
-        }
-        
-        // Update tooltip positions
         function updateTooltipPositions() {
-            if (window.innerWidth >= 1024 && sidebar.classList.contains('collapsed')) {
+            if (window.innerWidth >= 1024 && sidebar && sidebar.classList.contains('collapsed')) {
                 const links = sidebar.querySelectorAll('nav a, nav button[data-bantuan-toggle]');
                 links.forEach(link => {
                     const rect = link.getBoundingClientRect();
                     link.style.setProperty('--tooltip-top', (rect.top + rect.height/2) + 'px');
                 });
+            }
+        }
+
+        function openMobileSidebar() {
+            if (!sidebar) return;
+            sidebar.classList.add('mobile-open');
+            if (overlay) overlay.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+        }
+
+        function closeMobileSidebar() {
+            if (!sidebar) return;
+            sidebar.classList.remove('mobile-open');
+            if (overlay) overlay.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        }
+
+        function toggleMobileSidebar() {
+            if (sidebar.classList.contains('mobile-open')) {
+                closeMobileSidebar();
+            } else {
+                openMobileSidebar();
             }
         }
         
@@ -738,16 +672,10 @@
 
             if (window.innerWidth >= 1024) {
                 const collapsed = sidebar.classList.toggle('collapsed');
-
-                localStorage.setItem(
-                    'sidebarCollapsed',
-                    collapsed ? 'true' : 'false'
-                );
+                localStorage.setItem('sidebarCollapsed', collapsed ? 'true' : 'false');
 
                 window.dispatchEvent(new CustomEvent('sidebar-toggle', {
-                    detail: {
-                        collapsed: collapsed
-                    }
+                    detail: { collapsed: collapsed }
                 }));
 
                 setTimeout(updateTooltipPositions, 50);
@@ -762,17 +690,16 @@
             toggleDesktopCollapsed.addEventListener('click', toggleSidebarDesktop);
         }
         
-        // Mobile toggle: open/close drawer
-        if (toggleMobile) {
-            toggleMobile.addEventListener('click', function(e) {
+        // Event delegation untuk tombol hamburger mobile (luar dan dalam sidebar)
+        document.addEventListener('click', function(e) {
+            const mobileTrigger = e.target.closest('#mobileSidebarToggle, #mobileSidebarToggleBtn, [data-mobile-sidebar-toggle], .sidebar-hamburger-mobile');
+            if (mobileTrigger && window.innerWidth < 1024) {
                 e.stopPropagation();
-                sidebar.classList.toggle('mobile-open');
-                overlay.classList.toggle('hidden');
-                document.body.classList.toggle('overflow-hidden');
-            });
-        }
+                toggleMobileSidebar();
+            }
+        });
 
-        // Bantuan dropdown toggle
+        // Toggle bantuan dropdown
         document.querySelectorAll('[data-bantuan-toggle]').forEach(function(btn) {
             btn.addEventListener('click', function(e) {
                 e.stopPropagation();
@@ -783,16 +710,12 @@
             });
         });
         
-        // Overlay click to close mobile sidebar
         if (overlay) {
             overlay.addEventListener('click', function() {
-                sidebar.classList.remove('mobile-open');
-                overlay.classList.add('hidden');
-                document.body.classList.remove('overflow-hidden');
+                closeMobileSidebar();
             });
         }
         
-        // Restore state from localStorage (desktop only)
         if (window.innerWidth >= 1024) {
             const savedState = localStorage.getItem('sidebarCollapsed');
             if (savedState === 'true') {
@@ -800,17 +723,12 @@
             }
         }
         
-        // Handle resize
         let resizeTimer;
         window.addEventListener('resize', function() {
             clearTimeout(resizeTimer);
             resizeTimer = setTimeout(function() {
                 if (window.innerWidth >= 1024) {
-                    // Going to desktop
-                    sidebar.classList.remove('mobile-open');
-                    if (overlay) overlay.classList.add('hidden');
-                    document.body.classList.remove('overflow-hidden');
-                    
+                    closeMobileSidebar();
                     const savedState = localStorage.getItem('sidebarCollapsed');
                     if (savedState === 'true') {
                         sidebar.classList.add('collapsed');
@@ -818,7 +736,6 @@
                         sidebar.classList.remove('collapsed');
                     }
                 } else {
-                    // Going to mobile
                     sidebar.style.width = '';
                     sidebar.classList.remove('collapsed');
                 }
@@ -828,20 +745,15 @@
             }, 250);
         });
         
-        // Close mobile sidebar on escape key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' && window.innerWidth < 1024) {
-                sidebar.classList.remove('mobile-open');
-                if (overlay) overlay.classList.add('hidden');
-                document.body.classList.remove('overflow-hidden');
+                closeMobileSidebar();
             }
         });
         
-        // Update tooltip positions on scroll and resize
         window.addEventListener('scroll', updateTooltipPositions, { passive: true });
         window.addEventListener('resize', updateTooltipPositions);
         
-        // Fix tooltip positioning using CSS custom properties
         if (sidebar) {
             const observer = new MutationObserver(function() {
                 if (window.innerWidth >= 1024 && sidebar.classList.contains('collapsed')) {
@@ -851,7 +763,6 @@
             observer.observe(sidebar, { attributes: true, attributeFilter: ['class'] });
         }
 
-        // Initial dispatch
         setTimeout(function() {
             window.dispatchEvent(new CustomEvent('sidebar-toggle', { 
                 detail: { collapsed: sidebar.classList.contains('collapsed') }

@@ -220,7 +220,7 @@ $stageColors = [
             </div>
         </main>
 
-        @include('navbar.footer')
+    
     </div>
 
 </body>

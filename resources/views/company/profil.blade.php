@@ -5,16 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <script>
-        if (localStorage.getItem('theme') === 'dark') {
+        @auth
+            const profileThemeUserId = "{{ Auth::id() }}";
+        @else
+            const profileThemeUserId = 'guest';
+        @endauth
+        const profileThemeKey = 'theme_user_' + profileThemeUserId;
+        if (localStorage.getItem(profileThemeKey) === 'dark') {
             document.documentElement.classList.add('dark');
         }
     </script>
 
     <title>Profil Perusahaan - Ultra Modern Dashboard</title>
 
+    {{-- Tailwind CSS (CDN) + darkMode class — dipakai navbar & sistem dark mode --}}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = tailwind.config || {};
+        tailwind.config.darkMode = 'class';
+    </script>
+
     <!-- Bootstrap 5.3 & Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- FontAwesome (dipakai navbar shared) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <!-- Google Fonts: Plus Jakarta Sans -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- AOS Animation Library CSS -->
@@ -411,10 +426,178 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
     *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
 }
 
+/* ================= DARK MODE PROFIL COMPANY ================= */
+/* Mengikuti sistem dark mode aplikasi: class .dark pada <html> (key theme_user_{id}). */
+.dark{
+    --af-page:#020617;
+    --af-surface:#0f172a;
+    --af-ink:#f1f5f9;
+    --af-muted:#94a3b8;
+    --af-border:#1e293b;
+    --bg-color:#020617;
+    --card-bg:rgba(15,23,42,.85);
+    --text-main:#f1f5f9;
+    --text-muted:#94a3b8;
+    --border-color:rgba(51,65,85,.6);
+}
+.dark body{
+    background-color:#020617;
+}
+.dark .page-title{
+    color:#f1f5f9;
+}
+.dark .page-subtitle{
+    color:#94a3b8;
+}
+.dark .profile-card,
+.dark .content-card{
+    background:rgba(15,23,42,.9);
+    border-color:rgba(51,65,85,.7);
+    box-shadow:0 15px 35px -5px rgba(0,0,0,.4);
+}
+.dark .profile-header{
+    background:linear-gradient(135deg,rgba(30,41,59,.85) 0%,rgba(15,23,42,.55) 100%);
+}
+.dark .company-logo{
+    border-color:#1e293b;
+    background:#0f172a;
+}
+.dark .company-name{
+    color:#f8fafc;
+}
+.dark .company-type{
+    color:#94a3b8;
+}
+.dark .info{
+    color:#cbd5e1;
+}
+.dark .rate-badge-top{
+    background:rgba(15,23,42,.85);
+    border-color:rgba(51,65,85,.7);
+    color:#cbd5e1;
+}
+.dark .btn-back{
+    background:rgba(15,23,42,.85);
+    border-color:rgba(51,65,85,.7);
+    color:#cbd5e1;
+}
+.dark .btn-back:hover{
+    background:#1e293b;
+    color:#fff;
+    border-color:rgba(125,211,252,.5);
+}
+.dark .stat-card{
+    background:rgba(15,23,42,.85);
+    border-color:rgba(51,65,85,.6);
+}
+.dark .stat-card:hover{
+    background:#1e293b;
+    border-color:rgba(2,132,199,.35);
+}
+.dark .stat-card h3{
+    color:#f1f5f9;
+}
+.dark .stat-card span{
+    color:#94a3b8;
+}
+.dark .edit-btn{
+    background:rgba(15,23,42,.85);
+    border-color:rgba(51,65,85,.7);
+    color:#cbd5e1;
+}
+.dark .edit-btn:hover{
+    background:#1e293b;
+    color:#fff;
+}
+.dark .alert-light{
+    background-color:rgba(30,41,59,.7)!important;
+    border-color:rgba(51,65,85,.7)!important;
+    color:#cbd5e1!important;
+}
+.dark .stat-value{
+    color:#f1f5f9;
+}
+.dark .stat-label{
+    color:#94a3b8;
+}
+.dark .section-title{
+    color:#f8fafc;
+}
+.dark .table td,
+.dark .table th{
+    color:#e2e8f0;
+    border-color:rgba(51,65,85,.6)!important;
+}
+.dark .table-striped tbody tr:nth-of-type(odd){
+    background-color:rgba(30,41,59,.4);
+}
+.dark .progress{
+    background-color:#1e293b;
+}
+.dark .alert-danger{
+    background-color:rgba(127,29,29,.55)!important;
+    border-color:rgba(127,29,29,.8)!important;
+    color:#fecaca!important;
+}
+.dark .alert-success{
+    background-color:rgba(6,78,59,.55)!important;
+    border-color:rgba(6,78,59,.8)!important;
+    color:#a7f3d0!important;
+}
+.dark .alert-warning{
+    background-color:rgba(113,63,18,.55)!important;
+    border-color:rgba(113,63,18,.8)!important;
+    color:#fde68a!important;
+}
+.dark .bg-light{
+    background-color:#1e293b!important;
+}
+.dark .text-dark{
+    color:#f1f5f9!important;
+}
+.dark .text-muted{
+    color:#94a3b8!important;
+}
+.dark .text-secondary{
+    color:#94a3b8!important;
+}
+.dark .text-success{
+    color:#6ee7b7!important;
+}
+.dark .text-warning{
+    color:#fcd34d!important;
+}
+.dark hr{
+    border-color:rgba(51,65,85,.6)!important;
+}
+.dark .form-control,
+.dark .form-select,
+.dark .form-textarea{
+    background-color:#0f172a!important;
+    color:#e2e8f0!important;
+    border-color:rgba(51,65,85,.7)!important;
+}
+.dark .form-control::placeholder{
+    color:#64748b;
+}
+
 </style>
 </head>
 
-<body>
+<body class="bg-[#f6f9ff] dark:bg-slate-950 text-slate-800 dark:text-white antialiased flex transition-colors duration-300">
+
+{{-- SIDEBAR COMPANY (sama dengan halaman Company lain) --}}
+
+{{-- AREA KANAN --}}
+<div class="flex-1 flex flex-col min-w-0">
+
+    {{-- TOP NAVBAR COMPANY (sama dengan halaman Company lain) --}}
+    <div class="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-b border-blue-100/80 dark:border-slate-800 shadow-xs">
+        @include('navbar.nav')
+    </div>
+
+    <main class="flex-1 px-4 sm:px-6 lg:px-8 py-8">
+        <div class="max-w-7xl mx-auto">
 
 @php
     // Inisialisasi variabel internal tanpa menggunakan external helper function
@@ -438,7 +621,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
     <!-- Flash Message -->
     @if(session('error'))
-        <div class="alert alert-danger border-0 shadow-sm rounded-4 mb-4" role="alert" data-aos="fade-down" data-aos-duration="500">
+        <div class="alert alert-danger border-0 shadow-sm rounded-4 mb-4 dark:bg-rose-950/40 dark:text-rose-100 dark:border-rose-900" role="alert" data-aos="fade-down" data-aos-duration="500">
             <div class="d-flex align-items-start gap-2">
                 <i class="bi bi-exclamation-triangle-fill fs-5 mt-1"></i>
                 <div>
@@ -460,7 +643,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
     @endif
 
     @if(session('success'))
-        <div class="alert alert-success border-0 shadow-sm rounded-4 mb-4" role="alert" data-aos="fade-down" data-aos-duration="500">
+        <div class="alert alert-success border-0 shadow-sm rounded-4 mb-4 dark:bg-emerald-950/40 dark:text-emerald-100 dark:border-emerald-900" role="alert" data-aos="fade-down" data-aos-duration="500">
             <div class="d-flex align-items-center gap-2">
                 <i class="bi bi-check-circle-fill fs-5"></i>
                 <span>{{ session('success') }}</span>
@@ -470,20 +653,20 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
     <!-- Tombol Kembali ke Dashboard -->
     <div class="mb-4" data-aos="fade-down" data-aos-duration="600">
-        <a href="{{ route('company.dashboard') }}" class="btn btn-back">
+        <a href="{{ route('company.dashboard') }}" class="btn btn-back dark:bg-slate-800 dark:text-slate-200 dark:border-slate-600">
             <i class="bi bi-arrow-left"></i> Kembali ke Dashboard
         </a>
     </div>
 
     <!-- Header Title -->
     <div class="mb-4" data-aos="fade-up" data-aos-duration="800">
-        <h1 class="page-title">Profil Perusahaan</h1>
-        <p class="page-subtitle">Kelola informasi perusahaan Anda agar freelancer semakin percaya dan tertarik bergabung.</p>
+        <h1 class="page-title dark:text-white">Profil Perusahaan</h1>
+        <p class="page-subtitle dark:text-slate-400">Kelola informasi perusahaan Anda agar freelancer semakin percaya dan tertarik bergabung.</p>
     </div>
 
     <!-- MAIN PROFILE CARD -->
-    <div class="profile-card" data-aos="fade-up" data-aos-duration="1000">
-        <div class="profile-header">
+    <div class="profile-card dark:bg-slate-900/80 dark:border-slate-800" data-aos="fade-up" data-aos-duration="1000">
+        <div class="profile-header dark:bg-slate-800/60">
             <div class="row align-items-center">
                 <!-- LOGO PERUSAHAAN -->
                 <div class="col-lg-2 text-center mb-4 mb-lg-0">
@@ -643,7 +826,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                         <i class="bi bi-link-45deg me-1"></i> {{ $profileData->website }}
                     </div>
                 @else
-                    <div class="alert alert-warning border-0 shadow-sm mb-4">
+                    <div class="alert alert-warning border-0 shadow-sm mb-4 dark:bg-amber-950/40 dark:text-amber-100 dark:border-amber-900">
                         <i class="bi bi-exclamation-circle me-2"></i> Website perusahaan belum ditambahkan.
                     </div>
                 @endif
@@ -652,18 +835,18 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
                 <div class="row g-3">
                     <div class="col-6">
-                        <span class="d-block text-muted small mb-1 fw-semibold">Bidang Usaha</span>
+                        <span class="d-block text-muted small mb-1 fw-semibold dark:text-slate-400">Bidang Usaha</span>
                         @if(isset($profileData->industry) && $profileData->industry)
                             <span class="badge bg-primary px-3 py-2 rounded-pill fw-semibold" style="background: var(--primary-gradient) !important;">
                                 {{ $profileData->industry }}
                             </span>
                         @else
-                            <span class="text-muted fst-italic small">Belum diisi</span>
+                            <span class="text-muted fst-italic small dark:text-slate-400">Belum diisi</span>
                         @endif
                     </div>
                     <div class="col-6">
-                        <span class="d-block text-muted small mb-1 fw-semibold">Tanggal Bergabung</span>
-                        <strong class="text-dark small"><i class="bi bi-calendar-event me-1 text-primary"></i> {{ Auth::user()->created_at->format('d M Y') }}</strong>
+                        <span class="d-block text-muted small mb-1 fw-semibold dark:text-slate-400">Tanggal Bergabung</span>
+                        <strong class="text-dark small dark:text-white"><i class="bi bi-calendar-event me-1 text-primary"></i> {{ Auth::user()->created_at->format('d M Y') }}</strong>
                     </div>
                 </div>
             </div>
@@ -673,9 +856,9 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
     <!-- PROGRESS KELENGKAPAN PROFIL -->
     <div class="row mt-4" data-aos="fade-up" data-aos-duration="1000">
         <div class="col-lg-12">
-            <div class="content-card">
+            <div class="content-card dark:bg-slate-900/80 dark:border-slate-800">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="section-title mb-0">
+                    <h4 class="section-title mb-0 dark:text-white">
                         <i class="bi bi-bar-chart-line"></i> Progress Kelengkapan Profil
                     </h4>
                     <h3 class="fw-extrabold mb-0" style="color: #0284c7 !important;">{{ $completionPercentage }}%</h3>
@@ -686,11 +869,11 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                 </div>
 
                 @if($isComplete)
-                    <div class="alert alert-success border-0 shadow-sm rounded-4 mb-0">
+                    <div class="alert alert-success border-0 shadow-sm rounded-4 mb-0 dark:bg-emerald-950/40 dark:text-emerald-100 dark:border-emerald-900">
                         <i class="bi bi-check-circle-fill me-2"></i> Profil Anda sudah lengkap. Anda dapat menggunakan semua fitur aplikasi.
                     </div>
                 @else
-                    <div class="alert alert-warning border-0 shadow-sm rounded-4 mb-3">
+                    <div class="alert alert-warning border-0 shadow-sm rounded-4 mb-3 dark:bg-amber-950/40 dark:text-amber-100 dark:border-amber-900">
                         <i class="bi bi-exclamation-circle-fill me-2"></i> Lengkapi minimal 80% profil untuk membuat proyek, memilih freelancer, dan fitur lainnya.
                     </div>
                 @endif
@@ -719,7 +902,10 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
         </div>
     </div>
 
-</div>
+            </div>{{-- /.container --}}
+        </main>
+    </div>{{-- /.area kanan --}}
+</div>{{-- /.layout --}}
 
 <!-- Bootstrap JS Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

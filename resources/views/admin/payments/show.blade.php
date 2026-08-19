@@ -13,6 +13,7 @@
             <span class="text-slate-600 font-medium">{{ $payment->invoice_number }}</span>
         </div>
 
+        {{-- Alert Notifikasi --}}
         @if(session('success'))
             <div class="flex items-center gap-3 px-4 py-3 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl text-sm font-medium">
                 <i class="fa-solid fa-check-circle"></i> {{ session('success') }}
@@ -146,8 +147,8 @@
             </div>
         @endif
 
-        {{-- Actions --}}
-        @if($payment->status === 'waiting_verification')
+        {{-- Actions (Mencakup status pending, waiting_verification, & menunggu_verifikasi) --}}
+        @if(in_array(strtolower($payment->status), ['pending', 'waiting_verification', 'menunggu_verifikasi']))
             <div class="bg-white border border-blue-100 rounded-2xl shadow-sm overflow-hidden">
                 <div class="px-6 py-5 border-b border-blue-50">
                     <h2 class="font-bold text-slate-800">Aksi Verifikasi</h2>
@@ -174,8 +175,7 @@
 
                     <div class="mt-4 flex items-center gap-2 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-700">
                         <i class="fa-solid fa-info-circle"></i>
-                        Verifikasi akan menahan dana (escrow) dan mengubah status workspace menjadi <strong>Sedang Dikerjakan</strong>.
-                        Menolak akan mengembalikan status workspace menjadi <strong>Menunggu Pembayaran</strong>.
+                        <span>Verifikasi akan menahan dana (escrow) dan mengubah status workspace menjadi <strong>Sedang Dikerjakan</strong>. Menolak akan mengembalikan status workspace menjadi <strong>Menunggu Pembayaran</strong>.</span>
                     </div>
                 </div>
             </div>
@@ -190,7 +190,7 @@
                             <i class="fa-solid fa-xmark text-slate-500"></i>
                         </button>
                     </div>
-                    <form method="POST" action="{{ route('admin.payments.reject', $payment) }}" class="p-6 space-y-4">
+                    <form method="POST" action="{{ route('admin.payments.reject', $payment->id) }}" class="p-6 space-y-4">
                         @csrf
                         <div class="flex items-center gap-3 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
                             <i class="fa-solid fa-info-circle"></i>
@@ -212,7 +212,7 @@
         @endif
 
         {{-- Info jika sudah diverifikasi --}}
-        @if($payment->status === 'paid' && $payment->verifier)
+        @if(in_array(strtolower($payment->status), ['paid', 'dibayar', 'selesai']) && $payment->verifier)
             <div class="bg-white border border-blue-100 rounded-2xl shadow-sm overflow-hidden">
                 <div class="px-6 py-5 border-b border-blue-50">
                     <h2 class="font-bold text-slate-800">Informasi Verifikasi</h2>
@@ -269,7 +269,8 @@
             </div>
         @endif
 
-        @if($payment->status === 'rejected' && $payment->verifier)
+        {{-- Info jika ditolak --}}
+        @if(in_array(strtolower($payment->status), ['rejected', 'ditolak']) && $payment->verifier)
             <div class="bg-white border border-blue-100 rounded-2xl shadow-sm overflow-hidden">
                 <div class="px-6 py-5 border-b border-blue-50">
                     <h2 class="font-bold text-slate-800">Informasi Penolakan</h2>

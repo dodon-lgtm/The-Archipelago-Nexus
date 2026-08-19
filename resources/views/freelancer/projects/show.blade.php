@@ -79,8 +79,8 @@
                 <!-- Navigation Back -->
                 <div class="mb-6">
                     <a href="{{ route('freelancer.dashboard') }}"
-                       class="inline-flex items-center gap-2 text-xs font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-400 bg-blue-50 dark:bg-slate-800 hover:bg-blue-100/80 dark:hover:bg-slate-800/80 px-3.5 py-2 rounded-xl transition border border-blue-100 dark:border-slate-800">
-                        <i class="fa-solid fa-arrow-left text-[10px]"></i> Kembali ke Dashboard
+                       class="inline-flex items-center gap-2 text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100/80 px-3.5 py-2 rounded-xl transition border border-blue-100">
+                        <i class="fa-solid fa-arrow-left text-[10px]"></i> Kembali 
                     </a>
                 </div>
 
@@ -303,7 +303,7 @@
                 @endif
 
                 <div class="mt-16">
-                    @include('navbar.footer')
+              
                 </div>
 
             </div>

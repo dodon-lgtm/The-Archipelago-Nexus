@@ -68,7 +68,7 @@
     <div class="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
 
         <!-- Top Header Navigation -->
-        <div class="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-blue-100/80 dark:border-slate-800 shadow-xs">
+    <div class="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 border-b border-blue-100/80 dark:border-slate-800 shadow-xs">
             @include('navbar.nav')
         </div>
 

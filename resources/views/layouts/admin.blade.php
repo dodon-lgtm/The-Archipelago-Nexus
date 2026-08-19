@@ -8,7 +8,23 @@
      <title>@yield('title', 'Admin Panel') - ApexForge Labs</title>
 
      {{-- Tailwind CSS --}}
+     <script>
+         // Dark mode (class-based) — applies to elements with `dark:` variants.
+         // Existing light-only admin pages tanpa `dark:` tetap tampil terang (tidak berubah).
+         (function () {
+             var dark = localStorage.getItem('theme') === 'dark'
+                 || (!localStorage.getItem('theme')
+                     && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+             if (dark) {
+                 document.documentElement.classList.add('dark');
+             }
+         })();
+     </script>
      <script src="https://cdn.tailwindcss.com"></script>
+     <script>
+         tailwind.config = tailwind.config || {};
+         tailwind.config.darkMode = 'class';
+     </script>
 
      {{-- FontAwesome --}}
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">

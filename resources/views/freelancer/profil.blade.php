@@ -6,7 +6,13 @@
 <title>Profil Freelancer - Modern Dashboard</title>
 
 <script>
-    if (localStorage.getItem('theme') === 'dark') {
+    @auth
+        const profileThemeUserId = "{{ Auth::id() }}";
+    @else
+        const profileThemeUserId = 'guest';
+    @endauth
+    const profileThemeKey = 'theme_user_' + profileThemeUserId;
+    if (localStorage.getItem(profileThemeKey) === 'dark') {
         document.documentElement.classList.add('dark');
     }
 </script>
@@ -415,10 +421,89 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
     *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
 }
 
+/* ================= DARK MODE PROFIL FREELANCER ================= */
+/* Mengikuti sistem dark mode aplikasi: class .dark pada <html> (key theme_user_{id}). */
+.dark{
+    --af-page:#020617;
+    --af-surface:#0f172a;
+    --af-ink:#f1f5f9;
+    --af-muted:#94a3b8;
+    --af-border:#1e293b;
+    --bg-color:#020617;
+    --card-bg:rgba(15,23,42,.85);
+    --text-main:#f1f5f9;
+    --text-muted:#94a3b8;
+    --border-color:rgba(51,65,85,.6);
+}
+.dark body{
+    background-color:#020617;
+}
+.dark .profile-header{
+    background:linear-gradient(135deg,rgba(30,41,59,.85) 0%,rgba(15,23,42,.55) 100%);
+}
+.dark .btn-back{
+    background:rgba(15,23,42,.85);
+    border-color:rgba(51,65,85,.7);
+    color:#cbd5e1;
+}
+.dark .btn-back:hover{
+    background:#1e293b;
+    color:#fff;
+    border-color:rgba(125,211,252,.5);
+}
+.dark .stat-box{
+    background:rgba(15,23,42,.5);
+    border-color:rgba(51,65,85,.6);
+}
+.dark .stat-box:hover{
+    background:#1e293b;
+}
+.dark .stat-value{
+    color:#f1f5f9;
+}
+.dark .skill-badge{
+    background:rgba(14,165,233,.12);
+    color:#38bdf8;
+    border-color:rgba(14,165,233,.3);
+}
+.dark .review-item{
+    background:rgba(15,23,42,.8);
+    border-color:rgba(51,65,85,.6);
+}
+.dark .review-item:hover{
+    background:#1e293b;
+    border-color:rgba(2,132,199,.3);
+}
+.dark .table td,
+.dark .table th{
+    color:#e2e8f0;
+    border-color:rgba(51,65,85,.6)!important;
+}
+.dark .progress{
+    background-color:#1e293b;
+}
+.dark hr{
+    border-color:rgba(51,65,85,.6)!important;
+}
+
 </style>
 </head>
 
-<body class="bg-[#f6f9ff] dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-300">
+<body class="bg-[#f6f9ff] dark:bg-slate-950 text-slate-800 dark:text-white antialiased flex transition-colors duration-300">
+
+{{-- SIDEBAR FREELANCER (sama dengan halaman Freelancer lain) --}}
+
+
+{{-- AREA KANAN --}}
+<div class="flex-1 flex flex-col min-w-0">
+
+    {{-- TOP NAVBAR FREELANCER (sama dengan halaman Freelancer lain) --}}
+    <div class="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-b border-blue-100/80 dark:border-slate-800 shadow-xs">
+        @include('navbar.nav')
+    </div>
+
+    <main class="flex-1 px-4 sm:px-6 lg:px-8 py-8">
+        <div class="max-w-7xl mx-auto">
 
 @php
 // Single source of truth: gunakan helper yang memanggil ProfileCompletionService
@@ -766,7 +851,10 @@ $missingFields = get_missing_profile_fields();
     </div>
     @endif
 
-</div>
+            </div>{{-- /.container --}}
+        </main>
+    </div>{{-- /.area kanan --}}
+</div>{{-- /.layout --}}
 
 <!-- Bootstrap JS Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

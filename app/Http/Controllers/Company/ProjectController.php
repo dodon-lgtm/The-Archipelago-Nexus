@@ -414,7 +414,7 @@ class ProjectController extends Controller
                 ->where('status', 'Menunggu')
                 ->update(['status' => 'Ditolak']);
 
-            // Hitung biaya pembayaran berdasarkan harga penawaran
+// Hitung biaya pembayaran berdasarkan harga penawaran
             $amount = (float) $penawaran->harga_penawaran;
             $platformFee = round($amount * 5 / 100, 2);
             $freelancerReceive = $amount - $platformFee;
@@ -435,11 +435,13 @@ class ProjectController extends Controller
             $invoiceNumber = 'INV-' . $date . '-' . $newNumber;
 
             // Buat Workspace untuk project dengan status Menunggu Pembayaran
+            // `stages` diinisialisasi sejak awal agar workspace memiliki daftar tahap yang valid
             $workspace = Workspace::create([
                 'project_id' => $project->id,
                 'company_id' => Auth::id(),
                 'freelancer_id' => $penawaran->freelancer_id,
                 'status' => 'Menunggu Pembayaran',
+                'stages' => ['Analisis Kebutuhan', 'Desain', 'Backend', 'Frontend', 'Testing'],
             ]);
 
             // Buat record Payment awal dengan status pending
@@ -454,14 +456,17 @@ class ProjectController extends Controller
                 'status' => 'pending',
             ]);
 
-            // Buat Progress History pertama
+            // Buat Progress History pertama (tanda "freelancer dipilih").
+            // stage_order = 0 => pekerjaan BELUM dimulai => progress 0%.
             ProgressHistory::create([
                 'workspace_id' => $workspace->id,
                 'stage' => 'Dipilih',
-                'progress' => 5,
+                'stage_order' => 0,
+                'progress' => 0,
                 'description' => 'Freelancer dipilih oleh perusahaan. Menunggu pembayaran awal.',
                 'updated_by' => Auth::id(),
             ]);
+        
 
             // Buat System Message pertama
             Message::create([

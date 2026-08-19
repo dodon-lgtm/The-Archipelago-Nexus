@@ -457,7 +457,7 @@
                                         @if ($activeStage)
                                             <p class="text-xs font-bold text-blue-500 dark:text-blue-400 mt-2">{{ $activeStage }}</p>
                                         @endif
-                                        @if ($totalStages > 0)
+                                        @if ($totalStages > 0 && $activeStageOrder > 0)
                                             <p class="text-[9px] font-bold uppercase tracking-widest text-blue-300 dark:text-slate-400 mt-1">Tahap {{ $activeStageOrder }} dari {{ $totalStages }}</p>
                                         @endif
                                     </div>
@@ -867,7 +867,7 @@ $chatStatusMap = [
             </div>
         </main>
 
-        @include('navbar.footer')
+     
     </div>
 
     {{-- MODAL UPDATE PROGRESS --}}

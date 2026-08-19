@@ -47,10 +47,66 @@ class UserController extends Controller
             ->where('status', 'Diterima')
             ->count();
 
+        // ── KEUANGAN ─────────────────────────────────────────────
+        // Data transaksi diambil SEMATA dari tabel `payments` (data sudah ada).
+        // Tidak membuat transaksi baru dan tidak mengubah saldo apa pun.
+        //   * Company    → Pengeluaran (payments di mana user adalah company_id)
+        //   * Freelancer → Pemasukan  (payments di mana user adalah freelancer_id)
+        $companyExpenses = collect();
+        $companyExpensesTotal = 0;
+        $freelancerIncomes = collect();
+        $freelancerIncomesTotal = 0;
+        $freelancerWithdrawals = collect();
+        $freelancerWithdrawalsTotal = 0;
+        $remainingBalance = 0;
+
+        if ($user->role === 'company') {
+            $companyExpenses = \App\Models\Payment::with(['workspace.project', 'freelancer'])
+                ->where('company_id', $user->id)
+                ->latest()
+                ->get();
+
+            $companyExpensesTotal = \App\Models\Payment::where('company_id', $user->id)
+                ->where('status', 'paid')
+                ->sum('amount');
+        } elseif ($user->role === 'freelancer') {
+            $freelancerIncomes = \App\Models\Payment::with(['workspace.project', 'company'])
+                ->where('freelancer_id', $user->id)
+                ->latest()
+                ->get();
+
+            // Hanya pembayaran berstatus 'paid' yang dihitung sebagai pendapatan.
+            // Pembayaran Ditolak/gagal tidak masuk hitungan.
+            $freelancerIncomesTotal = \App\Models\Payment::where('freelancer_id', $user->id)
+                ->where('status', 'paid')
+                ->sum('freelancer_receive');
+
+            // Riwayat penarikan freelancer (semua status, untuk daftar).
+            $freelancerWithdrawals = \App\Models\Withdrawal::where('user_id', $user->id)
+                ->latest()
+                ->get();
+
+            // Hanya penarikan berstatus 'berhasil' yang mengurangi saldo.
+            // Penarikan Ditolak/gagal tidak dihitung sebagai Total Ditarik.
+            $freelancerWithdrawalsTotal = (float) \App\Models\Withdrawal::where('user_id', $user->id)
+                ->where('status', \App\Models\Withdrawal::STATUS_BERHASIL)
+                ->sum('amount');
+
+            // Sisa saldo = Total Pendapatan - Total Ditarik.
+            $remainingBalance = max(0.0, (float) $freelancerIncomesTotal - $freelancerWithdrawalsTotal);
+        }
+
         return view('admin.users.show', compact(
             'user',
             'projectsCount',
-            'acceptedOffers'
+            'acceptedOffers',
+            'companyExpenses',
+            'companyExpensesTotal',
+            'freelancerIncomes',
+            'freelancerIncomesTotal',
+            'freelancerWithdrawals',
+            'freelancerWithdrawalsTotal',
+            'remainingBalance'
         ));
     }
 
