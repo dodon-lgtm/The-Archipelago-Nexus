@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http; // 👈 Menambahkan HTTP Client bawaan Laravel
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -37,11 +38,11 @@ class AuthController extends Controller
 
         // Aturan login company: harus disetujui admin
         if ($user->role === 'company') {
-            $companyRequest = 
+            $companyRequest =
                 \App\Models\CompanyAccountRequest::query()
-                    ->where('company_email', $user->email)
-                    ->where('request_status', 'disetujui')
-                    ->first();
+                ->where('company_email', $user->email)
+                ->where('request_status', 'disetujui')
+                ->first();
 
             if (!$companyRequest) {
                 return back()->withInput()->withErrors([
@@ -54,6 +55,67 @@ class AuthController extends Controller
         $request->session()->regenerate();
 
         return redirect()->intended($this->redirectPathByRole($user));
+    }
+
+    /**
+     * Memproses callback dari Google Login tanpa memerlukan library external (Google_Client)
+     */
+    public function handleGoogleCallback(Request $request): RedirectResponse
+    {
+        $idToken = $request->input('id_token');
+
+        if (!$idToken) {
+            return redirect()->route('login')->withErrors(['email' => 'Token Google tidak ditemukan.']);
+        }
+
+        // 1. Verifikasi token langsung ke endpoint API Google
+        $response = Http::get('https://oauth2.googleapis.com/tokeninfo', [
+            'id_token' => $idToken,
+        ]);
+
+        // 2. Cek apakah respon Google sukses
+        if ($response->successful()) {
+            $payload = $response->json();
+
+            // Memastikan token sesuai dengan Client ID yang terdaftar di .env
+            if (isset($payload['aud']) && $payload['aud'] === config('services.google.client_id')) {
+                $email = Str::lower(trim($payload['email']));
+                $name = $payload['name'];
+
+                // 3. Cari user berdasarkan email, jika belum ada buatkan baru
+                $user = User::firstOrCreate(
+                    ['email' => $email],
+                    [
+                        'name' => $name,
+                        'password' => bcrypt(Str::random(16)), // Password acak aman
+                        // 'role' => 'freelancer', // Opsional: Berikan default role jika diperlukan di database Anda
+                    ]
+                );
+
+                // Cek khusus jika user bereperan sebagai company
+                if ($user->role === 'company') {
+                    $companyRequest = \App\Models\CompanyAccountRequest::query()
+                        ->where('company_email', $user->email)
+                        ->where('request_status', 'disetujui')
+                        ->first();
+
+                    if (!$companyRequest) {
+                        return redirect()->route('login')->withErrors([
+                            'email' => 'Akun perusahaan Anda belum disetujui admin.',
+                        ]);
+                    }
+                }
+
+                // 4. Auto-login dan regenerate session
+                Auth::login($user);
+                $request->session()->regenerate();
+
+                // Redirect sesuai role user
+                return redirect()->intended($this->redirectPathByRole($user))->with('success', 'Berhasil login dengan Google!');
+            }
+        }
+
+        return redirect()->route('login')->withErrors(['email' => 'Verifikasi akun Google gagal atau token tidak valid.']);
     }
 
     public function logout(Request $request): RedirectResponse
@@ -75,4 +137,3 @@ class AuthController extends Controller
         };
     }
 }
-

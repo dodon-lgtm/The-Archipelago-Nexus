@@ -36,9 +36,11 @@ return new class extends Migration
     {
         // 1. Ubah kolom menjadi VARCHAR agar bisa menampung nilai lama & baru
         //    tanpa bentrok dengan aturan ENUM MySQL.
-        DB::statement(
-            "ALTER TABLE projects MODIFY COLUMN status VARCHAR(20) NOT NULL DEFAULT 'open'"
-        );
+                if (DB::getDriverName() === 'mysql') {
+            DB::statement(
+                "ALTER TABLE projects MODIFY COLUMN status VARCHAR(20) NOT NULL DEFAULT 'open'"
+            );
+        }
 
         // 2. Migrasi data lama ke nilai standar baru (source of truth: archive_status).
         DB::table('projects')->where('archive_status', 'archived')->update(['status' => 'archived']);
@@ -47,9 +49,11 @@ return new class extends Migration
         DB::table('projects')->where('status', 'Closed')->update(['status' => 'closed']);
 
         // 3. Persempit kolom menjadi ENUM 3 nilai standar.
-        DB::statement(
-            "ALTER TABLE projects MODIFY COLUMN status ENUM('open','closed','archived') NOT NULL DEFAULT 'open'"
-        );
+                if (DB::getDriverName() === 'mysql') {
+            DB::statement(
+                "ALTER TABLE projects MODIFY COLUMN status ENUM('open','closed','archived') NOT NULL DEFAULT 'open'"
+            );
+        }
 
         // 4. Hapus kolom archive_status (tidak lagi diperlukan).
         Schema::table('projects', function (Blueprint $table) {
@@ -67,9 +71,11 @@ return new class extends Migration
         });
 
         // 2. Longgarkan kolom status menjadi VARCHAR agar nilai lowercase bisa ditimpa.
-        DB::statement(
-            "ALTER TABLE projects MODIFY COLUMN status VARCHAR(20) NOT NULL DEFAULT 'Open'"
-        );
+                if (DB::getDriverName() === 'mysql') {
+            DB::statement(
+                "ALTER TABLE projects MODIFY COLUMN status VARCHAR(20) NOT NULL DEFAULT 'Open'"
+            );
+        }
 
         // 3. Pulihkan data lama.
         DB::table('projects')->where('status', 'archived')->update(['status' => 'Closed', 'archive_status' => 'archived']);
@@ -77,8 +83,10 @@ return new class extends Migration
         DB::table('projects')->where('status', 'open')->update(['status' => 'Open', 'archive_status' => 'active']);
 
         // 4. Kembalikan ENUM lama.
-        DB::statement(
-            "ALTER TABLE projects MODIFY COLUMN status ENUM('Open','Closed') NOT NULL DEFAULT 'Open'"
-        );
+                if (DB::getDriverName() === 'mysql') {
+            DB::statement(
+                "ALTER TABLE projects MODIFY COLUMN status ENUM('Open','Closed') NOT NULL DEFAULT 'Open'"
+            );
+        }
     }
 };

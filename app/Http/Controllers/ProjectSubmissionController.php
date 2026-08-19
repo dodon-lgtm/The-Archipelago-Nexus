@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Workspace;
 use App\Models\Message;
-use App\Models\Payment;
 use App\Models\ProjectSubmission;
 use App\Models\SubmissionFile;
-use App\Models\Penawaran;
+use App\Models\ProgressHistory;
+use App\Services\EscrowService;
 use App\Services\NotificationService;
 use App\Services\ProfileCompletionService;
 use Illuminate\Http\RedirectResponse;
@@ -197,28 +197,9 @@ class ProjectSubmissionController extends Controller
                 ->with('error', 'Status submission sudah berubah.');
         }
 
-        // Pastikan workspace belum memiliki payment
-        if ($workspace->payment()->exists()) {
-            return redirect()
-                ->route('company.workspaces.show', $workspace)
-                ->with('error', 'Pembayaran untuk workspace ini sudah dibuat.');
-        }
-
         $request->validate([
             'company_note' => ['nullable', 'string', 'max:2000'],
         ]);
-
-        // Cari penawaran yang diterima untuk mendapatkan harga
-        $acceptedOffer = Penawaran::where('project_id', $workspace->project_id)
-            ->where('freelancer_id', $workspace->freelancer_id)
-            ->where('status', 'Diterima')
-            ->first();
-
-        if (!$acceptedOffer) {
-            return redirect()
-                ->route('company.workspaces.show', $workspace)
-                ->with('error', 'Data penawaran tidak ditemukan.');
-        }
 
         DB::beginTransaction();
 
@@ -230,43 +211,40 @@ class ProjectSubmissionController extends Controller
                 'reviewed_at' => now(),
             ]);
 
-            // Generate invoice number
-            $date = now()->format('Ymd');
-            $lastInvoice = Payment::whereDate('created_at', now()->toDateString())
-                ->orderBy('id', 'desc')
-                ->first();
+            // Update workspace status menjadi Selesai
+            $workspace->update(['status' => 'Selesai']);
 
-            if ($lastInvoice) {
-                $lastNumber = (int) substr($lastInvoice->invoice_number, -4);
-                $newNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
-            } else {
-                $newNumber = '0001';
+            // RELEASE dana tertahan (escrow) — idempotent, hanya sekali.
+            // Dana held/disputed menjadi released + ledger escrow_released + fee_earned.
+            $payment = $workspace->payment;
+            if ($payment && $payment->status === 'paid' && $payment->isFundsHeld()) {
+                app(EscrowService::class)->release(
+                    payment: $payment,
+                    report: null,
+                    description: 'Dana proyek dirilis ke freelancer karena proyek selesai/disetujui.',
+                    createdBy: Auth::id(),
+                );
+
+                // Refresh agar funds_status/released_amount terbaru dipakai di pesan.
+                $payment->refresh();
             }
 
-            $invoiceNumber = 'INV-' . $date . '-' . $newNumber;
-
-            // Hitung biaya
-            $amount = (float) $acceptedOffer->harga_penawaran;
-            $platformFee = round($amount * 5 / 100, 2);
-            $freelancerReceive = $amount - $platformFee;
-
-            // Buat Payment
-            Payment::create([
+            // Buat Progress History penyelesaian (100%)
+            ProgressHistory::create([
                 'workspace_id' => $workspace->id,
-                'company_id' => $workspace->company_id,
-                'freelancer_id' => $workspace->freelancer_id,
-                'invoice_number' => $invoiceNumber,
-                'amount' => $amount,
-                'platform_fee' => $platformFee,
-                'freelancer_receive' => $freelancerReceive,
-                'status' => 'pending',
+                'stage' => 'Selesai',
+                'progress' => 100,
+                'description' => 'Hasil pekerjaan telah disetujui oleh perusahaan. Proyek dinyatakan selesai.',
+                'updated_by' => Auth::id(),
             ]);
 
-            // Update workspace status menjadi Menunggu Pembayaran
-            $workspace->update(['status' => 'Menunggu Pembayaran']);
-
             // System message
-            $messageText = 'Perusahaan telah menerima hasil pekerjaan.';
+            $releaseText = '';
+            if ($payment && $payment->funds_status === \App\Models\Payment::FUNDS_RELEASED) {
+                $releaseText = ' Dana sebesar Rp ' . number_format((float) $payment->released_amount, 0, ',', '.') . ' telah dirilis ke pendapatan freelancer.';
+            }
+
+            $messageText = 'Perusahaan telah menerima hasil pekerjaan. Proyek dinyatakan selesai.' . $releaseText;
             if ($request->filled('company_note')) {
                 $messageText .= "\n\nCatatan:\n" . $request->company_note;
             }
@@ -278,20 +256,12 @@ class ProjectSubmissionController extends Controller
                 'type' => 'system',
             ]);
 
-            // System message untuk pembayaran
-            Message::create([
-                'workspace_id' => $workspace->id,
-                'sender_id' => Auth::id(),
-                'message' => 'Invoice telah diterbitkan. Menunggu pembayaran dari perusahaan.',
-                'type' => 'system',
-            ]);
-
-            // Notifikasi ke freelancer: hasil pekerjaan diterima
+            // Notifikasi ke freelancer: hasil pekerjaan diterima & proyek selesai + dana dirilis
             NotificationService::sendTo(
                 user: $workspace->freelancer_id,
                 type: 'submission.accepted',
-                title: 'Hasil Pekerjaan Diterima',
-                message: 'Hasil pekerjaan Anda untuk proyek "' . ($workspace->project->project_name ?? '') . '" telah diterima oleh perusahaan. Invoice telah diterbitkan.',
+                title: 'Hasil Pekerjaan Diterima - Proyek Selesai',
+                message: 'Selamat! Hasil pekerjaan Anda untuk proyek "' . ($workspace->project->project_name ?? '') . '" telah disetujui oleh perusahaan. Proyek telah selesai.' . $releaseText,
                 redirect: route('freelancer.workspaces.show', $workspace),
                 senderId: Auth::id(),
                 workspaceId: $workspace->id,
@@ -302,7 +272,7 @@ class ProjectSubmissionController extends Controller
 
             return redirect()
                 ->route('company.workspaces.show', $workspace)
-                ->with('success', 'Hasil pekerjaan telah diterima. Invoice telah diterbitkan, silakan lakukan pembayaran.');
+                ->with('success', 'Hasil pekerjaan telah diterima. Proyek berhasil diselesaikan!' . $releaseText);
 
         } catch (\Exception $e) {
             DB::rollBack();

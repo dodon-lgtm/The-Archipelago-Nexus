@@ -23,6 +23,8 @@ use App\Http\Controllers\Admin\PenawaranController as AdminPenawaranController;
 use App\Http\Controllers\Admin\HasilPekerjaanController as AdminHasilPekerjaanController;
 use App\Http\Controllers\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
+use App\Http\Controllers\Admin\ResolutionController as AdminResolutionController;
+
 
 // ─── COMPANY CONTROLLERS ─────────────────────────
 use App\Http\Controllers\Company\ProjectController as CompanyProjectController;
@@ -48,6 +50,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middl
 Route::get('/register', [RegisterController::class, 'showRegister'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
 
+Route::post('/login/google', [AuthController::class, 'handleGoogleCallback'])->name('login.google');
 
 // ──────────────────────────────────────────────
 // LANDING PAGE
@@ -61,11 +64,9 @@ Route::get('/', function () {
 
     $categories = \App\Models\Category::orderBy('name')->get();
 
-$totalProjects          = \App\Models\Project::count();
+    $totalProjects          = \App\Models\Project::count();
     $totalFreelancers       = \App\Models\User::where('role', 'freelancer')->count();
     $totalCompanies         = \App\Models\User::where('role', 'company')->count();
-    // Proyek Selesai dihitung dari Workspace.status = 'Selesai', BUKAN dari Project.status = 'Closed'.
-    // Project yang hanya 'ditutup' (Closed) TIDAK dihitung sebagai proyek selesai.
     $totalProjectsCompleted = \App\Models\Workspace::where('status', 'Selesai')->count();
 
     return view('landingpage', compact(
@@ -119,14 +120,18 @@ Route::middleware(['auth', 'ensureFreelancer'])
         Route::get('/workspaces', [WorkspaceController::class, 'freelancerIndex'])
             ->name('workspaces.index');
         Route::get('/workspaces/{workspace}', [WorkspaceController::class, 'show'])
+            ->middleware('ensureWorkspacePaid')
             ->name('workspaces.show');
         Route::post('/workspaces/{workspace}/message', [WorkspaceController::class, 'sendMessage'])
+            ->middleware('ensureWorkspacePaid')
             ->name('workspaces.message');
         Route::post('/workspaces/{workspace}/progress', [WorkspaceController::class, 'updateProgress'])
+            ->middleware('ensureWorkspacePaid')
             ->name('workspaces.progress');
 
         // Submissions
         Route::post('/workspaces/{workspace}/submissions', [ProjectSubmissionController::class, 'store'])
+            ->middleware('ensureWorkspacePaid')
             ->name('workspaces.submissions.store');
 
         // Profile
@@ -188,7 +193,7 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])
             ));
         })->name('dashboard');
 
-// Projects CRUD
+        // Projects CRUD
         Route::get('/projects', [CompanyProjectController::class, 'index'])->name('projects.index');
         Route::get('/projects/archive', [CompanyProjectController::class, 'archiveIndex'])->name('projects.archive');
         Route::get('/projects/create', [CompanyProjectController::class, 'create'])->name('projects.create');
@@ -212,18 +217,21 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])
         Route::get('/workspaces', [WorkspaceController::class, 'companyIndex'])
             ->name('workspaces.index');
         Route::get('/workspaces/{workspace}', [WorkspaceController::class, 'show'])
+            ->middleware('ensureWorkspacePaid')
             ->name('workspaces.show');
         Route::post('/workspaces/{workspace}/message', [WorkspaceController::class, 'sendMessage'])
+            ->middleware('ensureWorkspacePaid')
             ->name('workspaces.message');
-            
-            
+
         // Profile Freelancer (Read-only untuk Company)
         Route::get('/freelancer-profile/{id}', [FreelancerProfilController::class, 'profile'])->name('freelancer.profile');
 
         // Submissions
         Route::post('/workspaces/{workspace}/submissions/{submission}/accept', [ProjectSubmissionController::class, 'accept'])
+            ->middleware('ensureWorkspacePaid')
             ->name('workspaces.submissions.accept');
         Route::post('/workspaces/{workspace}/submissions/{submission}/revision', [ProjectSubmissionController::class, 'requestRevision'])
+            ->middleware('ensureWorkspacePaid')
             ->name('workspaces.submissions.revision');
 
         // Payment
@@ -233,6 +241,10 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])
             ->name('payments.upload-form');
         Route::post('/workspaces/{workspace}/payment/upload', [CompanyPaymentController::class, 'uploadProof'])
             ->name('payments.upload');
+        Route::post('/workspaces/{workspace}/payment/midtrans', [CompanyPaymentController::class, 'createMidtransTransaction'])
+            ->name('payments.midtrans');
+        Route::post('/workspaces/{workspace}/payment/confirm', [CompanyPaymentController::class, 'confirmPayment'])
+            ->name('payments.confirm');
 
         // Profile
         Route::get('/profile', [CompanyProfilController::class, 'profile'])
@@ -287,10 +299,21 @@ Route::middleware(['auth', 'ensureAdmin'])
         Route::get('/hasil-pekerjaan', [AdminHasilPekerjaanController::class, 'index'])->name('hasil-pekerjaan.index');
         Route::get('/hasil-pekerjaan/{workspace}', [AdminHasilPekerjaanController::class, 'show'])->name('hasil-pekerjaan.show');
 
+        // Admin Workspace Resolution (Diperbaiki)
+        Route::get('/workspaces/{workspace}/resolution', [AdminResolutionController::class, 'show'])->name('workspace.resolution');
+        Route::post('/workspaces/{workspace}/resolution/send-message', [AdminResolutionController::class, 'sendMessage'])->name('workspace.resolution.send-message');
+        Route::post('/workspaces/{workspace}/resolution/request-company-response', [AdminResolutionController::class, 'requestCompanyResponse'])->name('workspace.resolution.request-company-response');
+        Route::post('/workspaces/{workspace}/resolution/request-freelancer-response', [AdminResolutionController::class, 'requestFreelancerResponse'])->name('workspace.resolution.request-freelancer-response');
+        Route::post('/workspaces/{workspace}/resolution/start-review', [AdminResolutionController::class, 'startReview'])->name('workspace.resolution.start-review');
+        Route::post('/workspaces/{workspace}/resolution/decide', [AdminResolutionController::class, 'decide'])->name('workspace.resolution.decide');
+
         // Reports
         Route::get('/reports', [AdminReportController::class, 'index'])->name('reports.index');
         Route::get('/reports/{report}', [AdminReportController::class, 'show'])->name('reports.show');
         Route::post('/reports/{report}/update-status', [AdminReportController::class, 'updateStatus'])->name('reports.update-status');
+        Route::post('/reports/{report}/release-funds', [AdminReportController::class, 'releaseFunds'])->name('reports.release-funds');
+        Route::post('/reports/{report}/refund-funds', [AdminReportController::class, 'refundFunds'])->name('reports.refund-funds');
+        Route::post('/reports/{report}/split-funds', [AdminReportController::class, 'splitFunds'])->name('reports.split-funds');
         Route::post('/reports/{report}/destroy-project', [AdminReportController::class, 'destroyProject'])->name('reports.destroy-project');
         Route::post('/reports/{report}/destroy-penawaran', [AdminReportController::class, 'destroyPenawaran'])->name('reports.destroy-penawaran');
 
@@ -312,7 +335,7 @@ Route::middleware(['auth', 'ensureAdmin'])
     });
 
 // ──────────────────────────────────────────────
-// REPORTS (auth only - for any authenticated user)
+// REPORTS (auth only)
 // ──────────────────────────────────────────────
 Route::middleware('auth')->prefix('reports')->name('reports.')->group(function () {
     Route::get('/create', [ReportController::class, 'create'])->name('create');
@@ -321,7 +344,7 @@ Route::middleware('auth')->prefix('reports')->name('reports.')->group(function (
 });
 
 // ──────────────────────────────────────────────
-// NOTIFICATIONS (auth only - for any authenticated user)
+// NOTIFICATIONS (auth only)
 // ──────────────────────────────────────────────
 Route::middleware('auth')->prefix('notifications')->name('notifications.')->group(function () {
     Route::get('/', [NotificationController::class, 'index'])->name('index');
@@ -329,24 +352,11 @@ Route::middleware('auth')->prefix('notifications')->name('notifications.')->grou
     Route::post('/mark-all-read', [NotificationController::class, 'markAllRead'])->name('mark-all-read');
 });
 
+// ──────────────────────────────────────────────
+// PASSWORD SETTINGS (auth only)
+// ──────────────────────────────────────────────
 Route::middleware('auth')->group(function () {
-
-    // =========================
-    // UBAH PASSWORD
-    // =========================
-
-    Route::post('/settings/password/verify',
-        [PasswordController::class, 'verifyCurrentPassword']
-    )->name('settings.password.verify');
-
-    Route::post('/settings/password/update',
-        [PasswordController::class, 'updatePassword']
-    )->name('settings.password.update');
-
-});
-Route::middleware('auth')->group(function () {
-
-    Route::post('/password/update', [PasswordController::class, 'update'])
-        ->name('password.update');
-
+    Route::post('/settings/password/verify', [PasswordController::class, 'verifyCurrentPassword'])->name('settings.password.verify');
+    Route::post('/settings/password/update', [PasswordController::class, 'updatePassword'])->name('settings.password.update');
+    Route::post('/password/update', [PasswordController::class, 'update'])->name('password.update');
 });

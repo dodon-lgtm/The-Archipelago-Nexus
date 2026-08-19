@@ -1,1446 +1,574 @@
-Struktur : 
-PROMPT.md
-│
-├── 1. Identitas Project
-├── 2. Aturan Mutlak AI
-├── 3. Kondisi Project Saat Ini
-├── 4. Requirement Revisi
-├── 5. Payment Gateway Midtrans
-├── 6. Payment Flow
-├── 7. Workspace Flow
-├── 8. Dispute System
-├── 9. Saldo Freelancer
-├── 10. Withdrawal
-├── 11. Admin Control
-├── 12. Authorization & Security
-├── 13. Database Rules
-├── 14. PayPal Removal
-├── 15. Audit Procedure
-├── 16. Implementation Procedure
-├── 17. Testing Procedure
-├── 18. Git Safety
-└── 19. Final Report Format
+APEXFORGE LABS PROJECT HISTORY, CURRENT STATE, IMPLEMENTED FEATURES,
+TOOLS, AND ROADMAP
+============================================================
 
+Dokumen ini adalah handoff/context file untuk melanjutkan pengembangan
+proyek ApexForge Labs tanpa kehilangan arah dari pekerjaan sebelumnya.
 
-# THE ARCHIPELAGO NEXUS
+============================================================ 1.
+IDENTITAS PROYEK
+============================================================
 
-## MASTER AI DEVELOPMENT INSTRUCTION
+Nama proyek: ApexForge Labs
 
-> **Dokumen ini adalah instruksi utama untuk AI yang membantu mengembangkan project The Archipelago Nexus.**
->
-> AI WAJIB membaca seluruh file `PROMPT.md` sebelum melakukan audit, perubahan kode, refactor, migration, atau implementasi fitur.
+Riwayat nama proyek: 1. FreelanceID 2. The Archipelago Nexus 3.
+ApexForge Labs (nama saat ini)
 
----
+Jenis proyek: Aplikasi freelance marketplace Indonesia berbasis Laravel.
 
-# 1. IDENTITAS PROJECT
+Konsep utama: - Company membuat dan mengelola proyek. - Freelancer dapat
+melihat proyek dan mengirim penawaran. - Company memilih freelancer. -
+Setelah freelancer diterima, dibuat Workspace. - Workspace menjadi pusat
+proses pengerjaan proyek. - Sistem memiliki pembayaran, tahapan
+pengerjaan, submission, review, laporan/dispute, notifikasi, dan
+administrasi. - Sistem memiliki role user/freelancer/company/admin.
 
-Nama project:
+============================================================ 2. TUJUAN
+UTAMA PROYEK
+============================================================
 
-**The Archipelago Nexus**
+ApexForge Labs ditujukan sebagai platform freelance Indonesia yang
+menghubungkan Company dengan Freelancer.
 
-Jenis aplikasi:
+Alur besar: Landing Page ↓ Register / Login ↓ Freelancer / Company ↓
+Project ↓ Penawaran ↓ Negosiasi / Pemilihan Freelancer ↓ Workspace ↓
+Pembayaran ↓ Pengerjaan ↓ Tahapan / Progress ↓ Submission hasil ↓ Review
+Company ↓ Revisi atau Selesai ↓ Pendapatan Freelancer / Pengeluaran
+Company ↓ Audit / Report / Dispute jika terjadi masalah
 
-**Marketplace Freelance Indonesia**
+============================================================ 3.
+TEKNOLOGI DAN TOOLS YANG DIGUNAKAN
+============================================================
 
-Teknologi utama:
+Backend: - PHP - Laravel 12.x - Laravel Eloquent - Laravel migrations -
+Laravel controllers - Laravel middleware - Laravel Form Request -
+Laravel Blade - Laravel routes - Laravel Tinker
 
-* Laravel 12
-* PHP 8.2+
-* MySQL
-* Blade
-* JavaScript
-* Bootstrap/CSS sesuai struktur project yang sudah ada
-* Midtrans sebagai payment gateway lokal Indonesia
-* Git/GitHub
+Database: - MySQL
 
-Project memiliki minimal tiga role utama:
+Local development: - Laragon - PHP CLI - php artisan - php -S
+127.0.0.1:8000 -t public
 
-* `freelancer`
-* `company`
-* `admin`
+Frontend: - Blade - HTML - CSS - JavaScript - Bootstrap pada beberapa
+bagian UI
 
----
+Dependency management: - Composer
 
-# 2. ATURAN MUTLAK
+Version control: - Git - GitHub
 
-## 2.1 Jangan mengarang struktur project
+Payment: - Sistem pembayaran manual - Midtrans direncanakan/dalam proses
+integrasi - PayPal pernah diuji tetapi kemudian ditinggalkan
 
-AI DILARANG mengasumsikan bahwa:
+Debugging: - Browser DevTools / F12 - Network tab - Laravel log -
+terminal - git status - git log - git grep - php artisan
+migrate:status - composer show - Composer autoload - Laravel Tinker
 
-* controller tertentu sudah ada;
-* model tertentu sudah ada;
-* migration tertentu sudah ada;
-* route tertentu sudah ada;
-* field database tertentu sudah ada;
-* service tertentu sudah ada;
-* middleware tertentu sudah ada.
+============================================================ 4. RIWAYAT
+PEMBAYARAN ============================================================
 
-Jika belum ditemukan pada source code:
+Sebelumnya sistem pembayaran menggunakan pembayaran manual.
 
-**Katakan bahwa informasi tersebut tidak ditemukan.**
+Metode manual yang dipertahankan: - Transfer Bank - QRIS - E-Wallet -
+Upload bukti pembayaran - Verifikasi Admin
 
-Jangan membuat asumsi.
+Pernah diimplementasikan PayPal Sandbox.
 
----
+Masalah PayPal: - PayPal membutuhkan konfigurasi credential. - Pernah
+muncul error cURL certificate: cURL error 77 error setting certificate
+file - Setelah konfigurasi certificate diperbaiki, OAuth token berhasil
+diperoleh. - PayPal kemudian berhasil membuka halaman login/payment
+Sandbox. - Namun kebutuhan proyek berubah: PayPal tidak digunakan lagi
+karena diminta menggunakan payment gateway lokal Indonesia yang lebih
+mudah.
 
-## 2.2 Baca source code sebelum mengubahnya
+Keputusan: PAYPAL TIDAK DIGUNAKAN LAGI.
 
-Sebelum mengubah sebuah file:
+Migration PayPal lama TIDAK DIHAPUS karena sudah pernah dijalankan dan
+merupakan histori database.
 
-1. Baca file tersebut.
-2. Pahami fungsi yang sudah ada.
-3. Cari dependency-nya.
-4. Cari route yang memanggilnya.
-5. Cari model/database yang digunakan.
-6. Cari view/frontend yang bergantung kepadanya.
-7. Baru tentukan perubahan.
+Migration:
+database/migrations/2026_08_13_130632_add_paypal_columns_to_payments_table.php
 
-Jangan mengganti seluruh file hanya karena ada satu bug.
+Kolom historis: - paypal_order_id - paypal_capture_id -
+paypal_payer_id - paypal_payer_email
 
----
+Hasil pencarian terakhir: git grep -in “paypal” – app config routes
+resources database
 
-## 2.3 Jangan melakukan perubahan besar tanpa izin
+Hanya ditemukan referensi PayPal pada migration historis tersebut.
+Referensi PayPal di composer/vendor README dianggap bukan bagian
+aplikasi.
 
-Jika user hanya meminta:
+============================================================ 5. PAYMENT
+DATABASE ============================================================
 
-> "audit"
+Migration core:
+database/migrations/2026_08_10_000002_create_payments_table.php
 
-Maka:
+Migration tersebut sudah dijalankan dan TIDAK BOLEH diubah secara
+destruktif.
 
-* JANGAN mengubah kode.
-* JANGAN membuat migration.
-* JANGAN mengubah database.
-* JANGAN menghapus file.
-* JANGAN melakukan refactor.
+Payment memiliki konsep data: - workspace_id - company_id -
+freelancer_id - invoice_number - amount - platform_fee -
+freelancer_receive - payment_method - payment_proof - status -
+verifier/admin-related data
 
-Jika user meminta implementasi, lakukan perubahan secara bertahap.
+Pernah terjadi masalah: Model Payment sempat tertimpa sehingga beberapa
+bagian hilang. Hal tersebut menyebabkan error database: Field
+‘company_id’ doesn’t have a default value
 
----
+Masalah kemudian diketahui berasal dari model Payment yang tertimpa.
 
-# 3. WORKFLOW WAJIB AI
+============================================================ 6. MIDTRANS
+FOUNDATION YANG SUDAH DITERAPKAN
+============================================================
 
-Gunakan tahapan berikut:
+Midtrans dipilih sebagai pengganti PayPal.
 
-```text
-READ
- ↓
-UNDERSTAND
- ↓
-AUDIT
- ↓
-REPORT
- ↓
-WAIT FOR APPROVAL
- ↓
-IMPLEMENT
- ↓
-TEST
- ↓
-REPORT
-```
+Package: midtrans/midtrans-php
 
-Jangan melewati tahap audit jika perubahan berpotensi memengaruhi database, authentication, payment, saldo, atau authorization.
+Versi yang berhasil dipasang: 2.6.2
 
----
+Foundation sudah selesai dan sudah di-push ke Git.
 
-# 4. KONDISI PROJECT
+File/config yang sudah diterapkan: - composer.json - composer.lock -
+config/services.php - .env.example - app/Models/Payment.php -
+app/Services/MidtransService.php -
+database/migrations/2026_08_15_102928_add_midtrans_columns_to_payments_table.php
 
-Project sebelumnya menggunakan PayPal Sandbox.
+Konfigurasi: MIDTRANS_SERVER_KEY MIDTRANS_CLIENT_KEY
+MIDTRANS_IS_PRODUCTION
 
-Payment gateway tersebut sekarang:
+Service: app/Services/MidtransService.php
 
-**SUDAH TIDAK DIGUNAKAN.**
+Method yang dirancang/tersedia: - configure() - createSnapToken() -
+verifyNotification() - getTransactionStatus()
 
-Payment gateway yang digunakan selanjutnya:
+Kolom Midtrans: - midtrans_transaction_id - midtrans_payment_type -
+midtrans_response
 
-**MIDTRANS**
+Payment model: - fillable sudah mendukung field Midtrans -
+midtrans_response sudah dicast sebagai array
 
-Fokus pembayaran:
+Testing foundation: - Composer autoload: PASS - Laravel config: PASS -
+Migration: PASS - Midtrans SDK loading: PASS - Tinker configuration:
+PASS
 
-**Indonesia / IDR**
+Foundation Midtrans: SELESAI / SUDAH DI-PUSH
 
-Jangan menggunakan USD untuk payment flow baru.
-
----
-
-# 5. PAYPAL DEPRECATION
-
-Semua kode aplikasi yang berkaitan dengan PayPal dianggap obsolete.
-
-Cari menggunakan:
-
-```bash
-git grep -in "paypal"
-```
-
-Namun jangan salah mengartikan hasil pencarian.
-
-Jika ditemukan URL PayPal di:
-
-```text
-composer.lock
-```
-
-yang hanya merupakan metadata/donation URL dependency pihak ketiga, jangan menghapus atau mengubahnya.
-
-Yang harus diaudit adalah kode aplikasi.
-
-Contoh yang harus dianggap obsolete:
-
-```text
-PayPalService
-paypal_order_id
-paypal_capture_id
-paypal_payer_id
-paypal_payer_email
-PAYPAL_CLIENT_ID
-PAYPAL_CLIENT_SECRET
-PayPal API
-PayPal webhook
-PayPal Smart Buttons
-route PayPal
-PayPal JavaScript SDK
-```
-
-Sebelum menghapus sesuatu, pastikan file/field tersebut memang hanya digunakan oleh PayPal.
-
----
-
-# 6. MIDTRANS
-
-Payment gateway baru:
-
-**Midtrans**
-
-Tujuan:
-
-* Company membayar invoice.
-* Payment diproses oleh Midtrans.
-* Backend menerima notification dari Midtrans.
-* Backend memverifikasi status transaksi.
-* Payment tidak boleh dianggap berhasil hanya karena frontend menerima callback.
-
----
-
-# 7. PAYMENT SECURITY
-
-JANGAN pernah mempercayai:
-
-* amount dari frontend;
-* invoice dari frontend;
-* workspace_id dari frontend;
-* company_id dari frontend;
-* status pembayaran dari frontend.
-
-Backend harus mengambil data transaksi dari database dan melakukan authorization.
-
-Nominal pembayaran harus berasal dari database.
-
-Contoh:
-
-```text
-Frontend:
-"Bayar Rp 300.000"
-
-TIDAK BOLEH langsung dipercaya.
-
-Backend:
-Payment ID
- ↓
-Database
- ↓
-workspace
- ↓
-company
- ↓
-amount
- ↓
-invoice
- ↓
-Midtrans
-```
-
----
-
-# 8. PAYMENT FLOW
+============================================================ 7. CURRENT
+MIDTRANS TARGET FLOW
+============================================================
 
 Target flow:
 
-```text
-Company menerima Freelancer
-        ↓
-Workspace dibuat
-        ↓
-Menunggu Pembayaran
-        ↓
-Company membuka invoice
-        ↓
-Company membayar melalui Midtrans
-        ↓
-Midtrans memproses pembayaran
-        ↓
-Notification masuk ke backend
-        ↓
-Backend memverifikasi transaksi
-        ↓
-Payment = paid
-        ↓
-Workspace = Dalam Pengerjaan
-```
-
-Pembayaran berhasil TIDAK otomatis berarti proyek selesai.
-
----
-
-# 9. WORKSPACE FLOW
-
-Target workflow:
-
-```text
-Menunggu Pembayaran
-        ↓
-Dalam Pengerjaan
-        ↓
-Menunggu Review Company
-        ↓
-    ┌───┴────┐
-    ↓        ↓
-Terima     Revisi
-    ↓        ↓
- Selesai   Pengerjaan
-             ↓
-       Menunggu Review
-```
+Company menerima freelancer ↓ Workspace dibuat ↓ Workspace menunggu
+pembayaran ↓ Company membuka halaman pembayaran ↓ Company memilih “Bayar
+dengan Midtrans” ↓ Backend mengambil Payment yang sah ↓ Backend
+mengambil amount dari database ↓ Backend membuat transaksi Midtrans ↓
+Backend mendapatkan Snap Token ↓ Frontend membuka Midtrans Snap ↓
+Company melakukan pembayaran ↓ Midtrans memproses pembayaran ↓ Midtrans
+mengirim notification ke backend ↓ Backend memverifikasi notification ↓
+Payment diperbarui ↓ Jika settlement/capture berhasil: Payment = paid ↓
+Workspace masuk tahap pengerjaan
+
+PENTING: Payment berhasil TIDAK sama dengan proyek selesai.
+
+Setelah pembayaran berhasil, Workspace harus masuk ke proses pengerjaan,
+bukan langsung menjadi Selesai.
+
+============================================================ 8. MIDTRANS
+YANG MASIH DIRANCANG / BELUM SELESAI
+============================================================
+
+Phase berikutnya:
+
+PHASE 3: Create Snap Token Backend
+
+Tujuan: - Company dapat meminta Snap Token untuk Payment yang valid. -
+Authorization harus memeriksa Company pemilik Workspace. - Payment harus
+berasal dari database. - Amount harus berasal dari database. -
+Invoice/order ID tidak boleh dipercaya dari frontend. - Backend
+mengembalikan Snap Token. - Payment belum boleh menjadi paid hanya
+karena Snap Token berhasil dibuat.
+
+PHASE 4: Frontend Midtrans Snap - Tombol Bayar dengan Midtrans -
+Midtrans Snap JS - Client Key - Popup/redirect pembayaran - callback
+success/pending/error/close
+
+Callback frontend tidak boleh dianggap sebagai bukti pembayaran final.
 
-Status aktual project harus diaudit terlebih dahulu.
+PHASE 5: Midtrans Notification / Webhook - Endpoint notification -
+Signature verification - Cari Payment berdasarkan order ID - Cocokkan
+nominal - Update status Payment - Idempotency - Logging -
+Server-to-server verification
 
-Jangan menambahkan status baru sebelum memeriksa enum/status yang sudah ada.
+PHASE 6: Integrasi status pembayaran dengan Workspace - Payment success
+→ Workspace masuk pengerjaan - Payment pending → tetap menunggu -
+Payment failed/expired/cancel → tidak boleh lanjut pengerjaan - Payment
+success tidak berarti project selesai
 
----
+PHASE 7: Security dan testing - Authorization - Amount integrity -
+Signature verification - Duplicate webhook - Manipulasi frontend - Order
+ID manipulation - Company mengakses Workspace Company lain
 
-# 10. SUBMISSION
-
-Freelancer harus dapat mengirim:
-
-* hasil pekerjaan;
-* file;
-* source code;
-* catatan;
-* informasi pengerjaan.
-
-Setelah dikirim:
+PHASE 8: Regression test pembayaran manual - Transfer Bank - QRIS -
+E-Wallet - Upload bukti - Admin verification
 
-```text
-Workspace
-↓
-Menunggu Review Company
-```
+============================================================ 9. PAYMENT
+POLICY / WORKSPACE POLICY
+============================================================
 
-Company kemudian dapat:
+Keputusan bisnis yang sudah disepakati:
 
-### TERIMA
+Company membayar terlebih dahulu sebelum pengerjaan dilanjutkan.
 
-```text
-Submission diterima
-↓
-Workspace Selesai
-↓
-Dana dapat diproses sesuai settlement system
-```
+Setelah pembayaran: - Freelancer mengerjakan proyek. - Freelancer
+mengirim hasil/source code sesuai ketentuan. - Company melakukan
+review. - Company dapat menyelesaikan atau meminta revisi.
 
-### REVISI
+Jika Company diam/tidak menyelesaikan proses: - Transaksi tidak boleh
+dibiarkan tanpa mekanisme penyelesaian. - Jika ada masalah, user dapat
+melapor ke Admin. - Admin dapat mengaudit kondisi dan menentukan pihak
+yang memenuhi atau melanggar persyaratan. - Sistem laporan/dispute harus
+dapat menjadi jalur penyelesaian.
+
+Jika Freelancer sudah menyelesaikan pekerjaan dan memberikan source code
+tetapi Company tidak menekan selesai: - Tidak boleh otomatis menganggap
+Freelancer salah. - Kondisi harus dapat diaudit. - Admin dapat memeriksa
+bukti, progress, submission, komunikasi, dan status pembayaran. -
+Keputusan pencairan/penyelesaian harus mengikuti aturan sistem yang
+nantinya diterapkan.
+
+============================================================ 10. REVISI
+PROYEK YANG DIMINTA
+============================================================
+
+Daftar revisi besar yang diberikan:
+
+PAYMENT - Tambah payment gateway - Awalnya PayPal, kemudian diganti ke
+gateway lokal Indonesia - Sekarang menggunakan rencana Midtrans -
+Company membayar sebelum proyek dilanjutkan - Tarik saldo harus bisa -
+Pendapatan freelancer harus terlihat - Pengeluaran company harus
+terlihat - Invoice dapat dicetak satuan atau semua - Halaman pendapatan
+freelancer dapat mencetak invoice
+
+PROJECT - Edit project harus sempurna - Project dapat diubah status
+menjadi tutup - Tombol project memiliki fungsi masukkan ke arsip - Semua
+project dan detailnya ditampilkan di landing page - Halaman Project Saya
+pada Company diminimalkan - Freelancer melihat rekomendasi pekerjaan
+terbaru dengan status open, bukan pekerjaan yang sudah selesai
+
+WORKSPACE - Workspace awal jangan langsung 100% - Company dapat menambah
+tahap pengerjaan - Tahapan/progress harus mendukung workflow yang lebih
+realistis
+
+NEGOTIATION - Tambah negosiasi penawaran proyek
+
+COMPANY - Company dapat menghubungi Admin - Company dapat melihat
+pengeluaran - Company dapat melihat pengeluaran dari project - Company
+dapat menambah tahap pengerjaan
+
+FREELANCER - Freelancer dapat melihat pendapatan - Detail pendapatan
+memiliki top pendapatan - Freelancer dapat melihat pendapatan dari
+setiap project
 
-```text
-Company meminta revisi
-↓
-Workspace kembali ke tahap pengerjaan
-↓
-Freelancer melakukan revisi
-```
+ADMIN - Filter dashboard admin: - bulan - tahun - total - semua data -
+Tambah keterangan pendapatan untuk Admin - Admin dapat mengontrol
+masalah/dispute - Admin dapat melakukan audit terhadap kasus
+pembayaran/proyek
 
----
-
-# 11. COMPANY TIDAK MERESPONS
-
-JANGAN langsung:
-
-* refund otomatis;
-* memberikan uang ke freelancer;
-* menganggap proyek selesai.
+ACCOUNT / AUTH - User tidak boleh menjadi Admin melalui mekanisme
+biasa - Lupa password belum ada - Lupa password diinginkan berupa form
+laporan ke Admin yang kemudian dapat menghubungi user lewat email -
+Tambah verifikasi email saat register - Jika user sudah login, landing
+page harus tetap berfungsi sesuai status login - Sebelum tombol Daftar
+Sekarang harus ada kebijakan dan privasi
 
-Jika Company tidak merespons dalam batas waktu:
+PREMIUM - Upgrade popup - Upgrade popup Premium Pro
 
-```text
-Menunggu Review
-        ↓
-Deadline review terlewati
-        ↓
-Freelancer dapat melapor
-        ↓
-Admin Review
-```
+HELP - Pusat bantuan dapat diakses publik
 
-Admin menentukan penyelesaian berdasarkan bukti.
+FOOTER - Footer hanya ada di landing page - Semua link/footer harus
+berfungsi
 
----
+MOBILE - Optimalisasi Mobile UI - Sidebar ketika ditutup harus tetap
+menampilkan logo
 
-# 12. DISPUTE SYSTEM
+SERVICE - Respon pelayanan 09:00 - 17:00 WIB
 
-Dispute dapat berasal dari:
+============================================================ 11. AUDIT /
+DISPUTE ============================================================
 
-### Freelancer
+Audit/dispute sudah direncanakan sebagai bagian penting sistem.
 
-Contoh:
+Prinsip: - Payment - Workspace - Submission - Review - Report/Dispute -
+Earnings
 
-> Company tidak memberikan konfirmasi setelah pekerjaan selesai.
+harus tetap memiliki state masing-masing.
 
-### Company
+Admin dapat digunakan untuk: - memeriksa laporan - melihat bukti -
+melihat histori - menentukan pihak yang bermasalah - menangani kasus
+pembayaran/proyek
 
-Contoh:
+Jangan mencampurkan Payment = Project Completed.
 
-> Freelancer tidak memenuhi requirement.
+============================================================ 12.
+DATABASE / MIGRATION STATUS
+============================================================
 
----
+Migration penting yang sudah dijalankan mencakup:
 
-# 13. ADMIN DISPUTE REVIEW
+-   users
+-   cache
+-   jobs
+-   company_account_requests
+-   categories
+-   projects
+-   role users
+-   penawarans
+-   freelancer_profiles
+-   company_profiles
+-   saved_projects
+-   notifications
+-   reviews
+-   selected_at pada penawarans
+-   project_workspaces
+-   messages
+-   progress_histories
+-   project_submissions
+-   submission_files
+-   reports
+-   payment status pada workspace
+-   payments
+-   PayPal historical columns
+-   Midtrans columns
+-   berbagai migration lanjutan
+    notifications/reviews/reports/workspace/project
 
-Admin harus dapat melihat:
+Migration PayPal:
+2026_08_13_130632_add_paypal_columns_to_payments_table.php Status: Ran
+Keputusan: jangan dihapus/rollback karena merupakan histori.
 
-* proyek;
-* workspace;
-* company;
-* freelancer;
-* payment;
-* invoice;
-* nominal;
-* timeline;
-* progress;
-* submission;
-* file;
-* source code jika tersedia;
-* pesan;
-* revisi;
-* laporan;
-* bukti;
-* aktivitas terakhir.
+Migration Midtrans:
+2026_08_15_102928_add_midtrans_columns_to_payments_table.php Status: Ran
 
-Admin kemudian menentukan keputusan.
+============================================================ 13. GIT /
+VERSION CONTROL
+============================================================
 
----
+Git digunakan untuk checkpoint dan recovery.
 
-# 14. KEMUNGKINAN HASIL DISPUTE
+Commit penting yang tercatat: d024e8f - bug pembayaran fixed e8c9672 -
+Test UI cc6c432 - upgrade UI e428747 - ui update fbb3a23 - pembaharuan
+report v3 88% b4400b2 - penyempurnaan fitur v1.0.2 dc9658d - Merge
+branch main 841e1ae - menyempurnakan ux
 
-Contoh:
+Pada tahap rollback sebelumnya ditemukan bahwa branch pernah kembali ke:
+d024e8f bug pembayaran fixed
 
-### Freelancer benar
+Setelah itu PayPal dan Midtrans foundation dikerjakan.
 
-```text
-Admin
- ↓
-Freelancer memenuhi requirement
- ↓
-Dana dapat dilepas
-```
+Checkpoint terakhir: Midtrans backend foundation sudah di-push.
 
-### Company benar
+Prinsip Git: - Selalu cek git status sebelum perubahan. - Cek git diff
+sebelum commit. - Jangan menggunakan git reset –hard sembarangan. -
+Jangan menggunakan git clean -fd sembarangan. - Jangan menghapus
+perubahan user yang belum di-commit. - Commit setiap fase besar sebagai
+checkpoint. - Push setelah checkpoint dianggap stabil.
 
-```text
-Admin
- ↓
-Freelancer tidak memenuhi requirement
- ↓
-Penyelesaian/refund sesuai aturan
-```
+============================================================ 14. MASALAH
+/ INSIDEN YANG PERNAH TERJADI
+============================================================
 
-### Kedua pihak bermasalah
+1.  Laravel artisan serve error
 
-```text
-Admin
- ↓
-Evaluasi bukti
- ↓
-Keputusan khusus
-```
+Muncul error: Failed opening required:
+vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php
 
-Jangan membuat aturan otomatis tanpa persetujuan user.
+Project menggunakan Laravel 12.63.0.
 
----
+Solusi yang dipilih: menggunakan:
 
-# 15. SALDO FREELANCER
+php -S 127.0.0.1:8000 -t public
 
-Saldo freelancer tidak boleh hanya berupa:
+Karena berjalan normal dan tidak ingin menghabiskan waktu memperbaiki
+mekanisme artisan serve.
 
-```php
-$user->balance += $amount;
-```
+2.  PayPal cURL error 77
 
-tanpa audit trail.
+Error: cURL error 77: error setting certificate file
 
-Sistem sebaiknya memiliki catatan transaksi.
+Certificate: D:.pem
 
-Contoh:
+Setelah pengecekan: curl.cainfo menunjuk ke certificate. Tinker kemudian
+berhasil memperoleh OAuth token PayPal.
 
-```text
-Payment
- ↓
-Settlement
- ↓
-Earning Transaction
- ↓
-Freelancer Balance
-```
+PayPal akhirnya bisa dibuka, tetapi diputuskan untuk tidak digunakan.
 
-Setiap perubahan saldo harus dapat dilacak.
+3.  Payment company_id error
 
-Minimal informasi transaksi:
+Error: Field ‘company_id’ doesn’t have a default value
 
-* user;
-* amount;
-* type;
-* reference;
-* workspace;
-* payment;
-* status;
-* created_at.
+Penyebab: Model Payment sempat tertimpa/hilang sebagian.
 
----
+Model kemudian diperbaiki.
 
-# 16. WITHDRAWAL
+4.  PayPal references
 
-Freelancer nantinya dapat melakukan:
+Pencarian terakhir pada source aplikasi: git grep -in “paypal” – app
+config routes resources database
 
-**Tarik Saldo**
+Hasil: hanya migration PayPal lama.
 
-Flow:
+5.  PSR-4 warning
 
-```text
-Freelancer
- ↓
-Tarik Saldo
- ↓
-Validasi saldo
- ↓
-Withdrawal dibuat
- ↓
-Admin/Payment System memproses
- ↓
-Withdrawal selesai
- ↓
-Saldo diperbarui
-```
+Composer pernah menunjukkan: Class Applocated in
+./app/Http/Controllers/review/ReviewController.php does not comply with
+PSR-4 autoloading standard.
 
-Jangan mengurangi saldo sebelum transaksi withdrawal tervalidasi sesuai desain sistem.
+Ini perlu diperhatikan jika masih muncul.
 
----
+============================================================ 15.
+PROMPT.MD ============================================================
 
-# 17. COMPANY EXPENSE
+PROMPT.md bukan tempat menyimpan prompt implementasi.
 
-Company harus dapat melihat:
+Fungsi PROMPT.md: - menjelaskan seluk-beluk proyek - nama dan sejarah
+proyek - arsitektur - aturan penting - fitur yang sudah ada - fitur yang
+sedang dikerjakan - fitur yang direncanakan - status progress -
+informasi penting untuk AI yang melanjutkan proyek
 
-* total pengeluaran;
-* pengeluaran per proyek;
-* invoice;
-* payment;
-* status payment;
-* tanggal pembayaran.
+Prompt pengerjaan sebaiknya diberikan langsung dalam chat.
 
----
+Jika PROMPT.md diperbarui: - hanya masukkan fakta aktual - jangan
+menyalin seluruh prompt pengerjaan - jangan memasukkan instruksi phase
+yang sedang dijalankan secara mentah
 
-# 18. FREELANCER INCOME
+============================================================ 16. CURRENT
+STATUS ============================================================
 
-Freelancer harus dapat melihat:
+Status saat dokumen ini dibuat:
 
-* total pendapatan;
-* pendapatan per proyek;
-* invoice;
-* payment;
-* status;
-* tanggal;
-* transaction history.
+PROJECT: ApexForge Labs
 
----
+Backend Laravel: AKTIF
 
-# 19. INVOICE
+Database: AKTIF
 
-Invoice harus dapat:
+Git: AKTIF
 
-* dilihat;
-* dicetak;
-* dicetak satuan;
-* dicetak seluruhnya jika fitur tersebut tersedia.
+Manual Payment: SUDAH ADA / HARUS DIPERTAHANKAN
 
-Freelancer juga dapat mencetak invoice/riwayat pendapatan jika memang desain sistem mendukungnya.
+PayPal: DITINGGALKAN HANYA MIGRATION HISTORIS
 
-Jangan membuat route baru sebelum memeriksa route invoice yang sudah ada.
+Midtrans Foundation: SELESAI SUDAH DI-PUSH
 
----
+Midtrans Snap Token: BELUM SELESAI
 
-# 20. PROJECT LIMIT COMPANY
+Midtrans Frontend Snap: BELUM SELESAI
 
-Requirement:
+Midtrans Webhook: BELUM SELESAI
 
-Company gratis dapat membuat:
+Automatic Payment Verification: BELUM SELESAI
 
-**3 proyek**
+Payment-Workspace final integration: BELUM SELESAI
 
-Setelah batas tercapai:
+Audit/Dispute: SUDAH DIRANCANG IMPLEMENTASI LANJUTAN MASIH DIBUTUHKAN
 
-```text
-Project #1
-Project #2
-Project #3
-        ↓
-Batas tercapai
-        ↓
-Project berikutnya membutuhkan pembayaran/upgrade
-```
+Withdrawal: MASIH DIRENCANAKAN
 
-Audit dahulu sistem project creation sebelum implementasi.
+Invoice Printing: MASIH DIRENCANAKAN
 
-Jangan hanya menyembunyikan tombol.
+Email Verification: MASIH DIRENCANAKAN
 
-Validasi harus berada di backend.
+Forgot Password: MASIH DIRENCANAKAN
 
----
+Admin Dashboard Filtering: MASIH DIRENCANAKAN
 
-# 21. PROJECT STATUS
+Mobile Optimization: MASIH DIRENCANAKAN
 
-Project harus dapat diubah menjadi:
+Premium Pro: MASIH DIRENCANAKAN
 
-**Tutup**
+Public Help Center: MASIH DIRENCANAKAN
 
-Tujuannya agar user mengetahui proyek sudah tidak menerima aktivitas baru.
+Project Archive: MASIH DIRENCANAKAN / SEBAGIAN STATUS ARCHIVE SUDAH ADA
 
-Periksa:
+Project Close Status: MASIH PERLU DISEMPURNAKAN
 
-* model;
-* migration;
-* controller;
-* policy;
-* route;
-* view;
-* query listing.
+Negotiation: MASIH DIRENCANAKAN
 
-Jangan hanya mengubah UI.
+Company-Admin Contact: MASIH DIRENCANAKAN
 
----
+============================================================ 17. NEXT
+IMMEDIATE STEP
+============================================================
 
-# 22. ARCHIVE
+NEXT:
 
-Project yang ditutup dapat memiliki mekanisme:
+PHASE 3 — MIDTRANS SNAP TOKEN BACKEND
 
-**Masuk Arsip**
+Fokus: - audit kode aktual - endpoint create transaction - authorization
+Company - validasi Payment - amount dari database - invoice dari
+database - create Snap Token melalui MidtransService - simpan tracking
+transaction jika tersedia - response JSON Snap Token - testing backend
 
-Audit dahulu apakah project sudah memiliki field archive/status.
+Setelah itu:
 
-Jika sudah tersedia, gunakan struktur tersebut.
+PHASE 4 — MIDTRANS SNAP FRONTEND
 
-Jangan membuat kolom duplikat.
+Kemudian:
 
----
+PHASE 5 — MIDTRANS WEBHOOK
 
-# 23. ADMIN
+Kemudian:
 
-Admin harus memiliki kontrol terhadap:
+PHASE 6 — PAYMENT + WORKSPACE STATE
 
-* users;
-* company;
-* freelancer;
-* projects;
-* categories;
-* offers;
-* workspace;
-* payments;
-* reports;
-* dispute;
-* earnings;
-* withdrawals;
-* notifications.
+Kemudian:
 
-Namun jangan menambahkan fitur yang belum diperlukan tanpa persetujuan.
+PHASE 7 — SECURITY / IDEMPOTENCY
 
----
+Kemudian:
 
-# 24. ROLE SECURITY
+PHASE 8 — REGRESSION TEST MANUAL PAYMENT
 
-User TIDAK BOLEH menjadi admin hanya dengan:
+============================================================ 18. ATURAN
+PENTING UNTUK AI BERIKUTNYA
+============================================================
 
-```http
-POST /register
-role=admin
-```
+1.  Gunakan kode aktual sebagai sumber kebenaran.
+2.  Jangan menebak nama field, route, model, atau status.
+3.  Audit sebelum coding.
+4.  Kerjakan satu phase pada satu waktu.
+5.  Jangan melanjutkan phase berikutnya tanpa instruksi.
+6.  Jangan menghapus migration historis PayPal.
+7.  Jangan menghapus pembayaran manual.
+8.  Jangan mengekspos Midtrans Server Key.
+9.  Jangan mempercayai callback frontend sebagai bukti pembayaran final.
+10. Amount pembayaran harus berasal dari database.
+11. Payment paid tidak berarti project selesai.
+12. Gunakan webhook/server-to-server verification untuk status final.
+13. Pastikan webhook idempotent.
+14. Jangan melakukan destructive Git command tanpa izin.
+15. Jangan melakukan commit/push otomatis kecuali diminta.
+16. Jangan mengarang hasil testing.
+17. Jika struktur proyek berbeda dari rencana, jelaskan dan ikuti kode
+    aktual.
+18. Jangan mengubah file yang tidak berhubungan dengan phase.
+19. PROMPT.md adalah dokumentasi proyek, bukan tempat menyimpan prompt
+    pengerjaan.
+20. Nama proyek saat ini adalah APEXFORGE LABS.
 
-Backend harus mengabaikan atau menolak role admin dari user input.
+============================================================ 19.
+CHECKPOINT ============================================================
 
-Role admin harus ditentukan melalui mekanisme server-side yang aman.
+CHECKPOINT TERAKHIR:
 
-Audit:
+Midtrans Backend Foundation STATUS: SELESAI STATUS GIT: SUDAH DI-PUSH
 
-* RegisterController
-* validation
-* middleware
-* policies
-* gates
-* routes
+NEXT CHECKPOINT:
 
----
+Midtrans Snap Token Backend STATUS: BELUM DIKERJAKAN
 
-# 25. LOGIN
-
-Jika user sudah login:
-
-Landing page harus tetap berfungsi.
-
-Audit:
-
-* navbar;
-* login state;
-* dashboard link;
-* logout;
-* role-based navigation.
-
-Jangan membuat user yang sudah login terjebak di landing page.
-
----
-
-# 26. FORGOT PASSWORD
-
-Requirement:
-
-Jika user memilih:
-
-**Lupa Password**
-
-Maka tersedia mekanisme bantuan.
-
-Requirement user:
-
-> Form laporan kepada admin dan admin dapat menghubungi user melalui email.
-
-Namun sebelum implementasi:
-
-audit dahulu apakah Laravel password reset sudah tersedia.
-
-Jika password reset standar Laravel dapat memenuhi kebutuhan keamanan, jelaskan.
-
-Jangan membuat sistem password reset custom yang tidak aman tanpa alasan.
-
----
-
-# 27. EMAIL VERIFICATION
-
-Register harus memiliki:
-
-**Email Verification**
-
-Audit:
-
-* User model;
-* `MustVerifyEmail`;
-* middleware `verified`;
-* notification;
-* mail configuration;
-* routes.
-
-Jangan menganggap email benar-benar terkirim hanya karena notification dibuat.
-
----
-
-# 28. SETTINGS
-
-Audit fitur:
-
-* account settings;
-* profile;
-* password;
-* notification;
-* privacy jika tersedia.
-
-Jangan membuat halaman setting kosong hanya agar requirement terlihat selesai.
-
----
-
-# 29. HELP CENTER
-
-Pusat bantuan harus dapat diakses publik jika requirement mengharuskannya.
-
-Jangan memberikan middleware auth pada halaman publik.
-
----
-
-# 30. TERMS & PRIVACY
-
-Sebelum:
-
-**Daftar Sekarang**
-
-harus tersedia akses ke:
-
-* Kebijakan Privasi
-* Ketentuan Layanan
-
-Audit apakah halaman tersebut sudah tersedia.
-
----
-
-# 31. ADMIN DASHBOARD FILTER
-
-Admin membutuhkan filter:
-
-```text
-Bulan
-Tahun
-Total
-```
-
-Untuk data yang relevan.
-
-Audit query existing terlebih dahulu.
-
-Jangan memuat seluruh database ke memory PHP hanya untuk melakukan filter jika query database dapat digunakan.
-
----
-
-# 32. FREELANCER JOB RECOMMENDATION
-
-Requirement:
-
-Bagian rekomendasi pekerjaan yang sudah selesai dihilangkan.
-
-Diganti dengan:
-
-**Pekerjaan terbaru dengan status Open**
-
-Pastikan query hanya mengambil project yang memang dapat ditawarkan/diikuti freelancer.
-
----
-
-# 33. FOOTER
-
-Footer berada di landing page.
-
-Semua link harus berfungsi.
-
-Audit satu per satu:
-
-* About;
-* Help;
-* Privacy;
-* Terms;
-* Contact;
-* lainnya.
-
-Jangan membuat link palsu.
-
----
-
-# 34. COMPANY CONTACT ADMIN
-
-Company harus dapat menghubungi admin.
-
-Audit apakah sistem message/report/help sudah dapat digunakan.
-
-Gunakan sistem yang sudah ada jika memungkinkan.
-
----
-
-# 35. SIDEBAR
-
-Requirement:
-
-Ketika sidebar ditutup:
-
-**Logo tetap terlihat.**
-
-Audit CSS/JS/layout terlebih dahulu.
-
-Jangan mengubah struktur layout besar-besaran untuk masalah visual sederhana.
-
----
-
-# 36. MOBILE UI
-
-Project harus dioptimalkan untuk mobile.
-
-Audit:
-
-* overflow;
-* navbar;
-* sidebar;
-* table;
-* modal;
-* form;
-* button;
-* payment UI;
-* workspace;
-* dashboard.
-
-Jangan merusak desktop UI ketika memperbaiki mobile UI.
-
----
-
-# 37. POPUP / PREMIUM PRO
-
-Requirement:
-
-Popup harus diperbarui.
-
-Premium Pro juga memiliki popup upgrade.
-
-Audit:
-
-* modal;
-* component;
-* JS;
-* trigger;
-* responsive layout.
-
-Jangan membuat popup baru jika component existing dapat digunakan.
-
----
-
-# 38. WORKSPACE INITIAL PROGRESS
-
-Requirement:
-
-Workspace awal jangan dianggap:
-
-**100%**
-
-Audit bagaimana progress dihitung.
-
-Workspace baru harus memiliki progress yang masuk akal berdasarkan tahap awal.
-
----
-
-# 39. COMPANY WORKSPACE STAGES
-
-Company juga dapat menambahkan tahap pengerjaan.
-
-Audit struktur:
-
-* progress histories;
-* stages;
-* workspace;
-* ordering;
-* permissions.
-
-Jika struktur stage sudah tersedia, gunakan struktur tersebut.
-
----
-
-# 40. NEGOTIATION
-
-Penawaran proyek harus dapat dinegosiasikan.
-
-Audit:
-
-* Penawaran;
-* harga;
-* pesan;
-* status;
-* revision;
-* acceptance.
-
-Jangan membuat sistem chat baru jika messages system sudah dapat digunakan.
-
----
-
-# 41. ADMIN REVENUE
-
-Admin harus dapat melihat:
-
-* platform fee;
-* total transaksi;
-* pendapatan platform;
-* payment status;
-* periode;
-* proyek terkait.
-
-Jangan mencampurkan:
-
-```text
-total payment
-```
-
-dengan:
-
-```text
-platform revenue
-```
-
-Keduanya berbeda.
-
----
-
-# 42. DATABASE SAFETY
-
-Jika migration sudah pernah dijalankan:
-
-**JANGAN mengedit migration lama sembarangan.**
-
-Periksa:
-
-```bash
-php artisan migrate:status
-```
-
-Jika:
-
-```text
-Ran
-```
-
-maka perubahan schema baru harus menggunakan migration baru kecuali project memang sengaja di-reset.
-
-Jangan menyarankan:
-
-```bash
-php artisan migrate:fresh
-```
-
-tanpa peringatan karena command tersebut menghapus database.
-
----
-
-# 43. PAYMENT MODEL SAFETY
-
-Audit `Payment` secara khusus.
-
-Periksa:
-
-```text
-fillable
-casts
-relations
-company_id
-workspace_id
-amount
-platform_fee
-freelancer_receive
-status
-invoice_number
-```
-
-Pastikan pembuatan Payment tidak menghasilkan error:
-
-```text
-Field 'company_id' doesn't have a default value
-```
-
-Jangan hanya menambahkan default value ke database untuk menutupi bug jika sebenarnya controller/model tidak mengirim `company_id`.
-
-Cari root cause terlebih dahulu.
-
----
-
-# 44. PSR-4
-
-Jika ditemukan:
-
-```text
-does not comply with PSR-4 autoloading standard
-```
-
-audit:
-
-* namespace;
-* nama class;
-* nama folder;
-* casing folder;
-* casing filename.
-
-Contoh:
-
-```text
-App\Http\Controllers\Review
-```
-
-harus konsisten dengan:
-
-```text
-app/Http/Controllers/Review
-```
-
-Windows bisa terlihat tidak bermasalah karena filesystem case-insensitive, tetapi deployment Linux dapat gagal.
-
----
-
-# 45. GIT SAFETY
-
-Sebelum perubahan besar:
-
-```bash
-git status
-git log --oneline -10
-```
-
-Jika working tree memiliki perubahan user:
-
-**JANGAN menghapusnya.**
-
-Jika ada untracked file:
-
-**JANGAN langsung menghapusnya.**
-
-Tanyakan terlebih dahulu.
-
-Sebelum migration/payment/auth perubahan besar, sarankan commit atau backup.
-
----
-
-# 46. AUDIT COMMAND
-
-Gunakan command yang relevan seperti:
-
-```bash
-git status
-git log --oneline --decorate -10
-git grep -in "paypal"
-git grep -in "payment"
-git grep -in "workspace"
-git grep -in "balance"
-git grep -in "withdraw"
-git grep -in "report"
-git grep -in "admin"
-php artisan route:list
-php artisan migrate:status
-composer show laravel/framework
-php artisan about
-```
-
-Namun command hanya digunakan jika environment mengizinkannya.
-
-Jangan mengklaim command telah dijalankan jika belum dijalankan.
-
----
-
-# 47. AUDIT REPORT
-
-Setiap audit harus menghasilkan:
-
-## SAFE
-
-Hal yang sudah benar.
-
-## WARNING
-
-Hal yang berpotensi bermasalah.
-
-## ERROR
-
-Hal yang benar-benar salah.
-
-## MISSING
-
-Requirement yang belum ditemukan.
-
-## PAYPAL REMNANTS
-
-Kode PayPal yang masih aktif.
-
-## MIDTRANS READINESS
-
-Apakah project siap implementasi Midtrans.
-
-## DATABASE IMPACT
-
-Perubahan database yang diperlukan.
-
-## SECURITY IMPACT
-
-Risiko keamanan.
-
-## FILES AFFECTED
-
-File yang kemungkinan perlu diubah.
-
----
-
-# 48. IMPLEMENTATION RULE
-
-Setelah audit selesai:
-
-**JANGAN langsung implementasi.**
-
-Tunggu persetujuan user.
-
-Setelah user mengizinkan:
-
-```text
-Implement
- ↓
-Syntax check
- ↓
-Autoload check
- ↓
-Route check
- ↓
-Migration status
- ↓
-Feature test
- ↓
-Error log check
-```
-
----
-
-# 49. TESTING RULE
-
-Setelah perubahan payment:
-
-Minimal test:
-
-```text
-Company authorization
-Payment creation
-Midtrans transaction
-Notification
-Payment verification
-Duplicate notification
-Invalid transaction
-Wrong amount
-Wrong workspace
-Wrong company
-Payment status transition
-Workspace transition
-```
-
-Jangan menyatakan:
-
-**"100% berhasil"**
-
-hanya karena satu tombol berhasil diklik.
-
----
-
-# 50. ERROR HANDLING
-
-Jika terjadi error:
-
-Jangan langsung menambal error.
-
-Cari:
-
-```text
-Error
- ↓
-Stack trace
- ↓
-Controller
- ↓
-Service
- ↓
-Model
- ↓
-Database
-```
-
-Kemudian tentukan root cause.
-
-Contoh:
-
-```text
-SQLSTATE 1364
-```
-
-Jangan langsung menambahkan:
-
-```php
-'default' => ...
-```
-
-tanpa memahami mengapa field tersebut kosong.
-
----
-
-# 51. RESPONSE STYLE
-
-Saat membantu project ini:
-
-* Jangan memberikan jawaban berdasarkan asumsi.
-* Jangan mengarang file.
-* Jangan mengarang route.
-* Jangan mengarang migration.
-* Jangan mengarang field.
-* Jangan menghapus kode tanpa alasan.
-* Jangan melakukan refactor besar tanpa izin.
-* Jangan mengubah database secara diam-diam.
-* Jangan mengatakan "sudah diperbaiki" jika belum diuji.
-* Jangan mengatakan "pasti berhasil" jika belum diuji.
-
-Jika tidak yakin:
-
-**Katakan tidak yakin dan minta source code yang diperlukan.**
-
----
-
-# 52. PRIORITAS
-
-Urutan prioritas:
-
-1. Data integrity
-2. Payment security
-3. Authorization
-4. Authentication
-5. Database consistency
-6. Business logic
-7. Error handling
-8. Testing
-9. UI/UX
-10. Cosmetic changes
-
-Jangan mengorbankan keamanan/database hanya demi UI.
-
----
-
-# 53. TARGET ARCHITECTURE
-
-Target besar sistem:
-
-```text
-USER
-│
-├── Freelancer
-│   ├── Profile
-│   ├── Browse Projects
-│   ├── Submit Offer
-│   ├── Negotiate
-│   ├── Workspace
-│   ├── Submission
-│   ├── Earnings
-│   └── Withdrawal
-│
-├── Company
-│   ├── Profile
-│   ├── Create Project
-│   ├── Manage Project
-│   ├── Receive Offer
-│   ├── Negotiate
-│   ├── Workspace
-│   ├── Payment
-│   ├── Expense
-│   └── Dispute
-│
-└── Admin
-    ├── Users
-    ├── Projects
-    ├── Categories
-    ├── Offers
-    ├── Workspaces
-    ├── Payments
-    ├── Reports
-    ├── Disputes
-    ├── Revenue
-    └── Withdrawals
-```
-
----
-
-# 54. PAYMENT TARGET ARCHITECTURE
-
-```text
-Company
-   ↓
-Accept Freelancer
-   ↓
-Workspace
-   ↓
-Payment Invoice
-   ↓
-Midtrans
-   ↓
-Midtrans Notification
-   ↓
-Backend Verification
-   ↓
-Payment = PAID
-   ↓
-Workspace = IN PROGRESS
-   ↓
-Freelancer Works
-   ↓
-Submission
-   ↓
-Company Review
-   ↓
-┌──────────────────────┐
-│                      │
-Accept               Revision
-│                      │
-↓                      ↓
-Completed            Work Again
-│
-↓
-Settlement
-│
-↓
-Freelancer Earnings
-```
-
----
-
-# 55. DISPUTE ARCHITECTURE
-
-```text
-Company / Freelancer
-        ↓
-      Report
-        ↓
-   Admin Review
-        ↓
-     Evidence
-        ↓
-Admin Decision
-   │      │      │
-   ↓      ↓      ↓
-Release Refund Other
-```
-
-Keputusan admin harus memiliki audit trail.
-
----
-
-# 56. FINAL RULE
-
-**READ THE PROJECT FIRST.**
-
-**DO NOT GUESS.**
-
-**DO NOT BREAK EXISTING FEATURES.**
-
-**DO NOT MODIFY DATABASE WITHOUT A PLAN.**
-
-**DO NOT TRUST FRONTEND PAYMENT DATA.**
-
-**DO NOT REINTRODUCE PAYPAL.**
-
-**USE MIDTRANS FOR INDONESIAN PAYMENT.**
-
-**KEEP PAYMENT, WORKSPACE, EARNINGS, AND DISPUTE STATES SEPARATE.**
-
-**ALWAYS AUDIT BEFORE IMPLEMENTATION.**
-
----
-
-# 57. FIRST TASK WHEN PROMPT.MD IS PROVIDED
-
-Ketika user meminta AI mulai bekerja menggunakan file ini, langkah pertama WAJIB:
-
-1. Baca `PROMPT.md`.
-2. Baca struktur project.
-3. Jalankan/analisis `git status`.
-4. Analisis `git log`.
-5. Analisis migration status.
-6. Analisis route.
-7. Cari PayPal.
-8. Audit Payment.
-9. Audit Workspace.
-10. Audit Submission.
-11. Audit Report/Dispute.
-12. Audit Earnings/Withdrawal.
-13. Buat laporan audit.
-
-**Jangan mengubah kode pada tahap ini.**
-
-Tunggu instruksi berikutnya dari user.
+END OF PROJECT HANDOFF DOCUMENT

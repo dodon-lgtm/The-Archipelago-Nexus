@@ -36,8 +36,8 @@ return new class extends Migration
 
             $table->string('attachment')->nullable();
 
-            $table->enum('status', ['Open', 'Closed'])
-                  ->default('Open');
+            $table->enum('status', ['open', 'closed'])
+                  ->default('open');
 
             $table->timestamps();
         });

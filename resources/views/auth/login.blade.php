@@ -12,6 +12,9 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- Google Identity Services SDK -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
     <!-- Google Font -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -211,7 +214,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
                 <div>
                     <h2 class="font-extrabold text-base tracking-wide text-white">
-                       ApexForge Labs<span class="text-blue-400">Labs</span>
+                       ApexForge <span class="text-blue-400">Labs</span>
                     </h2>
                     <p class="text-[11px] text-slate-400 font-medium mt-0.5">
                         Masuk ke akun untuk melanjutkan
@@ -219,7 +222,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                 </div>
             </div>
 
-            <!-- FORM LOGIN -->
+            <!-- FORM LOGIN MANUAL -->
             <form action="{{ route('login') }}" method="POST" class="space-y-3.5 my-auto py-4 relative z-10">
                 @csrf
 
@@ -309,7 +312,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                     </label>
                 </div>
 
-                <!-- TOMBOL LOGIN -->
+                <!-- TOMBOL LOGIN MANUAL -->
                 <button type="submit" class="w-full py-2.5 mt-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-blue-600/20 transition transform active:scale-[0.98] flex items-center justify-center gap-2 group">
                     <i class="fa-solid fa-right-to-bracket group-hover:translate-x-0.5 transition-transform"></i>
                     Masuk
@@ -324,17 +327,32 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                     <div class="flex-grow border-t border-slate-700/60"></div>
                 </div>
 
-                <!-- GOOGLE -->
-                <a href="#" class="w-full py-2.5 bg-white hover:bg-blue-50 text-slate-900 text-xs font-bold rounded-xl flex items-center justify-center gap-2 transition shadow-sm">
-                    <svg class="w-4 h-4" viewBox="0 0 24 24">
-                        <path fill="#EA4335" d="M5.266 9.765A7.077 7.077 0 0 1 12 4.909c1.69 0 3.218.6 4.418 1.582l3.51-3.51C17.642 1.09 14.974 0 12 0 7.354 0 3.307 2.673 1.295 6.57l3.971 3.195z"/>
-                        <path fill="#4285F4" d="M23.49 12.275c0-.818-.073-1.609-.21-2.373H12v4.51h6.44c-.277 1.463-1.096 2.704-2.33 3.533l3.63 2.815c2.123-1.955 3.35-4.832 3.35-8.485z"/>
-                        <path fill="#FBBC05" d="M5.266 14.235L1.295 17.43A11.96 11.96 0 0 0 12 24c3.045 0 5.89-.964 8.11-2.618l-3.63-2.815c-1.214.814-2.768 1.309-4.48 1.309-3.455 0-6.382-2.336-7.423-5.472l-3.971 3.196z"/>
-                        <path fill="#34A853" d="M12 19.091c-1.714 0-3.268-.495-4.48-1.31l-3.631 2.816A11.966 11.966 0 0 0 12 24c4.646 0 8.693-2.673 10.705-6.57l-3.97-3.195c-1.042 3.136-3.969 5.472-7.424 5.472z"/>
-                    </svg>
-                    Google
-                </a>
+                <!-- GOOGLE LOGIN INTEGRATION -->
+                <!-- ⚠️ PENTING: Ganti YOUR_CLIENT_ID dengan Client ID Google Cloud Anda -->
+                <div id="g_id_onload"
+                     data-client_id="1003806983123-1lj0oba3dn5ptanueebqsrd6n1ees0g3.apps.googleusercontent.com"
+                     data-context="signin"
+                     data-ux_mode="popup"
+                     data-callback="handleGoogleLogin"
+                     data-auto_prompt="false">
+                </div>
 
+                <div class="g_id_signin flex justify-center"
+                     data-type="standard"
+                     data-shape="rectangular"
+                     data-theme="outline"
+                     data-text="signin_with"
+                     data-size="large"
+                     data-logo_alignment="left"
+                     data-width="100%">
+                </div>
+
+            </form>
+
+            <!-- FORM TERSEMBUNYI UNTUK MENGIRIM TOKEN GOOGLE KE LARAVEL -->
+            <form id="google-login-form" action="{{ route('login.google') }}" method="POST" class="hidden">
+                @csrf
+                <input type="hidden" name="id_token" id="google_id_token">
             </form>
 
             <!-- REGISTER -->
@@ -348,6 +366,17 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
         </div>
 
     </div>
+
+<script>
+    // Callback fungsi saat user berhasil login Google
+    function handleGoogleLogin(response) {
+        // Masukkan token JWT dari Google ke input tersembunyi
+        document.getElementById('google_id_token').value = response.credential;
+        
+        // Kirim form ke backend Laravel
+        document.getElementById('google-login-form').submit();
+    }
+</script>
 
 </body>
 </html>

@@ -168,6 +168,96 @@
                 </div>
             @endif
 
+            @php
+                $payment = $report->payment ?? $report->workspace?->payment;
+            @endphp
+
+            {{-- Dana Tertahan / Dispute Resolution (escrow) --}}
+            @if($payment && $payment->status === 'paid' && $payment->funds_status !== 'not_applicable')
+                <div class="bg-white rounded-2xl border border-blue-100 shadow-sm p-5">
+                    <h3 class="font-bold text-slate-800 mb-3">Dana Tertahan / Dispute</h3>
+                    <div class="space-y-2 text-sm mb-4">
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">Invoice</span>
+                            <span class="font-semibold">{{ $payment->invoice_number }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">Total Dibayar</span>
+                            <span class="font-semibold">Rp {{ number_format($payment->amount, 0, ',', '.') }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">Freelancer Receive</span>
+                            <span class="font-semibold">Rp {{ number_format($payment->freelancer_receive, 0, ',', '.') }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">Status Dana</span>
+                            <span class="font-semibold">{{ $payment->funds_status_label }}</span>
+                        </div>
+                        @if((float) $payment->released_amount > 0)
+                            <div class="flex justify-between">
+                                <span class="text-slate-500">Dirilis</span>
+                                <span class="font-semibold text-emerald-600">Rp {{ number_format($payment->released_amount, 0, ',', '.') }}</span>
+                            </div>
+                        @endif
+                        @if((float) $payment->refunded_amount > 0)
+                            <div class="flex justify-between">
+                                <span class="text-slate-500">Direfund</span>
+                                <span class="font-semibold text-red-600">Rp {{ number_format($payment->refunded_amount, 0, ',', '.') }}</span>
+                            </div>
+                        @endif
+                    </div>
+
+                    @if($payment->isFundsHeld() && !in_array($report->status, ['selesai', 'ditolak']))
+                        <div class="space-y-4">
+                            {{-- Release Full --}}
+                            <form method="POST" action="{{ route('admin.reports.release-funds', $report) }}"
+                                  onsubmit="return confirm('Yakin merilis SELURUH dana ke freelancer? Aksi tercatat di ledger dan tidak dapat dibatalkan.')">
+                                @csrf
+                                <textarea name="admin_note" rows="2" required placeholder="Alasan keputusan (wajib)..."
+                                          class="w-full rounded-xl border-blue-100 bg-[#f6f9ff] px-4 py-2.5 text-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none"></textarea>
+                                <button type="submit"
+                                        class="mt-2 w-full px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-sm font-semibold transition">
+                                    <i class="fa-solid fa-hand-holding-dollar mr-1"></i> Release Penuh ke Freelancer
+                                </button>
+                            </form>
+
+                            {{-- Refund Full --}}
+                            <form method="POST" action="{{ route('admin.reports.refund-funds', $report) }}"
+                                  onsubmit="return confirm('Yakin merefund SELURUH dana ke company? Aksi tercatat di ledger dan tidak dapat dibatalkan.')">
+                                @csrf
+                                <textarea name="admin_note" rows="2" required placeholder="Alasan keputusan (wajib)..."
+                                          class="w-full rounded-xl border-blue-100 bg-[#f6f9ff] px-4 py-2.5 text-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none"></textarea>
+                                <button type="submit"
+                                        class="mt-2 w-full px-4 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-xl text-sm font-semibold transition">
+                                    <i class="fa-solid fa-rotate-left mr-1"></i> Refund Penuh ke Company
+                                </button>
+                            </form>
+
+                            {{-- Split / Partial --}}
+                            <form method="POST" action="{{ route('admin.reports.split-funds', $report) }}"
+                                  onsubmit="return confirm('Yakin melakukan pembagian dana (split)? Aksi tercatat di ledger dan tidak dapat dibatalkan.')">
+                                @csrf
+                                <textarea name="admin_note" rows="2" required placeholder="Alasan keputusan (wajib)..."
+                                          class="w-full rounded-xl border-blue-100 bg-[#f6f9ff] px-4 py-2.5 text-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none"></textarea>
+                                <div class="mt-2">
+                                    <label class="text-xs font-semibold text-slate-600 mb-1 block">Nominal untuk Freelancer</label>
+                                    <input type="number" name="freelancer_amount" min="0" max="{{ $payment->freelancer_receive }}"
+                                           step="0.01" required value="{{ $payment->freelancer_receive }}"
+                                           class="w-full rounded-xl border-blue-100 bg-[#f6f9ff] px-4 py-2.5 text-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none">
+                                    <p class="text-[11px] text-slate-400 mt-1">Sisa otomatis menjadi refund ke company (tidak boleh ada nominal hilang).</p>
+                                </div>
+                                <button type="submit"
+                                        class="mt-2 w-full px-4 py-2.5 bg-blue-500 hover:bg-blue-600 text-white rounded-xl text-sm font-semibold transition">
+                                    <i class="fa-solid fa-scale-balanced mr-1"></i> Split / Bagi Dana
+                                </button>
+                            </form>
+                        </div>
+                    @else
+                        <p class="text-sm text-slate-400 text-center py-2">Dana sudah terselesaikan pada laporan ini.</p>
+                    @endif
+                </div>
+            @endif
+
             {{-- Penanganan Laporan (V2) --}}
             <div class="bg-white rounded-2xl border border-blue-100 shadow-sm p-5">
                 <h3 class="font-bold text-slate-800 mb-3">Penanganan</h3>

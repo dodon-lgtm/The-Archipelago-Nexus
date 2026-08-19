@@ -33,6 +33,11 @@
                     <span class="text-[10px] font-bold px-2.5 py-1 rounded-full border {{ $payment->status_color }}">
                         {{ $payment->status_label }}
                     </span>
+                    @if($payment->funds_status !== 'not_applicable')
+                        <span class="ml-2 text-[10px] font-bold px-2.5 py-1 rounded-full border {{ $payment->funds_status_color }}">
+                            {{ $payment->funds_status_label }}
+                        </span>
+                    @endif
                 </div>
             </div>
             <div class="p-6">
@@ -151,7 +156,7 @@
                     <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
                         {{-- Verify --}}
                         <form method="POST" action="{{ route('admin.payments.verify', $payment) }}"
-                              onsubmit="return confirm('Yakin ingin memverifikasi pembayaran ini? Status workspace akan menjadi Selesai.')">
+                              onsubmit="return confirm('Yakin ingin memverifikasi pembayaran ini? Dana otomatis ditahan (escrow) dan workspace menjadi Sedang Dikerjakan.')">
                             @csrf
                             <button type="submit"
                                     class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-emerald-500 text-white rounded-xl text-sm font-semibold hover:bg-emerald-600 transition">
@@ -169,7 +174,7 @@
 
                     <div class="mt-4 flex items-center gap-2 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-700">
                         <i class="fa-solid fa-info-circle"></i>
-                        Verifikasi akan mengubah status workspace menjadi <strong>Selesai</strong>.
+                        Verifikasi akan menahan dana (escrow) dan mengubah status workspace menjadi <strong>Sedang Dikerjakan</strong>.
                         Menolak akan mengembalikan status workspace menjadi <strong>Menunggu Pembayaran</strong>.
                     </div>
                 </div>
@@ -221,6 +226,44 @@
                             <p class="text-sm font-semibold text-slate-700">Diverifikasi oleh {{ $payment->verifier->name ?? 'Admin' }}</p>
                             <p class="text-xs text-slate-400">{{ $payment->verified_at ? $payment->verified_at->format('d M Y H:i') : '-' }}</p>
                         </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        {{-- Info Dana Tertahan (escrow) --}}
+        @if($payment->funds_status !== 'not_applicable')
+            <div class="bg-white border border-blue-100 rounded-2xl shadow-sm overflow-hidden">
+                <div class="px-6 py-5 border-b border-blue-50 flex items-center justify-between">
+                    <h2 class="font-bold text-slate-800">Informasi Dana (Escrow)</h2>
+                    <span class="text-[10px] font-bold px-2.5 py-1 rounded-full border {{ $payment->funds_status_color }}">
+                        {{ $payment->funds_status_label }}
+                    </span>
+                </div>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Dana Ditahan Sejak</p>
+                            <p class="font-semibold text-slate-700 mt-0.5">{{ $payment->held_at ? $payment->held_at->format('d M Y H:i') : '-' }}</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Dirilis Pada</p>
+                            <p class="font-semibold text-slate-700 mt-0.5">{{ $payment->released_at ? $payment->released_at->format('d M Y H:i') : '-' }}</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Dirilis ke Freelancer</p>
+                            <p class="font-bold text-emerald-600 mt-0.5">Rp {{ number_format($payment->released_amount, 0, ',', '.') }}</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Direfund ke Company</p>
+                            <p class="font-bold text-red-600 mt-0.5">Rp {{ number_format($payment->refunded_amount, 0, ',', '.') }}</p>
+                        </div>
+                        @if($payment->dispute_reference)
+                            <div class="md:col-span-2">
+                                <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Referensi Dispute</p>
+                                <p class="font-semibold text-slate-700 mt-0.5">{{ $payment->dispute_reference }}</p>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>

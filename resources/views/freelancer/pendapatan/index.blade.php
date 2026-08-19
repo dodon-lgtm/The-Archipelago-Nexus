@@ -131,14 +131,14 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                 </div>
 
                 {{-- Stat Cards --}}
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
                     <div class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl shadow-sm p-5 transition-colors duration-300">
                         <div class="flex items-center gap-4">
                             <div class="w-14 h-14 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center">
                                 <i class="fa-solid fa-wallet text-emerald-600 dark:text-emerald-300 text-xl"></i>
                             </div>
                             <div>
-                                <p class="text-xs text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider">Total Diterima</p>
+                                <p class="text-xs text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider">Saldo Tersedia</p>
                                 <h3 class="text-2xl font-black text-emerald-600 dark:text-emerald-300">Rp {{ number_format($totalEarned, 0, ',', '.') }}</h3>
                             </div>
                         </div>
@@ -147,11 +147,35 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                     <div class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl shadow-sm p-5 transition-colors duration-300">
                         <div class="flex items-center gap-4">
                             <div class="w-14 h-14 rounded-xl bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center">
-                                <i class="fa-solid fa-clock text-amber-600 dark:text-amber-300 text-xl"></i>
+                                <i class="fa-solid fa-lock text-amber-600 dark:text-amber-300 text-xl"></i>
                             </div>
                             <div>
-                                <p class="text-xs text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider">Menunggu</p>
-                                <h3 class="text-2xl font-black text-amber-600 dark:text-amber-300">Rp {{ number_format($totalPending, 0, ',', '.') }}</h3>
+                                <p class="text-xs text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider">Dana Tertahan</p>
+                                <h3 class="text-2xl font-black text-amber-600 dark:text-amber-300">Rp {{ number_format($totalHeld, 0, ',', '.') }}</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl shadow-sm p-5 transition-colors duration-300">
+                        <div class="flex items-center gap-4">
+                            <div class="w-14 h-14 rounded-xl bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center">
+                                <i class="fa-solid fa-clock text-blue-600 dark:text-blue-300 text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider">Menunggu Pembayaran</p>
+                                <h3 class="text-2xl font-black text-blue-600 dark:text-blue-300">Rp {{ number_format($totalPending, 0, ',', '.') }}</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl shadow-sm p-5 transition-colors duration-300">
+                        <div class="flex items-center gap-4">
+                            <div class="w-14 h-14 rounded-xl bg-red-100 dark:bg-red-900/40 flex items-center justify-center">
+                                <i class="fa-solid fa-rotate-left text-red-600 dark:text-red-300 text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider">Direfund ke Company</p>
+                                <h3 class="text-2xl font-black text-red-600 dark:text-red-300">Rp {{ number_format($totalRefunded, 0, ',', '.') }}</h3>
                             </div>
                         </div>
                     </div>
@@ -203,6 +227,11 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                                 <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border {{ $sc }}">
                                                     {{ $sl }}
                                                 </span>
+                                                @if($payment->funds_status !== 'not_applicable')
+                                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border {{ $payment->funds_status_color }}">
+                                                        {{ $payment->funds_status_label }}
+                                                    </span>
+                                                @endif
                                             </div>
                                             <p class="text-sm font-semibold text-slate-800 dark:text-white mt-1 truncate">
                                                 {{ $payment->workspace->project->project_name ?? '-' }}
@@ -216,10 +245,16 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                         </div>
                                         <div class="text-right shrink-0">
                                             <p class="text-sm font-bold text-slate-800 dark:text-white">Rp {{ number_format($payment->amount, 0, ',', '.') }}</p>
-                                            @if($payment->status === 'paid')
+                                            @if($payment->funds_status === 'released' || $payment->funds_status === 'released_partial')
                                                 <p class="text-xs font-semibold text-emerald-600 dark:text-emerald-300 mt-1">
-                                                    <i class="fa-solid fa-check-circle"></i> Diterima: Rp {{ number_format($payment->freelancer_receive, 0, ',', '.') }}
+                                                    <i class="fa-solid fa-check-circle"></i> Dirilis: Rp {{ number_format($payment->released_amount, 0, ',', '.') }}
                                                 </p>
+                                            @elseif($payment->isFundsHeld())
+                                                <p class="text-xs font-semibold text-amber-600 dark:text-amber-300 mt-1">
+                                                    <i class="fa-solid fa-lock"></i> Ditahan: Rp {{ number_format($payment->freelancer_receive, 0, ',', '.') }}
+                                                </p>
+                                            @elseif($payment->funds_status === 'refunded' || $payment->funds_status === 'refunded_partial')
+                                                <p class="text-xs text-red-500 dark:text-red-300 mt-1">Direfund: Rp {{ number_format($payment->refunded_amount, 0, ',', '.') }}</p>
                                             @elseif($payment->status === 'rejected')
                                                 <p class="text-xs text-red-500 dark:text-red-300 mt-1">Pembayaran ditolak</p>
                                             @else
