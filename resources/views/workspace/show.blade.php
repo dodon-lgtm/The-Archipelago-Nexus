@@ -213,6 +213,29 @@
             --af-page: #f6f9ff;
         }
 
+        /* Perbaikan CSS Dark Mode */
+        .dark {
+            --af-page: #0f172a;
+            --af-surface: #0f172a;
+            --af-border: #334155;
+        }
+
+        .dark input, 
+        .dark select, 
+        .dark textarea {
+            background: rgba(15, 23, 42, 0.9) !important;
+            border-color: rgba(51, 65, 85, 0.8) !important;
+            color: #ffffff !important;
+        }
+
+        .dark .glass-card,
+        .dark .glass-panel,
+        .dark .glass-surface {
+            background: rgba(15, 23, 42, 0.85) !important;
+            border-color: rgba(51, 65, 85, 0.6) !important;
+            box-shadow: 0 18px 50px -32px rgba(0, 0, 0, 0.6) !important;
+        }
+
         html {
             scroll-behavior: smooth
         }
@@ -357,7 +380,7 @@
     {{-- Ambient Background Glows --}}
     <div class="fixed inset-0 pointer-events-none hologram-grid-blue z-0"></div>
     <div
-        class="fixed top-[-20%] left-[-10%] w-[50rem] h-[50rem] bg-gradient-to-br from-blue-100/40 to-transparent rounded-full blur-[100px] pointer-events-none z-0">
+        class="fixed top-[-20%] left-[-10%] w-[50rem] h-[50rem] bg-gradient-to-br from-blue-100/40 dark:from-blue-900/20 to-transparent rounded-full blur-[100px] pointer-events-none z-0">
     </div>
 
     @include('navbar.navigasi')
@@ -406,7 +429,7 @@
 
                         {{-- Card: Info Project --}}
                         <div class="md:col-span-1 glass-card dark:bg-slate-900 rounded-3xl overflow-hidden">
-                            <div class="px-6 py-5 border-b border-blue-50/50 dark:border-slate-800 bg-gradient-to-b from-blue-50/50 to-transparent">
+                            <div class="px-6 py-5 border-b border-blue-50/50 dark:border-slate-800 bg-gradient-to-b from-blue-50/50 dark:from-slate-800/50 to-transparent">
                                 <h2 class="font-black text-sm text-blue-950 dark:text-white tracking-tight">{{ $workspace->project->project_name }}</h2>
                             </div>
                             <div class="p-6 space-y-5">
@@ -447,13 +470,13 @@
                         {{-- Card: Progress Bar --}}
                         <div class="md:col-span-1 glass-card dark:bg-slate-900 rounded-3xl overflow-hidden flex flex-col justify-between">
                             <div>
-                                <div class="px-6 py-5 border-b border-blue-50/50 dark:border-slate-800 bg-gradient-to-b from-blue-50/50 to-transparent">
+                                <div class="px-6 py-5 border-b border-blue-50/50 dark:border-slate-800 bg-gradient-to-b from-blue-50/50 dark:from-slate-800/50 to-transparent">
                                     <h2 class="font-black text-sm text-blue-950 dark:text-white tracking-tight">Progress Pengerjaan</h2>
                                 </div>
                                 <div class="p-6">
                                     <div class="text-center mb-5">
                                         <span
-                                            class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-blue-400 tracking-tighter">{{ $progressValue }}%</span>
+                                            class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-blue-400 dark:from-blue-400 dark:to-blue-200 tracking-tighter">{{ $progressValue }}%</span>
                                         @if ($activeStage)
                                             <p class="text-xs font-bold text-blue-500 dark:text-blue-400 mt-2">{{ $activeStage }}</p>
                                         @endif
@@ -475,7 +498,7 @@
                                 <div class="px-6 pb-6 mt-6">
                                     @if (in_array($workspace->status, ['Menunggu Pembayaran', 'Menunggu Verifikasi Admin', 'Selesai']))
                                         <button type="button" disabled
-                                            class="w-full flex items-center justify-center gap-2 px-4 py-3.5 bg-gray-200 text-gray-500 rounded-xl text-sm font-bold cursor-not-allowed border border-gray-300">
+                                            class="w-full flex items-center justify-center gap-2 px-4 py-3.5 bg-gray-200 dark:bg-slate-800 text-gray-500 dark:text-slate-400 rounded-xl text-sm font-bold cursor-not-allowed border border-gray-300 dark:border-slate-700">
                                             <i class="fa-solid fa-lock"></i> Update Progress Dikunci
                                         </button>
                                     @else
@@ -491,7 +514,7 @@
 
                         {{-- Card: Stage --}}
                         <div class="md:col-span-1 glass-card dark:bg-slate-900 rounded-3xl overflow-hidden flex flex-col h-full">
-                            <div class="px-6 py-5 border-b border-blue-50/50 dark:border-slate-800 bg-gradient-to-b from-blue-50/50 to-transparent">
+                            <div class="px-6 py-5 border-b border-blue-50/50 dark:border-slate-800 bg-gradient-to-b from-blue-50/50 dark:from-slate-800/50 to-transparent">
                                 <h2 class="font-black text-sm text-blue-950 dark:text-white tracking-tight">Tahap Pengerjaan</h2>
                             </div>
                             <div class="p-6 flex-1 overflow-y-auto custom-sidebar-scroll max-h-[300px]">
@@ -548,7 +571,7 @@
                     {{-- ROW 2: CHAT --}}
                     <div class="glass-card dark:bg-slate-900 rounded-3xl overflow-hidden flex flex-col h-[500px]">
                         {{-- Chat Header --}}
-                        <div class="px-6 py-4 border-b border-blue-50/50 dark:border-slate-800 bg-gradient-to-b from-blue-50/80 to-transparent flex items-center justify-between shrink-0">
+                        <div class="px-6 py-4 border-b border-blue-50/50 dark:border-slate-800 bg-gradient-to-b from-blue-50/80 dark:from-slate-800/80 to-transparent flex items-center justify-between shrink-0">
                             <div class="flex items-center gap-4">
                                 <div
                                     class="w-12 h-12 rounded-[1rem] bg-gradient-to-br from-blue-500 to-blue-700 text-white flex items-center justify-center font-black text-lg shadow-[0_4px_10px_rgba(59,130,246,0.3)]">
@@ -564,7 +587,7 @@
 
                             @php
                                 // Pure Blue Status Indicators using ORIGINAL labels
-$chatStatusMap = [
+                                $chatStatusMap = [
                                     'Sedang Dikerjakan' => ['label' => 'Sedang Dikerjakan', 'dot' => 'bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.8)]', 'box' => 'bg-blue-50 border-blue-100 text-blue-600 dark:bg-slate-800 dark:border-slate-800 dark:text-blue-400'],
                                     'Menunggu Review' => ['label' => 'Menunggu Review', 'dot' => 'bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.8)]', 'box' => 'bg-amber-50 border-amber-200 text-amber-700 dark:bg-amber-900/40 dark:border-amber-900 dark:text-amber-300'],
                                     'Menunggu Revisi' => ['label' => 'Menunggu Revisi', 'dot' => 'bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)]', 'box' => 'bg-white border-blue-200 text-blue-700 dark:bg-slate-900 dark:border-slate-700 dark:text-blue-400'],
@@ -657,7 +680,7 @@ $chatStatusMap = [
                     {{-- ROW 4: INVOICE (company Menunggu Pembayaran / Verifikasi Admin) --}}
                     @if(auth()->user()->role === 'company' && in_array($workspace->status, ['Menunggu Pembayaran', 'Menunggu Verifikasi Admin']) && $payment)
                         <div class="glass-card dark:bg-slate-900 rounded-3xl overflow-hidden">
-                            <div class="px-6 py-5 border-b border-blue-50/50 dark:border-slate-800 bg-gradient-to-b from-blue-50/50 to-transparent">
+                            <div class="px-6 py-5 border-b border-blue-50/50 dark:border-slate-800 bg-gradient-to-b from-blue-50/50 dark:from-slate-800/50 to-transparent">
                                 <h2 class="font-black text-sm text-blue-950 dark:text-white tracking-tight">Invoice Pembayaran</h2>
                             </div>
                             <div class="p-6 space-y-6">
@@ -709,7 +732,7 @@ $chatStatusMap = [
 
                                 {{-- Payment Gateway (hanya pending) --}}
                                 @if($payment->status === 'pending')
-                                    <div class="flex flex-col gap-4 bg-gradient-to-r from-blue-50 to-transparent p-5 rounded-2xl border border-blue-100 dark:border-slate-800">
+                                    <div class="flex flex-col gap-4 bg-gradient-to-r from-blue-50 dark:from-slate-800/50 to-transparent p-5 rounded-2xl border border-blue-100 dark:border-slate-800">
                                         <p class="text-xs font-semibold text-blue-800 dark:text-blue-300 leading-relaxed max-w-2xl">
                                             Silakan lanjutkan ke <strong>Payment Gateway</strong> untuk melakukan pembayaran, kemudian upload bukti pembayaran pada halaman berikutnya.
                                         </p>
@@ -777,7 +800,7 @@ $chatStatusMap = [
 
                         {{-- Card: Timeline --}}
                         <div class="md:col-span-2 glass-card dark:bg-slate-900 rounded-3xl overflow-hidden">
-                            <div class="px-6 py-5 border-b border-blue-50/50 dark:border-slate-800 bg-gradient-to-b from-blue-50/50 to-transparent">
+                            <div class="px-6 py-5 border-b border-blue-50/50 dark:border-slate-800 bg-gradient-to-b from-blue-50/50 dark:from-slate-800/50 to-transparent">
                                 <h2 class="font-black text-sm text-blue-950 dark:text-white tracking-tight">Timeline Progress</h2>
                             </div>
                             <div class="p-6">
@@ -812,15 +835,14 @@ $chatStatusMap = [
                         {{-- Card: Actions & Rating --}}
                         <div class="md:col-span-1 glass-card dark:bg-slate-900 rounded-3xl overflow-hidden flex flex-col justify-between">
                             <div>
-                                <div class="px-6 py-5 border-b border-blue-50/50 dark:border-slate-800 bg-gradient-to-b from-blue-50/50 to-transparent">
+                                <div class="px-6 py-5 border-b border-blue-50/50 dark:border-slate-800 bg-gradient-to-b from-blue-50/50 dark:from-slate-800/50 to-transparent">
                                     <h2 class="font-black text-sm text-blue-950 dark:text-white tracking-tight">Aksi & Ulasan</h2>
                                 </div>
                                 <div class="p-6 space-y-4">
                                     @if (auth()->user()->role === 'company' && $workspace->status === 'Menunggu Review')
                                         <div class="flex items-center gap-3 px-4 py-3.5 bg-amber-50 dark:bg-amber-900/40 border border-amber-200 dark:border-amber-900 rounded-xl text-amber-700 dark:text-amber-300">
                                             <i class="fa-solid fa-clock"></i>
-                                            <p class="text-xs font-bold">Perusahaan sedang meninjau hasil pekerjaan
-                                                Anda.</p>
+                                            <p class="text-xs font-bold">Perusahaan sedang meninjau hasil pekerjaan Anda.</p>
                                         </div>
                                     @endif
 
@@ -867,12 +889,11 @@ $chatStatusMap = [
             </div>
         </main>
 
-     
     </div>
 
     {{-- MODAL UPDATE PROGRESS --}}
     <div id="progressModal" class="hidden modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-blue-950/40 backdrop-blur-md p-4">
-            <div class="modal-panel bg-white dark:bg-slate-900 rounded-3xl shadow-[0_20px_50px_rgba(30,58,138,0.2)] w-full max-w-md overflow-hidden border border-blue-100 dark:border-slate-800">
+        <div class="modal-panel bg-white dark:bg-slate-900 rounded-3xl shadow-[0_20px_50px_rgba(30,58,138,0.2)] w-full max-w-md overflow-hidden border border-blue-100 dark:border-slate-800">
             <div class="relative px-6 py-7 bg-gradient-to-br from-blue-700 via-blue-600 to-blue-500 overflow-hidden">
                 <div class="absolute inset-0 modal-header-pattern opacity-50"></div>
                 <div class="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
@@ -885,8 +906,7 @@ $chatStatusMap = [
                         </div>
                         <div>
                             <h3 class="font-black text-white text-base tracking-tight">Update Progress</h3>
-                            <p class="text-[10px] font-bold tracking-widest uppercase text-blue-200 mt-0.5">Perbarui
-                                status pekerjaan Anda</p>
+                            <p class="text-[10px] font-bold tracking-widest uppercase text-blue-200 mt-0.5">Perbarui status pekerjaan Anda</p>
                         </div>
                     </div>
                     <button type="button" onclick="document.getElementById('progressModal').classList.add('hidden')"
@@ -1014,7 +1034,7 @@ $chatStatusMap = [
     {{-- MODAL RATING & ULASAN (Company Only) --}}
     @if (auth()->user()->role === 'company' && $workspace->status === 'Selesai')
         <div id="ratingModal" class="hidden modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-blue-950/40 backdrop-blur-md p-4">
-        <div class="modal-panel bg-white dark:bg-slate-900 rounded-3xl shadow-[0_20px_50px_rgba(30,58,138,0.2)] w-full max-w-md overflow-hidden border border-blue-100 dark:border-slate-800">
+            <div class="modal-panel bg-white dark:bg-slate-900 rounded-3xl shadow-[0_20px_50px_rgba(30,58,138,0.2)] w-full max-w-md overflow-hidden border border-blue-100 dark:border-slate-800">
                 <div class="relative px-6 py-7 bg-gradient-to-br from-blue-700 via-blue-600 to-blue-500 overflow-hidden">
                     <div class="absolute inset-0 modal-header-pattern opacity-50"></div>
                     <div class="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
@@ -1027,8 +1047,7 @@ $chatStatusMap = [
                             </div>
                             <div>
                                 <h3 class="font-black text-white text-base tracking-tight">Beri Rating & Ulasan</h3>
-                                <p class="text-[10px] font-bold tracking-widest uppercase text-blue-200 mt-0.5">Bagikan
-                                    pengalaman Anda</p>
+                                <p class="text-[10px] font-bold tracking-widest uppercase text-blue-200 mt-0.5">Bagikan pengalaman Anda</p>
                             </div>
                         </div>
                         <button type="button"
