@@ -8,7 +8,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Laporan Saya - ApexForge Labs</title>
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = tailwind.config || {};
+        tailwind.config.darkMode = 'class';
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -98,13 +107,13 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
 </style>
 </head>
-<body class="h-full bg-[#f6f9ff] text-slate-800 antialiased selection:bg-blue-500 selection:text-white flex">
+<body class="h-full bg-[#f6f9ff] dark:bg-slate-950 text-slate-800 dark:text-white antialiased selection:bg-blue-500 selection:text-white flex transition-colors duration-300">
 
     @include('navbar.navigasi')
 
     <div class="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
         
-        <div class="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-blue-100/80 shadow-xs">
+        <div class="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-blue-100/80 dark:border-slate-800 shadow-xs">
             @include('navbar.nav')
         </div>
 
@@ -113,16 +122,16 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
                 {{-- Flash Messages --}}
                 @if(session('success'))
-                    <div class="mb-6 flex items-center gap-3 px-5 py-4 bg-emerald-50/90 border border-emerald-200 text-emerald-800 text-sm font-semibold rounded-2xl shadow-xs backdrop-blur-sm">
-                        <span class="w-8 h-8 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600 shrink-0">
+                    <div class="mb-6 flex items-center gap-3 px-5 py-4 bg-emerald-50/90 dark:bg-emerald-900/40 border border-emerald-200 dark:border-emerald-900 text-emerald-800 dark:text-emerald-300 text-sm font-semibold rounded-2xl shadow-xs backdrop-blur-sm">
+                        <span class="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center text-emerald-600 dark:text-emerald-300 shrink-0">
                             <i class="fa-solid fa-check text-sm"></i>
                         </span>
                         <span>{{ session('success') }}</span>
                     </div>
                 @endif
                 @if(session('error'))
-                    <div class="mb-6 flex items-center gap-3 px-5 py-4 bg-rose-50/90 border border-rose-200 text-rose-800 text-sm font-semibold rounded-2xl shadow-xs backdrop-blur-sm">
-                        <span class="w-8 h-8 rounded-xl bg-rose-100 flex items-center justify-center text-rose-600 shrink-0">
+                    <div class="mb-6 flex items-center gap-3 px-5 py-4 bg-rose-50/90 dark:bg-rose-900/40 border border-rose-200 dark:border-rose-900 text-rose-800 dark:text-rose-300 text-sm font-semibold rounded-2xl shadow-xs backdrop-blur-sm">
+                        <span class="w-8 h-8 rounded-xl bg-rose-100 dark:bg-rose-900/40 flex items-center justify-center text-rose-600 dark:text-rose-300 shrink-0">
                             <i class="fa-solid fa-xmark text-sm"></i>
                         </span>
                         <span>{{ session('error') }}</span>
@@ -161,24 +170,24 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                 @if($reports->count() > 0)
                     <div class="space-y-4">
                         @foreach($reports as $report)
-                            <div class="group bg-white rounded-2xl border border-blue-100/80 shadow-xs hover:shadow-md hover:border-blue-200 transition-all duration-200 p-5 sm:p-6">
+                            <div class="group bg-white dark:bg-slate-900 rounded-2xl border border-blue-100/80 dark:border-slate-800 shadow-xs hover:shadow-md hover:border-blue-200 dark:hover:border-slate-700 transition-all duration-200 p-5 sm:p-6">
                                 <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
                                     
                                     {{-- Left: Details & Metadata --}}
                                     <div class="flex-1 min-w-0">
                                         {{-- Header Row: Title & Status Badge --}}
                                         <div class="flex flex-wrap items-center gap-3 mb-2.5">
-                                            <h3 class="text-base sm:text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors duration-200">
+                                            <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
                                                 {{ $report->subject }}
                                             </h3>
 
 {{-- Dynamic Status Pill --}}
                                             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold shrink-0 border
-                                                @if($report->status == 'menunggu') bg-amber-50 text-amber-700 border-amber-200/80
-                                                @elseif($report->status == 'ditinjau') bg-blue-50 text-blue-700 border-blue-200/80
-                                                @elseif($report->status == 'menunggu-bukti') bg-violet-50 text-violet-700 border-violet-200/80
-                                                @elseif($report->status == 'selesai') bg-emerald-50 text-emerald-700 border-emerald-200/80
-                                                @else bg-rose-50 text-rose-700 border-rose-200/80 @endif">
+                                                @if($report->status == 'menunggu') bg-amber-50 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 border-amber-200/80 dark:border-amber-900
+                                                @elseif($report->status == 'ditinjau') bg-blue-50 dark:bg-slate-800 text-blue-700 dark:text-blue-400 border-blue-200/80 dark:border-slate-800
+                                                @elseif($report->status == 'menunggu-bukti') bg-violet-50 dark:bg-violet-900/40 text-violet-700 dark:text-violet-300 border-violet-200/80 dark:border-violet-900
+                                                @elseif($report->status == 'selesai') bg-emerald-50 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 border-emerald-200/80 dark:border-emerald-900
+                                                @else bg-rose-50 dark:bg-rose-900/40 text-rose-700 dark:text-rose-300 border-rose-200/80 dark:border-rose-900 @endif">
                                                 
                                                 <span class="w-1.5 h-1.5 rounded-full 
                                                     @if($report->status == 'menunggu') bg-amber-500
@@ -187,46 +196,46 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                                     @elseif($report->status == 'selesai') bg-emerald-500
                                                     @else bg-rose-500 @endif">
                                                 </span>
-                                                {{ \App\Models\Report::statusLabel($report->status) }}<span class="inline-flex items-center gap-1.5 px-2 py-0.5 bg-blue-50 text-slate-500 text-[10px] font-semibold rounded-full">{{ \App\Models\Report::targetLabel($report->target) }}</span>
+                                                {{ \App\Models\Report::statusLabel($report->status) }}<span class="inline-flex items-center gap-1.5 px-2 py-0.5 bg-blue-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[10px] font-semibold rounded-full">{{ \App\Models\Report::targetLabel($report->target) }}</span>
                                             </span>
                                         </div>
 
                                         {{-- Description --}}
-                                        <p class="text-sm text-slate-600 leading-relaxed line-clamp-2 mb-4">
+                                        <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed line-clamp-2 mb-4">
                                             {{ Str::limit($report->description, 150) }}
                                         </p>
 
                                         {{-- Tags & Reference Badges --}}
                                         <div class="flex flex-wrap items-center gap-2 text-xs">
                                             {{-- Kategori --}}
-                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-slate-700 font-semibold rounded-lg border border-blue-100/60">
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 dark:bg-slate-800 text-slate-700 dark:text-white font-semibold rounded-lg border border-blue-100/60 dark:border-slate-800">
                                                 <i class="fa-solid fa-tag text-slate-400 text-[10px]"></i>
                                                 {{ \App\Models\Report::categoryLabel($report->category) }}
                                             </span>
 
                                             {{-- Tanggal --}}
-                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-[#f6f9ff] text-slate-500 font-medium rounded-lg border border-blue-100/50">
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-[#f6f9ff] dark:bg-slate-950 text-slate-500 dark:text-slate-400 font-medium rounded-lg border border-blue-100/50 dark:border-slate-800">
                                                 <i class="fa-regular fa-calendar text-slate-400 text-[10px]"></i>
                                                 {{ $report->created_at->format('d M Y') }}
                                             </span>
 
                                             {{-- User Terlapor --}}
                                             @if($report->reportedUser)
-                                                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-orange-50/80 text-orange-700 font-medium rounded-lg border border-orange-200/60">
-                                                    <i class="fa-solid fa-user-shield text-orange-500 text-[10px]"></i>
+                                                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-orange-50/80 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300 font-medium rounded-lg border border-orange-200/60 dark:border-orange-900">
+                                                    <i class="fa-solid fa-user-shield text-orange-500 dark:text-orange-400 text-[10px]"></i>
                                                     {{ $report->reportedUser->name }}
                                                 </span>
                                             @endif
 
                                             {{-- Context (Workspace / Project) --}}
                                             @if($report->workspace)
-                                                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-50/80 text-indigo-700 font-medium rounded-lg border border-indigo-200/60">
-                                                    <i class="fa-solid fa-layer-group text-indigo-500 text-[10px]"></i>
+                                                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-50/80 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 font-medium rounded-lg border border-indigo-200/60 dark:border-indigo-900">
+                                                    <i class="fa-solid fa-layer-group text-indigo-500 dark:text-indigo-400 text-[10px]"></i>
                                                     {{ Str::limit($report->workspace->project->project_name ?? 'Workspace', 30) }}
                                                 </span>
                                             @elseif($report->project)
-                                                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50/80 text-blue-700 font-medium rounded-lg border border-blue-200/60">
-                                                    <i class="fa-solid fa-folder-open text-blue-500 text-[10px]"></i>
+                                                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50/80 dark:bg-slate-800/80 text-blue-700 dark:text-blue-400 font-medium rounded-lg border border-blue-200/60 dark:border-slate-800">
+                                                    <i class="fa-solid fa-folder-open text-blue-500 dark:text-blue-400 text-[10px]"></i>
                                                     {{ Str::limit($report->project->project_name, 30) }}
                                                 </span>
                                             @endif
@@ -234,9 +243,9 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                     </div>
 
                                     {{-- Right: Actions --}}
-                                    <div class="flex items-center justify-end pt-3 lg:pt-0 border-t lg:border-t-0 border-blue-50 shrink-0">
+                                    <div class="flex items-center justify-end pt-3 lg:pt-0 border-t lg:border-t-0 border-blue-50 dark:border-slate-800 shrink-0">
                                         <a href="{{ route('freelancer.reports.show', $report) }}"
-                                           class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 text-xs font-bold bg-blue-50 hover:bg-blue-600 text-blue-600 hover:text-white rounded-xl transition-all duration-200 border border-blue-100 shadow-xs">
+                                           class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 text-xs font-bold bg-blue-50 dark:bg-slate-800 hover:bg-blue-600 text-blue-600 dark:text-blue-400 hover:text-white rounded-xl transition-all duration-200 border border-blue-100 dark:border-slate-800 shadow-xs">
                                             Lihat Detail
                                             <i class="fa-solid fa-arrow-right text-[10px]"></i>
                                         </a>
@@ -255,12 +264,12 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                     @endif
                 @else
                     {{-- Empty State --}}
-                    <div class="bg-white rounded-3xl border border-blue-100/80 p-12 text-center max-w-lg mx-auto my-8 shadow-xs">
-                        <div class="w-20 h-20 rounded-2xl bg-blue-50 text-slate-400 flex items-center justify-center mx-auto mb-6">
-                            <i class="fa-solid fa-shield-cat text-4xl text-slate-300"></i>
+                    <div class="bg-white dark:bg-slate-900 rounded-3xl border border-blue-100/80 dark:border-slate-800 p-12 text-center max-w-lg mx-auto my-8 shadow-xs">
+                        <div class="w-20 h-20 rounded-2xl bg-blue-50 dark:bg-slate-800 text-slate-400 flex items-center justify-center mx-auto mb-6">
+                            <i class="fa-solid fa-shield-cat text-4xl text-slate-300 dark:text-slate-600"></i>
                         </div>
-                        <h3 class="text-xl font-bold text-slate-900 mb-2">Belum Ada Laporan</h3>
-                        <p class="text-sm text-slate-500 leading-relaxed mb-6">
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Belum Ada Laporan</h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-6">
                             Anda belum pernah membuat laporan aduan. Jika Anda menemukan penyalahgunaan sistem, pengguna mencurigakan, atau kendala transaksi, silakan sampaikan melalui tombol di bawah.
                         </p>
                         <a href="{{ route('freelancer.reports.create') }}"
@@ -272,7 +281,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                 @endif
 
                 <div class="mt-16">
-                    @include('navbar.footer')
+                  
                 </div>
 
             </div>

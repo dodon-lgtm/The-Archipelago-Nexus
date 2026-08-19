@@ -5,6 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Profil Freelancer - Modern Dashboard</title>
 
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = tailwind.config || {};
+        tailwind.config.darkMode = 'class';
+    </script>
+
     <!-- Bootstrap 5.3 & FontAwesome -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -294,25 +305,25 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 </style>
 </head>
 
-<body>
+<body class="bg-[#f6f9ff] dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-300">
 
 <div class="container">
 
     <!-- Header Title -->
     <div class="mb-4" data-aos="fade-down" data-aos-duration="600">
-        <h1 class="page-title">Edit Profil</h1>
-        <p class="page-subtitle">Lengkapi informasi profil agar lebih menarik dan dipercaya oleh klien.</p>
+        <h1 class="page-title dark:text-white">Edit Profil</h1>
+        <p class="page-subtitle dark:text-slate-400">Lengkapi informasi profil agar lebih menarik dan dipercaya oleh klien.</p>
     </div>
 
     <!-- Alert Notifikasi -->
     @if(session('success'))
-        <div class="alert alert-success mb-4" data-aos="fade-up">
+        <div class="alert alert-success dark:bg-green-900/40 dark:text-green-300 mb-4" data-aos="fade-up">
             <i class="fa-solid fa-circle-check me-2"></i> {{ session('success') }}
         </div>
     @endif
 
     @if ($errors->any())
-        <div class="alert alert-danger mb-4" data-aos="fade-up">
+        <div class="alert alert-danger dark:bg-red-900/40 dark:text-red-300 mb-4" data-aos="fade-up">
             <ul class="mb-0">
                 @foreach($errors->all() as $error)
                     <li><i class="fa-solid fa-triangle-exclamation me-2"></i> {{ $error }}</li>
@@ -325,8 +336,8 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
         @csrf
 
         <!-- FOTO PROFIL CARD -->
-        <div class="card-custom" data-aos="fade-up" data-aos-duration="800">
-            <div class="card-header-custom">
+        <div class="card-custom dark:bg-slate-900 dark:border-slate-800 transition-colors duration-300" data-aos="fade-up" data-aos-duration="800">
+            <div class="card-header-custom dark:bg-slate-800 dark:border-slate-800">
                 <i class="fa-solid fa-camera"></i> Foto Profil
             </div>
             <div class="card-body-custom text-center">
@@ -338,91 +349,91 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                     @endif
                 </div>
                 <div class="mb-2 col-md-6 mx-auto">
-                    <input type="file" name="photo" id="photo" class="form-control">
+                    <input type="file" name="photo" id="photo" class="form-control dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:placeholder:text-slate-500">
                 </div>
-                <small class="text-muted d-block">Format yang didukung: JPG, JPEG, PNG. Ukuran maksimal 2MB.</small>
+                <small class="text-muted dark:text-slate-400 d-block">Format yang didukung: JPG, JPEG, PNG. Ukuran maksimal 2MB.</small>
             </div>
         </div>
 
         <!-- INFORMASI DASAR -->
-        <div class="card-custom" data-aos="fade-up" data-aos-duration="900">
-            <div class="card-header-custom">
+        <div class="card-custom dark:bg-slate-900 dark:border-slate-800 transition-colors duration-300" data-aos="fade-up" data-aos-duration="900">
+            <div class="card-header-custom dark:bg-slate-800 dark:border-slate-800">
                 <i class="fa-solid fa-user"></i> Informasi Dasar
             </div>
             <div class="card-body-custom">
                 <div class="row">
                    <div class="col-md-6 mb-4">
-    <label class="form-label">Nama Lengkap</label>
+    <label class="form-label dark:text-slate-200">Nama Lengkap</label>
     <input
         type="text"
         name="name"
-        class="form-control"
+        class="form-control dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:placeholder:text-slate-500"
         value="{{ old('name', $user->name) }}"
         placeholder="Masukkan nama lengkap"
     >
 </div>
 
 <div class="col-md-6 mb-4">
-    <label class="form-label">Email Utama</label>
+    <label class="form-label dark:text-slate-200">Email Utama</label>
     <input
         type="email"
         name="email"
-        class="form-control"
+        class="form-control dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:placeholder:text-slate-500"
         value="{{ old('email', $user->email) }}"
         placeholder="Masukkan email"
     >
 </div>
 
                     <div class="col-md-6 mb-4">
-                        <label class="form-label">Lokasi Domisili</label>
-                        <input type="text" name="location" class="form-control" placeholder="Contoh : Sukabumi, Jawa Barat" value="{{ old('location', $profile->location) }}">
+                        <label class="form-label dark:text-slate-200">Lokasi Domisili</label>
+                        <input type="text" name="location" class="form-control dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:placeholder:text-slate-500" placeholder="Contoh : Sukabumi, Jawa Barat" value="{{ old('location', $profile->location) }}">
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- TENTANG SAYA -->
-        <div class="card-custom" data-aos="fade-up" data-aos-duration="1000">
-            <div class="card-header-custom">
+        <div class="card-custom dark:bg-slate-900 dark:border-slate-800 transition-colors duration-300" data-aos="fade-up" data-aos-duration="1000">
+            <div class="card-header-custom dark:bg-slate-800 dark:border-slate-800">
                 <i class="fa-solid fa-address-card"></i> Tentang Saya
             </div>
             <div class="card-body-custom">
-                <label class="form-label">Ceritakan Singkat Tentang Diri Anda</label>
-                <textarea name="bio" rows="5" class="form-control" placeholder="Contoh: Saya adalah seorang Web Developer profesional yang berpengalaman menggunakan Laravel, PHP, dan MySQL selama lebih dari 3 tahun...">{{ old('bio', $profile->bio) }}</textarea>
+                <label class="form-label dark:text-slate-200">Ceritakan Singkat Tentang Diri Anda</label>
+                <textarea name="bio" rows="5" class="form-control dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:placeholder:text-slate-500" placeholder="Contoh: Saya adalah seorang Web Developer profesional yang berpengalaman menggunakan Laravel, PHP, dan MySQL selama lebih dari 3 tahun...">{{ old('bio', $profile->bio) }}</textarea>
             </div>
         </div>
 
         <!-- KEAHLIAN -->
-        <div class="card-custom" data-aos="fade-up" data-aos-duration="1000">
-            <div class="card-header-custom">
+        <div class="card-custom dark:bg-slate-900 dark:border-slate-800 transition-colors duration-300" data-aos="fade-up" data-aos-duration="1000">
+            <div class="card-header-custom dark:bg-slate-800 dark:border-slate-800">
                 <i class="fa-solid fa-code"></i> Keahlian (Skills)
             </div>
             <div class="card-body-custom">
-                <label class="form-label">Daftar Keahlian (Pisahkan dengan tanda koma)</label>
-                <input type="text" name="skills" class="form-control" placeholder="Laravel, PHP, JavaScript, Bootstrap, Figma" value="{{ old('skills', $profile->skills) }}">
-                <small class="text-muted mt-2 d-block">Contoh: Laravel, PHP, JavaScript, Bootstrap, UI/UX Design</small>
+                <label class="form-label dark:text-slate-200">Daftar Keahlian (Pisahkan dengan tanda koma)</label>
+                <input type="text" name="skills" class="form-control dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:placeholder:text-slate-500" placeholder="Laravel, PHP, JavaScript, Bootstrap, Figma" value="{{ old('skills', $profile->skills) }}">
+                <small class="text-muted dark:text-slate-400 mt-2 d-block">Contoh: Laravel, PHP, JavaScript, Bootstrap, UI/UX Design</small>
             </div>
         </div>
 
         <!-- PENGALAMAN -->
-        <div class="card-custom" data-aos="fade-up" data-aos-duration="1000">
-            <div class="card-header-custom">
+        <div class="card-custom dark:bg-slate-900 dark:border-slate-800 transition-colors duration-300" data-aos="fade-up" data-aos-duration="1000">
+            <div class="card-header-custom dark:bg-slate-800 dark:border-slate-800">
                 <i class="fa-solid fa-briefcase"></i> Pengalaman Kerja
             </div>
             <div class="card-body-custom">
-                <label class="form-label">Riwayat Pengalaman Kerja / Freelance</label>
-                <textarea name="experience" rows="5" class="form-control" placeholder="Contoh: Freelance Web Developer di berbagai agensi lokal selama 2 tahun...">{{ old('experience', $profile->experience) }}</textarea>
+                <label class="form-label dark:text-slate-200">Riwayat Pengalaman Kerja / Freelance</label>
+                <textarea name="experience" rows="5" class="form-control dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:placeholder:text-slate-500" placeholder="Contoh: Freelance Web Developer di berbagai agensi lokal selama 2 tahun...">{{ old('experience', $profile->experience) }}</textarea>
             </div>
         </div>
 
         <!-- PORTOFOLIO -->
-        <div class="card-custom" data-aos="fade-up" data-aos-duration="1000">
-            <div class="card-header-custom">
+        <div class="card-custom dark:bg-slate-900 dark:border-slate-800 transition-colors duration-300" data-aos="fade-up" data-aos-duration="1000">
+            <div class="card-header-custom dark:bg-slate-800 dark:border-slate-800">
                 <i class="fa-solid fa-globe"></i> Tautan Portofolio
             </div>
             <div class="card-body-custom">
-                <label class="form-label">URL Website / GitHub / Behance / Dribbble</label>
-                <input type="url" name="portfolio_link" class="form-control" placeholder="https://github.com/username" value="{{ old('portfolio_link', $profile->portfolio_link) }}">
+                <label class="form-label dark:text-slate-200">URL Website / GitHub / Behance / Dribbble</label>
+                <input type="url" name="portfolio_link" class="form-control dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:placeholder:text-slate-500" placeholder="https://github.com/username" value="{{ old('portfolio_link', $profile->portfolio_link) }}">
 
                 @if($profile->portfolio_link)
                     <div class="mt-3">
@@ -435,16 +446,16 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
         </div>
 
         <!-- CURRICULUM VITAE (CV) -->
-        <div class="card-custom" data-aos="fade-up" data-aos-duration="1000">
-            <div class="card-header-custom">
+        <div class="card-custom dark:bg-slate-900 dark:border-slate-800 transition-colors duration-300" data-aos="fade-up" data-aos-duration="1000">
+            <div class="card-header-custom dark:bg-slate-800 dark:border-slate-800">
                 <i class="fa-solid fa-file-pdf"></i> Curriculum Vitae (CV)
             </div>
             <div class="card-body-custom">
-                <label class="form-label">Unggah Dokumen CV Baru (Format PDF)</label>
-                <input type="file" name="cv" id="cv" class="form-control">
-                <small class="text-muted mt-2 d-block">Format file wajib PDF dengan ukuran maksimal 2MB.</small>
+                <label class="form-label dark:text-slate-200">Unggah Dokumen CV Baru (Format PDF)</label>
+                <input type="file" name="cv" id="cv" class="form-control dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:placeholder:text-slate-500">
+                <small class="text-muted dark:text-slate-400 mt-2 d-block">Format file wajib PDF dengan ukuran maksimal 2MB.</small>
                 
-                <div id="cvName" class="mt-3 text-info fw-semibold"></div>
+                <div id="cvName" class="mt-3 text-info dark:text-sky-400 fw-semibold"></div>
 
                 @if($profile->cv)
                     <div class="mt-3">
@@ -458,7 +469,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
         <!-- TOMBOL AKSI -->
         <div class="d-flex justify-content-end gap-3 mb-5" data-aos="fade-up" data-aos-duration="1000">
-            <a href="{{ route('freelancer.profile') }}" class="btn btn-secondary-custom">
+            <a href="{{ route('freelancer.profile') }}" class="btn btn-secondary-custom dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700">
                 <i class="fa-solid fa-arrow-left me-2"></i> Batal / Kembali
             </a>
             <button type="submit" class="btn btn-custom-primary">

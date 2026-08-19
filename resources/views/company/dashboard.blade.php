@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+
     <title>Dashboard Perusahaan | Professional Workspace</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -13,6 +19,7 @@
 
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
@@ -205,7 +212,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 </style>
 </head>
 
-<body class="bg-surface text-slate-800 min-h-screen flex font-sans antialiased selection:bg-brand selection:text-white">
+<body class="bg-surface dark:bg-slate-900 text-slate-800 dark:text-white min-h-screen flex font-sans antialiased selection:bg-brand selection:text-white transition-colors duration-300">
 
     {{-- SIDEBAR --}}
     @include('navbar.navigasi')
@@ -222,7 +229,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
                 {{-- NOTIFIKASI SESSION SUCCESS --}}
                 @if(session('success'))
-                    <div class="reveal reveal-1 flex items-center gap-3 px-5 py-4 bg-emerald-50/80 backdrop-blur-md border border-emerald-200/60 text-emerald-800 text-sm font-medium rounded-2xl shadow-sm">
+                    <div class="reveal reveal-1 flex items-center gap-3 px-5 py-4 bg-emerald-50/80 dark:bg-emerald-900/40 backdrop-blur-md border border-emerald-200/60 dark:border-emerald-900 text-emerald-800 dark:text-emerald-300 text-sm font-medium rounded-2xl shadow-sm">
                         <div class="w-8 h-8 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-sm shadow-emerald-500/30">
                             <i class="fa-solid fa-check text-xs"></i>
                         </div>
@@ -256,7 +263,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                         </div>
 
                         <a href="{{ route('company.projects.create') }}"
-                           class="btn-shimmer inline-flex items-center justify-center gap-2.5 bg-white text-brand px-6 py-3.5 rounded-2xl text-sm font-bold shadow-lg shadow-black/5 hover:bg-[#f6f9ff] hover:scale-[1.02] active:scale-[0.98] transition-all shrink-0">
+                           class="btn-shimmer inline-flex items-center justify-center gap-2.5 bg-white dark:bg-slate-900 text-brand dark:text-blue-400 px-6 py-3.5 rounded-2xl text-sm font-bold shadow-lg shadow-black/5 hover:bg-[#f6f9ff] dark:hover:bg-slate-800 hover:scale-[1.02] active:scale-[0.98] transition-all shrink-0">
                             <i class="fa-solid fa-plus text-xs"></i>
                             <span>Buat Proyek Baru</span>
                         </a>
@@ -268,65 +275,65 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 w-full">
 
                     {{-- TOTAL PROYEK --}}
-                    <div class="reveal reveal-2 stat-card bg-white border border-blue-100/80 rounded-2xl p-5 sm:p-6 shadow-sm relative overflow-hidden">
+                    <div class="reveal reveal-2 stat-card bg-white dark:bg-slate-900 border border-blue-100/80 dark:border-slate-800 rounded-2xl p-5 sm:p-6 shadow-sm relative overflow-hidden transition-colors duration-300">
                         <div class="flex items-center justify-between">
                             <div class="space-y-1">
-                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Proyek</p>
-                                <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight" data-count="{{ $totalProjects }}">0</h3>
+                                <p class="text-xs font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider">Total Proyek</p>
+                                <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight" data-count="{{ $totalProjects }}">0</h3>
                             </div>
-                            <div class="stat-icon w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-blue-50 text-brand flex items-center justify-center text-xl shadow-inner border border-blue-100/50">
+                            <div class="stat-icon w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-blue-50 dark:bg-slate-800 text-brand dark:text-blue-400 flex items-center justify-center text-xl shadow-inner border border-blue-100/50 dark:border-slate-800">
                                 <i class="fa-regular fa-folder-open"></i>
                             </div>
                         </div>
-                        <div class="mt-4 flex items-center gap-1.5 text-xs font-semibold text-blue-600 bg-blue-50/60 w-fit px-2.5 py-1 rounded-lg">
+                        <div class="mt-4 flex items-center gap-1.5 text-xs font-semibold text-blue-600 dark:text-blue-400 bg-blue-50/60 dark:bg-slate-800/60 w-fit px-2.5 py-1 rounded-lg">
                             <i class="fa-solid fa-chart-pie"></i> Keseluruhan Portofolio
                         </div>
                     </div>
 
                     {{-- PROYEK AKTIF --}}
-                    <div class="reveal reveal-3 stat-card bg-white border border-blue-100/80 rounded-2xl p-5 sm:p-6 shadow-sm relative overflow-hidden">
+                    <div class="reveal reveal-3 stat-card bg-white dark:bg-slate-900 border border-blue-100/80 dark:border-slate-800 rounded-2xl p-5 sm:p-6 shadow-sm relative overflow-hidden transition-colors duration-300">
                         <div class="flex items-center justify-between">
                             <div class="space-y-1">
-                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Proyek Aktif</p>
-                                <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight" data-count="{{ $activeProjects }}">0</h3>
+                                <p class="text-xs font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider">Proyek Aktif</p>
+                                <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight" data-count="{{ $activeProjects }}">0</h3>
                             </div>
-                            <div class="stat-icon w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl shadow-inner border border-emerald-100/50">
+                            <div class="stat-icon w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-emerald-50 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-300 flex items-center justify-center text-xl shadow-inner border border-emerald-100/50 dark:border-emerald-900">
                                 <i class="fa-solid fa-briefcase"></i>
                             </div>
                         </div>
-                        <div class="mt-4 flex items-center gap-1.5 text-xs font-semibold text-emerald-600 bg-emerald-50/60 w-fit px-2.5 py-1 rounded-lg">
+                        <div class="mt-4 flex items-center gap-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-300 bg-emerald-50/60 dark:bg-emerald-900/40 w-fit px-2.5 py-1 rounded-lg">
                             <i class="fa-solid fa-bolt"></i> Sedang Berjalan
                         </div>
                     </div>
 
                     {{-- FREELANCER BEKERJA --}}
-                    <div class="reveal reveal-4 stat-card bg-white border border-blue-100/80 rounded-2xl p-5 sm:p-6 shadow-sm relative overflow-hidden">
+                    <div class="reveal reveal-4 stat-card bg-white dark:bg-slate-900 border border-blue-100/80 dark:border-slate-800 rounded-2xl p-5 sm:p-6 shadow-sm relative overflow-hidden transition-colors duration-300">
                         <div class="flex items-center justify-between">
                             <div class="space-y-1">
-                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Freelancer Aktif</p>
-                                <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight" data-count="{{ $activeFreelancers }}">0</h3>
+                                <p class="text-xs font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider">Freelancer Aktif</p>
+                                <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight" data-count="{{ $activeFreelancers }}">0</h3>
                             </div>
-                            <div class="stat-icon w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl shadow-inner border border-amber-100/50">
+                            <div class="stat-icon w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-amber-50 dark:bg-amber-900/40 text-amber-600 dark:text-amber-300 flex items-center justify-center text-xl shadow-inner border border-amber-100/50 dark:border-amber-900">
                                 <i class="fa-solid fa-user-group"></i>
                             </div>
                         </div>
-                        <div class="mt-4 flex items-center gap-1.5 text-xs font-semibold text-amber-600 bg-amber-50/60 w-fit px-2.5 py-1 rounded-lg">
+                        <div class="mt-4 flex items-center gap-1.5 text-xs font-semibold text-amber-600 dark:text-amber-300 bg-amber-50/60 dark:bg-amber-900/40 w-fit px-2.5 py-1 rounded-lg">
                             <i class="fa-solid fa-handshake"></i> Mitra Kolaborasi
                         </div>
                     </div>
 
                     {{-- TOTAL PENGELUARAN --}}
-                    <div class="reveal reveal-5 stat-card bg-white border border-blue-100/80 rounded-2xl p-5 sm:p-6 shadow-sm relative overflow-hidden">
+                    <div class="reveal reveal-5 stat-card bg-white dark:bg-slate-900 border border-blue-100/80 dark:border-slate-800 rounded-2xl p-5 sm:p-6 shadow-sm relative overflow-hidden transition-colors duration-300">
                         <div class="flex items-center justify-between">
                             <div class="space-y-1">
-                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Pengeluaran</p>
-                                <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight mt-1">Rp <span data-count="{{ $totalSpending }}">0</span></h3>
+                                <p class="text-xs font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider">Total Pengeluaran</p>
+                                <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight mt-1">Rp <span data-count="{{ $totalSpending }}">0</span></h3>
                             </div>
-                            <div class="stat-icon w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-xl shadow-inner border border-rose-100/50">
+                            <div class="stat-icon w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-rose-50 dark:bg-rose-900/40 text-rose-600 dark:text-rose-300 flex items-center justify-center text-xl shadow-inner border border-rose-100/50 dark:border-rose-900">
                                 <i class="fa-solid fa-wallet"></i>
                             </div>
                         </div>
-                        <div class="mt-4 flex items-center gap-1.5 text-xs font-semibold text-rose-600 bg-rose-50/60 w-fit px-2.5 py-1 rounded-lg">
+                        <div class="mt-4 flex items-center gap-1.5 text-xs font-semibold text-rose-600 dark:text-rose-300 bg-rose-50/60 dark:bg-rose-900/40 w-fit px-2.5 py-1 rounded-lg">
                             <i class="fa-solid fa-arrow-trend-up"></i> Investasi Proyek
                         </div>
                     </div>
@@ -338,17 +345,17 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
 
                     {{-- KARTU PROYEK ANDA --}}
-                    <div class="reveal reveal-6 bg-white border border-blue-100/80 rounded-3xl p-5 sm:p-6 lg:p-7 shadow-sm flex flex-col justify-between w-full">
+                    <div class="reveal reveal-6 bg-white dark:bg-slate-900 border border-blue-100/80 dark:border-slate-800 rounded-3xl p-5 sm:p-6 lg:p-7 shadow-sm flex flex-col justify-between w-full transition-colors duration-300">
                         <div>
                             <div class="flex items-center justify-between mb-6">
                                 <div class="flex items-center gap-3">
                                     <span class="section-accent h-7"></span>
                                     <div>
-                                        <h2 class="font-extrabold text-slate-900 text-lg">Proyek Anda</h2>
-                                        <p class="text-xs text-slate-400 font-medium">Daftar proyek terbaru yang dipublikasikan</p>
+                                        <h2 class="font-extrabold text-slate-900 dark:text-white text-lg">Proyek Anda</h2>
+                                        <p class="text-xs text-slate-400 dark:text-slate-400 font-medium">Daftar proyek terbaru yang dipublikasikan</p>
                                     </div>
                                 </div>
-                                <a href="{{ route('company.projects.index') }}" class="text-xs text-brand font-bold hover:text-brand-dark flex items-center gap-1.5 group bg-brand/5 px-3 py-1.5 rounded-xl transition">
+                                <a href="{{ route('company.projects.index') }}" class="text-xs text-brand dark:text-blue-400 font-bold hover:text-brand-dark dark:hover:text-blue-400 flex items-center gap-1.5 group bg-brand/5 px-3 py-1.5 rounded-xl transition">
                                     <span>Lihat Semua</span> 
                                     <i class="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
                                 </a>
@@ -357,42 +364,48 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                             @if($recentProjects->count() > 0)
                                 <div class="space-y-3">
                                     @foreach($recentProjects as $project)
-                                    <div class="modern-row flex items-center justify-between p-4 bg-[#f6f9ff]/70 rounded-2xl border border-blue-50">
+                                    <div class="modern-row flex items-center justify-between p-4 bg-[#f6f9ff]/70 dark:bg-slate-950/70 rounded-2xl border border-blue-50 dark:border-slate-800">
                                         <div class="min-w-0 flex-1 pr-4">
-                                            <h4 class="text-sm font-bold text-slate-800 truncate">
+                                            <h4 class="text-sm font-bold text-slate-800 dark:text-white truncate">
                                                 <a href="{{ route('company.projects.show', $project) }}" class="hover:text-brand transition">
                                                     {{ $project->project_name }}
                                                 </a>
                                             </h4>
-                                            <div class="flex flex-wrap items-center gap-3 mt-1.5 text-xs font-medium text-slate-400">
+                                            <div class="flex flex-wrap items-center gap-3 mt-1.5 text-xs font-medium text-slate-400 dark:text-slate-400">
                                                 @if($project->budget)
-                                                <span class="flex items-center gap-1"><i class="fa-regular fa-money-bill-1 text-slate-400"></i>Rp {{ number_format($project->budget, 0, ',', '.') }}</span>
+                                                <span class="flex items-center gap-1"><i class="fa-regular fa-money-bill-1 text-slate-400 dark:text-slate-400"></i>Rp {{ number_format($project->budget, 0, ',', '.') }}</span>
                                                 @endif
                                                 @if($project->deadline)
-                                                <span class="flex items-center gap-1"><i class="fa-regular fa-calendar text-slate-400"></i>{{ \Carbon\Carbon::parse($project->deadline)->format('d M Y') }}</span>
+                                                <span class="flex items-center gap-1"><i class="fa-regular fa-calendar text-slate-400 dark:text-slate-400"></i>{{ \Carbon\Carbon::parse($project->deadline)->format('d M Y') }}</span>
                                                 @endif
                                             </div>
                                         </div>
-                                        <span class="inline-flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full shrink-0
-                                            @if($project->status == 'Open') bg-emerald-50 text-emerald-600 border border-emerald-200/60
-                                            @elseif($project->status == 'Closed') bg-rose-50 text-rose-600 border border-rose-200/60
-                                            @else bg-blue-50 text-slate-600 border border-blue-100 @endif
-                                        ">
-                                            @if($project->status == 'Open')
+                                        @php
+                                            $projStatus = $project->status ?? 'open';
+                                            $statusBadge = match($projStatus) {
+                                                'open' => 'bg-emerald-50 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-900',
+                                                'closed' => 'bg-rose-50 dark:bg-rose-900/40 text-rose-600 dark:text-rose-300 border border-rose-200/60 dark:border-rose-900',
+                                                'archived' => 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700',
+                                                default => 'bg-blue-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-blue-100 dark:border-slate-800',
+                                            };
+                                            $statusLabel = \App\Models\Project::statusLabel($projStatus);
+                                        @endphp
+                                        <span class="inline-flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full shrink-0 {{ $statusBadge }}">
+                                            @if($projStatus === 'open')
                                                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
                                             @endif
-                                            {{ $project->status ?? 'Draft' }}
+                                            {{ $statusLabel }}
                                         </span>
                                     </div>
                                     @endforeach
                                 </div>
                             @else
                                 <div class="py-12 text-center">
-                                    <div class="w-14 h-14 mx-auto mb-3 bg-blue-50 text-slate-400 rounded-2xl flex items-center justify-center text-xl shadow-inner">
+                                    <div class="w-14 h-14 mx-auto mb-3 bg-blue-50 dark:bg-slate-800 text-slate-400 dark:text-slate-400 rounded-2xl flex items-center justify-center text-xl shadow-inner">
                                         <i class="fa-regular fa-folder-open"></i>
                                     </div>
-                                    <h3 class="text-sm font-bold text-slate-700">Belum ada proyek</h3>
-                                    <p class="text-xs text-slate-400 mt-1 max-w-xs mx-auto">Mulai buat proyek pertama Anda dan temukan talenta terbaik.</p>
+                                    <h3 class="text-sm font-bold text-slate-700 dark:text-white">Belum ada proyek</h3>
+                                    <p class="text-xs text-slate-400 dark:text-slate-400 mt-1 max-w-xs mx-auto">Mulai buat proyek pertama Anda dan temukan talenta terbaik.</p>
                                     <a href="{{ route('company.projects.create') }}" class="btn-shimmer inline-flex items-center gap-2 mt-4 px-4 py-2 bg-brand text-white rounded-xl text-xs font-bold shadow-md shadow-brand/20">
                                         <i class="fa-solid fa-plus text-[10px]"></i> Buat Proyek
                                     </a>
@@ -403,17 +416,17 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
 
                     {{-- KARTU PROPOSAL MASUK --}}
-                    <div class="reveal reveal-7 bg-white border border-blue-100/85 rounded-3xl p-5 sm:p-6 lg:p-7 shadow-sm flex flex-col justify-between w-full">
+                    <div class="reveal reveal-7 bg-white dark:bg-slate-900 border border-blue-100/85 dark:border-slate-800 rounded-3xl p-5 sm:p-6 lg:p-7 shadow-sm flex flex-col justify-between w-full transition-colors duration-300">
                         <div>
                             <div class="flex items-center justify-between mb-6">
                                 <div class="flex items-center gap-3">
                                     <span class="section-accent h-7"></span>
                                     <div>
-                                        <h2 class="font-extrabold text-slate-900 text-lg">Proposal Masuk</h2>
-                                        <p class="text-xs text-slate-400 font-medium">Tawaran & lamaran dari freelancer</p>
+                                        <h2 class="font-extrabold text-slate-900 dark:text-white text-lg">Proposal Masuk</h2>
+                                        <p class="text-xs text-slate-400 dark:text-slate-400 font-medium">Tawaran & lamaran dari freelancer</p>
                                     </div>
                                 </div>
-                                <a href="{{ route('company.projects.index') }}" class="text-xs text-brand font-bold hover:text-brand-dark flex items-center gap-1.5 group bg-brand/5 px-3 py-1.5 rounded-xl transition">
+                                <a href="{{ route('company.projects.index') }}" class="text-xs text-brand dark:text-blue-400 font-bold hover:text-brand-dark dark:hover:text-blue-400 flex items-center gap-1.5 group bg-brand/5 px-3 py-1.5 rounded-xl transition">
                                     <span>Kelola</span> 
                                     <i class="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
                                 </a>
@@ -422,21 +435,21 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                             @if($incomingProposals->count() > 0)
                                 <div class="space-y-3">
                                     @foreach($incomingProposals as $proposal)
-                                    <div class="modern-row flex items-center justify-between p-4 bg-[#f6f9ff]/70 rounded-2xl border border-blue-50">
+                                    <div class="modern-row flex items-center justify-between p-4 bg-[#f6f9ff]/70 dark:bg-slate-950/70 rounded-2xl border border-blue-50 dark:border-slate-800">
                                         <div class="min-w-0 flex-1 pr-4">
-                                            <h4 class="text-sm font-bold text-slate-800 truncate">
+                                            <h4 class="text-sm font-bold text-slate-800 dark:text-white truncate">
                                                 {{ $proposal->freelancer->name ?? 'Freelancer' }}
                                             </h4>
-                                            <div class="flex flex-wrap items-center gap-3 mt-1.5 text-xs font-medium text-slate-400">
+                                            <div class="flex flex-wrap items-center gap-3 mt-1.5 text-xs font-medium text-slate-400 dark:text-slate-400">
                                                 <span class="truncate max-w-[140px]"><i class="fa-regular fa-file-lines mr-1"></i>{{ $proposal->project->project_name ?? '-' }}</span>
-                                                <span class="text-slate-600 font-semibold"><i class="fa-regular fa-money-bill-1 mr-1 text-slate-400"></i>Rp {{ number_format($proposal->harga_penawaran, 0, ',', '.') }}</span>
-                                                <span><i class="fa-regular fa-clock mr-1 text-slate-400"></i>{{ $proposal->estimasi_hari }} hari</span>
+                                                <span class="text-slate-600 dark:text-slate-300 font-semibold"><i class="fa-regular fa-money-bill-1 mr-1 text-slate-400 dark:text-slate-400"></i>Rp {{ number_format($proposal->harga_penawaran, 0, ',', '.') }}</span>
+                                                <span><i class="fa-regular fa-clock mr-1 text-slate-400 dark:text-slate-400"></i>{{ $proposal->estimasi_hari }} hari</span>
                                             </div>
                                         </div>
                                         <span class="inline-flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full shrink-0
-                                            @if($proposal->status == 'Menunggu') bg-amber-50 text-amber-700 border border-amber-200/60
-                                            @elseif($proposal->status == 'Diterima') bg-emerald-50 text-emerald-600 border border-emerald-200/60
-                                            @else bg-rose-50 text-rose-600 border border-rose-200/60 @endif
+                                            @if($proposal->status == 'Menunggu') bg-amber-50 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 border border-amber-200/60 dark:border-amber-900
+                                            @elseif($proposal->status == 'Diterima') bg-emerald-50 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-900
+                                            @else bg-rose-50 dark:bg-rose-900/40 text-rose-600 dark:text-rose-300 border border-rose-200/60 dark:border-rose-900 @endif
                                         ">
                                             {{ $proposal->status }}
                                         </span>
@@ -445,11 +458,11 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                 </div>
                             @else
                                 <div class="py-12 text-center">
-                                    <div class="w-14 h-14 mx-auto mb-3 bg-blue-50 text-slate-400 rounded-2xl flex items-center justify-center text-xl shadow-inner">
+                                    <div class="w-14 h-14 mx-auto mb-3 bg-blue-50 dark:bg-slate-800 text-slate-400 dark:text-slate-400 rounded-2xl flex items-center justify-center text-xl shadow-inner">
                                         <i class="fa-regular fa-envelope"></i>
                                     </div>
-                                    <h3 class="text-sm font-bold text-slate-700">Belum ada proposal</h3>
-                                    <p class="text-xs text-slate-400 mt-1 max-w-xs mx-auto">Penawaran dan lamaran dari freelancer ahli akan muncul secara instan di sini.</p>
+                                    <h3 class="text-sm font-bold text-slate-700 dark:text-white">Belum ada proposal</h3>
+                                    <p class="text-xs text-slate-400 dark:text-slate-400 mt-1 max-w-xs mx-auto">Penawaran dan lamaran dari freelancer ahli akan muncul secara instan di sini.</p>
                                 </div>
                             @endif
                         </div>

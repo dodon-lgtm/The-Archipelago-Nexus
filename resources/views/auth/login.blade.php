@@ -220,7 +220,16 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
             </div>
 
             <!-- FORM LOGIN -->
-            <form action="{{ route('login') }}" method="POST" class="space-y-3.5 my-auto py-4 relative z-10">
+           <form action="{{ route('login') }}" method="POST" class="space-y-3.5 my-auto py-4 relative z-10">
+    @csrf
+
+    @if(request()->filled('redirect'))
+        <input
+            type="hidden"
+            name="redirect"
+            value="{{ request('redirect') }}"
+        >
+    @endif
                 @csrf
 
                 <!-- Pesan Success -->

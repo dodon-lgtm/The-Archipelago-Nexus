@@ -1,33 +1,35 @@
-<?php
+    <?php
 
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
+    use Illuminate\Support\Facades\Route;
+    use Illuminate\Support\Facades\Auth;
 
-// ─── GENERAL CONTROLLERS ─────────────────────────
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\RegisterController;
-use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\WorkspaceController;
-use App\Http\Controllers\ProjectSubmissionController;
-use App\Http\Controllers\review\ReviewController;
-use App\Http\Controllers\ReportController;
+    // ─── GENERAL CONTROLLERS ─────────────────────────
+    use App\Http\Controllers\AuthController;
+    use App\Http\Controllers\RegisterController;
+    use App\Http\Controllers\NotificationController;
+    use App\Http\Controllers\WorkspaceController;
+    use App\Http\Controllers\ProjectSubmissionController;
+    use App\Http\Controllers\review\ReviewController;
+    use App\Http\Controllers\ReportController;
+    use App\Http\Controllers\PasswordController;
+    use App\Http\Controllers\Freelancer\ProjectController;
 
-// ─── ADMIN CONTROLLERS ───────────────────────────
-use App\Http\Controllers\Admin\CompanyAccountRequestAdminController;
-use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\Admin\UserController as AdminUserController;
-use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
-use App\Http\Controllers\Admin\ProjectController as AdminProjectController;
-use App\Http\Controllers\Admin\PenawaranController as AdminPenawaranController;
-use App\Http\Controllers\Admin\HasilPekerjaanController as AdminHasilPekerjaanController;
-use App\Http\Controllers\Admin\ReportController as AdminReportController;
-use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
+    // ─── ADMIN CONTROLLERS ───────────────────────────
+    use App\Http\Controllers\Admin\CompanyAccountRequestAdminController;
+    use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+    use App\Http\Controllers\Admin\UserController as AdminUserController;
+    use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+    use App\Http\Controllers\Admin\ProjectController as AdminProjectController;
+    use App\Http\Controllers\Admin\PenawaranController as AdminPenawaranController;
+    use App\Http\Controllers\Admin\HasilPekerjaanController as AdminHasilPekerjaanController;
+    use App\Http\Controllers\Admin\ReportController as AdminReportController;
+    use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
 
-// ─── COMPANY CONTROLLERS ─────────────────────────
-use App\Http\Controllers\Company\ProjectController as CompanyProjectController;
-use App\Http\Controllers\Company\ProfilController as CompanyProfilController;
-use App\Http\Controllers\Company\PaymentController as CompanyPaymentController;
-use App\Http\Controllers\Company\ReportController as CompanyReportController;
+    // ─── COMPANY CONTROLLERS ─────────────────────────
+    use App\Http\Controllers\Company\ProjectController as CompanyProjectController;
+    use App\Http\Controllers\Company\ProfilController as CompanyProfilController;
+    use App\Http\Controllers\Company\PaymentController as CompanyPaymentController;
+    use App\Http\Controllers\Company\ReportController as CompanyReportController;
 
 // ─── FREELANCER CONTROLLERS ──────────────────────
 use App\Http\Controllers\Freelancer\PendapatanController as FreelancerPendapatanController;

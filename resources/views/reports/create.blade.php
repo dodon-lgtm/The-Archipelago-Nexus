@@ -5,7 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buat Laporan - ApexForge Labs</title>
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = tailwind.config || {};
+        tailwind.config.darkMode = 'class';
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
@@ -176,7 +185,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 </style>
 </head>
 
-<body class="bg-white text-blue-950 antialiased min-h-screen flex">
+<body class="bg-white dark:bg-slate-900 text-blue-950 dark:text-white antialiased min-h-screen flex transition-colors duration-300">
 
     @include('navbar.navigasi')
 
@@ -184,7 +193,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
         @include('navbar.nav')
 
         {{-- PURE BLUE & WHITE HOLOGRAPHIC MAIN CONTAINER --}}
-        <main class="flex-1 overflow-y-auto relative bg-white">
+        <main class="flex-1 overflow-y-auto relative bg-white dark:bg-slate-900">
 
             {{-- Ambient Lighting & Hologram Background Layers --}}
             <div class="absolute inset-0 z-0 pointer-events-none hologram-grid-blue"></div>
@@ -205,34 +214,34 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                 {{-- ALERTS: FUTURISTIC GLASS ALERTS --}}
                 @if (session('success'))
                     <div
-                        class="mb-8 overflow-hidden relative bg-white border border-blue-200 backdrop-blur-xl p-5 rounded-[1.5rem] shadow-[0_10px_30px_rgba(59,130,246,0.1)] flex items-start gap-4">
+                        class="mb-8 overflow-hidden relative bg-white dark:bg-slate-900 border border-blue-200 dark:border-slate-700 backdrop-blur-xl p-5 rounded-[1.5rem] shadow-[0_10px_30px_rgba(59,130,246,0.1)] flex items-start gap-4">
                         <div
-                            class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center shrink-0 border border-blue-100">
-                            <i class="fa-solid fa-check text-blue-600"></i>
+                            class="w-10 h-10 rounded-full bg-blue-50 dark:bg-slate-800 flex items-center justify-center shrink-0 border border-blue-100 dark:border-slate-800">
+                            <i class="fa-solid fa-check text-blue-600 dark:text-blue-400"></i>
                         </div>
-                        <div class="pt-2 font-bold text-blue-900">{{ session('success') }}</div>
+                        <div class="pt-2 font-bold text-blue-900 dark:text-white">{{ session('success') }}</div>
                     </div>
                 @endif
 
                 @if (session('error'))
                     <div
-                        class="mb-8 overflow-hidden relative bg-white border border-red-200 backdrop-blur-xl p-5 rounded-[1.5rem] shadow-[0_10px_30px_rgba(225,29,72,0.1)] flex items-start gap-4">
+                        class="mb-8 overflow-hidden relative bg-white dark:bg-slate-900 border border-red-200 dark:border-red-900 backdrop-blur-xl p-5 rounded-[1.5rem] shadow-[0_10px_30px_rgba(225,29,72,0.1)] flex items-start gap-4">
                         <div
-                            class="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center shrink-0 border border-red-100">
+                            class="w-10 h-10 rounded-full bg-red-50 dark:bg-red-900/40 flex items-center justify-center shrink-0 border border-red-100 dark:border-red-900">
                             <i class="fa-solid fa-xmark text-red-500"></i>
                         </div>
-                        <div class="pt-2 font-bold text-red-600">{{ session('error') }}</div>
+                        <div class="pt-2 font-bold text-red-600 dark:text-red-300">{{ session('error') }}</div>
                     </div>
                 @endif
 
                 @if ($errors->any())
                     <div
-                        class="mb-8 overflow-hidden relative bg-white border border-red-200 backdrop-blur-xl p-5 rounded-[1.5rem] shadow-[0_10px_30px_rgba(225,29,72,0.1)] flex items-start gap-4">
+                        class="mb-8 overflow-hidden relative bg-white dark:bg-slate-900 border border-red-200 dark:border-red-900 backdrop-blur-xl p-5 rounded-[1.5rem] shadow-[0_10px_30px_rgba(225,29,72,0.1)] flex items-start gap-4">
                         <div
-                            class="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center shrink-0 border border-red-100">
+                            class="w-10 h-10 rounded-full bg-red-50 dark:bg-red-900/40 flex items-center justify-center shrink-0 border border-red-100 dark:border-red-900">
                             <i class="fa-solid fa-triangle-exclamation text-red-500"></i>
                         </div>
-                        <div class="pt-1.5 text-sm font-bold text-red-500 space-y-1">
+                        <div class="pt-1.5 text-sm font-bold text-red-500 dark:text-red-300 space-y-1">
                             @foreach ($errors->all() as $error)
                                 <p>{{ $error }}</p>
                             @endforeach
@@ -241,7 +250,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                 @endif
 
                 {{-- FORM CONTAINER: PRISTINE WHITE GLASS --}}
-                <div class="glass-panel-pristine rounded-[2.5rem] relative overflow-hidden">
+                <div class="glass-panel-pristine dark:bg-slate-900 rounded-[2.5rem] relative overflow-hidden">
 
                     {{-- Decorative Top Accent Line --}}
                     <div
@@ -259,8 +268,8 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                 <i class="fa-solid fa-flag"></i>
                             </div>
                             <div>
-                                <h2 class="text-3xl font-black text-blue-950 tracking-tight mb-1">Buat Laporan</h2>
-                                <p class="text-sm font-semibold text-blue-600/70">Laporkan masalah, pengguna, atau
+                                <h2 class="text-3xl font-black text-blue-950 dark:text-white tracking-tight mb-1">Buat Laporan</h2>
+                                <p class="text-sm font-semibold text-blue-600/70 dark:text-blue-400/70">Laporkan masalah, pengguna, atau
                                     proyek yang melanggar protokol</p>
                             </div>
                         </div>
@@ -274,11 +283,11 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                 {{-- Kategori --}}
                                 <div class="relative group">
                                     <label
-                                        class="text-[10px] font-extrabold text-blue-500 uppercase tracking-widest mb-2 block">Kategori
+                                        class="text-[10px] font-extrabold text-blue-500 dark:text-blue-400 uppercase tracking-widest mb-2 block">Kategori
                                         Laporan <span class="text-blue-600">*</span></label>
                                     <div class="relative">
                                         <select name="category"
-                                            class="w-full appearance-none rounded-2xl border border-blue-100 bg-white/80 px-5 py-4 text-sm font-bold text-blue-950 transition-all duration-300 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 outline-none shadow-sm group-hover:border-blue-300 @error('category') border-red-300 focus:border-red-500 focus:ring-red-500/20 @enderror">
+                                            class="w-full appearance-none rounded-2xl border border-blue-100 dark:border-slate-700 bg-white/80 dark:bg-slate-800 px-5 py-4 text-sm font-bold text-blue-950 dark:text-white transition-all duration-300 focus:border-blue-500 focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-blue-500/10 outline-none shadow-sm group-hover:border-blue-300 @error('category') border-red-300 focus:border-red-500 focus:ring-red-500/20 @enderror">
                                             <option value="" disabled selected>Pilih Kategori...</option>
                                             @foreach (\App\Models\Report::categoriesForTarget(\App\Models\Report::TARGET_WEBSITE) as $cat)
                                                 <option value="{{ $cat }}" @selected(old('category') == $cat)>
@@ -286,7 +295,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                             @endforeach
                                         </select>
                                         <div
-                                            class="absolute inset-y-0 right-5 flex items-center pointer-events-none text-blue-400">
+                                            class="absolute inset-y-0 right-5 flex items-center pointer-events-none text-blue-400 dark:text-slate-400">
                                             <i class="fa-solid fa-chevron-down text-xs"></i>
                                         </div>
                                     </div>
@@ -299,10 +308,10 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                 {{-- Subjek --}}
                                 <div class="relative group">
                                     <label
-                                        class="text-[10px] font-extrabold text-blue-500 uppercase tracking-widest mb-2 block">Subjek
+                                        class="text-[10px] font-extrabold text-blue-500 dark:text-blue-400 uppercase tracking-widest mb-2 block">Subjek
                                         Laporan <span class="text-blue-600">*</span></label>
                                     <input type="text" name="subject" value="{{ old('subject') }}"
-                                        class="w-full rounded-2xl border border-blue-100 bg-white/80 px-5 py-4 text-sm font-bold text-blue-950 transition-all duration-300 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 outline-none shadow-sm group-hover:border-blue-300 placeholder-blue-300 @error('subject') border-red-300 focus:border-red-500 focus:ring-red-500/20 @enderror"
+                                        class="w-full rounded-2xl border border-blue-100 dark:border-slate-700 bg-white/80 dark:bg-slate-800 px-5 py-4 text-sm font-bold text-blue-950 dark:text-white transition-all duration-300 focus:border-blue-500 focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-blue-500/10 outline-none shadow-sm group-hover:border-blue-300 placeholder-blue-300 dark:placeholder:text-slate-500 @error('subject') border-red-300 focus:border-red-500 focus:ring-red-500/20 @enderror"
                                         placeholder="Contoh: Pengguna mencurigakan...">
                                     @error('subject')
                                         <p class="text-xs font-bold text-red-500 mt-2 flex items-center gap-1"><i
@@ -314,10 +323,10 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                             {{-- Deskripsi --}}
                             <div class="relative group">
                                 <label
-                                    class="text-[10px] font-extrabold text-blue-500 uppercase tracking-widest mb-2 block">Deskripsi
+                                    class="text-[10px] font-extrabold text-blue-500 dark:text-blue-400 uppercase tracking-widest mb-2 block">Deskripsi
                                     Detail <span class="text-blue-600">*</span></label>
                                 <textarea name="description" rows="5"
-                                    class="w-full rounded-2xl border border-blue-100 bg-white/80 px-5 py-4 text-sm font-bold text-blue-950 transition-all duration-300 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 outline-none shadow-sm resize-none group-hover:border-blue-300 placeholder-blue-300 @error('description') border-red-300 focus:border-red-500 focus:ring-red-500/20 @enderror"
+                                    class="w-full rounded-2xl border border-blue-100 dark:border-slate-700 bg-white/80 dark:bg-slate-800 px-5 py-4 text-sm font-bold text-blue-950 dark:text-white transition-all duration-300 focus:border-blue-500 focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-blue-500/10 outline-none shadow-sm resize-none group-hover:border-blue-300 placeholder-blue-300 dark:placeholder:text-slate-500 @error('description') border-red-300 focus:border-red-500 focus:ring-red-500/20 @enderror"
                                     placeholder="Jelaskan kronologi dan detail masalah yang Anda temui secara spesifik...">{{ old('description') }}</textarea>
                                 @error('description')
                                     <p class="text-xs font-bold text-red-500 mt-2 flex items-center gap-1"><i
@@ -328,11 +337,11 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                             {{-- Lampiran / Bukti --}}
                             <div class="relative">
                                 <label
-                                    class="text-[10px] font-extrabold text-blue-500 uppercase tracking-widest mb-2 block">Lampiran
+                                    class="text-[10px] font-extrabold text-blue-500 dark:text-blue-400 uppercase tracking-widest mb-2 block">Lampiran
                                     / Bukti (Opsional)</label>
 
                                 <div id="dropzone"
-                                    class="relative flex flex-col items-center border-2 border-dashed border-blue-200 rounded-2xl px-6 py-8 bg-blue-50/30 hover:bg-blue-50/80 hover:border-blue-400 transition-colors duration-300 group">
+                                    class="relative flex flex-col items-center border-2 border-dashed border-blue-200 dark:border-slate-700 rounded-2xl px-6 py-8 bg-blue-50/30 dark:bg-slate-800/30 hover:bg-blue-50/80 dark:hover:bg-slate-800/80 hover:border-blue-400 transition-colors duration-300 group">
 
                                     <input type="file" id="fileInput" name="attachments[]" multiple
                                         accept=".jpg,.jpeg,.png,.pdf"
@@ -340,14 +349,14 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
                                     <div class="w-full text-center pointer-events-none">
                                         <div id="uploadIcon"
-                                            class="w-12 h-12 rounded-full bg-white shadow-sm border border-blue-100 flex items-center justify-center text-blue-500 mx-auto mb-3 group-hover:bg-blue-500 group-hover:text-white group-hover:scale-110 group-hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] transition-all">
+                                            class="w-12 h-12 rounded-full bg-white dark:bg-slate-800 shadow-sm border border-blue-100 dark:border-slate-700 flex items-center justify-center text-blue-500 dark:text-blue-400 mx-auto mb-3 group-hover:bg-blue-500 group-hover:text-white group-hover:scale-110 group-hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] transition-all">
                                             <i class="fa-solid fa-cloud-arrow-up text-xl"></i>
                                         </div>
-                                        <p id="uploadText" class="text-sm font-bold text-blue-900 mb-1">Tarik & Lepas
+                                        <p id="uploadText" class="text-sm font-bold text-blue-900 dark:text-white mb-1">Tarik & Lepas
                                             file ke sini, atau <span
-                                                class="text-blue-600 underline decoration-blue-300 underline-offset-2">Jelajahi</span>
+                                                class="text-blue-600 dark:text-blue-400 underline decoration-blue-300 dark:decoration-slate-600 underline-offset-2">Jelajahi</span>
                                         </p>
-                                        <p class="text-[11px] font-bold text-blue-400">Maksimal 5 file. Format: JPG,
+                                        <p class="text-[11px] font-bold text-blue-400 dark:text-slate-400">Maksimal 5 file. Format: JPG,
                                             PNG, atau PDF (Maks 5 MB/file).</p>
                                     </div>
 
@@ -366,19 +375,19 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                             </div>
                             {{-- Info Banner --}}
                             <div
-                                class="bg-blue-50/50 border border-blue-100 rounded-2xl p-5 text-sm flex items-start gap-4">
+                                class="bg-blue-50/50 dark:bg-slate-800/50 border border-blue-100 dark:border-slate-800 rounded-2xl p-5 text-sm flex items-start gap-4">
                                 <div
-                                    class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
+                                    class="w-8 h-8 rounded-full bg-blue-100 dark:bg-slate-800 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
                                     <i class="fa-solid fa-shield-halved"></i>
                                 </div>
-                                <div class="pt-1 text-blue-900/80 font-bold leading-relaxed">
+                                <div class="pt-1 text-blue-900/80 dark:text-white font-bold leading-relaxed">
                                     Laporan Anda akan diamankan dan ditinjau secara mendalam oleh tim administrator
                                     ApexForge. Pastikan menyertakan bukti valid untuk mempercepat proses investigasi.
                                 </div>
                             </div>
 
                             {{-- Action Buttons --}}
-                            <div class="flex flex-col sm:flex-row items-center gap-4 pt-4 border-t border-blue-50">
+                            <div class="flex flex-col sm:flex-row items-center gap-4 pt-4 border-t border-blue-50 dark:border-slate-800">
                                 <button type="submit"
                                     class="w-full sm:w-auto px-8 py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-sm font-bold transition-all duration-300 shadow-[0_8px_20px_-6px_rgba(37,99,235,0.4)] hover:shadow-[0_12px_25px_-6px_rgba(37,99,235,0.6)] hover:-translate-y-0.5 flex items-center justify-center gap-2.5 group">
                                     <i
@@ -387,7 +396,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                 </button>
 
                                 <a href="{{ url()->previous() }}"
-                                    class="w-full sm:w-auto px-8 py-3.5 bg-white hover:bg-blue-50 border border-blue-200 text-blue-600 rounded-2xl text-sm font-bold transition-all duration-300 text-center hover:-translate-y-0.5">
+                                    class="w-full sm:w-auto px-8 py-3.5 bg-white dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 border border-blue-200 dark:border-slate-700 text-blue-600 dark:text-blue-400 rounded-2xl text-sm font-bold transition-all duration-300 text-center hover:-translate-y-0.5">
                                     Batalkan
                                 </a>
                             </div>

@@ -3,10 +3,19 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
     <title>Buat Proyek Baru - ApexForge Labs</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = tailwind.config || {};
+        tailwind.config.darkMode = 'class';
+    </script>
     
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -123,7 +132,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
 </style>
 </head>
-<body class="bg-white text-blue-950 min-h-screen flex relative antialiased">
+<body class="bg-white text-blue-950 min-h-screen flex relative antialiased dark:bg-slate-900 dark:text-white transition-colors duration-300">
 
     {{-- Ambient Background Glows --}}
     <div class="fixed inset-0 pointer-events-none hologram-grid-blue z-0"></div>
@@ -148,22 +157,22 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
             <div class="max-w-4xl mx-auto space-y-6">
 
                 {{-- BREADCRUMB --}}
-                <nav class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-blue-300">
-                    <a href="{{ route('company.dashboard') }}" class="hover:text-blue-600 transition-colors">Dashboard</a>
+                <nav class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-blue-300 dark:text-slate-400">
+                    <a href="{{ route('company.dashboard') }}" class="hover:text-blue-600 transition-colors dark:hover:text-blue-400">Dashboard</a>
                     <i class="fa-solid fa-chevron-right text-[9px] text-blue-200"></i>
-                    <a href="{{ route('company.projects.index') }}" class="hover:text-blue-600 transition-colors">Proyek</a>
+                    <a href="{{ route('company.projects.index') }}" class="hover:text-blue-600 transition-colors dark:hover:text-blue-400">Proyek</a>
                     <i class="fa-solid fa-chevron-right text-[9px] text-blue-200"></i>
-                    <span class="text-blue-600">Buat Proyek</span>
+                    <span class="text-blue-600 dark:text-blue-400">Buat Proyek</span>
                 </nav>
 
                 {{-- HEADER --}}
                 <div>
-                    <h1 class="text-3xl font-black text-blue-950 tracking-tight">Buat Proyek Baru</h1>
-                    <p class="text-sm font-semibold text-blue-400 mt-1">Jelaskan kebutuhan proyek Anda dan temukan freelancer terbaik untuk membantu mewujudkannya.</p>
+                    <h1 class="text-3xl font-black text-blue-950 tracking-tight dark:text-white">Buat Proyek Baru</h1>
+                    <p class="text-sm font-semibold text-blue-400 mt-1 dark:text-slate-400">Jelaskan kebutuhan proyek Anda dan temukan freelancer terbaik untuk membantu mewujudkannya.</p>
                 </div>
 
                 {{-- FORM CARD --}}
-                <div class="glass-card rounded-3xl relative overflow-hidden">
+                <div class="glass-card rounded-3xl relative overflow-hidden dark:bg-slate-900 dark:border-slate-800">
                     
                     {{-- Decorative top line --}}
                     <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 via-blue-600 to-blue-400"></div>
@@ -173,16 +182,16 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
                         {{-- VALIDATION ERRORS (Global) --}}
                         @if ($errors->any())
-                            <div class="mb-8 overflow-hidden relative bg-white border-2 border-blue-600 p-5 rounded-2xl shadow-[0_0_20px_rgba(59,130,246,0.15)] flex items-start gap-4">
-                                <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 border border-blue-200 flex items-center justify-center shrink-0">
+                            <div class="mb-8 overflow-hidden relative bg-white border-2 border-blue-600 p-5 rounded-2xl shadow-[0_0_20px_rgba(59,130,246,0.15)] flex items-start gap-4 dark:bg-slate-900">
+                                <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 border border-blue-200 flex items-center justify-center shrink-0 dark:bg-slate-800 dark:text-blue-400 dark:border-slate-700">
                                     <i class="fa-solid fa-exclamation text-sm"></i>
                                 </div>
                                 <div>
-                                    <div class="font-black text-blue-950 text-sm mb-1">Mohon perbaiki kesalahan berikut:</div>
+                                    <div class="font-black text-blue-950 text-sm mb-1 dark:text-white">Mohon perbaiki kesalahan berikut:</div>
                                     <ul class="list-none space-y-1">
                                         @foreach ($errors->all() as $error)
-                                            <li class="text-xs font-semibold text-blue-700 flex items-center gap-2">
-                                                <i class="fa-solid fa-angle-right text-[10px] text-blue-400"></i> {{ $error }}
+                                            <li class="text-xs font-semibold text-blue-700 flex items-center gap-2 dark:text-blue-400">
+                                                <i class="fa-solid fa-angle-right text-[10px] text-blue-400 dark:text-slate-400"></i> {{ $error }}
                                             </li>
                                         @endforeach
                                     </ul>
@@ -193,33 +202,33 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                         {{-- SECTION 1: INFORMASI PROYEK --}}
                         <div class="mb-8">
                             <div class="flex items-center gap-4 mb-6">
-                                <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center shrink-0 shadow-sm">
+                                <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center shrink-0 shadow-sm dark:bg-slate-800 dark:text-blue-400 dark:border-slate-800">
                                     <i class="fa-solid fa-clipboard-list"></i>
                                 </div>
                                 <div>
-                                    <h2 class="text-sm font-black text-blue-950 tracking-tight">Informasi Proyek</h2>
-                                    <p class="text-[10px] font-bold text-blue-400 uppercase tracking-widest mt-0.5">Lengkapi detail dasar proyek Anda</p>
+                                    <h2 class="text-sm font-black text-blue-950 tracking-tight dark:text-white">Informasi Proyek</h2>
+                                    <p class="text-[10px] font-bold text-blue-400 uppercase tracking-widest mt-0.5 dark:text-slate-400">Lengkapi detail dasar proyek Anda</p>
                                 </div>
                             </div>
 
                             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                 {{-- Nama Proyek --}}
                                 <div class="lg:col-span-2">
-                                    <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2">Nama Proyek <span class="text-blue-500">*</span></label>
+                                    <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2 dark:text-blue-400">Nama Proyek <span class="text-blue-500">*</span></label>
                                     <input type="text" name="project_name" value="{{ old('project_name') }}"
-                                        class="w-full px-5 py-3.5 bg-blue-50/50 border @error('project_name') border-blue-500 ring-2 ring-blue-500/20 @else border-blue-100 @enderror rounded-xl text-sm font-bold text-blue-950 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 focus:bg-white transition-all placeholder:text-blue-300 placeholder:font-medium"
+                                        class="w-full px-5 py-3.5 bg-blue-50/50 border @error('project_name') border-blue-500 ring-2 ring-blue-500/20 @else border-blue-100 @enderror rounded-xl text-sm font-bold text-blue-950 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 focus:bg-white transition-all placeholder:text-blue-300 placeholder:font-medium dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:focus:bg-slate-800 dark:placeholder:text-slate-500"
                                         placeholder="Contoh: Pengembangan Website E-commerce" required>
-                                    <p class="text-[10px] font-bold text-blue-400 mt-2">Berikan nama yang singkat dan jelas untuk proyek Anda.</p>
+                                    <p class="text-[10px] font-bold text-blue-400 mt-2 dark:text-slate-400">Berikan nama yang singkat dan jelas untuk proyek Anda.</p>
                                     @error('project_name')
-                                        <p class="text-[10px] font-bold tracking-wide text-blue-600 mt-1.5">{{ $message }}</p>
+                                        <p class="text-[10px] font-bold tracking-wide text-blue-600 mt-1.5 dark:text-blue-400">{{ $message }}</p>
                                     @enderror
                                 </div>
 
                                 {{-- Kategori --}}
                                 <div>
-                                    <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2">Kategori</label>
+                                    <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2 dark:text-blue-400">Kategori</label>
                                     <select name="category_id"
-                                        class="w-full px-5 py-3.5 bg-blue-50/50 border @error('category_id') border-blue-500 ring-2 ring-blue-500/20 @else border-blue-100 @enderror rounded-xl text-sm font-bold text-blue-950 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 focus:bg-white transition-all cursor-pointer">
+                                        class="w-full px-5 py-3.5 bg-blue-50/50 border @error('category_id') border-blue-500 ring-2 ring-blue-500/20 @else border-blue-100 @enderror rounded-xl text-sm font-bold text-blue-950 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 focus:bg-white transition-all cursor-pointer dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:focus:bg-slate-800">
                                         <option value="">Pilih Kategori</option>
                                         @foreach($categories as $category)
                                             <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
@@ -228,30 +237,30 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                         @endforeach
                                     </select>
                                     @error('category_id')
-                                        <p class="text-[10px] font-bold tracking-wide text-blue-600 mt-1.5">{{ $message }}</p>
+                                        <p class="text-[10px] font-bold tracking-wide text-blue-600 mt-1.5 dark:text-blue-400">{{ $message }}</p>
                                     @enderror
                                 </div>
 
                                 {{-- Skills --}}
                                 <div>
-                                    <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2">Skill yang Dibutuhkan <span class="text-blue-500">*</span></label>
+                                    <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2 dark:text-blue-400">Skill yang Dibutuhkan <span class="text-blue-500">*</span></label>
                                     <input type="text" name="skills" value="{{ old('skills') }}"
-                                        class="w-full px-5 py-3.5 bg-blue-50/50 border @error('skills') border-blue-500 ring-2 ring-blue-500/20 @else border-blue-100 @enderror rounded-xl text-sm font-bold text-blue-950 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 focus:bg-white transition-all placeholder:text-blue-300 placeholder:font-medium"
+                                        class="w-full px-5 py-3.5 bg-blue-50/50 border @error('skills') border-blue-500 ring-2 ring-blue-500/20 @else border-blue-100 @enderror rounded-xl text-sm font-bold text-blue-950 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 focus:bg-white transition-all placeholder:text-blue-300 placeholder:font-medium dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:focus:bg-slate-800 dark:placeholder:text-slate-500"
                                         placeholder="Laravel, Bootstrap, MySQL">
-                                    <p class="text-[10px] font-bold text-blue-400 mt-2">Pisahkan dengan koma.</p>
+                                    <p class="text-[10px] font-bold text-blue-400 mt-2 dark:text-slate-400">Pisahkan dengan koma.</p>
                                     @error('skills')
-                                        <p class="text-[10px] font-bold tracking-wide text-blue-600 mt-1.5">{{ $message }}</p>
+                                        <p class="text-[10px] font-bold tracking-wide text-blue-600 mt-1.5 dark:text-blue-400">{{ $message }}</p>
                                     @enderror
                                 </div>
 
                                 {{-- Deskripsi --}}
                                 <div class="lg:col-span-2">
-                                    <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2">Deskripsi Proyek <span class="text-blue-500">*</span></label>
+                                    <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2 dark:text-blue-400">Deskripsi Proyek <span class="text-blue-500">*</span></label>
                                     <textarea name="project_description" rows="6"
-                                        class="w-full px-5 py-4 bg-blue-50/50 border @error('project_description') border-blue-500 ring-2 ring-blue-500/20 @else border-blue-100 @enderror rounded-xl text-sm font-medium text-blue-950 leading-relaxed focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 focus:bg-white transition-all placeholder:text-blue-300 resize-y"
+                                        class="w-full px-5 py-4 bg-blue-50/50 border @error('project_description') border-blue-500 ring-2 ring-blue-500/20 @else border-blue-100 @enderror rounded-xl text-sm font-medium text-blue-950 leading-relaxed focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 focus:bg-white transition-all placeholder:text-blue-300 resize-y dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:focus:bg-slate-800 dark:placeholder:text-slate-500"
                                         placeholder="Jelaskan kebutuhan, tujuan, dan hasil yang Anda harapkan dari freelancer.">{{ old('project_description') }}</textarea>
                                     @error('project_description')
-                                        <p class="text-[10px] font-bold tracking-wide text-blue-600 mt-1.5">{{ $message }}</p>
+                                        <p class="text-[10px] font-bold tracking-wide text-blue-600 mt-1.5 dark:text-blue-400">{{ $message }}</p>
                                     @enderror
                                 </div>
                             </div>
@@ -263,40 +272,40 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                         {{-- SECTION 2: ANGGARAN & WAKTU --}}
                         <div class="mb-8">
                             <div class="flex items-center gap-4 mb-6">
-                                <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center shrink-0 shadow-sm">
+                                <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center shrink-0 shadow-sm dark:bg-slate-800 dark:text-blue-400 dark:border-slate-800">
                                     <i class="fa-solid fa-coins"></i>
                                 </div>
                                 <div>
-                                    <h2 class="text-sm font-black text-blue-950 tracking-tight">Anggaran & Waktu</h2>
-                                    <p class="text-[10px] font-bold text-blue-400 uppercase tracking-widest mt-0.5">Tentukan budget dan batas waktu pengerjaan</p>
+                                    <h2 class="text-sm font-black text-blue-950 tracking-tight dark:text-white">Anggaran & Waktu</h2>
+                                    <p class="text-[10px] font-bold text-blue-400 uppercase tracking-widest mt-0.5 dark:text-slate-400">Tentukan budget dan batas waktu pengerjaan</p>
                                 </div>
                             </div>
 
                             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                 {{-- Budget --}}
                                 <div>
-                                    <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2">Budget (Rp) <span class="text-blue-500">*</span></label>
+                                    <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2 dark:text-blue-400">Budget (Rp) <span class="text-blue-500">*</span></label>
                                     <div class="relative">
                                         <div class="absolute inset-y-0 left-0 flex items-center pl-5 pointer-events-none">
-                                            <span class="text-blue-400 font-bold text-sm">Rp</span>
+                                            <span class="text-blue-400 font-bold text-sm dark:text-slate-400">Rp</span>
                                         </div>
                                         <input type="hidden" name="budget" id="real_budget" value="{{ old('budget') }}">
                                         <input type="text" id="display_budget"
-                                            class="w-full pl-12 pr-5 py-3.5 bg-blue-50/50 border @error('budget') border-blue-500 ring-2 ring-blue-500/20 @else border-blue-100 @enderror rounded-xl text-sm font-bold text-blue-950 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 focus:bg-white transition-all placeholder:text-blue-300 placeholder:font-medium"
+                                            class="w-full pl-12 pr-5 py-3.5 bg-blue-50/50 border @error('budget') border-blue-500 ring-2 ring-blue-500/20 @else border-blue-100 @enderror rounded-xl text-sm font-bold text-blue-950 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 focus:bg-white transition-all placeholder:text-blue-300 placeholder:font-medium dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:focus:bg-slate-800 dark:placeholder:text-slate-500"
                                             placeholder="5000000" required>
                                     </div>
                                     @error('budget')
-                                        <p class="text-[10px] font-bold tracking-wide text-blue-600 mt-1.5">{{ $message }}</p>
+                                        <p class="text-[10px] font-bold tracking-wide text-blue-600 mt-1.5 dark:text-blue-400">{{ $message }}</p>
                                     @enderror
                                 </div>
 
                                 {{-- Deadline --}}
                                 <div>
-                                    <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2">Deadline <span class="text-blue-500">*</span></label>
+                                    <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2 dark:text-blue-400">Deadline <span class="text-blue-500">*</span></label>
                                     <input type="date" name="deadline" value="{{ old('deadline') }}"
-                                        class="w-full px-5 py-3.5 bg-blue-50/50 border @error('deadline') border-blue-500 ring-2 ring-blue-500/20 @else border-blue-100 @enderror rounded-xl text-sm font-bold text-blue-950 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 focus:bg-white transition-all cursor-pointer" required>
+                                        class="w-full px-5 py-3.5 bg-blue-50/50 border @error('deadline') border-blue-500 ring-2 ring-blue-500/20 @else border-blue-100 @enderror rounded-xl text-sm font-bold text-blue-950 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 focus:bg-white transition-all cursor-pointer dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:focus:bg-slate-800" required>
                                     @error('deadline')
-                                        <p class="text-[10px] font-bold tracking-wide text-blue-600 mt-1.5">{{ $message }}</p>
+                                        <p class="text-[10px] font-bold tracking-wide text-blue-600 mt-1.5 dark:text-blue-400">{{ $message }}</p>
                                     @enderror
                                 </div>
                             </div>
@@ -308,39 +317,39 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                         {{-- SECTION 3: DETAIL TAMBAHAN --}}
                         <div class="mb-8">
                             <div class="flex items-center gap-4 mb-6">
-                                <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center shrink-0 shadow-sm">
+                                <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center shrink-0 shadow-sm dark:bg-slate-800 dark:text-blue-400 dark:border-slate-800">
                                     <i class="fa-solid fa-paperclip"></i>
                                 </div>
                                 <div>
-                                    <h2 class="text-sm font-black text-blue-950 tracking-tight">Detail Tambahan</h2>
-                                    <p class="text-[10px] font-bold text-blue-400 uppercase tracking-widest mt-0.5">Lampirkan file pendukung jika diperlukan</p>
+                                    <h2 class="text-sm font-black text-blue-950 tracking-tight dark:text-white">Detail Tambahan</h2>
+                                    <p class="text-[10px] font-bold text-blue-400 uppercase tracking-widest mt-0.5 dark:text-slate-400">Lampirkan file pendukung jika diperlukan</p>
                                 </div>
                             </div>
 
                             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                 {{-- Gambar --}}
                                 <div>
-                                    <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2">Gambar Proyek</label>
-                                    <div class="relative w-full border-2 border-dashed @error('image') border-blue-400 @else border-blue-200 @enderror rounded-xl bg-blue-50/30 hover:bg-blue-50/80 hover:border-blue-400 transition-colors duration-300">
+                                    <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2 dark:text-blue-400">Gambar Proyek</label>
+                                    <div class="relative w-full border-2 border-dashed @error('image') border-blue-400 @else border-blue-200 @enderror rounded-xl bg-blue-50/30 hover:bg-blue-50/80 hover:border-blue-400 transition-colors duration-300 dark:bg-slate-800/30 dark:hover:bg-slate-800/80 dark:hover:border-slate-700">
                                         <input type="file" name="image" accept="image/*" id="imageInput"
-                                            class="w-full px-5 py-4 text-sm text-blue-900 cursor-pointer file:cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-[10px] file:font-black file:uppercase file:tracking-wider file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:transition-colors focus:outline-none">
+                                            class="w-full px-5 py-4 text-sm text-blue-900 cursor-pointer dark:text-white file:cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-[10px] file:font-black file:uppercase file:tracking-wider file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:transition-colors focus:outline-none">
                                     </div>
-                                    <p class="text-[10px] font-bold text-blue-400 mt-2">Format: JPG, PNG, WebP. Max 2MB.</p>
+                                    <p class="text-[10px] font-bold text-blue-400 mt-2 dark:text-slate-400">Format: JPG, PNG, WebP. Max 2MB.</p>
                                     @error('image')
-                                        <p class="text-[10px] font-bold tracking-wide text-blue-600 mt-1.5">{{ $message }}</p>
+                                        <p class="text-[10px] font-bold tracking-wide text-blue-600 mt-1.5 dark:text-blue-400">{{ $message }}</p>
                                     @enderror
                                 </div>
 
                                 {{-- Lampiran --}}
                                 <div>
-                                    <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2">Lampiran (PDF/DOC)</label>
-                                    <div class="relative w-full border-2 border-dashed @error('attachment') border-blue-400 @else border-blue-200 @enderror rounded-xl bg-blue-50/30 hover:bg-blue-50/80 hover:border-blue-400 transition-colors duration-300">
+                                    <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2 dark:text-blue-400">Lampiran (PDF/DOC)</label>
+                                    <div class="relative w-full border-2 border-dashed @error('attachment') border-blue-400 @else border-blue-200 @enderror rounded-xl bg-blue-50/30 hover:bg-blue-50/80 hover:border-blue-400 transition-colors duration-300 dark:bg-slate-800/30 dark:hover:bg-slate-800/80 dark:hover:border-slate-700">
                                         <input type="file" name="attachment" accept=".pdf,.doc,.docx" id="attachmentInput"
-                                            class="w-full px-5 py-4 text-sm text-blue-900 cursor-pointer file:cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-[10px] file:font-black file:uppercase file:tracking-wider file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:transition-colors focus:outline-none">
+                                            class="w-full px-5 py-4 text-sm text-blue-900 cursor-pointer dark:text-white file:cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-[10px] file:font-black file:uppercase file:tracking-wider file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:transition-colors focus:outline-none">
                                     </div>
-                                    <p class="text-[10px] font-bold text-blue-400 mt-2">Format: PDF, DOC, DOCX. Max 10MB.</p>
+                                    <p class="text-[10px] font-bold text-blue-400 mt-2 dark:text-slate-400">Format: PDF, DOC, DOCX. Max 10MB.</p>
                                     @error('attachment')
-                                        <p class="text-[10px] font-bold tracking-wide text-blue-600 mt-1.5">{{ $message }}</p>
+                                        <p class="text-[10px] font-bold tracking-wide text-blue-600 mt-1.5 dark:text-blue-400">{{ $message }}</p>
                                     @enderror
                                 </div>
                             </div>
@@ -350,21 +359,22 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                         <div class="h-px w-full bg-gradient-to-r from-transparent via-blue-100 to-transparent mb-8"></div>
 
                         {{-- SECTION 4: STATUS & SUBMIT --}}
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6 bg-blue-50/50 p-5 rounded-2xl border border-blue-100">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6 bg-blue-50/50 p-5 rounded-2xl border border-blue-100 dark:bg-slate-800/50 dark:border-slate-800">
                             {{-- Status --}}
                             <div class="flex items-center gap-4">
-                                <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest">Status:</label>
+                                <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest dark:text-blue-400">Status:</label>
                                 <select name="status"
-                                    class="px-5 py-2.5 bg-white border border-blue-200 rounded-xl text-sm font-bold text-blue-950 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all cursor-pointer shadow-sm">
-                                    <option value="Open" {{ old('status') == 'Open' ? 'selected' : '' }}>Open</option>
-                                    <option value="Closed" {{ old('status') == 'Closed' ? 'selected' : '' }}>Closed</option>
+                                    class="px-5 py-2.5 bg-white border border-blue-200 rounded-xl text-sm font-bold text-blue-950 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all cursor-pointer shadow-sm dark:bg-slate-800 dark:border-slate-700 dark:text-white">
+                                    <option value="open" {{ old('status', 'open') == 'open' ? 'selected' : '' }}>Open</option>
+                                    <option value="closed" {{ old('status') == 'closed' ? 'selected' : '' }}>Tutup</option>
+                                    <option value="archived" {{ old('status') == 'archived' ? 'selected' : '' }}>Arsip</option>
                                 </select>
                             </div>
 
                             {{-- Buttons --}}
                             <div class="flex items-center gap-3 w-full sm:w-auto">
                                 <a href="{{ route('company.projects.index') }}"
-                                    class="w-full sm:w-auto px-6 py-3.5 text-[11px] font-black uppercase tracking-widest text-blue-600 bg-white border border-blue-200 rounded-xl hover:bg-blue-50 hover:border-blue-300 transition-colors text-center shadow-sm">
+                                    class="w-full sm:w-auto px-6 py-3.5 text-[11px] font-black uppercase tracking-widest text-blue-600 bg-white border border-blue-200 rounded-xl hover:bg-blue-50 hover:border-blue-300 transition-colors text-center shadow-sm dark:text-blue-400 dark:bg-slate-900 dark:border-slate-700 dark:hover:bg-slate-800">
                                     <i class="fa-solid fa-arrow-left mr-1.5"></i>Batal
                                 </a>
                                 <button type="submit"
@@ -382,7 +392,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
         </main>
 
         {{-- FOOTER --}}
-        @include('navbar.footer')
+       
 
     </div>
 

@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lamaran Saya - ApexForge Labs</title>
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
     @vite('resources/css/app.css')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -95,7 +100,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
 </style>
 </head>
-<body class="bg-[#f6f9ff] text-slate-800">
+<body class="bg-[#f6f9ff] dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-300">
 
 <div class="flex h-screen overflow-hidden">
 
@@ -106,7 +111,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
     <div class="flex-1 flex flex-col overflow-hidden">
 
         {{-- Top Navbar --}}
-        <div class="sticky top-0 z-40 bg-white border-b">
+        <div class="sticky top-0 z-40 bg-white dark:bg-slate-900 border-b dark:border-slate-800">
             @include('navbar.nav')
         </div>
 
@@ -114,20 +119,20 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
             {{-- Header --}}
             <div class="mb-8">
-                <h1 class="text-3xl sm:text-4xl font-black text-slate-900">Lamaran Saya</h1>
-                <p class="text-slate-500 mt-2 text-sm sm:text-base">Pantau semua lamaran proyek yang telah kamu kirim.</p>
+                <h1 class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white">Lamaran Saya</h1>
+                <p class="text-slate-500 dark:text-slate-400 mt-2 text-sm sm:text-base">Pantau semua lamaran proyek yang telah kamu kirim.</p>
             </div>
 
             {{-- Flash Messages --}}
             @if(session('success'))
-                <div class="mb-6 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl flex items-center gap-3">
+                <div class="mb-6 bg-green-50 dark:bg-green-900/40 border border-green-200 dark:border-green-900 text-green-700 dark:text-green-300 px-4 py-3 rounded-xl flex items-center gap-3">
                     <i class="fa-solid fa-circle-check"></i>
                     <span>{{ session('success') }}</span>
                 </div>
             @endif
 
             @if(session('error'))
-                <div class="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl flex items-center gap-3">
+                <div class="mb-6 bg-red-50 dark:bg-red-900/40 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-300 px-4 py-3 rounded-xl flex items-center gap-3">
                     <i class="fa-solid fa-circle-exclamation"></i>
                     <span>{{ session('error') }}</span>
                 </div>
@@ -137,19 +142,19 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
             @if($lamaran->count() > 0)
                 <div class="space-y-4">
                     @foreach($lamaran as $item)
-                        <div class="bg-white rounded-2xl border border-blue-100 shadow-sm hover:shadow-md transition-all duration-300 p-5 sm:p-6">
+                        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-blue-100 dark:border-slate-800 shadow-sm hover:shadow-md transition-all duration-300 p-5 sm:p-6">
                             <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
 
                                 {{-- Left: Project Info --}}
                                 <div class="flex-1 min-w-0">
                                     {{-- Project Name --}}
-                                    <h3 class="text-base sm:text-lg font-bold text-slate-900 mb-1">
+                                    <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white mb-1">
                                         {{ $item->project->project_name ?? 'Proyek Tidak Ditemukan' }}
                                     </h3>
 
                                     {{-- Company / Owner --}}
                                     @if($item->project?->owner?->name)
-                                        <p class="text-xs sm:text-sm text-slate-400 flex items-center gap-1.5 mb-2">
+                                        <p class="text-xs sm:text-sm text-slate-400 dark:text-slate-400 flex items-center gap-1.5 mb-2">
                                             <i class="fa-regular fa-building"></i>
                                             {{ $item->project->owner->name }}
                                         </p>
@@ -157,14 +162,14 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
                                     {{-- Category --}}
                                     @if($item->project?->category?->name)
-                                        <span class="inline-block text-[11px] font-semibold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full mb-3">
+                                        <span class="inline-block text-[11px] font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-slate-800 px-2.5 py-1 rounded-full mb-3">
                                             {{ $item->project->category->name }}
                                         </span>
                                     @endif
 
                                     {{-- Cover Letter / Pesan --}}
                                     @if($item->pesan)
-                                        <p class="text-sm text-slate-500 leading-relaxed mt-1 line-clamp-2">
+                                        <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mt-1 line-clamp-2">
                                             {{ \Illuminate\Support\Str::limit($item->pesan, 120) }}
                                         </p>
                                     @endif
@@ -175,16 +180,16 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                     
                                     {{-- Proposed Price --}}
                                     <div class="text-left sm:text-right">
-                                        <p class="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Harga Penawaran</p>
-                                        <p class="text-sm sm:text-base font-bold text-blue-600">
+                                        <p class="text-[10px] text-slate-400 dark:text-slate-400 font-medium uppercase tracking-wider">Harga Penawaran</p>
+                                        <p class="text-sm sm:text-base font-bold text-blue-600 dark:text-blue-400">
                                             Rp {{ number_format($item->harga_penawaran ?? 0, 0, ',', '.') }}
                                         </p>
                                     </div>
 
                                     {{-- Estimated Days --}}
                                     <div class="text-left sm:text-right">
-                                        <p class="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Estimasi</p>
-                                        <p class="text-xs sm:text-sm font-semibold text-slate-600">
+                                        <p class="text-[10px] text-slate-400 dark:text-slate-400 font-medium uppercase tracking-wider">Estimasi</p>
+                                        <p class="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300">
                                             {{ $item->estimasi_hari ?? '-' }} Hari
                                         </p>
                                     </div>
@@ -192,17 +197,17 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                     {{-- Status Badge --}}
                                     <div class="mt-0 sm:mt-1">
                                         @if($item->status === 'Menunggu')
-                                            <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-yellow-100 text-yellow-700 text-xs font-bold border border-yellow-200">
+                                            <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-300 text-xs font-bold border border-yellow-200 dark:border-yellow-900">
                                                 <i class="fa-solid fa-clock"></i>
                                                 Menunggu
                                             </span>
                                         @elseif($item->status === 'Diterima')
-                                            <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-green-100 text-green-700 text-xs font-bold border border-green-200">
+                                            <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 text-xs font-bold border border-green-200 dark:border-green-900">
                                                 <i class="fa-solid fa-check-circle"></i>
                                                 Diterima
                                             </span>
                                         @else
-                                            <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-red-100 text-red-700 text-xs font-bold border border-red-200">
+                                            <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 text-xs font-bold border border-red-200 dark:border-red-900">
                                                 <i class="fa-solid fa-times-circle"></i>
                                                 Ditolak
                                             </span>
@@ -212,9 +217,9 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                             </div>
 
                             {{-- Bottom: Date & Action --}}
-                            <div class="mt-4 pt-4 border-t border-blue-50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                            <div class="mt-4 pt-4 border-t border-blue-50 dark:border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                                 {{-- Submission Date --}}
-                                <p class="text-xs text-slate-400 flex items-center gap-1.5">
+                                <p class="text-xs text-slate-400 dark:text-slate-400 flex items-center gap-1.5">
                                     <i class="fa-regular fa-calendar"></i>
                                     Diajukan {{ optional($item->created_at)->isoFormat('D MMMM YYYY') ?? '-' }}
                                 </p>
@@ -263,11 +268,11 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
             @else
                 {{-- Empty State --}}
                 <div class="flex flex-col items-center justify-center py-20 px-4">
-                    <div class="w-24 h-24 rounded-full bg-blue-50 flex items-center justify-center mb-6">
-                        <i class="fa-regular fa-paper-plane text-4xl text-slate-300"></i>
+                    <div class="w-24 h-24 rounded-full bg-blue-50 dark:bg-slate-800 flex items-center justify-center mb-6">
+                        <i class="fa-regular fa-paper-plane text-4xl text-slate-300 dark:text-slate-600"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-slate-700 mb-2">Belum Ada Lamaran</h3>
-                    <p class="text-sm text-slate-400 text-center max-w-md">
+                    <h3 class="text-xl font-bold text-slate-700 dark:text-white mb-2">Belum Ada Lamaran</h3>
+                    <p class="text-sm text-slate-400 dark:text-slate-400 text-center max-w-md">
                         Kamu belum mengirim lamaran ke proyek mana pun.
                     </p>
                     <a href="{{ route('freelancer.proyek') }}"
@@ -279,7 +284,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
             @endif
 
             {{-- Footer --}}
-            @include('navbar.footer')
+          
 
         </main>
     </div>

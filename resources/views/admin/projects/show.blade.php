@@ -20,8 +20,8 @@
                         <p class="text-sm text-slate-500 mt-1">oleh {{ $project->owner->name ?? '—' }}</p>
                     </div>
                     <span class="text-xs px-3 py-1.5 rounded-full font-semibold
-                        @if($project->status == 'Open') bg-emerald-50 text-emerald-600
-                        @else bg-blue-50 text-slate-600 @endif">{{ $project->status }}</span>
+                        @if(($project->status ?? 'open') == 'open') bg-emerald-50 text-emerald-600
+                        @else bg-blue-50 text-slate-600 @endif">{{ \App\Models\Project::statusLabel($project->status ?? 'open') }}</span>
                 </div>
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4 text-sm">
                     <div><p class="text-xs text-slate-500 font-semibold">Kategori</p><p class="font-semibold">{{ $project->category->name ?? '—' }}</p></div>

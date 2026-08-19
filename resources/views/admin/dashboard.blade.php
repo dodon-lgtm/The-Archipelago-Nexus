@@ -106,7 +106,7 @@
                     </div>
                     <div class="pr-4 relative z-10">
                         <p class="text-[11px] text-blue-300 uppercase font-black tracking-widest mb-0.5">Status Sistem</p>
-                        <p class="text-lg font-bold text-white">DEWA GACOR ACTIVE</p>
+                        <p class="text-lg font-bold text-white">dodon lgtm</p>
                     </div>
                 </div>
             </div>
@@ -236,9 +236,9 @@
                                             <p class="text-xs font-semibold text-slate-500 mt-1.5"><i class="fa-regular fa-building mr-1"></i> {{ $project->owner->name ?? '—' }}</p>
                                         </div>
                                         <span class="text-[10px] px-2.5 py-1 rounded-lg font-black uppercase tracking-wider
-                                            @if($project->status == 'Open') bg-blue-50 text-blue-600 border border-blue-100
+                                            @if($project->status == 'open') bg-blue-50 text-blue-600 border border-blue-100
                                             @else bg-[#f6f9ff] text-slate-500 border border-blue-100 @endif">
-                                            {{ $project->status }}
+                                            {{ \App\Models\Project::statusLabel($project->status ?? 'open') }}
                                         </span>
                                     </div>
                                 </div>

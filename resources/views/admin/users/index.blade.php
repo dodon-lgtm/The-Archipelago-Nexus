@@ -75,7 +75,6 @@
                                             @csrf
                                             <select name="role" onchange="this.form.submit()"
                                                     class="text-xs rounded-lg border-blue-100 bg-[#f6f9ff] px-2 py-1.5 outline-none focus:border-blue-400">
-                                                <option value="admin" @selected($user->role == 'admin')>Admin</option>
                                                 <option value="company" @selected($user->role == 'company')>Company</option>
                                                 <option value="freelancer" @selected($user->role == 'freelancer')>Freelancer</option>
                                             </select>

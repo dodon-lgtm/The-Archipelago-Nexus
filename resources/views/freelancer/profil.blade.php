@@ -5,6 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Profil Freelancer - Modern Dashboard</title>
 
+<script>
+    if (localStorage.getItem('theme') === 'dark') {
+        document.documentElement.classList.add('dark');
+    }
+</script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = tailwind.config || {};
+    tailwind.config.darkMode = 'class';
+</script>
+
 <!-- Bootstrap 5.3 & FontAwesome -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
@@ -407,7 +418,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 </style>
 </head>
 
-<body>
+<body class="bg-[#f6f9ff] dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-300">
 
 @php
 // Single source of truth: gunakan helper yang memanggil ProfileCompletionService
@@ -419,7 +430,7 @@ $missingFields = get_missing_profile_fields();
 
     <!-- Flash Message -->
     @if(session('error'))
-        <div class="alert alert-danger border-0 shadow-sm rounded-4 mb-4" role="alert" data-aos="fade-down" data-aos-duration="500">
+        <div class="alert alert-danger border-0 shadow-sm rounded-4 mb-4 dark:bg-red-900/40 dark:text-red-300" role="alert" data-aos="fade-down" data-aos-duration="500">
             <div class="d-flex align-items-start gap-2">
                 <i class="fa-solid fa-triangle-exclamation fs-5 mt-1"></i>
                 <div>
@@ -441,7 +452,7 @@ $missingFields = get_missing_profile_fields();
     @endif
 
     @if(session('success'))
-        <div class="alert alert-success border-0 shadow-sm rounded-4 mb-4" role="alert" data-aos="fade-down" data-aos-duration="500">
+        <div class="alert alert-success border-0 shadow-sm rounded-4 mb-4 dark:bg-green-900/40 dark:text-green-300" role="alert" data-aos="fade-down" data-aos-duration="500">
             <div class="d-flex align-items-center gap-2">
                 <i class="fa-solid fa-circle-check fs-5"></i>
                 <span>{{ session('success') }}</span>
@@ -452,11 +463,11 @@ $missingFields = get_missing_profile_fields();
     <!-- Tombol Back Dinamis -->
     <div class="mb-4" data-aos="fade-down" data-aos-duration="600">
         @if(isset($isViewOnly) && $isViewOnly)
-            <a href="{{ url()->previous() }}" class="btn btn-back shadow-sm">
+            <a href="{{ url()->previous() }}" class="btn btn-back dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 shadow-sm">
                 <i class="fa-solid fa-arrow-left me-2"></i> Kembali
             </a>
         @else
-            <a href="{{ route('freelancer.dashboard') }}" class="btn btn-back shadow-sm">
+            <a href="{{ route('freelancer.dashboard') }}" class="btn btn-back dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 shadow-sm">
                 <i class="fa-solid fa-arrow-left me-2"></i> Kembali ke Dashboard
             </a>
         @endif
@@ -464,15 +475,15 @@ $missingFields = get_missing_profile_fields();
 
     <!-- Header Title -->
     <div class="mb-4" data-aos="fade-up" data-aos-duration="800">
-        <h1 class="page-title">{{ isset($isViewOnly) && $isViewOnly ? 'Profil Freelancer' : 'Profil Saya' }}</h1>
-        <p class="page-subtitle">
+        <h1 class="page-title dark:text-white">{{ isset($isViewOnly) && $isViewOnly ? 'Profil Freelancer' : 'Profil Saya' }}</h1>
+        <p class="page-subtitle dark:text-slate-400">
             {{ isset($isViewOnly) && $isViewOnly ? 'Detail informasi dan portofolio freelancer.' : 'Kelola informasi data diri, keahlian, dan pantau performa Anda secara real-time.' }}
         </p>
     </div>
 
     <!-- MAIN PROFILE CARD -->
-    <div class="profile-card" data-aos="fade-up" data-aos-duration="1000">
-        <div class="profile-header">
+    <div class="profile-card dark:bg-slate-900 dark:border-slate-800 transition-colors duration-300" data-aos="fade-up" data-aos-duration="1000">
+        <div class="profile-header dark:bg-slate-800/60">
             <div class="row align-items-center">
                 <!-- FOTO DENGAN PULSE ANIMATION -->
                 <div class="col-lg-2 text-center mb-4 mb-lg-0">
@@ -488,24 +499,24 @@ $missingFields = get_missing_profile_fields();
 
                 <!-- BIODATA -->
                 <div class="col-lg-7 text-center text-lg-start">
-                    <h2 class="profile-name">{{ $user->name }}</h2>
+                    <h2 class="profile-name dark:text-white">{{ $user->name }}</h2>
                     <div>
                         <span class="badge-freelancer"><i class="fa-solid fa-circle-check me-1"></i> Verified Freelancer</span>
                     </div>
 
-                    <div class="profile-info justify-content-center justify-content-lg-start">
+                    <div class="profile-info dark:text-slate-400 justify-content-center justify-content-lg-start">
                         <i class="fa-solid fa-location-dot"></i>
                         <span>{{ $profile->location ?: 'Belum mengisi lokasi' }}</span>
                     </div>
-                    <div class="profile-info justify-content-center justify-content-lg-start">
+                    <div class="profile-info dark:text-slate-400 justify-content-center justify-content-lg-start">
                         <i class="fa-solid fa-envelope"></i>
                         <span>{{ $user->email }}</span>
                     </div>
-                    <div class="profile-info justify-content-center justify-content-lg-start">
+                    <div class="profile-info dark:text-slate-400 justify-content-center justify-content-lg-start">
                         <i class="fa-solid fa-phone"></i>
                         <span>{{ $user->phone ?: 'Belum mengisi nomor HP' }}</span>
                     </div>
-                    <div class="profile-info justify-content-center justify-content-lg-start">
+                    <div class="profile-info dark:text-slate-400 justify-content-center justify-content-lg-start">
                         <i class="fa-solid fa-calendar-days"></i>
                         <span>Bergabung sejak {{ $user->created_at->translatedFormat('d F Y') }}</span>
                     </div>
@@ -521,7 +532,7 @@ $missingFields = get_missing_profile_fields();
                                 <i class="fa-solid fa-flag me-2"></i> Laporkan Freelancer
                             </a>
                         @else
-                            <span class="badge bg-light text-primary border border-primary px-3 py-2 rounded-pill shadow-sm" style="font-size: 13px;">
+                            <span class="badge bg-light dark:bg-slate-800 text-primary dark:text-blue-400 border border-primary px-3 py-2 rounded-pill shadow-sm" style="font-size: 13px;">
                                 <i class="fa-solid fa-eye me-1"></i> Mode Lihat Profil
                             </span>
                         @endif
@@ -536,25 +547,25 @@ $missingFields = get_missing_profile_fields();
 
         <!-- STATISTIK / METRIK CARD -->
         <div class="row g-0">
-            <div class="col stat-box">
+            <div class="col stat-box dark:bg-slate-800/50">
                 <div class="stat-icon"><i class="fa-solid fa-star"></i></div>
-                <div class="stat-title">Rating Performa</div>
-                <div class="stat-value text-warning">{{ number_format($averageRating ?? 0, 1) }} <small class="text-muted fs-6">/5.0</small></div>
+                <div class="stat-title dark:text-slate-400">Rating Performa</div>
+                <div class="stat-value text-warning dark:text-amber-300">{{ number_format($averageRating ?? 0, 1) }} <small class="text-muted dark:text-slate-400 fs-6">/5.0</small></div>
             </div>
-            <div class="col stat-box">
+            <div class="col stat-box dark:bg-slate-800/50">
                 <div class="stat-icon"><i class="fa-solid fa-comments"></i></div>
-                <div class="stat-title">Total Ulasan</div>
-                <div class="stat-value">{{ $totalReview ?? 0 }} <small class="text-muted fs-6">Klien</small></div>
+                <div class="stat-title dark:text-slate-400">Total Ulasan</div>
+                <div class="stat-value dark:text-white">{{ $totalReview ?? 0 }} <small class="text-muted dark:text-slate-400 fs-6">Klien</small></div>
             </div>
-            <div class="col stat-box">
+            <div class="col stat-box dark:bg-slate-800/50">
                 <div class="stat-icon"><i class="fa-solid fa-code"></i></div>
-                <div class="stat-title">Keahlian</div>
-                <div class="stat-value">{{ $profile->skills ? count(explode(',',$profile->skills)) : 0 }} <small class="text-muted fs-6">Skill</small></div>
+                <div class="stat-title dark:text-slate-400">Keahlian</div>
+                <div class="stat-value dark:text-white">{{ $profile->skills ? count(explode(',',$profile->skills)) : 0 }} <small class="text-muted dark:text-slate-400 fs-6">Skill</small></div>
             </div>
-            <div class="col stat-box">
+            <div class="col stat-box dark:bg-slate-800/50">
                 <div class="stat-icon"><i class="fa-solid fa-circle-check"></i></div>
-                <div class="stat-title">Status Akun</div>
-                <div class="stat-value text-success fs-5 fw-bold mt-1">Aktif</div>
+                <div class="stat-title dark:text-slate-400">Status Akun</div>
+                <div class="stat-value text-success dark:text-emerald-300 fs-5 fw-bold mt-1">Aktif</div>
             </div>
         </div>
     </div>
@@ -562,43 +573,43 @@ $missingFields = get_missing_profile_fields();
     <!-- TENTANG & KEAHLIAN -->
     <div class="row g-4 mb-4">
         <div class="col-lg-8" data-aos="fade-right" data-aos-duration="1000">
-            <div class="content-card">
-                <h4 class="content-title">
+            <div class="content-card dark:bg-slate-900 dark:border-slate-800 transition-colors duration-300">
+                <h4 class="content-title dark:text-white">
                     <i class="fa-solid fa-user-pen" style="color: #0284c7;"></i> Tentang Saya
                 </h4>
 
                 @if($profile->bio)
-                    <p class="text-secondary" style="font-size: 15px; line-height: 1.8;">{{ $profile->bio }}</p>
+                    <p class="text-secondary dark:text-slate-400" style="font-size: 15px; line-height: 1.8;">{{ $profile->bio }}</p>
                 @else
-                    <p class="text-muted fst-italic">Belum ada deskripsi profil yang ditambahkan.</p>
+                    <p class="text-muted dark:text-slate-400 fst-italic">Belum ada deskripsi profil yang ditambahkan.</p>
                 @endif
 
                 <hr class="my-4" style="border-color: rgba(186, 230, 253, 0.6);">
 
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <span class="d-block text-muted small mb-1 fw-semibold">Nama Lengkap</span>
-                        <strong class="text-dark">{{ $user->name }}</strong>
+                        <span class="d-block text-muted dark:text-slate-400 small mb-1 fw-semibold">Nama Lengkap</span>
+                        <strong class="text-dark dark:text-white">{{ $user->name }}</strong>
                     </div>
                     <div class="col-md-6">
-                        <span class="d-block text-muted small mb-1 fw-semibold">Email Utama</span>
-                        <strong class="text-dark">{{ $user->email }}</strong>
+                        <span class="d-block text-muted dark:text-slate-400 small mb-1 fw-semibold">Email Utama</span>
+                        <strong class="text-dark dark:text-white">{{ $user->email }}</strong>
                     </div>
                     <div class="col-md-6">
-                        <span class="d-block text-muted small mb-1 fw-semibold">Nomor HP / WhatsApp</span>
-                        <strong class="text-dark">{{ $user->phone ?: '-' }}</strong>
+                        <span class="d-block text-muted dark:text-slate-400 small mb-1 fw-semibold">Nomor HP / WhatsApp</span>
+                        <strong class="text-dark dark:text-white">{{ $user->phone ?: '-' }}</strong>
                     </div>
                     <div class="col-md-6">
-                        <span class="d-block text-muted small mb-1 fw-semibold">Lokasi Domisili</span>
-                        <strong class="text-dark">{{ $profile->location ?: '-' }}</strong>
+                        <span class="d-block text-muted dark:text-slate-400 small mb-1 fw-semibold">Lokasi Domisili</span>
+                        <strong class="text-dark dark:text-white">{{ $profile->location ?: '-' }}</strong>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="col-lg-4" data-aos="fade-left" data-aos-duration="1000">
-            <div class="content-card">
-                <h4 class="content-title">
+            <div class="content-card dark:bg-slate-900 dark:border-slate-800 transition-colors duration-300">
+                <h4 class="content-title dark:text-white">
                     <i class="fa-solid fa-code" style="color: #0284c7;"></i> Keahlian
                 </h4>
 
@@ -611,7 +622,7 @@ $missingFields = get_missing_profile_fields();
                         @endforeach
                     </div>
                 @else
-                    <p class="text-muted fst-italic">Belum menambahkan skill/keahlian.</p>
+                    <p class="text-muted dark:text-slate-400 fst-italic">Belum menambahkan skill/keahlian.</p>
                 @endif
             </div>
         </div>
@@ -620,32 +631,32 @@ $missingFields = get_missing_profile_fields();
     <!-- PORTOFOLIO & CV -->
     <div class="row g-4 mb-4" data-aos="fade-up" data-aos-duration="1000">
         <div class="col-lg-6">
-            <div class="content-card d-flex flex-column justify-content-between">
+            <div class="content-card dark:bg-slate-900 dark:border-slate-800 transition-colors duration-300 d-flex flex-column justify-content-between">
                 <div>
-                    <h4 class="content-title">
+                    <h4 class="content-title dark:text-white">
                         <i class="fa-solid fa-folder-open text-info"></i> Portofolio
                     </h4>
-                    <p class="text-muted small">Tampilkan hasil karya terbaik Anda kepada klien.</p>
+                    <p class="text-muted dark:text-slate-400 small">Tampilkan hasil karya terbaik Anda kepada klien.</p>
                 </div>
                 <div class="mt-3">
                     @if($profile->portfolio_link)
-                        <a href="{{ $profile->portfolio_link }}" target="_blank" class="btn btn-outline-info text-dark rounded-pill px-4 fw-bold w-100 py-2 border-info transition-all">
+                        <a href="{{ $profile->portfolio_link }}" target="_blank" class="btn btn-outline-info text-dark dark:text-white rounded-pill px-4 fw-bold w-100 py-2 border-info transition-all">
                             <i class="fa-solid fa-arrow-up-right-from-square me-2"></i> Buka Link Portofolio
                         </a>
                     @else
-                        <div class="p-3 bg-light rounded-3 text-muted small text-center fst-italic">Tautan portofolio belum diatur.</div>
+                        <div class="p-3 bg-light dark:bg-slate-800 rounded-3 text-muted dark:text-slate-400 small text-center fst-italic">Tautan portofolio belum diatur.</div>
                     @endif
                 </div>
             </div>
         </div>
 
         <div class="col-lg-6">
-            <div class="content-card d-flex flex-column justify-content-between">
+            <div class="content-card dark:bg-slate-900 dark:border-slate-800 transition-colors duration-300 d-flex flex-column justify-content-between">
                 <div>
-                    <h4 class="content-title">
+                    <h4 class="content-title dark:text-white">
                         <i class="fa-solid fa-file-arrow-down text-primary"></i> Curriculum Vitae (CV)
                     </h4>
-                    <p class="text-muted small">Unduh dokumen CV terbaru Anda untuk keperluan review.</p>
+                    <p class="text-muted dark:text-slate-400 small">Unduh dokumen CV terbaru Anda untuk keperluan review.</p>
                 </div>
                 <div class="mt-3">
                     @if($profile->cv)
@@ -653,7 +664,7 @@ $missingFields = get_missing_profile_fields();
                             <i class="fa-solid fa-download me-2"></i> Unduh Berkas CV
                         </a>
                     @else
-                        <div class="p-3 bg-light rounded-3 text-muted small text-center fst-italic">Belum ada file CV yang diunggah.</div>
+                        <div class="p-3 bg-light dark:bg-slate-800 rounded-3 text-muted dark:text-slate-400 small text-center fst-italic">Belum ada file CV yang diunggah.</div>
                     @endif
                 </div>
             </div>
@@ -663,18 +674,18 @@ $missingFields = get_missing_profile_fields();
     <!-- ULASAN & RATING -->
     <div class="row g-4 mb-4" data-aos="fade-up" data-aos-duration="1000">
         <div class="col-lg-12">
-            <div class="content-card">
+            <div class="content-card dark:bg-slate-900 dark:border-slate-800 transition-colors duration-300">
                 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 pb-3 border-bottom">
-                    <h4 class="content-title mb-2 mb-md-0">
+                    <h4 class="content-title dark:text-white mb-2 mb-md-0">
                         <i class="fa-solid fa-star text-warning"></i> Ulasan & Rating dari Perusahaan
                     </h4>
-                    <div class="d-flex align-items-center gap-3 bg-light px-4 py-2 rounded-pill border">
-                        <span class="fw-extrabold text-dark" style="font-size: 24px;">{{ number_format($averageRating ?? 0, 1) }}</span>
+                    <div class="d-flex align-items-center gap-3 bg-light dark:bg-slate-800 px-4 py-2 rounded-pill border">
+                        <span class="fw-extrabold text-dark dark:text-white" style="font-size: 24px;">{{ number_format($averageRating ?? 0, 1) }}</span>
                         <div class="text-warning small">
                             @for($i=1; $i<=5; $i++)
                                 <i class="fa-{{ $i <= round($averageRating ?? 0) ? 'solid' : 'regular' }} fa-star"></i>
                             @endfor
-                            <span class="text-muted ms-2 fw-semibold">({{ $totalReview ?? 0 }} Ulasan)</span>
+                            <span class="text-muted dark:text-slate-400 ms-2 fw-semibold">({{ $totalReview ?? 0 }} Ulasan)</span>
                         </div>
                     </div>
                 </div>
@@ -682,26 +693,26 @@ $missingFields = get_missing_profile_fields();
                 <div class="row g-3">
                     @forelse($reviews ?? [] as $review)
                         <div class="col-md-6">
-                            <div class="review-item h-100">
+                            <div class="review-item dark:bg-slate-900 dark:border-slate-800 h-100">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <h6 class="fw-bold text-dark mb-0">{{ $review->project->project_name ?? 'Project Selesai' }}</h6>
-                                    <small class="text-muted fw-semibold" style="font-size: 11px;">{{ $review->created_at->translatedFormat('d M Y') }}</small>
+                                    <h6 class="fw-bold text-dark dark:text-white mb-0">{{ $review->project->project_name ?? 'Project Selesai' }}</h6>
+                                    <small class="text-muted dark:text-slate-400 fw-semibold" style="font-size: 11px;">{{ $review->created_at->translatedFormat('d M Y') }}</small>
                                 </div>
                                 <div class="text-warning small mb-2">
                                     @for ($i = 1; $i <= 5; $i++)
                                         <i class="fa-{{ $i <= $review->rating ? 'solid' : 'regular' }} fa-star"></i>
                                     @endfor
-                                    <span class="text-muted ms-2 small">oleh <strong class="text-dark">{{ $review->client->name ?? 'Perusahaan' }}</strong></span>
+                                    <span class="text-muted dark:text-slate-400 ms-2 small">oleh <strong class="text-dark dark:text-white">{{ $review->client->name ?? 'Perusahaan' }}</strong></span>
                                 </div>
                                 @if ($review->review)
-                                    <p class="text-secondary fst-italic mb-0 small bg-white p-3 rounded-3 border-0 shadow-sm">"{{ $review->review }}"</p>
+                                    <p class="text-secondary dark:text-slate-400 fst-italic mb-0 small bg-white dark:bg-slate-900 p-3 rounded-3 border-0 shadow-sm">"{{ $review->review }}"</p>
                                 @endif
                             </div>
                         </div>
                     @empty
                         <div class="col-12">
-                            <div class="text-center py-5 text-muted">
-                                <i class="fa-regular fa-face-smile fa-3x mb-3 text-slate-300"></i>
+                            <div class="text-center py-5 text-muted dark:text-slate-400">
+                                <i class="fa-regular fa-face-smile fa-3x mb-3 text-slate-300 dark:text-slate-600"></i>
                                 <p class="mb-0 fw-semibold">Belum ada ulasan atau rating yang diterima dari perusahaan.</p>
                             </div>
                         </div>
@@ -715,39 +726,39 @@ $missingFields = get_missing_profile_fields();
     @if(!($isViewOnly ?? false))
     <div class="row" data-aos="fade-up" data-aos-duration="1000">
         <div class="col-lg-12">
-            <div class="content-card">
+            <div class="content-card dark:bg-slate-900 dark:border-slate-800 transition-colors duration-300">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="content-title mb-0">
+                    <h4 class="content-title dark:text-white mb-0">
                         <i class="fa-solid fa-chart-line" style="color: #0284c7;"></i> Progress Kelengkapan Profil
                     </h4>
                     <h3 class="fw-extrabold mb-0" style="color: #0284c7 !important;">{{ $progress }}%</h3>
                 </div>
 
-                <div class="progress mb-4 shadow-inner">
+                <div class="progress dark:bg-slate-800 mb-4 shadow-inner">
                     <div class="progress-bar progress-bar-striped progress-bar-animated" style="width:{{ $progress }}%"></div>
                 </div>
 
                 <div class="row g-3 text-sm">
                     <div class="col-6 col-md-3">
-                        @if(Auth::user()->name) <span class="text-success fw-bold"><i class="fa-solid fa-circle-check me-1"></i> Nama Lengkap</span> @else <span class="text-muted"><i class="fa-regular fa-circle me-1"></i> Nama Lengkap</span> @endif
+                        @if(Auth::user()->name) <span class="text-success dark:text-emerald-300 fw-bold"><i class="fa-solid fa-circle-check me-1"></i> Nama Lengkap</span> @else <span class="text-muted dark:text-slate-400"><i class="fa-regular fa-circle me-1"></i> Nama Lengkap</span> @endif
                     </div>
                     <div class="col-6 col-md-3">
-                        @if(Auth::user()->email) <span class="text-success fw-bold"><i class="fa-solid fa-circle-check me-1"></i> Email</span> @else <span class="text-muted"><i class="fa-regular fa-circle me-1"></i> Email</span> @endif
+                        @if(Auth::user()->email) <span class="text-success dark:text-emerald-300 fw-bold"><i class="fa-solid fa-circle-check me-1"></i> Email</span> @else <span class="text-muted dark:text-slate-400"><i class="fa-regular fa-circle me-1"></i> Email</span> @endif
                     </div>
                     <div class="col-6 col-md-3">
-                        @if(Auth::user()->phone) <span class="text-success fw-bold"><i class="fa-solid fa-circle-check me-1"></i> Nomor Telepon</span> @else <span class="text-muted"><i class="fa-regular fa-circle me-1"></i> Nomor Telepon</span> @endif
+                        @if(Auth::user()->phone) <span class="text-success dark:text-emerald-300 fw-bold"><i class="fa-solid fa-circle-check me-1"></i> Nomor Telepon</span> @else <span class="text-muted dark:text-slate-400"><i class="fa-regular fa-circle me-1"></i> Nomor Telepon</span> @endif
                     </div>
                     <div class="col-6 col-md-3">
-                        @if($profile->location) <span class="text-success fw-bold"><i class="fa-solid fa-circle-check me-1"></i> Lokasi</span> @else <span class="text-muted"><i class="fa-regular fa-circle me-1"></i> Lokasi</span> @endif
+                        @if($profile->location) <span class="text-success dark:text-emerald-300 fw-bold"><i class="fa-solid fa-circle-check me-1"></i> Lokasi</span> @else <span class="text-muted dark:text-slate-400"><i class="fa-regular fa-circle me-1"></i> Lokasi</span> @endif
                     </div>
                     <div class="col-6 col-md-3">
-                        @if($profile->skills) <span class="text-success fw-bold"><i class="fa-solid fa-circle-check me-1"></i> Keahlian</span> @else <span class="text-muted"><i class="fa-regular fa-circle me-1"></i> Keahlian</span> @endif
+                        @if($profile->skills) <span class="text-success dark:text-emerald-300 fw-bold"><i class="fa-solid fa-circle-check me-1"></i> Keahlian</span> @else <span class="text-muted dark:text-slate-400"><i class="fa-regular fa-circle me-1"></i> Keahlian</span> @endif
                     </div>
                     <div class="col-6 col-md-3">
-                        @if($profile->photo) <span class="text-success fw-bold"><i class="fa-solid fa-circle-check me-1"></i> Foto Profil</span> @else <span class="text-muted"><i class="fa-regular fa-circle me-1"></i> Foto Profil</span> @endif
+                        @if($profile->photo) <span class="text-success dark:text-emerald-300 fw-bold"><i class="fa-solid fa-circle-check me-1"></i> Foto Profil</span> @else <span class="text-muted dark:text-slate-400"><i class="fa-regular fa-circle me-1"></i> Foto Profil</span> @endif
                     </div>
                     <div class="col-6 col-md-3">
-                        @if($profile->bio) <span class="text-success fw-bold"><i class="fa-solid fa-circle-check me-1"></i> Tentang Saya</span> @else <span class="text-muted"><i class="fa-regular fa-circle me-1"></i> Tentang Saya</span> @endif
+                        @if($profile->bio) <span class="text-success dark:text-emerald-300 fw-bold"><i class="fa-solid fa-circle-check me-1"></i> Tentang Saya</span> @else <span class="text-muted dark:text-slate-400"><i class="fa-regular fa-circle me-1"></i> Tentang Saya</span> @endif
                     </div>
                 </div>
             </div>

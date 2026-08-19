@@ -23,10 +23,13 @@ class ProfilController extends Controller
         // 1. Total Project yang pernah dibuat
         $totalProjects = Project::where('user_id', $userId)->count();
         
-        // 2. Project Selesai (Mencakup berbagai variasi nama status di database)
-        $completedProjects = Project::where('user_id', $userId)
-                                    ->whereIn('status', ['completed', 'selesai', 'done', 'finished', 'closed']) 
-                                    ->count();
+        // 2. Project Selesai dihitung dari Workspace.status = 'Selesai',
+        //    BUKAN dari Project.status (yang hanya open/closed/archived).
+        $completedProjects = \App\Models\Workspace::where('status', 'Selesai')
+            ->whereHas('project', function ($q) use ($userId) {
+                $q->where('user_id', $userId);
+            })
+            ->count();
 
         $paymentRate = '100%'; 
         $successRate = $totalProjects > 0 ? round(($completedProjects / $totalProjects) * 100) . '%' : '0%';   

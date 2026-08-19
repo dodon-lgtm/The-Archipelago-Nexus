@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Proyek Tersimpan - ApexForge Labs</title>
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
     @vite('resources/css/app.css')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -91,7 +96,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
 </style>
 </head>
-<body class="bg-[#f6f9ff] text-slate-800">
+<body class="bg-[#f6f9ff] dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-300">
 
 <div class="flex h-screen overflow-hidden">
 
@@ -102,7 +107,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
     <div class="flex-1 flex flex-col overflow-hidden">
 
         {{-- Top Navbar --}}
-        <div class="sticky top-0 z-40 bg-white border-b">
+        <div class="sticky top-0 z-40 bg-white dark:bg-slate-900 border-b dark:border-slate-800">
             @include('navbar.nav')
         </div>
 
@@ -110,8 +115,8 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
             {{-- Header --}}
             <div class="mb-8">
-                <h1 class="text-3xl sm:text-4xl font-black text-slate-900">Proyek Tersimpan</h1>
-                <p class="text-slate-500 mt-2 text-sm sm:text-base">Kumpulan proyek yang telah kamu simpan untuk dilamar nanti.</p>
+                <h1 class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white">Proyek Tersimpan</h1>
+                <p class="text-slate-500 dark:text-slate-400 mt-2 text-sm sm:text-base">Kumpulan proyek yang telah kamu simpan untuk dilamar nanti.</p>
             </div>
 
             {{-- Daftar Proyek Tersimpan --}}
@@ -120,16 +125,16 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                     @foreach($savedProjects as $saved)
                         @php $project = $saved->project; @endphp
                         @if($project)
-                        <div class="group bg-white rounded-2xl border border-blue-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-in-out overflow-hidden flex flex-col">
+                        <div class="group bg-white dark:bg-slate-900 rounded-2xl border border-blue-100 dark:border-slate-800 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-in-out overflow-hidden flex flex-col">
 
                             {{-- Image --}}
-                            <div class="relative h-44 sm:h-48 overflow-hidden bg-blue-50">
+                            <div class="relative h-44 sm:h-48 overflow-hidden bg-blue-50 dark:bg-slate-800">
                                 @if($project->image)
                                     <img src="{{ asset('storage/'.$project->image) }}"
                                          alt="{{ $project->project_name }}"
                                          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                                 @else
-                                    <div class="w-full h-full flex items-center justify-center text-slate-300">
+                                    <div class="w-full h-full flex items-center justify-center text-slate-300 dark:text-slate-600">
                                         <i class="fa-solid fa-image text-5xl"></i>
                                     </div>
                                 @endif
@@ -146,19 +151,19 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
                                 {{-- Category --}}
                                 @if($project->category && $project->category->name)
-                                    <span class="text-[11px] font-semibold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full w-fit mb-3">
+                                    <span class="text-[11px] font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-slate-800 px-2.5 py-1 rounded-full w-fit mb-3">
                                         {{ $project->category->name }}
                                     </span>
                                 @endif
 
                                 {{-- Project Name --}}
-                                <h3 class="text-base font-bold text-slate-900 leading-snug mb-2 line-clamp-2">
+                                <h3 class="text-base font-bold text-slate-900 dark:text-white leading-snug mb-2 line-clamp-2">
                                     {{ $project->project_name }}
                                 </h3>
 
                                 {{-- Company / Owner --}}
                                 @if($project->owner && $project->owner->name)
-                                    <p class="text-xs text-slate-400 flex items-center gap-1.5 mb-3">
+                                    <p class="text-xs text-slate-400 dark:text-slate-400 flex items-center gap-1.5 mb-3">
                                         <i class="fa-regular fa-building"></i>
                                         {{ $project->owner->name }}
                                     </p>
@@ -168,14 +173,14 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                 <div class="flex-1"></div>
 
                                 {{-- Budget --}}
-                                <div class="flex items-center justify-between border-t border-blue-50 pt-4 mt-2">
+                                <div class="flex items-center justify-between border-t border-blue-50 dark:border-slate-800 pt-4 mt-2">
                                     <div>
-                                        <p class="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Budget</p>
-                                        <p class="text-sm font-bold text-blue-600">Rp {{ number_format($project->budget, 0, ',', '.') }}</p>
+                                        <p class="text-[10px] text-slate-400 dark:text-slate-400 font-medium uppercase tracking-wider">Budget</p>
+                                        <p class="text-sm font-bold text-blue-600 dark:text-blue-400">Rp {{ number_format($project->budget, 0, ',', '.') }}</p>
                                     </div>
                                     <div class="text-right">
-                                        <p class="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Disimpan</p>
-                                        <p class="text-xs font-semibold text-slate-600">
+                                        <p class="text-[10px] text-slate-400 dark:text-slate-400 font-medium uppercase tracking-wider">Disimpan</p>
+                                        <p class="text-xs font-semibold text-slate-600 dark:text-slate-300">
                                             {{ $saved->created_at->isoFormat('D MMM') }}
                                         </p>
                                     </div>
@@ -194,7 +199,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
-                                                class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-red-300 text-red-600 hover:bg-red-50 text-xs font-semibold rounded-xl transition-colors duration-200">
+                                                class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-red-300 dark:border-red-900 text-red-600 dark:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/40 text-xs font-semibold rounded-xl transition-colors duration-200">
                                             <i class="fa-solid fa-bookmark-slash text-xs"></i>
                                             Batalkan
                                         </button>
@@ -216,11 +221,11 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
             @else
                 {{-- Empty State --}}
                 <div class="flex flex-col items-center justify-center py-20 px-4">
-                    <div class="w-24 h-24 rounded-full bg-blue-50 flex items-center justify-center mb-6">
-                        <i class="fa-regular fa-bookmark text-4xl text-slate-300"></i>
+                    <div class="w-24 h-24 rounded-full bg-blue-50 dark:bg-slate-800 flex items-center justify-center mb-6">
+                        <i class="fa-regular fa-bookmark text-4xl text-slate-300 dark:text-slate-600"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-slate-700 mb-2">Belum Ada Proyek Tersimpan</h3>
-                    <p class="text-sm text-slate-400 text-center max-w-md">
+                    <h3 class="text-xl font-bold text-slate-700 dark:text-white mb-2">Belum Ada Proyek Tersimpan</h3>
+                    <p class="text-sm text-slate-400 dark:text-slate-400 text-center max-w-md">
                         Kamu belum menyimpan proyek apa pun. Simpan proyek yang menarik agar mudah ditemukan kembali.
                     </p>
                     <a href="{{ route('freelancer.proyek') }}"

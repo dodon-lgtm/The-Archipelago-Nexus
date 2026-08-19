@@ -6,9 +6,15 @@
     <title>Workspace Perusahaan - ApexForge Labs</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: { sans: ['Inter', 'sans-serif'] },
@@ -98,7 +104,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
 </style>
 </head>
-<body class="bg-surface text-slate-800 min-h-screen flex font-sans">
+<body class="bg-surface dark:bg-slate-950 text-slate-800 dark:text-white min-h-screen flex font-sans transition-colors duration-300">
 
     @include('navbar.navigasi')
 
@@ -111,19 +117,19 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                 {{-- Header --}}
                 <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div>
-                        <h1 class="text-2xl font-extrabold text-slate-800">Workspace</h1>
-                        <p class="text-sm text-slate-500 mt-1">Pantau progress proyek yang sedang dikerjakan freelancer.</p>
+                        <h1 class="text-2xl font-extrabold text-slate-800 dark:text-white">Workspace</h1>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Pantau progress proyek yang sedang dikerjakan freelancer.</p>
                     </div>
                 </div>
 
                 @if(session('success'))
-                    <div class="flex items-center gap-3 px-4 py-3 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl text-sm font-medium">
+                    <div class="flex items-center gap-3 px-4 py-3 bg-emerald-50 dark:bg-emerald-900/40 border border-emerald-200 dark:border-emerald-900 text-emerald-700 dark:text-emerald-300 rounded-xl text-sm font-medium">
                         <i class="fa-solid fa-check-circle"></i> {{ session('success') }}
                     </div>
                 @endif
 
                 @if(session('error'))
-                    <div class="flex items-center gap-3 px-4 py-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-sm font-medium">
+                    <div class="flex items-center gap-3 px-4 py-3 bg-red-50 dark:bg-red-900/40 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-300 rounded-xl text-sm font-medium">
                         <i class="fa-solid fa-xmark-circle"></i> {{ session('error') }}
                     </div>
                 @endif
@@ -135,16 +141,16 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                             @php
                                 $progress = $ws->currentProgress();
 $stageColors = [
-                                    'Sedang Dikerjakan' => 'bg-blue-100 text-blue-700 border-blue-200',
-                                    'Menunggu Review' => 'bg-amber-100 text-amber-700 border-amber-200',
-                                    'Menunggu Revisi' => 'bg-blue-50 text-blue-600 border-blue-200',
-                                    'Menunggu Pembayaran' => 'bg-purple-50 text-purple-600 border-purple-200',
-                                    'Menunggu Verifikasi Admin' => 'bg-orange-50 text-orange-600 border-orange-200',
-                                    'Selesai' => 'bg-emerald-50 text-emerald-600 border-emerald-200',
+                                    'Sedang Dikerjakan' => 'bg-blue-100 text-blue-700 border-blue-200 dark:bg-slate-800 dark:text-blue-300 dark:border-slate-700',
+                                    'Menunggu Review' => 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/40 dark:text-amber-300 dark:border-amber-900',
+                                    'Menunggu Revisi' => 'bg-blue-50 text-blue-600 border-blue-200 dark:bg-slate-800 dark:text-blue-300 dark:border-slate-700',
+                                    'Menunggu Pembayaran' => 'bg-purple-50 text-purple-600 border-purple-200 dark:bg-purple-900/40 dark:text-purple-300 dark:border-purple-900',
+                                    'Menunggu Verifikasi Admin' => 'bg-orange-50 text-orange-600 border-orange-200 dark:bg-orange-900/40 dark:text-orange-300 dark:border-orange-900',
+                                    'Selesai' => 'bg-emerald-50 text-emerald-600 border-emerald-200 dark:bg-emerald-900/40 dark:text-emerald-300 dark:border-emerald-900',
                                 ];
-                                $wsStatusColor = $stageColors[$ws->status] ?? 'bg-[#f6f9ff] text-slate-600 border-blue-100';
+                                $wsStatusColor = $stageColors[$ws->status] ?? 'bg-[#f6f9ff] text-slate-600 border-blue-100 dark:bg-slate-950 dark:text-slate-300 dark:border-slate-800';
                             @endphp
-                            <div class="relative bg-white border border-blue-100 rounded-2xl shadow-sm hover:shadow-md transition overflow-hidden">
+                            <div class="relative bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl shadow-sm hover:shadow-md transition overflow-hidden">
                                 {{-- Red dot jika ada notifikasi unread terkait workspace ini --}}
                                 @if (($unreadByWorkspace[$ws->id] ?? 0) > 0)
                                     <span class="absolute top-3 right-3 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[10px] font-bold shadow-md z-10">
@@ -154,7 +160,7 @@ $stageColors = [
                                 <div class="p-5">
                                     <div class="flex items-start justify-between gap-3 mb-4">
                                         <div class="min-w-0 flex-1">
-                                            <h3 class="font-bold text-slate-800 truncate">{{ $ws->project->project_name }}</h3>
+                                            <h3 class="font-bold text-slate-800 dark:text-white truncate">{{ $ws->project->project_name }}</h3>
                                             <p class="text-xs text-slate-400 mt-1">
                                                 <i class="fa-solid fa-user-tie mr-1"></i>{{ $ws->freelancer->name }}
                                             </p>
@@ -167,22 +173,22 @@ $stageColors = [
                                     {{-- Progress Bar --}}
                                     <div class="mb-3">
                                         <div class="flex items-center justify-between text-xs mb-1">
-                                            <span class="text-slate-500">Progress</span>
+                                            <span class="text-slate-500 dark:text-slate-400">Progress</span>
                                             <span class="font-bold text-brand">{{ $progress }}%</span>
                                         </div>
-                                        <div class="w-full bg-blue-50 rounded-full h-2 overflow-hidden">
+                                        <div class="w-full bg-blue-50 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
                                             <div class="h-full rounded-full bg-gradient-to-r from-brand to-blue-400 transition-all" style="width: {{ $progress }}%"></div>
                                         </div>
                                     </div>
 
                                     @if($ws->latestProgress)
-                                        <p class="text-xs text-slate-500">
+                                        <p class="text-xs text-slate-500 dark:text-slate-400">
                                             <span class="font-semibold">Stage:</span> {{ $ws->latestProgress->stage }}
                                         </p>
                                     @endif
                                 </div>
 
-                                <div class="px-5 py-3 bg-[#f6f9ff] border-t border-blue-50">
+                                <div class="px-5 py-3 bg-[#f6f9ff] dark:bg-slate-950 border-t border-blue-50 dark:border-slate-800">
                                     <a href="{{ route('company.workspaces.show', $ws) }}"
                                        class="block text-center text-sm font-semibold text-brand hover:text-white bg-brand/10 hover:bg-brand px-4 py-2 rounded-xl transition">
                                         <i class="fa-solid fa-external-link-alt mr-1"></i> Buka Workspace
@@ -196,11 +202,11 @@ $stageColors = [
                         <div class="mt-8">{{ $workspaces->links() }}</div>
                     @endif
                 @else
-                    <div class="bg-white border border-blue-100 rounded-2xl p-16 text-center">
-                        <div class="w-20 h-20 mx-auto mb-5 bg-blue-50 rounded-2xl flex items-center justify-center">
-                            <i class="fa-solid fa-layer-group text-3xl text-slate-400"></i>
+                    <div class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl p-16 text-center transition-colors duration-300">
+                        <div class="w-20 h-20 mx-auto mb-5 bg-blue-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center">
+                            <i class="fa-solid fa-layer-group text-3xl text-slate-400 dark:text-slate-400"></i>
                         </div>
-                        <h3 class="text-lg font-bold text-slate-700">Belum Ada Workspace</h3>
+                        <h3 class="text-lg font-bold text-slate-700 dark:text-white">Belum Ada Workspace</h3>
                         <p class="text-sm text-slate-400 mt-2">Workspace akan muncul setelah Anda memilih freelancer untuk proyek.</p>
                         <a href="{{ route('company.projects.index') }}"
                            class="inline-flex items-center gap-2 mt-6 px-5 py-2.5 bg-brand text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition">

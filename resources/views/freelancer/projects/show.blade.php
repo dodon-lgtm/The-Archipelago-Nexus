@@ -5,7 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $project->project_name ?? 'Detail Proyek' }} - ApexForge Labs</title>
 
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = tailwind.config || {};
+        tailwind.config.darkMode = 'class';
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <style>
@@ -54,13 +63,13 @@
     </style>
 </head>
 
-<body class="h-full bg-[#f6f9ff] text-slate-800 antialiased selection:bg-blue-600 selection:text-white flex">
+<body class="h-full bg-[#f6f9ff] dark:bg-slate-950 text-slate-800 dark:text-white antialiased selection:bg-blue-600 selection:text-white flex transition-colors duration-300">
 
     @include('navbar.navigasi')
 
     <div class="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
 
-        <div class="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-blue-100/80 shadow-xs">
+        <div class="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-blue-100/80 dark:border-slate-800 shadow-xs">
             @include('navbar.nav')
         </div>
 
@@ -77,8 +86,8 @@
 
                 {{-- Flash Notifications --}}
                 @if(session('error'))
-                    <div class="bg-rose-50/90 border border-rose-200 text-rose-800 px-5 py-4 rounded-2xl mb-6 flex items-center gap-3 shadow-xs">
-                        <span class="w-8 h-8 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center shrink-0">
+                    <div class="bg-rose-50/90 dark:bg-rose-900/40 border border-rose-200 dark:border-rose-900 text-rose-800 dark:text-rose-300 px-5 py-4 rounded-2xl mb-6 flex items-center gap-3 shadow-xs">
+                        <span class="w-8 h-8 rounded-xl bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-300 flex items-center justify-center shrink-0">
                             <i class="fa-solid fa-circle-exclamation text-sm"></i>
                         </span>
                         <span class="text-sm font-semibold">{{ session('error') }}</span>
@@ -86,8 +95,8 @@
                 @endif
 
                 @if(session('success'))
-                    <div class="bg-emerald-50/90 border border-emerald-200 text-emerald-800 px-5 py-4 rounded-2xl mb-6 flex items-center gap-3 shadow-xs">
-                        <span class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
+                    <div class="bg-emerald-50/90 dark:bg-emerald-900/40 border border-emerald-200 dark:border-emerald-900 text-emerald-800 dark:text-emerald-300 px-5 py-4 rounded-2xl mb-6 flex items-center gap-3 shadow-xs">
+                        <span class="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-300 flex items-center justify-center shrink-0">
                             <i class="fa-solid fa-circle-check text-sm"></i>
                         </span>
                         <span class="text-sm font-semibold">{{ session('success') }}</span>
@@ -99,52 +108,52 @@
 
                         <!-- LEFT SIDE: Project Main Details -->
                         <div class="lg:col-span-2 space-y-6">
-                            <div class="bg-white rounded-3xl border border-blue-100/80 shadow-xs p-6 sm:p-8">
+                            <div class="bg-white dark:bg-slate-900 rounded-3xl border border-blue-100/80 dark:border-slate-800 shadow-xs p-6 sm:p-8 transition-colors duration-300">
 
                                 <!-- Cover Image -->
-                                <div class="relative h-64 sm:h-80 w-full overflow-hidden rounded-2xl bg-blue-50 border border-blue-100/60">
+                                <div class="relative h-64 sm:h-80 w-full overflow-hidden rounded-2xl bg-blue-50 dark:bg-slate-800 border border-blue-100/60 dark:border-slate-800">
                                     @if($project->image)
                                         <img src="{{ asset('storage/'.$project->image) }}"
                                              class="w-full h-full object-cover" alt="{{ $project->project_name }}">
                                     @else
-                                        <div class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50/60 text-slate-300">
-                                            <i class="fa-solid fa-image text-5xl mb-2 text-slate-300"></i>
-                                            <span class="text-xs font-semibold text-slate-400">Tidak ada gambar proyek</span>
+                                        <div class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50/60 dark:from-slate-800 dark:to-slate-800/60 text-slate-300 dark:text-slate-600">
+                                            <i class="fa-solid fa-image text-5xl mb-2 text-slate-300 dark:text-slate-600"></i>
+                                            <span class="text-xs font-semibold text-slate-400 dark:text-slate-400">Tidak ada gambar proyek</span>
                                         </div>
                                     @endif
 
                                     <!-- Category & Status Overlay Badges -->
                                     <div class="absolute top-4 left-4 flex flex-wrap gap-2">
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/90 backdrop-blur-md text-blue-700 font-bold text-xs rounded-full shadow-xs border border-white/40">
-                                            <i class="fa-solid fa-folder-open text-blue-500 text-[10px]"></i>
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md text-blue-700 dark:text-blue-400 font-bold text-xs rounded-full shadow-xs border border-white/40">
+                                            <i class="fa-solid fa-folder-open text-blue-500 dark:text-blue-400 text-[10px]"></i>
                                             {{ optional($project->category)->name ?? 'Umum' }}
                                         </span>
                                         <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/90 backdrop-blur-md text-white font-bold text-xs rounded-full shadow-xs border border-emerald-400/30">
                                             <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
-                                            {{ ucfirst($project->status ?? 'Open') }}
+                                            {{ \App\Models\Project::statusLabel($project->status ?? 'open') }}
                                         </span>
                                     </div>
                                 </div>
 
                                 <!-- Title -->
-                                <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-6 tracking-tight leading-snug">
+                                <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mt-6 tracking-tight leading-snug">
                                     {{ $project->project_name }}
                                 </h1>
 
                                 <!-- Description -->
-                                <div class="mt-8 pt-6 border-t border-blue-50">
-                                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Deskripsi Proyek</h3>
-                                    <p class="text-slate-600 text-sm sm:text-base leading-relaxed whitespace-pre-line">{{ $project->project_description ?? 'Tidak ada deskripsi.' }}</p>
+                                <div class="mt-8 pt-6 border-t border-blue-50 dark:border-slate-800">
+                                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400 mb-3">Deskripsi Proyek</h3>
+                                    <p class="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed whitespace-pre-line">{{ $project->project_description ?? 'Tidak ada deskripsi.' }}</p>
                                 </div>
 
                                 <!-- Required Skills -->
                                 @if(!empty($project->skills))
-                                    <div class="mt-8 pt-6 border-t border-blue-50">
-                                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Keahlian Yang Dibutuhkan</h3>
+                                    <div class="mt-8 pt-6 border-t border-blue-50 dark:border-slate-800">
+                                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400 mb-3">Keahlian Yang Dibutuhkan</h3>
                                         <div class="flex flex-wrap gap-2">
                                             @foreach(explode(',', $project->skills) as $skill)
-                                                <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-blue-50/80 border border-blue-100 text-blue-700 text-xs font-semibold rounded-xl">
-                                                    <i class="fa-solid fa-code text-[10px] text-blue-400"></i>
+                                                <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-blue-50/80 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-800 text-blue-700 dark:text-blue-400 text-xs font-semibold rounded-xl">
+                                                    <i class="fa-solid fa-code text-[10px] text-blue-400 dark:text-slate-400"></i>
                                                     {{ trim($skill) }}
                                                 </span>
                                             @endforeach
@@ -153,16 +162,16 @@
                                 @endif
 
                                 <!-- Attachment Section -->
-                                <div class="mt-8 pt-6 border-t border-blue-50">
-                                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Lampiran Proyek</h3>
+                                <div class="mt-8 pt-6 border-t border-blue-50 dark:border-slate-800">
+                                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400 mb-3">Lampiran Proyek</h3>
                                     @if($project->attachment)
-                                        <div class="border border-blue-100/80 rounded-2xl p-4 flex items-center justify-between bg-[#f6f9ff]/60 hover:bg-[#f6f9ff] transition">
+                                        <div class="border border-blue-100/80 dark:border-slate-800 rounded-2xl p-4 flex items-center justify-between bg-[#f6f9ff]/60 dark:bg-slate-900/60 hover:bg-[#f6f9ff] dark:hover:bg-slate-900 transition">
                                             <div class="flex items-center gap-3.5 min-w-0">
-                                                <div class="w-11 h-11 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center shrink-0 font-bold">
+                                                <div class="w-11 h-11 rounded-xl bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-300 flex items-center justify-center shrink-0 font-bold">
                                                     <i class="fa-solid fa-file-pdf text-xl"></i>
                                                 </div>
                                                 <div class="min-w-0">
-                                                    <p class="font-bold text-sm text-slate-800 truncate">{{ $project->attachment }}</p>
+                                                    <p class="font-bold text-sm text-slate-800 dark:text-white truncate">{{ $project->attachment }}</p>
                                                     <p class="text-xs text-slate-400">Dokumen pendukung dari perusahaan</p>
                                                 </div>
                                             </div>
@@ -172,8 +181,8 @@
                                             </a>
                                         </div>
                                     @else
-                                        <div class="border border-dashed border-blue-100 rounded-2xl p-5 text-center text-slate-400 text-xs font-medium">
-                                            <i class="fa-regular fa-folder-open text-base mb-1 block text-slate-300"></i>
+                                        <div class="border border-dashed border-blue-100 dark:border-slate-700 rounded-2xl p-5 text-center text-slate-400 dark:text-slate-400 text-xs font-medium">
+                                            <i class="fa-regular fa-folder-open text-base mb-1 block text-slate-300 dark:text-slate-600"></i>
                                             Tidak ada berkas lampiran untuk proyek ini.
                                         </div>
                                     @endif
@@ -184,41 +193,41 @@
 
                         <!-- RIGHT SIDE: Project Meta & Actions Sidebar -->
                         <div class="space-y-6">
-                            <div class="bg-white rounded-3xl border border-blue-100/80 shadow-xs p-6 sticky top-24">
-                                <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-5">Ringkasan Informasi</h2>
+                            <div class="bg-white dark:bg-slate-900 rounded-3xl border border-blue-100/80 dark:border-slate-800 shadow-xs p-6 sticky top-24 transition-colors duration-300">
+                                <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400 mb-5">Ringkasan Informasi</h2>
                                 
                                 <div class="space-y-4 text-sm">
                                     <!-- Budget -->
-                                    <div class="bg-blue-50/60 border border-blue-100/80 rounded-2xl p-4">
-                                        <p class="text-xs text-blue-600/80 font-bold uppercase tracking-wider mb-1">Anggaran Proyek</p>
-                                        <h3 class="text-2xl font-extrabold text-blue-600">Rp {{ number_format($project->budget ?? 0, 0, ',', '.') }}</h3>
+                                    <div class="bg-blue-50/60 dark:bg-slate-800/60 border border-blue-100/80 dark:border-slate-800 rounded-2xl p-4">
+                                        <p class="text-xs text-blue-600/80 dark:text-blue-400/80 font-bold uppercase tracking-wider mb-1">Anggaran Proyek</p>
+                                        <h3 class="text-2xl font-extrabold text-blue-600 dark:text-blue-400">Rp {{ number_format($project->budget ?? 0, 0, ',', '.') }}</h3>
                                     </div>
 
                                     <!-- Meta List -->
                                     <div class="space-y-3 pt-2">
-                                        <div class="flex items-center justify-between py-2 border-b border-blue-50">
-                                            <span class="text-slate-500 font-medium text-xs flex items-center gap-2">
+                                        <div class="flex items-center justify-between py-2 border-b border-blue-50 dark:border-slate-800">
+                                            <span class="text-slate-500 dark:text-slate-400 font-medium text-xs flex items-center gap-2">
                                                 <i class="fa-regular fa-calendar text-slate-400"></i> Tenggat Waktu
                                             </span>
-                                            <span class="font-bold text-slate-800 text-xs">
+                                            <span class="font-bold text-slate-800 dark:text-white text-xs">
                                                 {{ $project->deadline ? \Carbon\Carbon::parse($project->deadline)->format('d M Y') : '-' }}
                                             </span>
                                         </div>
 
-                                        <div class="flex items-center justify-between py-2 border-b border-blue-50">
-                                            <span class="text-slate-500 font-medium text-xs flex items-center gap-2">
+                                        <div class="flex items-center justify-between py-2 border-b border-blue-50 dark:border-slate-800">
+                                            <span class="text-slate-500 dark:text-slate-400 font-medium text-xs flex items-center gap-2">
                                                 <i class="fa-solid fa-signal text-slate-400"></i> Status Proyek
                                             </span>
-                                            <span class="font-bold text-emerald-600 text-xs bg-emerald-50 px-2.5 py-0.5 rounded-md border border-emerald-100">
-                                                {{ ucfirst($project->status ?? 'Open') }}
+                                            <span class="font-bold text-emerald-600 dark:text-emerald-300 text-xs bg-emerald-50 dark:bg-emerald-900/40 px-2.5 py-0.5 rounded-md border border-emerald-100 dark:border-emerald-900">
+                                                {{ \App\Models\Project::statusLabel($project->status ?? 'open') }}
                                             </span>
                                         </div>
 
                                         <div class="flex items-center justify-between py-2">
-                                            <span class="text-slate-500 font-medium text-xs flex items-center gap-2">
+                                            <span class="text-slate-500 dark:text-slate-400 font-medium text-xs flex items-center gap-2">
                                                 <i class="fa-regular fa-building text-slate-400"></i> Klien / Perusahaan
                                             </span>
-                                            <span class="font-bold text-slate-800 text-xs truncate max-w-[140px]">
+                                            <span class="font-bold text-slate-800 dark:text-white text-xs truncate max-w-[140px]">
                                                 {{ optional($project->owner)->name ?? 'Perusahaan' }}
                                             </span>
                                         </div>
@@ -226,7 +235,7 @@
                                 </div>
 
                                 <!-- Actions Group -->
-                                <div class="mt-8 space-y-3 pt-4 border-t border-blue-50">
+                                <div class="mt-8 space-y-3 pt-4 border-t border-blue-50 dark:border-slate-800">
                                     @if(!empty($hasOffered))
                                         <a href="{{ route('freelancer.lamaran') }}" 
                                            class="w-full inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-center py-3 rounded-2xl font-bold text-xs transition">
@@ -238,7 +247,7 @@
                                             <i class="fa-solid fa-paper-plane"></i> Kirim Penawaran Baru
                                         </a>
                                     @else
-                                        <div class="w-full inline-flex items-center justify-center gap-2 border border-blue-100 bg-[#f6f9ff] text-slate-500 text-center py-3 rounded-2xl font-bold text-xs">
+                                        <div class="w-full inline-flex items-center justify-center gap-2 border border-blue-100 dark:border-slate-800 bg-[#f6f9ff] dark:bg-slate-950 text-slate-500 dark:text-slate-400 text-center py-3 rounded-2xl font-bold text-xs">
                                             <i class="fa-solid fa-lock"></i> Proyek Sudah Ditutup
                                         </div>
                                     @endif
@@ -254,14 +263,14 @@
                                         <form action="{{ route('freelancer.saved-projects.destroy', $project) }}" method="POST" class="w-full">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="w-full inline-flex items-center justify-center gap-2 border border-blue-200 bg-blue-50/80 text-blue-700 py-3 rounded-2xl hover:bg-blue-100 font-bold text-xs transition">
-                                                <i class="fa-solid fa-bookmark text-blue-600"></i> Tersimpan Dalam Bookmark
+                                            <button type="submit" class="w-full inline-flex items-center justify-center gap-2 border border-blue-200 dark:border-slate-800 bg-blue-50/80 dark:bg-slate-800/80 text-blue-700 dark:text-blue-400 py-3 rounded-2xl hover:bg-blue-100 dark:hover:bg-slate-800 font-bold text-xs transition">
+                                                <i class="fa-solid fa-bookmark text-blue-600 dark:text-blue-400"></i> Tersimpan Dalam Bookmark
                                             </button>
                                         </form>
                                     @else
                                         <form action="{{ route('freelancer.saved-projects.store', $project) }}" method="POST" class="w-full">
                                             @csrf
-                                            <button type="submit" class="w-full inline-flex items-center justify-center gap-2 border border-blue-100/80 bg-white text-slate-700 py-3 rounded-2xl hover:bg-[#f6f9ff] font-semibold text-xs transition">
+                                            <button type="submit" class="w-full inline-flex items-center justify-center gap-2 border border-blue-100/80 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-white py-3 rounded-2xl hover:bg-[#f6f9ff] dark:hover:bg-slate-950 font-semibold text-xs transition">
                                                 <i class="fa-regular fa-bookmark"></i> Simpan Ke Bookmark
                                             </button>
                                         </form>
@@ -269,13 +278,13 @@
 
                                     {{-- Report Buttons --}}
                                     <a href="{{ route('freelancer.reports.create', ['project_id' => $project->id]) }}"
-                                       class="w-full inline-flex items-center justify-center gap-2 border border-rose-200/80 bg-rose-50/50 text-rose-600 hover:bg-rose-100/80 text-center py-3 rounded-2xl font-semibold text-xs transition">
+                                       class="w-full inline-flex items-center justify-center gap-2 border border-rose-200/80 dark:border-rose-900/80 bg-rose-50/50 dark:bg-rose-900/40 text-rose-600 dark:text-rose-300 hover:bg-rose-100/80 dark:hover:bg-rose-900/60 text-center py-3 rounded-2xl font-semibold text-xs transition">
                                         <i class="fa-solid fa-flag"></i> Laporkan Masalah Proyek
                                     </a>
 
                                     @if($project->owner && (int) $project->owner->id !== (int) auth()->id())
                                         <a href="{{ route('freelancer.reports.create', ['reported_user_id' => $project->owner->id]) }}"
-                                           class="w-full inline-flex items-center justify-center gap-2 border border-blue-100/80 bg-white text-slate-600 hover:bg-[#f6f9ff] text-center py-3 rounded-2xl font-semibold text-xs transition">
+                                           class="w-full inline-flex items-center justify-center gap-2 border border-blue-100/80 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-[#f6f9ff] dark:hover:bg-slate-950 text-center py-3 rounded-2xl font-semibold text-xs transition">
                                             <i class="fa-solid fa-building-shield"></i> Laporkan Perusahaan
                                         </a>
                                     @endif
@@ -286,15 +295,15 @@
 
                     </div>
                 @else
-                    <div class="bg-white rounded-3xl border border-blue-100 p-12 text-center my-8">
-                        <i class="fa-solid fa-folder-open text-4xl text-slate-300 mb-3"></i>
-                        <h3 class="text-base font-bold text-slate-700">Data Proyek Tidak Ditemukan</h3>
+                    <div class="bg-white dark:bg-slate-900 rounded-3xl border border-blue-100 dark:border-slate-800 p-12 text-center my-8">
+                        <i class="fa-solid fa-folder-open text-4xl text-slate-300 dark:text-slate-600 mb-3"></i>
+                        <h3 class="text-base font-bold text-slate-700 dark:text-white">Data Proyek Tidak Ditemukan</h3>
                         <p class="text-xs text-slate-400 mt-1">Proyek mungkin telah dihapus atau tidak tersedia.</p>
                     </div>
                 @endif
 
                 <div class="mt-16">
-                    @include('navbar.footer')
+              
                 </div>
 
             </div>

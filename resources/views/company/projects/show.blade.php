@@ -5,22 +5,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+
     <title>{{ $project->project_name }} - Detail Proyek</title>
 
     {{-- Google Font --}}
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Lexend:wght@600;700;800&display=swap"
-        rel="stylesheet"
-    >
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     {{-- Font Awesome --}}
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    >
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    {{-- Tailwind --}}
+    {{-- Tailwind CSS --}}
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    {{-- Alpine.js (Untuk Filter, Search, & Toggle tanpa reload) --}}
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <style>
 
@@ -999,9 +1014,7 @@
 
 </head>
 
-
-<body class="text-slate-800 min-h-screen flex">
-
+<body class="text-slate-800 bg-slate-50 min-h-screen flex dark:bg-slate-950 dark:text-slate-100 transition-colors duration-200">
 
     {{-- =====================================================
         SIDEBAR
@@ -1009,9 +1022,8 @@
 
     @include('navbar.navigasi')
 
-
     {{-- =====================================================
-        AREA KANAN
+        AREA UTAMA
     ====================================================== --}}
 
     <div class="flex-1 min-w-0 flex flex-col min-h-screen">
@@ -1029,6 +1041,7 @@
         ================================================== --}}
 
         <main class="flex-1 min-w-0 overflow-y-auto">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
             <div class="max-w-7xl mx-auto px-6 py-6">
 
@@ -1347,6 +1360,11 @@
 
                     </div>
 
+                    <a href="{{ route('company.projects.index') }}"
+                       class="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 dark:bg-slate-900 dark:border-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition-all shadow-sm">
+                        <i class="fa-solid fa-arrow-left text-[11px]"></i>
+                        Kembali
+                    </a>
                 </div>
 
 
@@ -1398,9 +1416,7 @@
                         </span>
 
                     </div>
-
                 @endif
-
 
                 @if(session('error'))
 
@@ -1446,7 +1462,6 @@
                         </span>
 
                     </div>
-
                 @endif
 
 
@@ -1724,9 +1739,10 @@
                                     </p>
 
                                 @endif
-
                             </div>
-
+                            <p class="text-xs text-slate-500 dark:text-slate-400">
+                                Kategori: <span class="font-medium text-slate-700 dark:text-slate-300">{{ $project->category->name ?? 'Umum' }}</span>
+                            </p>
                         </div>
 
 
@@ -2061,13 +2077,77 @@
                                 </button>
 
                             </form>
+                        </div>
+                    </div>
 
+                    {{-- Ringkasan Parameter Proyek (Grid Horizontal 3 Kolom) --}}
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div class="p-3.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-xl flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-lg bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center text-sm shrink-0">
+                                <i class="fa-solid fa-wallet"></i>
+                            </div>
+                            <div>
+                                <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Budget Proyek</p>
+                                <p class="text-sm font-bold text-slate-900 dark:text-white mt-0.5">
+                                    {{ $project->budget ? 'Rp ' . number_format($project->budget, 0, ',', '.') : 'Belum Ditentukan' }}
+                                </p>
+                            </div>
                         </div>
 
+                        <div class="p-3.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-xl flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-lg bg-sky-100 dark:bg-sky-900/50 text-sky-600 dark:text-sky-400 flex items-center justify-center text-sm shrink-0">
+                                <i class="fa-regular fa-calendar-check"></i>
+                            </div>
+                            <div>
+                                <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Tenggat Waktu</p>
+                                <p class="text-sm font-bold text-slate-900 dark:text-white mt-0.5">
+                                    {{ $project->deadline ? \Carbon\Carbon::parse($project->deadline)->format('d M Y') : 'Belum Ditentukan' }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="p-3.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-xl flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-lg bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-sm shrink-0">
+                                <i class="fa-solid fa-users"></i>
+                            </div>
+                            <div>
+                                <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total Penawaran</p>
+                                <p class="text-sm font-bold text-slate-900 dark:text-white mt-0.5">
+                                    {{ $project->penawarans->count() }} Freelancer
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Deskripsi Ringkas --}}
+                    <div x-data="{ expanded: false }" class="pt-2">
+                        <p class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                            <i class="fa-solid fa-align-left text-blue-500"></i> Deskripsi Proyek
+                        </p>
+                        <div class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/30 p-4 rounded-xl border border-slate-100 dark:border-slate-800 leading-relaxed relative">
+                            <div :class="expanded ? '' : 'line-clamp-3'">
+                                {!! nl2br(e($project->project_description ?? 'Tidak ada deskripsi proyek.')) !!}
+                            </div>
+                            @if(strlen($project->project_description) > 200)
+                                <button @click="expanded = !expanded" class="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline mt-2 inline-block">
+                                    <span x-text="expanded ? 'Sembunyikan' : 'Baca Selengkapnya...'"></span>
+                                </button>
+                            @endif
+                        </div>
                     </div>
 
                 </div>
 
+                {{-- =========================================================
+                    SECTION PENAWARAN FREELANCER (DENGAN FILTER & COMPACT CARD)
+                ========================================================== --}}
+                @php
+                    $hasAccepted = $project->penawarans->contains(fn($p) => $p->status === 'Diterima');
+                    
+                    // Siapkan array JSON untuk Alpine.js
+                    $penawaranData = $project->penawarans->map(function($p) {
+                        $foto = optional($p->freelancer->freelanceProfile)->photo;
+                        $photoUrl = $foto ? (Str::startsWith($foto, ['http://', 'https://']) ? $foto : asset('storage/' . $foto)) : null;
 
                 {{-- =================================================
                     PENAWARAN FREELANCER
@@ -2223,6 +2303,12 @@
 
 
                         @else
+                            {{-- Empty state jika hasil filter kosong --}}
+                            <template x-if="filteredItems.length === 0">
+                                <div class="py-12 text-center">
+                                    <p class="text-xs font-semibold text-slate-400">Tidak ada penawaran yang cocok dengan filter atau pencarian Anda.</p>
+                                </div>
+                            </template>
 
 
                             {{-- CEK ACCEPTED --}}
@@ -2816,6 +2902,12 @@
                                                     Lapor
 
                                                 </a>
+                                            </template>
+                                            <template x-if="!item.freelancer_photo">
+                                                <a :href="'/company/freelancers/' + item.freelancer_id" class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm shrink-0">
+                                                    <span x-text="item.freelancer_name.charAt(0).toUpperCase()"></span>
+                                                </a>
+                                            </template>
 
 
                                                 {{-- PILIH FREELANCER --}}
@@ -2946,13 +3038,14 @@
                                             </div>
 
                                         </div>
-
                                     </div>
 
                                 @endforeach
 
                             </div>
 
+                                </div>
+                            </template>
                         @endif
 
                     </div>
@@ -3405,5 +3498,4 @@
 
 
 </body>
-
 </html>

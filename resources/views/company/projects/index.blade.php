@@ -3,6 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
     <title>Daftar Proyek | ApexForge Labs</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -12,6 +17,7 @@
 
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
@@ -97,7 +103,7 @@
     </style>
 </head>
 
-<body class="bg-surface text-slate-800 min-h-screen flex font-sans antialiased selection:bg-brand selection:text-white">
+<body class="bg-surface text-slate-800 min-h-screen flex font-sans antialiased selection:bg-brand selection:text-white dark:bg-slate-900 dark:text-white transition-colors duration-300">
 
     {{-- SIDEBAR --}}
     @include('navbar.navigasi')
@@ -153,7 +159,7 @@
                                 <span>Arsip</span>
                             </a>
 
-                            <a href="{{ route('company.projects.create') }}" class="btn-shimmer inline-flex items-center gap-2 bg-white text-brand hover:bg-[#f6f9ff] px-5 py-3 rounded-2xl text-sm font-bold shadow-lg shadow-black/5 transition">
+                            <a href="{{ route('company.projects.create') }}" class="btn-shimmer inline-flex items-center gap-2 bg-white text-brand hover:bg-[#f6f9ff] px-5 py-3 rounded-2xl text-sm font-bold shadow-lg shadow-black/5 transition dark:bg-slate-900 dark:hover:bg-slate-800">
                                 <i class="fa-solid fa-plus text-xs"></i>
                                 <span>Buat Proyek</span>
                             </a>
@@ -163,14 +169,14 @@
 
                 {{-- SESSION SUCCESS NOTIFICATION --}}
                 @if (session('success'))
-                    <div class="reveal reveal-1 flex items-center justify-between gap-3 px-5 py-4 bg-emerald-50/80 backdrop-blur-md border border-emerald-200/60 text-emerald-800 text-sm font-medium rounded-2xl shadow-sm">
+                    <div class="reveal reveal-1 flex items-center justify-between gap-3 px-5 py-4 bg-emerald-50/80 backdrop-blur-md border border-emerald-200/60 text-emerald-800 text-sm font-medium rounded-2xl shadow-sm dark:bg-emerald-900/40 dark:border-emerald-900 dark:text-emerald-300">
                         <div class="flex items-center gap-3 min-w-0">
                             <div class="w-8 h-8 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-sm shadow-emerald-500/30">
                                 <i class="fa-solid fa-check text-xs"></i>
                             </div>
                             <span class="truncate">{{ session('success') }}</span>
                         </div>
-                        <button onclick="this.parentElement.remove()" class="text-emerald-500 hover:text-emerald-700 p-1">
+                        <button onclick="this.parentElement.remove()" class="text-emerald-500 hover:text-emerald-700 p-1 dark:text-emerald-300">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
                     </div>
@@ -179,11 +185,11 @@
                 {{-- SUB HEADER & TITLE --}}
                 <div class="reveal reveal-2 flex items-center justify-between">
                     <div>
-                        <h2 class="text-lg font-extrabold text-slate-900 tracking-tight">Semua Proyek</h2>
-                        <p class="text-xs text-slate-400 font-medium">Portofolio proyek aktif yang sedang Anda kelola</p>
+                        <h2 class="text-lg font-extrabold text-slate-900 tracking-tight dark:text-white">Semua Proyek</h2>
+                        <p class="text-xs text-slate-400 font-medium dark:text-slate-400">Portofolio proyek aktif yang sedang Anda kelola</p>
                     </div>
                     @if ($projects->count() > 0)
-                        <span class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-blue-100 text-slate-500 text-xs font-semibold shadow-sm">
+                        <span class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-blue-100 text-slate-500 text-xs font-semibold shadow-sm dark:bg-slate-900 dark:border-slate-800 dark:text-slate-400">
                             <i class="fa-solid fa-list-ul text-brand"></i>
                             {{ $projects->count() }} ditampilkan
                         </span>
@@ -194,12 +200,19 @@
                 <div class="reveal reveal-3 space-y-3">
                     @forelse ($projects as $project)
                         @php
-                            $status = $project->status ?? 'Open';
-                            $isOpen = strtolower($status) === 'open';
+                            $status = $project->status ?? 'open';
+                            $isOpen = $status === 'open';
+                            $statusBadge = match($status) {
+                                'open' => 'bg-emerald-50 text-emerald-700 border-emerald-200/60',
+                                'closed' => 'bg-rose-50 text-rose-700 border-rose-200/60',
+                                'archived' => 'bg-slate-100 text-slate-600 border-slate-200',
+                                default => 'bg-slate-100 text-slate-600 border-slate-200',
+                            };
+                            $statusLabel = \App\Models\Project::statusLabel($status);
                         @endphp
                         
                         <a href="{{ route('company.projects.show', $project) }}" 
-                           class="modern-row block bg-white border border-blue-100/80 rounded-2xl p-5 shadow-sm relative overflow-hidden group">
+                           class="modern-row block bg-white border border-blue-100/80 rounded-2xl p-5 shadow-sm relative overflow-hidden group dark:bg-slate-900 dark:border-slate-800">
                             
                             {{-- Bar Status Kiri --}}
                             <div class="absolute left-0 top-0 bottom-0 w-1.5 {{ $isOpen ? 'bg-emerald-500' : 'bg-slate-300' }}"></div>
@@ -207,50 +220,50 @@
                             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pl-2">
                                 {{-- Detail Kiri --}}
                                 <div class="flex items-start gap-4 min-w-0 flex-1">
-                                    <div class="w-12 h-12 rounded-2xl bg-blue-50 text-brand border border-blue-100 flex items-center justify-center shrink-0 text-lg shadow-inner group-hover:bg-brand group-hover:text-white transition-colors duration-300">
+                                    <div class="w-12 h-12 rounded-2xl bg-blue-50 text-brand border border-blue-100 flex items-center justify-center shrink-0 text-lg shadow-inner group-hover:bg-brand group-hover:text-white transition-colors duration-300 dark:bg-slate-800 dark:border-slate-800">
                                         <i class="fa-solid fa-briefcase"></i>
                                     </div>
 
                                     <div class="min-w-0 flex-1">
                                         <div class="flex flex-wrap items-center gap-2">
-                                            <h3 class="text-base font-bold text-slate-800 group-hover:text-brand transition-colors truncate">
+                                            <h3 class="text-base font-bold text-slate-800 group-hover:text-brand transition-colors truncate dark:text-white">
                                                 {{ $project->project_name }}
                                             </h3>
                                             @if($project->relationLoaded('category') && $project->category)
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-md bg-blue-50 border border-blue-100 text-brand text-[11px] font-bold">
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-md bg-blue-50 border border-blue-100 text-brand text-[11px] font-bold dark:bg-slate-800 dark:border-slate-800">
                                                     {{ $project->category->name }}
                                                 </span>
                                             @endif
                                         </div>
 
                                         @if($project->project_description)
-                                            <p class="mt-1 text-xs text-slate-500 line-clamp-1 leading-relaxed">
+                                            <p class="mt-1 text-xs text-slate-500 line-clamp-1 leading-relaxed dark:text-slate-400">
                                                 {{ $project->project_description }}
                                             </p>
                                         @endif
 
                                         <div class="mt-3 flex flex-wrap items-center gap-2 text-xs font-semibold">
                                             @if(isset($project->budget) && $project->budget)
-                                                <span class="inline-flex items-center gap-1.5 text-emerald-700 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-lg">
-                                                    <i class="fa-solid fa-wallet text-emerald-600 text-[10px]"></i>
+                                                <span class="inline-flex items-center gap-1.5 text-emerald-700 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-lg dark:text-emerald-300 dark:bg-emerald-900/40 dark:border-emerald-900">
+                                                    <i class="fa-solid fa-wallet text-emerald-600 text-[10px] dark:text-emerald-300"></i>
                                                     Rp {{ number_format($project->budget, 0, ',', '.') }}
                                                 </span>
                                             @endif
                                             @if(isset($project->deadline))
-                                                <span class="inline-flex items-center gap-1.5 text-amber-700 bg-amber-50 border border-amber-100 px-2.5 py-1 rounded-lg">
+                                                <span class="inline-flex items-center gap-1.5 text-amber-700 bg-amber-50 border border-amber-100 px-2.5 py-1 rounded-lg dark:text-amber-300 dark:bg-amber-900/40 dark:border-amber-900">
                                                     <i class="fa-regular fa-calendar text-[10px]"></i>
                                                     {{ \Carbon\Carbon::parse($project->deadline)->format('d M Y') }}
                                                 </span>
                                             @endif
                                             @if($project->skills)
                                                 @php $skillList = explode(',', $project->skills); @endphp
-                                                <span class="inline-flex items-center gap-1.5 text-indigo-700 bg-indigo-50 border border-indigo-100 px-2.5 py-1 rounded-lg">
+                                                <span class="inline-flex items-center gap-1.5 text-indigo-700 bg-indigo-50 border border-indigo-100 px-2.5 py-1 rounded-lg dark:text-indigo-300 dark:bg-indigo-900/40 dark:border-indigo-900">
                                                     <i class="fa-solid fa-code text-[10px]"></i>
                                                     {{ trim($skillList[0]) }}{{ count($skillList) > 1 ? '…' : '' }}
                                                 </span>
                                             @endif
                                             @if($project->relationLoaded('penawarans'))
-                                                <span class="inline-flex items-center gap-1.5 text-blue-700 bg-blue-50 border border-blue-100 px-2.5 py-1 rounded-lg">
+                                                <span class="inline-flex items-center gap-1.5 text-blue-700 bg-blue-50 border border-blue-100 px-2.5 py-1 rounded-lg dark:text-blue-400 dark:bg-slate-800 dark:border-slate-800">
                                                     <i class="fa-solid fa-handshake text-[10px]"></i>
                                                     {{ $project->penawarans->count() }} Penawaran
                                                 </span>
@@ -262,9 +275,9 @@
                                 {{-- Status Kanan & Aksi --}}
                                 <div class="flex items-center justify-between md:justify-end gap-3 pt-3 md:pt-0 border-t md:border-t-0 border-slate-100">
                                     <div class="flex flex-wrap items-center gap-1.5">
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-xl border {{ $isOpen ? 'bg-emerald-50 text-emerald-700 border-emerald-200/60' : 'bg-slate-100 text-slate-600 border-slate-200' }}">
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-xl border dark:bg-slate-800 {{ $statusBadge }}">
                                             <span class="w-1.5 h-1.5 rounded-full {{ $isOpen ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400' }}"></span>
-                                            {{ $status }}
+                                            {{ $statusLabel }}
                                         </span>
 
                                         @php
@@ -281,7 +294,7 @@
                                         @endphp
 
                                         @if($workStatus)
-                                            <span class="inline-flex items-center gap-1 text-xs font-bold rounded-xl border px-2.5 py-1 {{ $workBadge }}">
+                                            <span class="inline-flex items-center gap-1 text-xs font-bold rounded-xl border px-2.5 py-1 dark:bg-slate-800 {{ $workBadge }}">
                                                 <i class="fa-solid fa-circle-half-stroke text-[10px]"></i>
                                                 {{ $workStatus }}
                                             </span>
@@ -293,19 +306,19 @@
                                         @endif
                                     </div>
 
-                                    <div class="w-8 h-8 rounded-xl bg-blue-50 text-brand flex items-center justify-center group-hover:bg-brand group-hover:text-white transition-all">
+                                    <div class="w-8 h-8 rounded-xl bg-blue-50 text-brand flex items-center justify-center group-hover:bg-brand group-hover:text-white transition-all dark:bg-slate-800">
                                         <i class="fa-solid fa-chevron-right text-xs"></i>
                                     </div>
                                 </div>
                             </div>
                         </a>
                     @empty
-                        <div class="bg-white border border-blue-100/80 rounded-3xl p-12 text-center shadow-sm">
-                            <div class="w-14 h-14 mx-auto mb-3 bg-blue-50 text-slate-400 rounded-2xl flex items-center justify-center text-xl shadow-inner">
+                        <div class="bg-white border border-blue-100/80 rounded-3xl p-12 text-center shadow-sm dark:bg-slate-900 dark:border-slate-800">
+                            <div class="w-14 h-14 mx-auto mb-3 bg-blue-50 text-slate-400 rounded-2xl flex items-center justify-center text-xl shadow-inner dark:bg-slate-800 dark:text-slate-400">
                                 <i class="fa-regular fa-folder-open"></i>
                             </div>
-                            <h3 class="text-sm font-bold text-slate-700">Belum ada proyek</h3>
-                            <p class="text-xs text-slate-400 mt-1 max-w-xs mx-auto">Mulai buat proyek pertama Anda dan temukan talenta terbaik.</p>
+                            <h3 class="text-sm font-bold text-slate-700 dark:text-white">Belum ada proyek</h3>
+                            <p class="text-xs text-slate-400 mt-1 max-w-xs mx-auto dark:text-slate-400">Mulai buat proyek pertama Anda dan temukan talenta terbaik.</p>
                             <a href="{{ route('company.projects.create') }}" class="btn-shimmer inline-flex items-center gap-2 mt-4 px-4 py-2.5 bg-brand text-white rounded-xl text-xs font-bold shadow-md shadow-brand/20">
                                 <i class="fa-solid fa-plus text-[10px]"></i> Buat Proyek
                             </a>
@@ -316,7 +329,7 @@
                 {{-- PAGINATION --}}
                 @if ($projects->hasPages())
                     <div class="pt-4 flex justify-center">
-                        <div class="bg-white border border-blue-100/80 rounded-2xl shadow-sm px-4 py-2">
+                        <div class="bg-white border border-blue-100/80 rounded-2xl shadow-sm px-4 py-2 dark:bg-slate-900 dark:border-slate-800">
                             {{ $projects->links() }}
                         </div>
                     </div>
@@ -326,7 +339,7 @@
         </main>
 
         {{-- FOOTER --}}
-        @include('navbar.footer')
+      
 
     </div>
 
