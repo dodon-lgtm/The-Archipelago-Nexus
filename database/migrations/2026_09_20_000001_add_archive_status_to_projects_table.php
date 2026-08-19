@@ -22,12 +22,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('projects', function (Blueprint $table) {
-            $table->enum('archive_status', ['active', 'archived', 'inactive'])
-                ->default('active')
-                ->after('status')
-                ->comment('Status arsip project: active/archived/inactive. Terpisah dari status pekerjaan.');
-        });
+        if (!Schema::hasColumn('projects', 'archive_status')) {
+            Schema::table('projects', function (Blueprint $table) {
+                $table->enum('archive_status', ['active', 'archived', 'inactive'])
+                    ->default('active')
+                    ->after('status')
+                    ->comment('Status arsip project: active/archived/inactive. Terpisah dari status pekerjaan.');
+            });
+        }
 
         // Pastikan semua project lama otomatis menjadi 'active'.
         DB::table('projects')->update(['archive_status' => 'active']);

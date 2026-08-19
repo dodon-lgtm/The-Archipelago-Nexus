@@ -100,6 +100,23 @@
 </head>
 <body class="bg-[#f6f9ff] dark:bg-slate-950 text-slate-800 dark:text-white transition-colors duration-300">
 
+@php
+    if (!function_exists('formatRupiahShort')) {
+        function formatRupiahShort($amount) {
+            $amount = (float) ($amount ?? 0);
+            if ($amount >= 1000000000000) {
+                $val = round($amount / 1000000000000, 2);
+                return 'Rp ' . (fmod($val, 1) == 0 ? number_format($val, 0) : $val) . ' T';
+            }
+            if ($amount > 999000000) {
+                $val = round($amount / 1000000000, 2);
+                return 'Rp ' . (fmod($val, 1) == 0 ? number_format($val, 0) : $val) . ' M';
+            }
+            return 'Rp ' . number_format($amount, 0, ',', '.');
+        }
+    }
+@endphp
+
 <div class="flex h-screen overflow-hidden">
     @include('navbar.navigasi')
 
@@ -139,7 +156,9 @@
                             </div>
                             <div class="min-w-0">
                                 <p class="text-xs text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider">Saldo Tersedia</p>
-                                <h3 class="text-2xl font-black text-emerald-600 dark:text-emerald-300 truncate">Rp {{ number_format($availableBalance ?? 0, 0, ',', '.') }}</h3>
+                                <h3 class="text-2xl font-black text-emerald-600 dark:text-emerald-300 truncate" title="Rp {{ number_format($availableBalance ?? 0, 0, ',', '.') }}">
+                                    {{ formatRupiahShort($availableBalance ?? 0) }}
+                                </h3>
                             </div>
                         </div>
                     </div>
@@ -151,10 +170,14 @@
                                 <i class="fa-solid fa-clock text-amber-600 dark:text-amber-300 text-xl"></i>
                             </div>
                             <div class="min-w-0">
-                                <p class="text-xs text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider">Saldo Tertahan</p>
-                                <h3 class="text-2xl font-black text-amber-600 dark:text-amber-300 truncate">Rp {{ number_format($heldBalance ?? 0, 0, ',', '.') }}</h3>
+                                <p class="text-xs text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider">Saldo Tertahan (Escrow)</p>
+                                <h3 class="text-2xl font-black text-amber-600 dark:text-amber-300 truncate" title="Rp {{ number_format($totalHeld ?? 0, 0, ',', '.') }}">
+                                    {{ formatRupiahShort($totalHeld ?? 0) }}
+                                </h3>
                                 @if((float) ($totalPending ?? 0) > 0)
-                                    <p class="text-[10px] text-slate-400 dark:text-slate-400 mt-1 truncate">+ Rp {{ number_format($totalPending, 0, ',', '.') }} menunggu pembayaran</p>
+                                    <p class="text-[10px] text-slate-400 dark:text-slate-400 mt-1 truncate" title="Rp {{ number_format($totalPending, 0, ',', '.') }}">
+                                        + {{ formatRupiahShort($totalPending) }} menunggu pembayaran
+                                    </p>
                                 @endif
                             </div>
                         </div>
@@ -168,7 +191,9 @@
                             </div>
                             <div class="min-w-0">
                                 <p class="text-xs text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider">Total Pendapatan</p>
-                                <h3 class="text-2xl font-black text-blue-600 dark:text-blue-300 truncate">Rp {{ number_format($totalEarned ?? 0, 0, ',', '.') }}</h3>
+                                <h3 class="text-2xl font-black text-blue-600 dark:text-blue-300 truncate" title="Rp {{ number_format($totalEarned ?? 0, 0, ',', '.') }}">
+                                    {{ formatRupiahShort($totalEarned ?? 0) }}
+                                </h3>
                             </div>
                         </div>
                     </div>
@@ -181,7 +206,9 @@
                             </div>
                             <div class="min-w-0">
                                 <p class="text-xs text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider">Direfund ke Company</p>
-                                <h3 class="text-2xl font-black text-red-600 dark:text-red-300 truncate">Rp {{ number_format($totalRefunded ?? 0, 0, ',', '.') }}</h3>
+                                <h3 class="text-2xl font-black text-red-600 dark:text-red-300 truncate" title="Rp {{ number_format($totalRefunded ?? 0, 0, ',', '.') }}">
+                                    {{ formatRupiahShort($totalRefunded ?? 0) }}
+                                </h3>
                             </div>
                         </div>
                     </div>
@@ -225,11 +252,15 @@
                                     ];
                                     $sc = $statusColors[$payment->status] ?? $statusColors['pending'];
                                     $sl = $statusLabels[$payment->status] ?? $payment->status;
+                                    
+                                    // Deteksi nomor pembayaran / VA / Bank tempat dana ditahan
+                                    $paymentNo = $payment->account_number ?? $payment->va_number ?? $payment->payment_code ?? null;
+                                    $paymentMethod = $payment->payment_method ?? $payment->bank_name ?? $payment->payment_channel ?? 'Rekening System/Escrow';
                                 @endphp
                                 <div class="px-6 py-4 hover:bg-[#f6f9ff]/50 dark:hover:bg-slate-800/50 transition">
                                     <div class="flex items-start justify-between gap-4">
                                         <div class="flex-1 min-w-0">
-                                            <div class="flex items-center gap-2">
+                                            <div class="flex items-center gap-2 flex-wrap">
                                                 <span class="text-xs font-bold text-slate-700 dark:text-white">{{ $payment->invoice_number }}</span>
                                                 <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border {{ $sc }}">
                                                     {{ $sl }}
@@ -240,28 +271,46 @@
                                                     </span>
                                                 @endif
                                             </div>
+
                                             <p class="text-sm font-semibold text-slate-800 dark:text-white mt-1 truncate">
                                                 {{ $payment->workspace->project->project_name ?? '-' }}
                                             </p>
+                                            
                                             <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                                                 <i class="fa-solid fa-building mr-1"></i>{{ $payment->company->name ?? '-' }}
                                             </p>
+
+                                            {{-- Detail Metode & Nomor Pembayaran --}}
+                                            <p class="text-xs font-medium text-slate-600 dark:text-slate-300 mt-1 flex items-center gap-1.5">
+                                                <i class="fa-solid fa-credit-card text-blue-500"></i>
+                                                <span>{{ $paymentMethod }}</span>
+                                                @if($paymentNo)
+                                                    <span class="font-bold text-slate-800 dark:text-slate-200">({{ $paymentNo }})</span>
+                                                @endif
+                                            </p>
+
                                             <p class="text-[10px] text-slate-400 dark:text-slate-400 mt-1">
                                                 <i class="fa-regular fa-clock mr-1"></i>{{ $payment->created_at->format('d M Y H:i') }}
                                             </p>
                                         </div>
+
                                         <div class="text-right shrink-0">
-                                            <p class="text-sm font-bold text-slate-800 dark:text-white">Rp {{ number_format($payment->amount, 0, ',', '.') }}</p>
+                                            <p class="text-sm font-bold text-slate-800 dark:text-white" title="Rp {{ number_format($payment->amount, 0, ',', '.') }}">
+                                                {{ formatRupiahShort($payment->amount) }}
+                                            </p>
+
                                             @if($payment->funds_status === 'released' || $payment->funds_status === 'released_partial')
-                                                <p class="text-xs font-semibold text-emerald-600 dark:text-emerald-300 mt-1">
-                                                    <i class="fa-solid fa-check-circle"></i> Dirilis: Rp {{ number_format($payment->released_amount, 0, ',', '.') }}
+                                                <p class="text-xs font-semibold text-emerald-600 dark:text-emerald-300 mt-1" title="Rp {{ number_format($payment->released_amount, 0, ',', '.') }}">
+                                                    <i class="fa-solid fa-check-circle"></i> Dirilis: {{ formatRupiahShort($payment->released_amount) }}
                                                 </p>
                                             @elseif($payment->isFundsHeld())
-                                                <p class="text-xs font-semibold text-amber-600 dark:text-amber-300 mt-1">
-                                                    <i class="fa-solid fa-lock"></i> Ditahan: Rp {{ number_format($payment->freelancer_receive, 0, ',', '.') }}
+                                                <p class="text-xs font-semibold text-amber-600 dark:text-amber-300 mt-1" title="Rp {{ number_format($payment->freelancer_receive, 0, ',', '.') }}">
+                                                    <i class="fa-solid fa-lock"></i> Ditahan: {{ formatRupiahShort($payment->freelancer_receive) }}
                                                 </p>
                                             @elseif($payment->funds_status === 'refunded' || $payment->funds_status === 'refunded_partial')
-                                                <p class="text-xs text-red-500 dark:text-red-300 mt-1">Direfund: Rp {{ number_format($payment->refunded_amount, 0, ',', '.') }}</p>
+                                                <p class="text-xs text-red-500 dark:text-red-300 mt-1" title="Rp {{ number_format($payment->refunded_amount, 0, ',', '.') }}">
+                                                    Direfund: {{ formatRupiahShort($payment->refunded_amount) }}
+                                                </p>
                                             @elseif($payment->status === 'rejected')
                                                 <p class="text-xs text-red-500 dark:text-red-300 mt-1">Pembayaran ditolak</p>
                                             @else
@@ -299,7 +348,7 @@
                         <h2 class="font-bold text-slate-800 dark:text-white">Riwayat Penarikan</h2>
                         @if((float) ($withdrawnBalance ?? 0) > 0)
                             <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">
-                                Total ditarik: <span class="text-emerald-600 dark:text-emerald-300 font-bold">Rp {{ number_format($withdrawnBalance, 0, ',', '.') }}</span>
+                                Total ditarik: <span class="text-emerald-600 dark:text-emerald-300 font-bold" title="Rp {{ number_format($withdrawnBalance, 0, ',', '.') }}">{{ formatRupiahShort($withdrawnBalance) }}</span>
                             </span>
                         @endif
                     </div>
@@ -349,11 +398,13 @@
 
                                         {{-- Nominal --}}
                                         <div class="text-right shrink-0">
-                                            <p class="text-sm font-black text-slate-800 dark:text-white">Rp {{ number_format($wd->amount, 0, ',', '.') }}</p>
+                                            <p class="text-sm font-black text-slate-800 dark:text-white" title="Rp {{ number_format($wd->amount, 0, ',', '.') }}">
+                                                {{ formatRupiahShort($wd->amount) }}
+                                            </p>
                                             @if($wd->fee > 0)
-                                                <p class="text-[10px] text-red-400 dark:text-red-400 mt-0.5">Pajak 5%: -Rp {{ number_format($wd->fee, 0, ',', '.') }}</p>
-                                                <p class="text-[10px] font-bold text-emerald-600 dark:text-emerald-300 mt-0.5">
-                                                    Diterima: Rp {{ number_format($wd->net_amount, 0, ',', '.') }}
+                                                <p class="text-[10px] text-red-400 dark:text-red-400 mt-0.5">Pajak 5%: -{{ formatRupiahShort($wd->fee) }}</p>
+                                                <p class="text-[10px] font-bold text-emerald-600 dark:text-emerald-300 mt-0.5" title="Rp {{ number_format($wd->net_amount, 0, ',', '.') }}">
+                                                    Diterima: {{ formatRupiahShort($wd->net_amount) }}
                                                 </p>
                                             @endif
                                         </div>
@@ -419,7 +470,9 @@
                     </div>
                     <div>
                         <p class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Saldo Tersedia</p>
-                        <p class="text-base font-black text-emerald-600 dark:text-emerald-300 leading-none mt-0.5" id="modalAvailableBalance">Rp {{ number_format($availableBalance ?? 0, 0, ',', '.') }}</p>
+                        <p class="text-base font-black text-emerald-600 dark:text-emerald-300 leading-none mt-0.5" id="modalAvailableBalance">
+                            {{ formatRupiahShort($availableBalance ?? 0) }}
+                        </p>
                     </div>
                 </div>
                 <span class="text-[9px] font-bold px-2.5 py-1 bg-amber-50 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 rounded-full border border-amber-200 dark:border-amber-900 shrink-0">Simulasi</span>
@@ -571,7 +624,7 @@
                     </div>
 
                     <p id="amountHint" class="text-[10px] text-slate-400 dark:text-slate-500 mt-2.5">
-                        Minimal penarikan Rp {{ number_format($minWithdraw ?? 0, 0, ',', '.') }} dan tidak boleh melebihi saldo tersedia.
+                        Minimal penarikan {{ formatRupiahShort($minWithdraw ?? 0) }} dan tidak boleh melebihi saldo tersedia.
                     </p>
 
                     {{-- Progress bar --}}
@@ -641,6 +694,19 @@
     const availableBalance = {{ (float) ($availableBalance ?? 0) }};
     const minWithdraw = {{ (int) ($minWithdraw ?? 0) }};
     const withdrawModal = document.getElementById('withdrawModal');
+
+    function formatShortRupiahJS(num) {
+        num = Number(num || 0);
+        if (num >= 1000000000000) {
+            let val = (num / 1000000000000).toFixed(2).replace(/\.00$/, '');
+            return 'Rp ' + val + ' T';
+        }
+        if (num > 999000000) {
+            let val = (num / 1000000000).toFixed(2).replace(/\.00$/, '');
+            return 'Rp ' + val + ' M';
+        }
+        return 'Rp ' + num.toLocaleString('id-ID');
+    }
 
     function openWithdrawModal() {
         withdrawModal.classList.remove('hidden');
@@ -734,16 +800,16 @@
         amountProgress.style.width = pct + '%';
 
         let state = 'empty';
-        let hint = 'Minimal penarikan Rp ' + Number(minWithdraw).toLocaleString('id-ID') +
+        let hint = 'Minimal penarikan ' + formatShortRupiahJS(minWithdraw) +
             ' dan tidak boleh melebihi saldo tersedia.';
 
         if (value > 0) {
             if (value < minWithdraw) {
                 state = 'error';
-                hint = 'Minimal penarikan adalah Rp ' + Number(minWithdraw).toLocaleString('id-ID') + '.';
+                hint = 'Minimal penarikan adalah ' + formatShortRupiahJS(minWithdraw) + '.';
             } else if (value > availableBalance) {
                 state = 'error';
-                hint = 'Nominal melebihi saldo tersedia (Rp ' + Number(availableBalance).toLocaleString('id-ID') + ').';
+                hint = 'Nominal melebihi saldo tersedia (' + formatShortRupiahJS(availableBalance) + ').';
             } else {
                 state = 'ok';
                 hint = 'Nominal valid.';
@@ -758,13 +824,13 @@
         const fee = value > 0 ? Math.round(value * 0.05) : 0;
         const received = value - fee;
 
-        summaryAmount.textContent = 'Rp ' + (digits ? Number(digits).toLocaleString('id-ID') : '0');
-        summaryTax.textContent = '-Rp ' + Number(fee).toLocaleString('id-ID');
+        summaryAmount.textContent = formatShortRupiahJS(value);
+        summaryTax.textContent = '-' + formatShortRupiahJS(fee);
         summaryReceived.textContent = value > 0
-            ? 'Rp ' + Number(received).toLocaleString('id-ID')
+            ? formatShortRupiahJS(received)
             : 'Rp 0';
         summaryRemaining.textContent = value > 0 && state === 'ok'
-            ? 'Rp ' + Number(availableBalance - value).toLocaleString('id-ID')
+            ? formatShortRupiahJS(availableBalance - value)
             : '-';
 
         withdrawSubmitBtn.disabled = state !== 'ok';
