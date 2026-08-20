@@ -879,46 +879,53 @@
                     </div>
 
                     <div class="space-y-6 order-1 lg:order-2">
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs font-bold rounded-full uppercase tracking-wider">
-                            Untuk Perusahaan
-                        </span>
+    <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs font-bold rounded-full uppercase tracking-wider">
+        Untuk Perusahaan
+    </span>
 
-                        <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white leading-tight tracking-tight">
-                            Temukan Talenta Terbaik <span class="text-blue-600 dark:text-blue-400">Untuk Bisnis Anda</span>
-                        </h2>
+    <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white leading-tight tracking-tight">
+        Temukan Talenta Terbaik <span class="text-blue-600 dark:text-blue-400">Untuk Bisnis Anda</span>
+    </h2>
 
-                        <p class="text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
-                            Selesaikan pekerjaan digital bisnis Anda lebih cepat dengan dukungan tim profesional independen yang terverifikasi.
-                        </p>
+    <p class="text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
+        Selesaikan pekerjaan digital bisnis Anda lebih cepat dengan dukungan tim profesional independen yang terverifikasi.
+    </p>
 
-                        <div class="space-y-3 pt-2">
-                            <div class="flex items-center gap-3.5 p-3.5 rounded-2xl bg-[#f6f9ff] dark:bg-slate-800 border border-blue-100/80 dark:border-slate-700 shadow-xs">
-                                <div class="w-9 h-9 rounded-xl bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 font-bold">
-                                    <i class="fa-solid fa-plus text-xs"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-bold text-sm text-slate-900 dark:text-white">Publikasikan Proyek Mudah</h4>
-                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Tentukan kriteria, budget, dan batas waktu proyek Anda.</p>
-                                </div>
-                            </div>
+    <div class="space-y-3 pt-2">
+        <div class="flex items-center gap-3.5 p-3.5 rounded-2xl bg-[#f6f9ff] dark:bg-slate-800 border border-blue-100/80 dark:border-slate-700 shadow-xs">
+            <div class="w-9 h-9 rounded-xl bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 font-bold">
+                <i class="fa-solid fa-plus text-xs"></i>
+            </div>
+            <div>
+                <h4 class="font-bold text-sm text-slate-900 dark:text-white">Publikasikan Proyek Mudah</h4>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Tentukan kriteria, budget, dan batas waktu proyek Anda.</p>
+            </div>
+        </div>
 
-                            <div class="flex items-center gap-3.5 p-3.5 rounded-2xl bg-[#f6f9ff] dark:bg-slate-800 border border-blue-100/80 dark:border-slate-700 shadow-xs">
-                                <div class="w-9 h-9 rounded-xl bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 font-bold">
-                                    <i class="fa-solid fa-layer-group text-xs"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-bold text-sm text-slate-900 dark:text-white">Workspace Terintegrasi</h4>
-                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Pantau kemajuan pekerjaan secara real-time di satu tempat.</p>
-                                </div>
-                            </div>
-                        </div>
+        <div class="flex items-center gap-3.5 p-3.5 rounded-2xl bg-[#f6f9ff] dark:bg-slate-800 border border-blue-100/80 dark:border-slate-700 shadow-xs">
+            <div class="w-9 h-9 rounded-xl bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 font-bold">
+                <i class="fa-solid fa-layer-group text-xs"></i>
+            </div>
+            <div>
+                <h4 class="font-bold text-sm text-slate-900 dark:text-white">Workspace Terintegrasi</h4>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Pantau kemajuan pekerjaan secara real-time di satu tempat.</p>
+            </div>
+        </div>
+    </div>
 
-                        <div class="pt-2">
-                            <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-7 py-3.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold rounded-2xl shadow-md shadow-blue-500/20 transition-all duration-200">
-                                <i class="fa-solid fa-building text-xs"></i>
-                                Daftar Sebagai Perusahaan
-                            </a>
-                        </div>
+    {{-- Tombol Aksi Berdampingan --}}
+    <div class="flex flex-col sm:flex-row gap-3 pt-2">
+        <a href="{{ route('register') }}" class="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold rounded-2xl shadow-md shadow-blue-500/20 transition-all duration-200">
+            <i class="fa-solid fa-building text-xs"></i>
+            Daftar Sebagai Perusahaan
+        </a>
+
+        <a href="mailto:inauta753@gmail.com" class="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 font-bold rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs transition-all duration-200">
+            <i class="fa-regular fa-envelope text-xs text-blue-600 dark:text-blue-400"></i>
+            Hubungi Admin
+        </a>
+    </div>
+</div>
                     </div>
                 </div>
             </div>
@@ -1033,7 +1040,7 @@
     <!-- ============================================================ -->
     <!-- 10. FOOTER -->
     <!-- ============================================================ -->
-   ```blade
+
 <footer class="bg-white dark:bg-slate-900 border-t border-blue-100/80 dark:border-slate-800 pt-12 pb-8 transition-colors duration-300">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
@@ -1136,7 +1143,7 @@
                     {{-- SUPPORT APEX --}}
                     <li class="pt-2">
                         <a
-                            href="mailto:inata735@gmail.com"
+                            href="mailto:inauta735@gmail.com"
                             class="inline-flex items-center text-slate-400 dark:text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition"
                         >
                             <i class="fa-regular fa-envelope mr-1.5"></i>
