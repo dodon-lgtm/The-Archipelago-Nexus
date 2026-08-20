@@ -13,6 +13,7 @@ use App\Http\Controllers\review\ReviewController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\Freelancer\ProjectController;
+use App\Http\Controllers\NegotiationController;
 
 
 // ─── ADMIN CONTROLLERS ───────────────────────────
@@ -27,6 +28,8 @@ use App\Http\Controllers\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
 use App\Http\Controllers\Admin\WithdrawalController as AdminWithdrawalController;
 use App\Http\Controllers\Admin\PolicyController as AdminPolicyController;
+use App\Http\Controllers\Admin\FooterSettingController as AdminFooterSettingController;
+use App\Http\Controllers\LegalPageController;
 // ─── ADMIN CONTROLLERS ───────────────────────────
 
 use App\Http\Controllers\Admin\ResolutionController as AdminResolutionController;
@@ -77,6 +80,16 @@ Route::post('/login/google', [AuthController::class, 'handleGoogleCallback'])->n
 // ================================================================
 // LANDING PAGE (BISA DIAKSES TANPA LOGIN)
 // ================================================================
+
+Route::get('/kebijakan-privasi', [
+    LegalPageController::class,
+    'privacyPolicy'
+])->name('kebijakan-privasi');
+
+Route::get('/syarat-ketentuan', [
+    LegalPageController::class,
+    'termsConditions'
+])->name('syarat-ketentuan');
 
 Route::get('/pusat-bantuan', [
     App\Http\Controllers\HelpCenterController::class,
@@ -282,6 +295,37 @@ Route::middleware(['auth', 'ensureFreelancer'])
             FreelancerReportController::class,
             'uploadEvidence'
         ])->name('reports.evidence');
+    });
+
+
+// ──────────────────────────────────────────────
+// NEGOTIATIONS (Company + Freelancer, autentikasi)
+// ──────────────────────────────────────────────
+
+Route::middleware(['auth'])
+    ->prefix('negotiations')
+    ->name('negotiations.')
+    ->group(function () {
+
+        Route::get('/{penawaran}', [
+            NegotiationController::class,
+            'getMessages'
+        ])->name('messages');
+
+        Route::post('/{penawaran}/send', [
+            NegotiationController::class,
+            'sendMessage'
+        ])->name('send');
+
+        Route::post('/{penawaran}/{negotiation}/accept', [
+            NegotiationController::class,
+            'acceptNegotiation'
+        ])->name('accept');
+
+        Route::post('/{penawaran}/{negotiation}/reject', [
+            NegotiationController::class,
+            'rejectNegotiation'
+        ])->name('reject');
     });
 
 
@@ -594,6 +638,17 @@ Route::middleware(['auth', 'ensureAdmin'])
             AdminPolicyController::class,
             'update'
         ])->name('policies.update');
+
+        // Footer Settings
+        Route::get('/footer-settings/edit', [
+            AdminFooterSettingController::class,
+            'edit'
+        ])->name('footer-settings.edit');
+
+        Route::put('/footer-settings', [
+            AdminFooterSettingController::class,
+            'update'
+        ])->name('footer-settings.update');
 
         // Projects
         Route::get('/projects', [

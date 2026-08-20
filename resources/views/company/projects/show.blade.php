@@ -819,6 +819,15 @@
 
                                                 <div class="flex flex-wrap items-center gap-2">
 
+                                                    <button type="button"
+                                                        data-negosiasi-open="{{ $penawaran->id }}"
+                                                        data-project-title="{{ $project->project_name }}"
+                                                        data-peer-name="{{ $penawaran->freelancer->name ?? 'Freelancer' }}"
+                                                        data-peer-type="freelancer"
+                                                        class="inline-flex items-center gap-2 px-4 py-2 border border-blue-200 dark:border-blue-900/50 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 rounded-lg text-xs font-bold hover:bg-blue-100 dark:hover:bg-blue-900/60 transition-colors">
+                                                        <i class="fa-regular fa-comments"></i> Negosiasi
+                                                    </button>
+
                                                     <a href="{{ route('company.reports.create', ['penawaran_id' => $penawaran->id]) }}"
                                                        class="inline-flex items-center gap-2 px-3 py-2 border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40 rounded-lg text-xs font-semibold hover:bg-red-100 dark:hover:bg-red-900/60 transition-colors"
                                                        title="Laporkan penawaran dari {{ $penawaran->freelancer->name ?? 'freelancer ini' }}">
@@ -1212,6 +1221,9 @@
         );
 
     </script>
+
+    {{-- Modal Negosiasi Chat --}}
+    @include('negotiations.modal')
 
 </body>
 </html>

@@ -23,7 +23,7 @@
                 </div>
 
                 <p class="text-sm font-medium text-blue-900/60 dark:text-slate-400 leading-relaxed max-w-sm">
-                    Infrastruktur marketplace freelance masa depan. Menghubungkan talenta berbakat Nusantara dengan ekosistem proyek industri kreatif dan teknologi global secara seamless.
+                    {{ $footerSettings->about_text ?: 'Infrastruktur marketplace freelance masa depan. Menghubungkan talenta berbakat Nusantara dengan ekosistem proyek industri kreatif dan teknologi global secara seamless.' }}
                 </p>
 
                 {{-- STATUS SISTEM --}}
@@ -88,7 +88,7 @@
 
                     {{-- SUPPORT APEX --}}
                     <a
-                        href="mailto:inata735@gmail.com"
+                        href="mailto:{{ $footerSettings->support_email ?: 'support@example.com' }}"
                         class="flex items-start gap-3 hover:text-blue-600 dark:hover:text-blue-400 transition-colors group"
                     >
 
@@ -102,7 +102,7 @@
                             </span>
 
                             <span class="block text-[11px] text-blue-900/50 dark:text-slate-500 font-medium">
-                                Hubungi Administrator
+                                {{ $footerSettings->support_email ?: 'support@example.com' }}
                             </span>
                         </div>
 
@@ -131,27 +131,30 @@
         <div class="mt-12 pt-6 border-t border-blue-50 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-3 text-xs font-semibold text-blue-400 dark:text-slate-400 text-center sm:text-left">
 
             <p>
-                © 2026
-                <span class="font-black text-blue-600 dark:text-blue-400">
-                    ApexForge Labs
-                </span>.
-                Hak Cipta Dilindungi.
+                {{ $footerSettings->copyright_text ?: '© 2026 ApexForge Labs. Hak Cipta Dilindungi.' }}
             </p>
 
             <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
 
                 <a
-                    href="#"
+                    href="{{ route('syarat-ketentuan') }}"
                     class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                 >
                     Ketentuan Layanan
                 </a>
 
                 <a
-                    href="#"
+                    href="{{ route('kebijakan-privasi') }}"
                     class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                 >
                     Kebijakan Privasi
+                </a>
+
+                <a
+                    href="{{ route('help.index') }}"
+                    class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                >
+                    Pusat Bantuan
                 </a>
 
                 <a
