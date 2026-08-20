@@ -18,8 +18,15 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <script>
+        // Inisialisasi tema sebelum halaman dirender untuk mencegah efek flicker
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
 
         tailwind.config = {
+            darkMode: 'class',
             theme: {
 
                 extend: {
@@ -168,9 +175,6 @@
             transform:
                 translateY(-2px);
 
-            background-color:
-                #ffffff;
-
             box-shadow:
                 0 10px 30px -10px
                 rgba(37, 99, 235, 0.08);
@@ -178,6 +182,14 @@
             border-color:
                 rgba(37, 99, 235, 0.25);
 
+        }
+
+        html:not(.dark) .modern-row:hover {
+            background-color: #ffffff;
+        }
+
+        html.dark .modern-row:hover {
+            background-color: #0f172a;
         }
 
 
@@ -250,6 +262,10 @@
 
         }
 
+        html.dark ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+
         ::-webkit-scrollbar-thumb {
 
             background:
@@ -260,11 +276,19 @@
 
         }
 
+        html.dark ::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+
         ::-webkit-scrollbar-thumb:hover {
 
             background:
                 #94a3b8;
 
+        }
+
+        html.dark ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
         }
 
 
@@ -379,7 +403,7 @@
 
 
 <body
-    class="bg-surface text-slate-800 min-h-screen flex font-sans antialiased selection:bg-brand selection:text-white">
+    class="bg-surface dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex font-sans antialiased selection:bg-brand selection:text-white transition-colors duration-300">
 
 
     {{-- =====================================================
@@ -496,6 +520,16 @@
                         <div
                             class="flex flex-wrap items-center gap-3 shrink-0">
 
+                            {{-- TOMBOL TOGGLE DARK MODE --}}
+                            <button
+                                type="button"
+                                onclick="toggleDarkMode()"
+                                class="inline-flex items-center justify-center w-11 h-11 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-2xl text-white transition ring-1 ring-white/20 shadow-lg"
+                                title="Ganti Mode Tampilan">
+                                <i class="fa-solid fa-moon text-sm dark:hidden"></i>
+                                <i class="fa-solid fa-sun text-sm hidden dark:inline text-amber-300"></i>
+                            </button>
+
 
                             <a
                                 href="{{ route('company.projects.index') }}"
@@ -532,7 +566,7 @@
 
                     <div
                         id="successToast"
-                        class="toast-animation flex items-center justify-between gap-3 px-5 py-4 bg-emerald-50/95 backdrop-blur-md border border-emerald-200 text-emerald-800 text-sm font-medium rounded-2xl shadow-lg">
+                        class="toast-animation flex items-center justify-between gap-3 px-5 py-4 bg-emerald-50/95 dark:bg-emerald-950/90 backdrop-blur-md border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200 text-sm font-medium rounded-2xl shadow-lg">
 
 
                         <div
@@ -552,7 +586,7 @@
                             <div class="min-w-0">
 
                                 <p
-                                    class="text-xs font-bold text-emerald-600 uppercase tracking-wide">
+                                    class="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wide">
 
                                     Berhasil
 
@@ -574,7 +608,7 @@
                         <button
                             type="button"
                             onclick="closeToast('successToast')"
-                            class="text-emerald-500 hover:text-emerald-700 p-2 rounded-lg hover:bg-emerald-100 transition">
+                            class="text-emerald-500 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-200 p-2 rounded-lg hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition">
 
                             <i
                                 class="fa-solid fa-xmark">
@@ -597,7 +631,7 @@
 
                     <div
                         id="errorToast"
-                        class="toast-animation flex items-center justify-between gap-3 px-5 py-4 bg-rose-50/95 backdrop-blur-md border border-rose-200 text-rose-800 text-sm font-medium rounded-2xl shadow-lg">
+                        class="toast-animation flex items-center justify-between gap-3 px-5 py-4 bg-rose-50/95 dark:bg-rose-950/90 backdrop-blur-md border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-200 text-sm font-medium rounded-2xl shadow-lg">
 
 
                         <div
@@ -617,7 +651,7 @@
                             <div class="min-w-0">
 
                                 <p
-                                    class="text-xs font-bold text-rose-600 uppercase tracking-wide">
+                                    class="text-xs font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wide">
 
                                     Terjadi Kesalahan
 
@@ -639,7 +673,7 @@
                         <button
                             type="button"
                             onclick="closeToast('errorToast')"
-                            class="text-rose-500 hover:text-rose-700 p-2 rounded-lg hover:bg-rose-100 transition">
+                            class="text-rose-500 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-200 p-2 rounded-lg hover:bg-rose-100 dark:hover:bg-rose-900/50 transition">
 
                             <i
                                 class="fa-solid fa-xmark">
@@ -665,7 +699,7 @@
                     <div>
 
                         <h2
-                            class="text-lg font-extrabold text-slate-900 tracking-tight">
+                            class="text-lg font-extrabold text-slate-900 dark:text-white tracking-tight">
 
                             Daftar Arsip
 
@@ -673,7 +707,7 @@
 
 
                         <p
-                            class="text-xs text-slate-400 font-medium">
+                            class="text-xs text-slate-400 dark:text-slate-500 font-medium">
 
                             Koleksi proyek nonaktif dan yang telah selesai dilakukan
 
@@ -698,20 +732,15 @@
 
 
                         @php
-
-                            $workspace = $project->workspace;
-
-                            $workStatus = $workspace?->status;
-
-                            $isCompleted = $project->isCompleted();
-
-                            $isInactive = $project->isInactive();
-
-                        @endphp
+    $workspace = $project->workspace;
+    $workStatus = $workspace?->status;
+    $isCompleted = $project->isCompleted();
+    $isInactive = $project->status === 'inactive';
+@endphp
 
 
                         <div
-                            class="modern-row block bg-white border border-blue-100/80 rounded-2xl p-5 shadow-sm relative overflow-hidden group">
+                            class="modern-row block bg-white dark:bg-slate-900 border border-blue-100/80 dark:border-slate-800 rounded-2xl p-5 shadow-sm relative overflow-hidden group">
 
 
                             {{-- STATUS BAR --}}
@@ -738,7 +767,7 @@
 
 
                                     <div
-                                        class="w-12 h-12 rounded-2xl bg-blue-50 text-brand border border-blue-100 flex items-center justify-center shrink-0 text-lg shadow-inner group-hover:bg-brand group-hover:text-white transition-colors duration-300">
+                                        class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-slate-800 text-brand dark:text-blue-400 border border-blue-100 dark:border-slate-700 flex items-center justify-center shrink-0 text-lg shadow-inner group-hover:bg-brand group-hover:text-white dark:group-hover:bg-brand dark:group-hover:text-white transition-colors duration-300">
 
                                         <i
                                             class="fa-solid fa-box-archive">
@@ -757,7 +786,7 @@
 
 
                                             <h3
-                                                class="text-base font-bold text-slate-800 group-hover:text-brand transition-colors truncate">
+                                                class="text-base font-bold text-slate-800 dark:text-slate-100 group-hover:text-brand dark:group-hover:text-blue-400 transition-colors truncate">
 
                                                 {{ $project->project_name }}
 
@@ -767,7 +796,7 @@
                                             @if($project->category)
 
                                                 <span
-                                                    class="inline-flex items-center px-2.5 py-0.5 rounded-md bg-blue-50 border border-blue-100 text-brand text-[11px] font-bold">
+                                                    class="inline-flex items-center px-2.5 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950/50 border border-blue-100 dark:border-blue-900/50 text-brand dark:text-blue-300 text-[11px] font-bold">
 
                                                     {{ $project->category->name }}
 
@@ -783,7 +812,7 @@
                                         @if($project->project_description)
 
                                             <p
-                                                class="mt-1 text-xs text-slate-500 line-clamp-1 leading-relaxed">
+                                                class="mt-1 text-xs text-slate-500 dark:text-slate-400 line-clamp-1 leading-relaxed">
 
                                                 {{ $project->project_description }}
 
@@ -800,10 +829,10 @@
                                             @if($project->budget)
 
                                                 <span
-                                                    class="inline-flex items-center gap-1.5 text-emerald-700 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-lg">
+                                                    class="inline-flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-100 dark:border-emerald-900/50 px-2.5 py-1 rounded-lg">
 
                                                     <i
-                                                        class="fa-solid fa-wallet text-emerald-600 text-[10px]">
+                                                        class="fa-solid fa-wallet text-emerald-600 dark:text-emerald-400 text-[10px]">
                                                     </i>
 
                                                     Rp
@@ -818,7 +847,7 @@
                                             @if($project->deadline)
 
                                                 <span
-                                                    class="inline-flex items-center gap-1.5 text-amber-700 bg-amber-50 border border-amber-100 px-2.5 py-1 rounded-lg">
+                                                    class="inline-flex items-center gap-1.5 text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border border-amber-100 dark:border-amber-900/50 px-2.5 py-1 rounded-lg">
 
                                                     <i
                                                         class="fa-regular fa-calendar text-[10px]">
@@ -835,7 +864,7 @@
                                             @if($project->penawarans)
 
                                                 <span
-                                                    class="inline-flex items-center gap-1.5 text-blue-700 bg-blue-50 border border-blue-100 px-2.5 py-1 rounded-lg">
+                                                    class="inline-flex items-center gap-1.5 text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900/50 px-2.5 py-1 rounded-lg">
 
                                                     <i
                                                         class="fa-solid fa-handshake text-[10px]">
@@ -862,7 +891,7 @@
                                 {{-- STATUS + ACTION --}}
 
                                 <div
-                                    class="flex flex-col sm:flex-row items-start sm:items-center justify-between md:justify-end gap-3 pt-3 md:pt-0 border-t md:border-t-0 border-slate-100">
+                                    class="flex flex-col sm:flex-row items-start sm:items-center justify-between md:justify-end gap-3 pt-3 md:pt-0 border-t md:border-t-0 border-slate-100 dark:border-slate-800">
 
 
                                     <div
@@ -876,22 +905,22 @@
                                                 $workBadge = match($workStatus) {
 
                                                     'Selesai'
-                                                        => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                                                        => 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-900/50',
 
                                                     'Menunggu Review'
-                                                        => 'bg-sky-50 text-sky-700 border-sky-200',
+                                                        => 'bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-400 border-sky-200 dark:border-sky-900/50',
 
                                                     'Menunggu Revisi'
-                                                        => 'bg-amber-50 text-amber-700 border-amber-200',
+                                                        => 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-900/50',
 
                                                     'Menunggu Pembayaran'
-                                                        => 'bg-indigo-50 text-indigo-700 border-indigo-200',
+                                                        => 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-400 border-indigo-200 dark:border-indigo-900/50',
 
                                                     'Menunggu Verifikasi Admin'
-                                                        => 'bg-purple-50 text-purple-700 border-purple-200',
+                                                        => 'bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-900/50',
 
                                                     default
-                                                        => 'bg-blue-50 text-blue-700 border-blue-200',
+                                                        => 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-900/50',
 
                                                 };
 
@@ -920,7 +949,7 @@
                                         @if($isInactive)
 
                                             <span
-                                                class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-xl border bg-amber-50 text-amber-700 border-amber-200">
+                                                class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-xl border bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-900/50">
 
                                                 <i
                                                     class="fa-solid fa-pause text-[10px]">
@@ -933,7 +962,7 @@
                                         @else
 
                                             <span
-                                                class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-xl border bg-indigo-50 text-indigo-700 border-indigo-200">
+                                                class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-xl border bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-400 border-indigo-200 dark:border-indigo-900/50">
 
                                                 <i
                                                     class="fa-solid fa-box-archive text-[10px]">
@@ -958,7 +987,7 @@
 
                                         <a
                                             href="{{ route('company.projects.show', $project) }}"
-                                            class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition">
+                                            class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold transition">
 
                                             <i
                                                 class="fa-solid fa-eye text-[10px]">
@@ -983,7 +1012,7 @@
 
                                                 <button
                                                     type="submit"
-                                                    class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 text-xs font-bold transition">
+                                                    class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 text-xs font-bold transition">
 
                                                     <i
                                                         class="fa-solid fa-rotate-left text-[10px]">
@@ -998,7 +1027,7 @@
                                         @else
 
                                             <span
-                                                class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-400 text-xs font-bold cursor-not-allowed">
+                                                class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 text-xs font-bold cursor-not-allowed">
 
                                                 <i
                                                     class="fa-solid fa-lock text-[10px]">
@@ -1029,11 +1058,11 @@
                         {{-- EMPTY STATE --}}
 
                         <div
-                            class="bg-white border border-blue-100/80 rounded-3xl p-12 text-center shadow-sm">
+                            class="bg-white dark:bg-slate-900 border border-blue-100/80 dark:border-slate-800 rounded-3xl p-12 text-center shadow-sm">
 
 
                             <div
-                                class="w-14 h-14 mx-auto mb-3 bg-blue-50 text-slate-400 rounded-2xl flex items-center justify-center text-xl shadow-inner">
+                                class="w-14 h-14 mx-auto mb-3 bg-blue-50 dark:bg-slate-800 text-slate-400 dark:text-slate-500 rounded-2xl flex items-center justify-center text-xl shadow-inner">
 
                                 <i
                                     class="fa-solid fa-box-archive">
@@ -1043,7 +1072,7 @@
 
 
                             <h3
-                                class="text-sm font-bold text-slate-700">
+                                class="text-sm font-bold text-slate-700 dark:text-slate-200">
 
                                 Belum ada proyek diarsipkan
 
@@ -1051,7 +1080,7 @@
 
 
                             <p
-                                class="text-xs text-slate-400 mt-1 max-w-xs mx-auto">
+                                class="text-xs text-slate-400 dark:text-slate-500 mt-1 max-w-xs mx-auto">
 
                                 Proyek yang Anda nonaktifkan atau selesaikan akan tersimpan otomatis di sini.
 
@@ -1091,7 +1120,7 @@
                         class="pt-4 flex justify-center">
 
                         <div
-                            class="bg-white border border-blue-100/80 rounded-2xl shadow-sm px-4 py-2">
+                            class="bg-white dark:bg-slate-900 border border-blue-100/80 dark:border-slate-800 rounded-2xl shadow-sm px-4 py-2">
 
                             {{ $archivedProjects->links() }}
 
@@ -1125,6 +1154,23 @@
     ====================================================== --}}
 
     <script>
+
+        /*
+        |--------------------------------------------------------------------------
+        | TOGGLE DARK MODE
+        |--------------------------------------------------------------------------
+        */
+
+        function toggleDarkMode() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
 
         /*
         |--------------------------------------------------------------------------
