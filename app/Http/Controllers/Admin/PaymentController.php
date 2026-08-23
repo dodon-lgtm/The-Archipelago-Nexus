@@ -8,6 +8,7 @@ use App\Models\Message;
 use App\Models\Workspace;
 use App\Services\EscrowService;
 use App\Services\NotificationService;
+use App\Services\AdminWalletService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -77,6 +78,41 @@ class PaymentController extends Controller
         ->route('admin.payments.show', $payment)
         ->with('error', 'Status pembayaran tidak dalam status menunggu verifikasi.');
 }
+
+                // Quota payment (Rp10.000/project slot) — tidak ada escrow / workspace
+        if ($payment->isQuotaPayment()) {
+            try {
+                DB::transaction(function () use ($payment) {
+                    $payment->update([
+                        'status'      => 'paid',
+                        'verified_by' => Auth::id(),
+                        'verified_at' => now(),
+                    ]);
+
+                    AdminWalletService::recordProjectQuotaIncome($payment, Auth::id());
+                });
+            } catch (\Exception $e) {
+                Log::error('Gagal verifikasi quota payment #' . $payment->id . ': ' . $e->getMessage());
+
+                return redirect()
+                    ->route('admin.payments.show', $payment)
+                    ->with('error', 'Gagal memverifikasi pembayaran kuota: ' . $e->getMessage());
+            }
+
+            NotificationService::sendTo(
+                user: $payment->company_id,
+                type: 'quota.verified',
+                title: 'Pembayaran Kuota Disetujui',
+                message: 'Pembayaran kuota proyek tambahan senilai Rp ' . number_format($payment->amount, 0, ',', '.') . ' telah diverifikasi. Slot proyek Anda telah ditambah.',
+                redirect: route('company.projects.create'),
+                senderId: Auth::id(),
+                paymentId: $payment->id,
+            );
+
+            return redirect()
+                ->route('admin.payments.show', $payment)
+                ->with('success', 'Pembayaran kuota proyek berhasil diverifikasi. Pendapatan Rp ' . number_format($payment->amount, 0, ',', '.') . ' telah masuk Admin Wallet.');
+        }
 
         $workspace = $payment->workspace;
 

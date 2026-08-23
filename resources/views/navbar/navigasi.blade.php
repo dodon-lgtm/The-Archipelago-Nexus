@@ -305,7 +305,7 @@
                     <span class="tracking-wide text-sm">Verifikasi Company</span>
                 </a>
 
-                <a href="{{ route('admin.withdrawals.index') }}"
+                                <a href="{{ route('admin.withdrawals.index') }}"
                    class="relative flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group
                    {{ request()->routeIs('admin.withdrawals.*')
                        ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-[0_8px_20px_-6px_rgba(59,130,246,0.6)] font-bold'
@@ -313,6 +313,16 @@
                    data-tooltip="Penarikan Dana">
                     <i class="fa-solid fa-money-bill-transfer w-5 text-center transition-transform group-hover:scale-110"></i>
                     <span class="tracking-wide text-sm">Penarikan Dana</span>
+                </a>
+
+                <a href="{{ route('admin.wallet.index') }}"
+                   class="relative flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group
+                   {{ request()->routeIs('admin.wallet.*')
+                       ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-[0_8px_20px_-6px_rgba(59,130,246,0.6)] font-bold'
+                       : 'text-blue-900/60 dark:text-slate-400 hover:bg-blue-50/80 dark:hover:bg-slate-800/80 hover:text-blue-700 dark:hover:text-blue-400 font-semibold' }}"
+                   data-tooltip="Wallet Admin">
+                    <i class="fa-solid fa-wallet w-5 text-center transition-transform group-hover:scale-110"></i>
+                    <span class="tracking-wide text-sm">Wallet Admin</span>
                 </a>
 
             @endif

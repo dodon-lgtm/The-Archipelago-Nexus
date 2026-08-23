@@ -13,6 +13,7 @@ use App\Models\ProgressHistory;
 use App\Models\Message;
 use App\Services\NotificationService;
 use App\Services\ProfileCompletionService;
+use App\Services\ProjectQuotaService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
@@ -126,10 +127,19 @@ class ProjectController extends Controller
             ->with('success', 'Proyek berhasil ditutup.');
     }
 
-    public function create(): View
+        public function create(): View
     {
         $categories = \App\Models\Category::query()->orderBy('name')->get();
-        return view('company.projects.create', compact('categories'));
+
+        $quota = new ProjectQuotaService();
+        $quotaData = [
+            'can_create'      => $quota->canCreateProject(Auth::id()),
+            'used_slots'      => $quota->usedSlots(Auth::id()),
+            'available_slots' => $quota->availableSlots(Auth::id()),
+            'free_quota'      => ProjectQuotaService::FREE_QUOTA_PER_MONTH,
+        ];
+
+        return view('company.projects.create', compact('categories', 'quotaData'));
     }
 
     public function store(ProjectStoreRequest $request): RedirectResponse
@@ -153,7 +163,16 @@ class ProjectController extends Controller
                 $data['attachment'] = $request->file('attachment')->store('projects/attachments', 'public');
             }
 
-            $data['user_id'] = Auth::id();
+                        $data['user_id'] = Auth::id();
+
+            // Kuota bulan berjalan: blokir pembuatan jika sudah melebihi batas
+            $quotaService = new ProjectQuotaService();
+            if (!$quotaService->canCreateProject(Auth::id())) {
+                return redirect()
+                    ->route('company.projects.create')
+                    ->with('quota_blocked', true)
+                    ->with('quota_message', 'Kuota proyek bulan ini telah penuh. Bayar Rp10.000 untuk menambah slot.');
+            }
 
             Project::create($data);
 

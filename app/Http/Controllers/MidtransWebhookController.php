@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\MidtransAttempt;
 use App\Models\Payment;
+use App\Services\AdminWalletService;
 use App\Services\EscrowService;
 use App\Services\MidtransService;
 use Illuminate\Http\JsonResponse;
@@ -159,12 +160,18 @@ class MidtransWebhookController extends Controller
                     ]);
                 }
 
-                if ($targetStatus === 'paid' && $payment->workspace) {
-                    // Dana otomatis DITAHAN (escrow) — belum menjadi pendapatan freelancer.
-                    // Idempotent: jika sudah held/disputed/resolved, hold() menjadi no-op.
-                    app(EscrowService::class)->hold($payment);
+                if ($targetStatus === 'paid') {
+                    // QUOTA: payment kuota proyek → catat INCOME Admin Wallet (idempotent).
+                    // Tidak ada escrow / workspace edit karena belum ada proyek.
+                    if ($payment->isQuotaPayment()) {
+                        app(AdminWalletService::class)->recordProjectQuotaIncome($payment);
+                    } elseif ($payment->workspace) {
+                        // Dana otomatis DITAHAN (escrow) — belum menjadi pendapatan freelancer.
+                        // Idempotent: jika sudah held/disputed/resolved, hold() menjadi no-op.
+                        app(EscrowService::class)->hold($payment);
 
-                    $payment->workspace->update(['status' => 'Sedang Dikerjakan']);
+                        $payment->workspace->update(['status' => 'Sedang Dikerjakan']);
+                    }
                 }
             });
 

@@ -9,6 +9,8 @@ use App\Models\Penawaran;
 use App\Models\Workspace;
 use App\Models\Report;
 use App\Models\CompanyAccountRequest;
+use App\Models\WalletLedger;
+use App\Services\AdminWalletService;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
@@ -47,10 +49,21 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        // Recent reports
+                // Recent reports
         $recentReports = Report::with('reporter')
             ->latest()
             ->take(5)
+            ->get();
+
+        // ─── ADMIN WALLET (semua perhitungan via AdminWalletService existing) ───
+        $walletBalance          = AdminWalletService::balance();
+        $walletIncome           = AdminWalletService::totalIncome();
+        $walletExpense          = AdminWalletService::totalExpense();
+        $walletMonthlyIncome    = AdminWalletService::monthlyIncome();
+        $walletMonthlyExpense   = AdminWalletService::monthlyExpense();
+        $recentWalletTransactions = WalletLedger::whereNull('user_id')
+            ->latest()
+            ->take(8)
             ->get();
 
         return view('admin.dashboard', compact(
@@ -66,7 +79,14 @@ class DashboardController extends Controller
             'recentUsers',
             'recentRequests',
             'recentPenawarans',
-            'recentReports'
+                        'recentReports',
+            // Admin Wallet
+            'walletBalance',
+            'walletIncome',
+            'walletExpense',
+            'walletMonthlyIncome',
+            'walletMonthlyExpense',
+            'recentWalletTransactions',
         ));
     }
 }

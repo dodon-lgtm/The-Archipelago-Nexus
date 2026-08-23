@@ -1,0 +1,85 @@
+﻿0066 |     /**
+0067 |      * Verify payment (approve).
+0068 |      */
+0069 |     public function verify(
+0070 |         Request $request,
+0071 |         Payment $payment
+0072 |     ): RedirectResponse {
+0073 |         // Pastikan status payment adalah waiting_verification
+0074 |        
+0075 |         if (!in_array($payment->status, ['waiting_verification', 'pending'])) {
+0076 |     return redirect()
+0077 |         ->route('admin.payments.show', $payment)
+0078 |         ->with('error', 'Status pembayaran tidak dalam status menunggu verifikasi.');
+0079 | }
+0080 | 
+0081 |         $workspace = $payment->workspace;
+0082 | 
+0083 |         // Update payment + tahan dana (escrow) + unlock workspace dalam SATU transaction
+0084 |         try {
+0085 |             DB::transaction(function () use ($payment, $workspace) {
+0086 |                 // Update payment
+0087 |                 $payment->update([
+0088 |                     'status' => 'paid',
+0089 |                     'verified_by' => Auth::id(),
+0090 |                     'verified_at' => now(),
+0091 |                 ]);
+0092 | 
+0093 | // Dana otomatis DITAHAN (escrow) — belum menjadi pendapatan freelancer.
+0094 |                 app(EscrowService::class)->hold($payment, null, Auth::id());
+0095 | 
+0096 |                 // Update workspace status menjadi Sedang Dikerjakan
+0097 |                 $workspace->update(['status' => 'Sedang Dikerjakan']);
+0098 |             });
+0099 |         } catch (\Exception $e) {
+0100 |             Log::error('Gagal verifikasi payment #' . $payment->id . ': ' . $e->getMessage());
+0101 | 
+0102 |             return redirect()
+0103 |                 ->route('admin.payments.show', $payment)
+0104 |                 ->with('error', 'Gagal memverifikasi pembayaran: ' . $e->getMessage());
+0105 |         }
+0106 | 
+0107 |         // System message
+0108 |         Message::create([
+0109 |             'workspace_id' => $workspace->id,
+0110 |             'sender_id' => Auth::id(),
+0111 |             'message' => 'Pembayaran telah diverifikasi oleh Admin.',
+0112 |             'type' => 'system',
+0113 |         ]);
+0114 | 
+0115 |         // Notification for freelancer
+0116 |         NotificationService::sendTo(
+0117 |             user: $payment->freelancer_id,
+0118 |             type: 'payment.verified',
+0119 |             title: 'Pembayaran Diverifikasi',
+0120 | message: 'Pembayaran untuk proyek "' . ($workspace->project->project_name ?? '') . '" telah diverifikasi. Dana sebesar Rp ' . number_format($payment->freelancer_receive, 0, ',', '.') . ' sedang ditahan (escrow) dan akan dirilis ke Anda setelah proyek selesai.',
+0121 |             redirect: route('freelancer.workspaces.show', $workspace),
+0122 |             senderId: Auth::id(),
+0123 |             paymentId: $payment->id,
+0124 |             workspaceId: $workspace->id,
+0125 |         );
+0126 | 
+0127 |         // Notification for company
+0128 |         NotificationService::sendTo(
+0129 |             user: $payment->company_id,
+0130 |             type: 'payment.verified',
+0131 |             title: 'Pembayaran Diverifikasi',
+0132 | message: 'Pembayaran untuk proyek "' . ($workspace->project->project_name ?? '') . '" berhasil diverifikasi oleh Admin. Status workspace telah menjadi Sedang Dikerjakan.',
+0133 |             redirect: route('company.workspaces.show', $workspace),
+0134 |             senderId: Auth::id(),
+0135 |             paymentId: $payment->id,
+0136 |             workspaceId: $workspace->id,
+0137 |         );
+0138 | 
+0139 |         return redirect()
+0140 |             ->route('admin.payments.show', $payment)
+0141 | ->with('success', 'Pembayaran berhasil diverifikasi. Dana otomatis ditahan (escrow) dan workspace telah menjadi Sedang Dikerjakan.');
+0142 |     }
+0143 | 
+0144 |     /**
+0145 |      * Reject payment.
+0146 |      */
+0147 |     public function reject(
+0148 |         Request $request,
+0149 |         Payment $payment
+0150 |     ): RedirectResponse {

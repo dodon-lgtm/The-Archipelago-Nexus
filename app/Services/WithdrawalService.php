@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\User;
 use App\Models\Withdrawal;
+use App\Services\AdminWalletService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -68,6 +69,11 @@ class WithdrawalService
                 'status'          => Withdrawal::STATUS_BERHASIL,
                 'paid_at'         => now(),
             ]);
+
+            // Fee 5% masuk ke Admin Wallet SEBAGAI INCOME — idempotent
+            // (unique index withdrawal_id+type; jika store dipanggil berulang,
+            // AdminWalletService hanya mencatat sekali).
+            AdminWalletService::recordWithdrawalFee($withdrawal, $userId);
 
             NotificationService::sendTo(
                 user: $userId,
@@ -135,6 +141,10 @@ class WithdrawalService
                 'processed_at' => now(),
                 'paid_at'      => now(),
             ]);
+
+            // Fee 5% (jika belum tercatat saat store) masuk ke Admin Wallet.
+            // Idempotent — tidak akan tercatat dua kali walau approve dipanggil ulang.
+            AdminWalletService::recordWithdrawalFee($withdrawal, $adminId);
 
             $this->notifyFreelancer($withdrawal, 'withdrawal.success', 'Penarikan Berhasil',
                 'Penarikan ' . $withdrawal->withdrawal_code

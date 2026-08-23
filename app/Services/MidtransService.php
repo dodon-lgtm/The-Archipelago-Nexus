@@ -46,11 +46,21 @@ class MidtransService
      * tercatat sebagai order_id aktif/expire. Webhook memetakan kembali order_id
      * ke Payment via resolveInvoiceFromOrderId().
      */
-    public function createSnapToken(Payment $payment, Workspace $workspace, ?string $orderId = null): string
+    public function createSnapToken(Payment $payment, ?Workspace $workspace = null, ?string $orderId = null): string
     {
         $this->configure();
 
         $orderId = $orderId ?? $this->buildOrderId($payment);
+
+        // Untuk payment QUOTA (tanpa workspace), detail customer diambil dari
+        // relasi payment->company (User), dan nama item disesuaikan.
+        $customerName = $workspace?->company?->name ?? $payment->company?->name ?? 'Company';
+        $customerEmail = $workspace?->company?->email ?? $payment->company?->email ?? 'company@example.com';
+
+        $itemId = $workspace?->id ?? $payment->id;
+        $itemName = $payment->isQuotaPayment()
+            ? 'Kuota Proyek Tambahan (Rp ' . number_format((int) round($payment->amount), 0, ',', '.') . ')'
+            : ('Pembayaran Proyek: ' . ($workspace?->project?->project_name ?? 'Workspace #' . $workspace?->id));
 
         $params = [
             'transaction_details' => [
@@ -58,15 +68,15 @@ class MidtransService
                 'gross_amount' => (int) round($payment->amount),
             ],
             'customer_details' => [
-                'first_name' => $workspace->company->name ?? 'Company',
-                'email' => $workspace->company->email ?? 'company@example.com',
+                'first_name' => $customerName,
+                'email' => $customerEmail,
             ],
             'item_details' => [
                 [
-                    'id' => $workspace->id,
+                    'id' => $itemId,
                     'price' => (int) round($payment->amount),
                     'quantity' => 1,
-                    'name' => 'Pembayaran Proyek: ' . ($workspace->project->project_name ?? 'Workspace #' . $workspace->id),
+                    'name' => $itemName,
                 ],
             ],
             // Pastikan Midtrans mengirimkan webhook ke endpoint yang dapat dijangkau publik.

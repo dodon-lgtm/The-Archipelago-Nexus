@@ -10,6 +10,18 @@ class Payment extends Model
 {
     protected $table = 'payments';
 
+    // ─── PAYMENT TYPE ────────────────────────────────────────────────
+    // Jenis payment:
+    //   workspace      : pembayaran proyek ber-workspace (flow existing).
+    //   project_quota  : pembayaran kuota proyek tambahan Rp10.000 (tanpa workspace).
+    public const PAYMENT_TYPE_WORKSPACE = 'workspace';
+    public const PAYMENT_TYPE_QUOTA    = 'quota';
+
+    public const PAYMENT_TYPES = [
+        self::PAYMENT_TYPE_WORKSPACE,
+        self::PAYMENT_TYPE_QUOTA,
+    ];
+
     // ─── FUNDS STATUS (state dana tertahan / escrow) ─────────────────
     // Terpisah dari payments.status agar tidak merusak alur pembayaran lama.
     public const FUNDS_NOT_APPLICABLE   = 'not_applicable';
@@ -32,6 +44,7 @@ class Payment extends Model
 
     protected $fillable = [
         'workspace_id',
+        'payment_type',
         'company_id',
         'freelancer_id',
         'invoice_number',
@@ -125,6 +138,14 @@ class Payment extends Model
             self::FUNDS_REFUNDED,
             self::FUNDS_REFUNDED_PARTIAL,
         ], true);
+    }
+
+    /**
+     * Apakah payment ini adalah pembayaran kuota proyek tambahan?
+     */
+    public function isQuotaPayment(): bool
+    {
+        return $this->payment_type === self::PAYMENT_TYPE_QUOTA;
     }
 
     /**

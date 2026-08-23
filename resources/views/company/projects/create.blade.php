@@ -14,8 +14,12 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = tailwind.config || {};
-        tailwind.config.darkMode = 'class';
+                tailwind.config.darkMode = 'class';
     </script>
+
+    {{-- Midtrans Snap SDK --}}
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.client_key') }}"></script>
+
     
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -477,6 +481,176 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                     }
                 });
             }
+                });
+    </script>
+
+        {{-- Quota Modal --}}
+    <div id="quotaModal" class="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 hidden">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-xl w-full max-w-md mx-4">
+            <div class="p-6 border-b border-blue-100 dark:border-slate-700">
+                <h3 class="font-bold text-slate-800 text-lg dark:text-white">Batas Kuota Proyek Bulan Ini</h3>
+                <p class="text-xs text-slate-500 mt-1 dark:text-slate-400">Anda telah mencapai batas kuota gratis (3 proyek/bulan).</p>
+            </div>
+            <div class="p-6 text-center">
+                <div class="w-16 h-16 mx-auto mb-4 bg-blue-50 rounded-full flex items-center justify-center dark:bg-slate-800">
+                    <i class="fa-solid fa-rocket text-2xl text-blue-600 dark:text-blue-400"></i>
+                </div>
+                <p class="text-sm font-semibold text-slate-700 dark:text-white mb-4">
+                    Kuota terpakai: <span class="font-bold text-blue-600 dark:text-blue-400" id="quotaUsedInfo">-</span> / <span class="font-bold text-slate-900 dark:text-white" id="quotaAvailInfo">-</span> slot
+                </p>
+                <p class="text-sm text-slate-600 dark:text-slate-300 mb-6">Bayar <span class="font-bold text-blue-600">Rp 10.000</span> untuk menambah 1 slot proyek.</p>
+            </div>
+            <div class="p-4 border-t border-blue-100 dark:border-slate-700 flex justify-end gap-3">
+                <button type="button" onclick="closeQuotaModal()"
+                        class="px-4 py-2 text-sm font-semibold text-slate-600 bg-slate-50 rounded-xl hover:bg-slate-100 transition">
+                    Batal
+                </button>
+                <button type="button" id="btnPayQuota" onclick="payQuota()"
+                        class="px-6 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 inline-flex items-center gap-2 transition shadow-[0_5px_15px_rgba(37,99,235,0.3)]">
+                    <i class="fa-solid fa-credit-card"></i> Bayar Rp10.000
+                </button>
+            </div>
+        </div>
+    </div>
+
+        <script>
+        // Quota data dari server (embed via PHP)
+        const quotaData = @json($quotaData ?? null);
+        const csrfToken = '{{ csrf_token() }}';
+        const isTemporaryConfirm = {{ config('services.midtrans.temporary_confirmation', false) ? 'true' : 'false' }};
+
+        function openQuotaModal() {
+            document.getElementById('quotaModal').classList.remove('hidden');
+            if (quotaData) {
+                document.getElementById('quotaUsedInfo').textContent = quotaData.used_slots;
+                document.getElementById('quotaAvailInfo').textContent = quotaData.available_slots;
+            }
+        }
+        function closeQuotaModal() { document.getElementById('quotaModal').classList.add('hidden'); }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Intercept form submit — block jika kuota penuh
+            const form = document.querySelector('form[action="{{ route('company.projects.store') }}"]');
+            if (form && quotaData && !quotaData.can_create) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    openQuotaModal();
+                });
+            }
+
+            // Open modal otomatis jika redirect dengan session quota_blocked
+            @if(session('quota_blocked'))
+            openQuotaModal();
+            @endif
+        });
+
+                async function payQuota() {
+            const btn = document.getElementById('btnPayQuota');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
+            try {
+                const response = await fetch('{{ route('company.quota.payment.midtrans') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: '{}',
+                });
+
+                // ── DIAGNOSTIK RESPONSE MENTAH (sementara) ──
+                const contentType = response.headers.get('content-type');
+                const rawResponse = await response.text();
+
+                console.log('QUOTA PAYMENT STATUS:', response.status);
+                console.log('QUOTA PAYMENT CONTENT-TYPE:', contentType);
+                console.log('QUOTA PAYMENT RESPONSE:', rawResponse);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${rawResponse.substring(0, 500)}`);
+                }
+
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error(
+                        `Server tidak mengembalikan JSON. Content-Type: ${contentType}. Response: ${rawResponse.substring(0, 500)}`
+                    );
+                }
+
+                const data = JSON.parse(rawResponse);
+
+                if (!data.success) {
+                    showToast(data.message || 'Gagal membuat pembayaran.', 'error');
+                    return;
+                }
+
+                // Dev flow: langsung konfirmasi (temporary_confirmation)
+                if (isTemporaryConfirm) {
+                    const confirmRes = await fetch('{{ route('company.quota.payment.confirm') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                        },
+                        body: JSON.stringify({ payment_id: data.payment_id })
+                    });
+
+                    const confirmType = confirmRes.headers.get('content-type');
+                    const confirmRaw = await confirmRes.text();
+                    console.log('QUOTA CONFIRM STATUS:', confirmRes.status);
+                    console.log('QUOTA CONFIRM RESPONSE:', confirmRaw);
+
+                    if (!confirmOk(confirmRes, confirmType, confirmRaw)) return;
+
+                    closeQuotaModal();
+                    showToast('Berhasil! Slot proyek telah ditambah.', 'success');
+                    setTimeout(() => location.reload(), 1500);
+                    return;
+                }
+
+                // Production flow: Midtrans Snap — snap_token diterima JS
+                if (data.snap_token && window.snap) {
+                    console.log('SNAP TOKEN DITERIMA, memanggil window.snap.pay()');
+                    window.snap.pay(data.snap_token, {
+                        onSuccess: function() {
+                            closeQuotaModal();
+                            showToast('Berhasil! Slot proyek telah ditambah.', 'success');
+                            setTimeout(() => location.reload(), 1500);
+                        },
+                        onPending: function() { showToast('Pembayaran sedang diproses.', 'success'); },
+                        onFailure: function() { showToast('Pembayaran gagal.', 'error'); },
+                    });
+                } else {
+                    showToast('Snap token tidak diterima dari server.', 'error');
+                }
+            } catch (e) {
+                console.error('QUOTA PAYMENT ERROR:', e);
+                showToast('Terjadi kesalahan: ' + e.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-credit-card"></i> Bayar Rp10.000';
+            }
+        }
+
+        function confirmOk(res, contentType, raw) {
+            if (!res.ok) {
+                showToast(`HTTP ${res.status}: ${raw.substring(0, 300)}`, 'error');
+                return false;
+            }
+            if (!contentType || !contentType.includes('application/json')) {
+                showToast(`Server tidak mengembalikan JSON (${contentType}).`, 'error');
+                return false;
+            }
+            return true;
+        }
+
+        // Close modal on backdrop click & Escape
+        document.getElementById('quotaModal').addEventListener('click', function(e) {
+            if (e.target === this) closeQuotaModal();
+        });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeQuotaModal();
         });
     </script>
 </body>

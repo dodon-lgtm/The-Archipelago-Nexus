@@ -7,7 +7,7 @@
 
 <div class="bg-white border border-blue-100 rounded-2xl shadow-sm relative print:border-none print:shadow-none">
 
-```
+
 {{-- ============================================================= --}}
 {{-- HEADER DAFTAR PEMBAYARAN --}}
 {{-- ============================================================= --}}
@@ -398,7 +398,7 @@
                             <td class="py-3 pr-4">
 
                                 <span class="text-xs text-slate-600">
-                                    {{ $payment->workspace->project->project_name ?? '-' }}
+                                                                        {{ $payment->workspace?->project?->project_name ?? ($payment->isQuotaPayment() ? 'Kuota Proyek' : '-') }}
                                 </span>
 
                             </td>
@@ -564,7 +564,7 @@
     @endif
 
 </div>
-```
+
 
 </div>
 

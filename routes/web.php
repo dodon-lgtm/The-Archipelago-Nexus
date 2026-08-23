@@ -27,6 +27,7 @@ use App\Http\Controllers\Admin\HasilPekerjaanController as AdminHasilPekerjaanCo
 use App\Http\Controllers\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
 use App\Http\Controllers\Admin\WithdrawalController as AdminWithdrawalController;
+use App\Http\Controllers\Admin\WalletController as AdminWalletController;
 use App\Http\Controllers\Admin\PolicyController as AdminPolicyController;
 use App\Http\Controllers\Admin\FooterSettingController as AdminFooterSettingController;
 use App\Http\Controllers\LegalPageController;
@@ -460,10 +461,26 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])
             'deactivate'
         ])->name('projects.deactivate');
 
-        Route::delete('/projects/{project}', [
+                Route::delete('/projects/{project}', [
             CompanyProjectController::class,
             'destroy'
         ])->name('projects.destroy');
+
+        // Project Quota (pay-per-additional-project, Rp10.000/slot) — reuse Payment+Midtrans
+        Route::get('/quota/payment/info', [
+            CompanyPaymentController::class,
+            'quotaPaymentInfo'
+        ])->name('quota.payment.info');
+
+        Route::post('/quota-payment/midtrans', [
+            CompanyPaymentController::class,
+            'createQuotaMidtransTransaction'
+        ])->name('quota.payment.midtrans');
+
+        Route::post('/quota-payment/confirm', [
+            CompanyPaymentController::class,
+            'confirmQuotaPayment'
+        ])->name('quota.payment.confirm');
 
         // Review
         Route::get('/client/project/{project}/review', [
@@ -813,10 +830,26 @@ Route::middleware(['auth', 'ensureAdmin'])
             'approve'
         ])->name('withdrawals.approve');
 
-        Route::post('/withdrawals/{withdrawal}/reject', [
+                Route::post('/withdrawals/{withdrawal}/reject', [
             AdminWithdrawalController::class,
             'reject'
         ])->name('withdrawals.reject');
+
+        // Admin Wallet
+        Route::get('/wallet', [
+            AdminWalletController::class,
+            'index'
+        ])->name('wallet.index');
+
+                Route::post('/wallet/expense', [
+            AdminWalletController::class,
+            'storeExpense'
+        ])->name('wallet.expense');
+
+        Route::post('/wallet/withdraw', [
+            AdminWalletController::class,
+            'withdraw'
+        ])->name('wallet.withdraw');
     });
 
 

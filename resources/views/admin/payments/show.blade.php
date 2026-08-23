@@ -50,7 +50,7 @@
                         </div>
                         <div>
                             <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Project</p>
-                            <p class="text-sm font-semibold text-slate-700 mt-0.5">{{ $payment->workspace->project->project_name ?? '-' }}</p>
+                            <p class="text-sm font-semibold text-slate-700 mt-0.5">                            {{ $payment->workspace?->project?->project_name ?? ($payment->isQuotaPayment() ? 'Kuota Proyek' : '-') }}</p>
                         </div>
                         <div>
                             <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Perusahaan</p>

@@ -1,0 +1,101 @@
+﻿0160 |                 message: 'Perusahaan "' . (Auth::user()->companyProfile->company_name ?? Auth::user()->name) . '" telah mengirim bukti pembayaran untuk proyek "' . ($workspace->project->project_name ?? '') . '". Silakan lakukan verifikasi.',
+0161 |                 redirect: route('admin.payments.show', $payment),
+0162 |                 senderId: Auth::id(),
+0163 |                 paymentId: $payment->id,
+0164 |                 workspaceId: $workspace->id,
+0165 |                 projectId: $workspace->project_id,
+0166 |             );
+0167 |         }
+0168 | 
+0169 |         return redirect()
+0170 |             ->route('company.workspaces.show', $workspace)
+0171 |             ->with('success', 'Bukti pembayaran berhasil dikirim. Menunggu verifikasi admin.');
+0172 |     }
+0173 | 
+0174 |     /**
+0175 |      * Create Midtrans Snap Token for automated payment.
+0176 |      */
+0177 |     public function createMidtransTransaction(Request $request, Workspace $workspace)
+0178 |     {
+0179 |         // 1. Authorization: Pastikan company yang login adalah pemilik workspace
+0180 |         if ((int) $workspace->company_id !== (int) Auth::id()) {
+0181 |             return response()->json([
+0182 |                 'success' => false,
+0183 |                 'message' => 'Hanya perusahaan pemilik workspace yang dapat melakukan pembayaran.'
+0184 |             ], 403);
+0185 |         }
+0186 | 
+0187 |         // 2. Cek status workspace
+0188 |         if ($workspace->status !== 'Menunggu Pembayaran') {
+0189 |             return response()->json([
+0190 |                 'success' => false,
+0191 |                 'message' => 'Workspace tidak dalam status Menunggu Pembayaran.'
+0192 |             ], 422);
+0193 |         }
+0194 | 
+0195 |         // 3. Ambil record Payment
+0196 |         $payment = $workspace->payment;
+0197 |         if (!$payment) {
+0198 |             return response()->json([
+0199 |                 'success' => false,
+0200 |                 'message' => 'Data pembayaran tidak ditemukan.'
+0201 |             ], 404);
+0202 |         }
+0203 | 
+0204 |         // 4. Pastikan pembayaran belum paid
+0205 |         if ($payment->status === 'paid') {
+0206 |             return response()->json([
+0207 |                 'success' => false,
+0208 |                 'message' => 'Pembayaran sudah lunas / diverifikasi.'
+0209 |             ], 422);
+0210 |         }
+0211 | 
+0212 |         // 5. Validasi nominal amount dari database
+0213 |         if (!$payment->amount || (float) $payment->amount <= 0) {
+0214 |             return response()->json([
+0215 |                 'success' => false,
+0216 |                 'message' => 'Nominal pembayaran tidak valid.'
+0217 |             ], 422);
+0218 |         }
+0219 | 
+0220 |         // 6. Buat Snap Token menggunakan MidtransService
+0221 |         try {
+0222 |             $midtransService = app(\App\Services\MidtransService::class);
+0223 | 
+0224 |             // Order ID unik per-attempt; dicatat agar webhook bisa memvalidasi & audit trail lengkap.
+0225 |             $orderId = $midtransService->buildOrderId($payment);
+0226 | 
+0227 |             \App\Models\MidtransAttempt::create([
+0228 |                 'payment_id' => $payment->id,
+0229 |                 'order_id' => $orderId,
+0230 |                 'status' => 'created',
+0231 |             ]);
+0232 | 
+0233 |             $snapToken = $midtransService->createSnapToken($payment, $workspace, $orderId);
+0234 | 
+0235 |             return response()->json([
+0236 |                 'success' => true,
+0237 |                 'snap_token' => $snapToken,
+0238 |             ]);
+0239 |         } catch (\Exception $e) {
+0240 |             \Illuminate\Support\Facades\Log::error('Midtrans Snap Token Error [Workspace #' . $workspace->id . ', Payment #' . $payment->id . ']: ' . $e->getMessage());
+0241 | 
+0242 |             return response()->json([
+0243 |                 'success' => false,
+0244 |                 'message' => 'Gagal membuat token pembayaran Midtrans. Silakan coba lagi.',
+0245 |             ], 500);
+0246 |         }
+0247 |     }
+0248 | 
+0249 |     /**
+0250 |      * ── TEMPORARY / TESTING FLOW ──────────────────────────────────────────
+0251 |      * Konfirmasi pembayaran dari sisi backend (tanpa menunggu webhook Midtrans).
+0252 |      *
+0253 |      * PERINGATAN: Ini adalah FLOW SEMENTARA untuk TESTING saja.
+0254 |      * Hanya aktif bila config('services.midtrans.temporary_confirmation') = true
+0255 |      * (env PAYMENT_TEMPORARY_CONFIRMATION=true).
+0256 |      *
+0257 |      * Setelah webhook Midtrans diperbaiki, matikan flag ini dan kembalikan
+0258 |      * kepercayaan konfirmasi pembayaran ke webhook resmi Midtrans.
+0259 |      *
+0260 |      * Keamanan:

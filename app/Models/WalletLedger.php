@@ -21,6 +21,12 @@ class WalletLedger extends Model
     public const TYPE_FEE_EARNED    = 'fee_earned';
     public const TYPE_ADMIN_ADJUSTMENT = 'admin_adjustment';
 
+    // ─── TYPE BARU — Admin Wallet (Platform) ─────────────────────────
+    public const TYPE_PROJECT_QUOTA_FEE = 'project_quota_fee';
+    public const TYPE_WITHDRAWAL_FEE    = 'withdrawal_fee';
+    public const TYPE_ADMIN_EXPENSE     = 'admin_expense';
+    public const TYPE_ADMIN_WITHDRAWAL  = 'admin_withdrawal';
+
     public const DIRECTION_CREDIT = 'credit';
     public const DIRECTION_DEBIT  = 'debit';
 
@@ -28,8 +34,10 @@ class WalletLedger extends Model
         'user_id',
         'workspace_id',
         'payment_id',
+        'withdrawal_id',
         'report_id',
         'type',
+        'source',
         'amount',
         'direction',
         'balance_after',
@@ -57,6 +65,11 @@ class WalletLedger extends Model
     public function payment(): BelongsTo
     {
         return $this->belongsTo(Payment::class, 'payment_id');
+    }
+
+    public function withdrawal(): BelongsTo
+    {
+        return $this->belongsTo(Withdrawal::class, 'withdrawal_id');
     }
 
     public function report(): BelongsTo

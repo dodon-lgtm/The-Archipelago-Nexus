@@ -7,15 +7,18 @@ use App\Models\Payment;
 use App\Models\Workspace;
 use App\Models\Message;
 use App\Models\User;
+use App\Services\AdminWalletService;
 use App\Services\EscrowService;
 use App\Services\NotificationService;
 use App\Services\ProfileCompletionService;
+use App\Services\ProjectQuotaService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class PaymentController extends Controller
 {
@@ -368,8 +371,166 @@ class PaymentController extends Controller
             'message' => 'Pembayaran berhasil dikonfirmasi. Workspace telah dibuka.',
         ]);
     }
-    public function gateway(Workspace $workspace)
+        public function gateway(Workspace $workspace)
 {
     return view('company.payments.gateway', compact('workspace'));
 }
+
+    /* ─── QUOTA PAYMENT (Project Slot — Rp10.000/slot via Midtrans) ─────
+    | Dipakai ulang sistem Payment + Midtrans + wallet_ledger yang existing.
+    | Tidak ada workspace / freelancer / escrow — hanya catat income ke Admin Wallet.
+    */
+
+    /**
+     * Info kuota bulan berjalan untuk company yang login.
+     */
+    public function quotaPaymentInfo(Request $request)
+    {
+        $userId = Auth::id();
+
+        $quotaService = new ProjectQuotaService();
+
+        return response()->json([
+            'can_create'      => $quotaService->canCreateProject($userId),
+            'used_slots'      => $quotaService->usedSlots($userId),
+            'available_slots' => $quotaService->availableSlots($userId),
+            'free_quota'      => ProjectQuotaService::FREE_QUOTA_PER_MONTH,
+            'paid_slots'      => $quotaService->paidSlotsThisMonth($userId),
+        ]);
+    }
+
+    /**
+     * Buat Payment kuota (invoice INV-QOT-...) + Snap token.
+     * Amount selalu Rp10.000 dari konstanta server (AdminWalletService::QUOTA_PRICE).
+     * Idempotent: jika sudah ada payment quota status=pending untuk company ini,
+     * pakai payment lama, hanya generate token baru.
+     */
+    public function createQuotaMidtransTransaction(Request $request)
+    {
+        $userId = Auth::id();
+        $quotaService = new ProjectQuotaService();
+
+        // Server-side re-check: hanya boleht membuat jika kuota sudah penuh
+        if ($quotaService->canCreateProject($userId)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kuota proyek belum penuh, tidak perlu membayar.',
+            ], 422);
+        }
+
+                // Cek apakah sudah ada pending quota payment (anti double payment).
+        // Transaksi DB HANYA untuk tulis database — panggilan API Midtrans
+        // dilakukan DI LUAR agar tidak ada exception HTML 500 saat Midtrans gagal.
+        $payment = DB::transaction(function () use ($userId) {
+            $existing = Payment::where('company_id', $userId)
+                ->where('payment_type', Payment::PAYMENT_TYPE_QUOTA)
+                ->whereIn('status', ['pending', 'waiting_verification'])
+                ->latest()
+                ->first();
+
+            if ($existing) {
+                return $existing;
+            }
+
+            $seq = (int) (Payment::max('id') ?? 0) + 1;
+            $invoiceNumber = 'INV-QOT-' . now()->format('Ymd') . '-' . str_pad($seq, 4, '0', STR_PAD_LEFT);
+
+            return Payment::create([
+                'company_id'    => $userId,
+                'freelancer_id' => null,
+                'workspace_id'  => null,
+                'invoice_number' => $invoiceNumber,
+                'amount'         => AdminWalletService::QUOTA_PRICE,
+                'payment_type'   => Payment::PAYMENT_TYPE_QUOTA,
+                'status'         => 'pending',
+                'payment_method' => 'Midtrans',
+            ]);
+        });
+
+        // Panggilan API Midtrans dibungkus try/catch — endpoint AJAX wajib
+        // SELALU mengembalikan JSON, baik sukses maupun gagal.
+        try {
+            $midtransService = app(\App\Services\MidtransService::class);
+            $orderId   = $midtransService->buildOrderId($payment);
+            $snapToken = $midtransService->createSnapToken($payment);
+        } catch (\Throwable $e) {
+            Log::error('Gagal membuat Snap token kuota: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal membuat token pembayaran Midtrans: ' . $e->getMessage(),
+            ], 502);
+        }
+
+                \App\Models\MidtransAttempt::create([
+            'payment_id'  => $payment->id,
+            'order_id'    => $orderId,
+            'status'      => 'pending',
+            'raw_response' => [],
+        ]);
+
+        return response()->json([
+            'success'         => true,
+            'payment_id'      => $payment->id,
+            'invoice_number'  => $payment->invoice_number,
+            'amount'          => (int) $payment->amount,
+            'snap_token'      => $snapToken,
+            'order_id'        => $orderId,
+        ]);
+    }
+
+    /**
+     * Konfirmasi sementara quota payment (untuk testing / PAYMENT_TEMPORARY_CONFIRMATION).
+     * Tanpa escrow / workspace — hanya mark 'paid' + catat income Admin Wallet (idempotent).
+     */
+    public function confirmQuotaPayment(Request $request)
+    {
+                $paymentId = $request->input('payment_id');
+        $payment = Payment::where('id', $paymentId)
+            ->where('company_id', Auth::id())
+            ->where('payment_type', Payment::PAYMENT_TYPE_QUOTA)
+            ->first();
+
+        // Endpoint AJAX wajib JSON — jangan gunakan firstOrFail() yang
+        // me-render halaman HTML 404.
+        if (!$payment) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Payment kuota tidak ditemukan.',
+            ], 404);
+        }
+
+        // Idempotency: jika sudah paid, jangan proses ulang
+        if ($payment->status === 'paid') {
+            return response()->json([
+                'success' => true,
+                'message' => 'Pembayaran kuota sudah selesai sebelumnya.',
+            ]);
+        }
+
+        try {
+            DB::transaction(function () use ($payment) {
+                $payment->update([
+                    'status'        => 'paid',
+                    'payment_method' => $payment->payment_method ?? 'Midtrans',
+                    'verified_at'   => $payment->verified_at ?? now(),
+                ]);
+
+                // Catat income ke Admin Wallet (idempotent)
+                AdminWalletService::recordProjectQuotaIncome($payment, Auth::id());
+            });
+        } catch (\Exception $e) {
+            Log::error('Temporary quota payment confirmation failed: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengonfirmasi pembayaran kuota: ' . $e->getMessage(),
+            ], 500);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Pembayaran kuota berhasil dikonfirmasi. Slot proyek Anda telah ditambah.',
+        ]);
+    }
 }

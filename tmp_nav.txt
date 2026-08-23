@@ -1,0 +1,263 @@
+﻿0058 | 
+0059 |             {{-- ================= FREELANCER MENU ================= --}}
+0060 |             @if(Auth::user()->role == 'freelancer')
+0061 | 
+0062 |                 <a href="{{ route('freelancer.dashboard') }}"
+0063 |                    class="relative flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group
+0064 |                    {{ request()->routeIs('freelancer.dashboard')
+0065 |                        ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-[0_8px_20px_-6px_rgba(59,130,246,0.6)] font-bold'
+0066 |                        : 'text-blue-900/60 dark:text-slate-400 hover:bg-blue-50/80 dark:hover:bg-slate-800/80 hover:text-blue-700 dark:hover:text-blue-400 font-semibold' }}"
+0067 |                    data-tooltip="Dashboard">
+0068 |                     <i class="fa-solid fa-house w-5 text-center transition-transform group-hover:scale-110"></i>
+0069 |                     <span class="tracking-wide text-sm">Dashboard</span>
+0070 |                 </a>
+0071 | 
+0072 |                 <a href="{{ route('freelancer.proyek') }}"
+0073 |                    class="relative flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group
+0074 |                    {{ request()->routeIs('freelancer.proyek')
+0075 |                        ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-[0_8px_20px_-6px_rgba(59,130,246,0.6)] font-bold'
+0076 |                        : 'text-blue-900/60 dark:text-slate-400 hover:bg-blue-50/80 dark:hover:bg-slate-800/80 hover:text-blue-700 dark:hover:text-blue-400 font-semibold' }}"
+0077 |                    data-tooltip="Cari Proyek">
+0078 |                     <i class="fa-solid fa-magnifying-glass w-5 text-center transition-transform group-hover:scale-110"></i>
+0079 |                     <span class="tracking-wide text-sm">Cari Proyek</span>
+0080 |                 </a>
+0081 | 
+0082 |                 <a href="{{ route('freelancer.workspaces.index') }}"
+0083 |                    class="relative flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group
+0084 |                    {{ request()->routeIs('freelancer.workspaces.*')
+0085 |                        ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-[0_8px_20px_-6px_rgba(59,130,246,0.6)] font-bold'
+0086 |                        : 'text-blue-900/60 dark:text-slate-400 hover:bg-blue-50/80 dark:hover:bg-slate-800/80 hover:text-blue-700 dark:hover:text-blue-400 font-semibold' }}"
+0087 |                    data-tooltip="Workspace Saya">
+0088 |                     <i class="fa-solid fa-layer-group w-5 text-center transition-transform group-hover:scale-110"></i>
+0089 |                     <span class="tracking-wide text-sm">Workspace Saya</span>
+0090 |                 </a>
+0091 | 
+0092 |                 <a href="{{ route('freelancer.pendapatan.index') }}"
+0093 |                    class="relative flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group
+0094 |                    {{ request()->routeIs('freelancer.pendapatan.*')
+0095 |                        ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-[0_8px_20px_-6px_rgba(59,130,246,0.6)] font-bold'
+0096 |                        : 'text-blue-900/60 dark:text-slate-400 hover:bg-blue-50/80 dark:hover:bg-slate-800/80 hover:text-blue-700 dark:hover:text-blue-400 font-semibold' }}"
+0097 |                    data-tooltip="Pendapatan">
+0098 |                     <i class="fa-solid fa-wallet w-5 text-center transition-transform group-hover:scale-110"></i>
+0099 |                     <span class="tracking-wide text-sm">Pendapatan</span>
+0100 |                 </a>
+0101 | 
+0102 |                 <a href="{{ route('freelancer.reports.index') }}"
+0103 |                    class="relative flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group
+0104 |                    {{ request()->routeIs('freelancer.reports.*')
+0105 |                        ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-[0_8px_20px_-6px_rgba(59,130,246,0.6)] font-bold'
+0106 |                        : 'text-blue-900/60 dark:text-slate-400 hover:bg-blue-50/80 dark:hover:bg-slate-800/80 hover:text-blue-700 dark:hover:text-blue-400 font-semibold' }}"
+0107 |                    data-tooltip="Laporan">
+0108 |                     <i class="fa-solid fa-flag w-5 text-center transition-transform group-hover:scale-110"></i>
+0109 |                     <span class="tracking-wide text-sm">Laporan</span>
+0110 |                 </a>
+0111 | 
+0112 |                 <div class="pt-4 pb-1">
+0113 |                     <div class="h-px w-full bg-gradient-to-r from-transparent via-blue-100 dark:via-slate-700 to-transparent"></div>
+0114 |                 </div>
+0115 | 
+0116 |                 <div>
+0117 |                     <button type="button" data-bantuan-toggle
+0118 |                         class="relative w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group text-blue-900/60 dark:text-slate-400 hover:bg-blue-50/80 dark:hover:bg-slate-800/80 hover:text-blue-700 dark:hover:text-blue-400 font-semibold"
+0119 |                         data-tooltip="Bantuan">
+0120 |                         <i class="fa-solid fa-circle-question w-5 text-center transition-transform group-hover:scale-110"></i>
+0121 |                         <span class="tracking-wide text-sm">Bantuan</span>
+0122 |                         <i class="fa-solid fa-chevron-down ml-auto text-[10px] opacity-50 transition-transform"></i>
+0123 |                     </button>
+0124 |                     <div class="bantuan-submenu hidden pl-12 space-y-1 mt-1">
+0125 |                         <a href="{{ route('reports.create') }}"
+0126 |                            class="relative flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group
+0127 |                            {{ request()->routeIs('reports.create')
+0128 |                                ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-[0_8px_20px_-6px_rgba(59,130,246,0.6)] font-bold'
+0129 |                                : 'text-blue-900/60 dark:text-slate-400 hover:bg-red-50/80 dark:hover:bg-red-950/50 hover:text-red-600 dark:hover:text-red-400 font-semibold' }}"
+0130 |                            data-tooltip="Laporkan Bug">
+0131 |                             <i class="fa-solid fa-bug w-5 text-center transition-transform group-hover:scale-110"></i>
+0132 |                             <span class="tracking-wide text-sm">Laporkan Bug</span>
+0133 |                         </a>
+0134 |                     </div>
+0135 |                 </div>
+0136 | 
+0137 |             {{-- ================= COMPANY MENU ================= --}}
+0138 |             @elseif(Auth::user()->role == 'company')
+0139 | 
+0140 |                 <a href="{{ route('company.dashboard') }}"
+0141 |                    class="relative flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group
+0142 |                    {{ request()->routeIs('company.dashboard')
+0143 |                        ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-[0_8px_20px_-6px_rgba(59,130,246,0.6)] font-bold'
+0144 |                        : 'text-blue-900/60 dark:text-slate-400 hover:bg-blue-50/80 dark:hover:bg-slate-800/80 hover:text-blue-700 dark:hover:text-blue-400 font-semibold' }}"
+0145 |                    data-tooltip="Dashboard">
+0146 |                     <i class="fa-solid fa-house w-5 text-center transition-transform group-hover:scale-110"></i>
+0147 |                     <span class="tracking-wide text-sm">Dashboard</span>
+0148 |                 </a>
+0149 | 
+0150 |                 <a href="{{ route('company.projects.create') }}"
+0151 |                    class="relative flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group
+0152 |                    {{ request()->routeIs('company.projects.create')
+0153 |                        ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-[0_8px_20px_-6px_rgba(59,130,246,0.6)] font-bold'
+0154 |                        : 'text-blue-900/60 dark:text-slate-400 hover:bg-blue-50/80 dark:hover:bg-slate-800/80 hover:text-blue-700 dark:hover:text-blue-400 font-semibold' }}"
+0155 |                    data-tooltip="Tambah Proyek">
+0156 |                     <i class="fa-solid fa-plus w-5 text-center transition-transform group-hover:scale-110"></i>
+0157 |                     <span class="tracking-wide text-sm">Tambah Proyek</span>
+0158 |                 </a>
+0159 | 
+0160 |                 <a href="{{ route('company.projects.index') }}"
+0161 |                    class="relative flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group
+0162 |                    {{ request()->routeIs('company.projects.index') || request()->routeIs('company.projects.show') || request()->routeIs('company.projects.edit')
+0163 |                        ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-[0_8px_20px_-6px_rgba(59,130,246,0.6)] font-bold'
+0164 |                        : 'text-blue-900/60 dark:text-slate-400 hover:bg-blue-50/80 dark:hover:bg-slate-800/80 hover:text-blue-700 dark:hover:text-blue-400 font-semibold' }}"
+0165 |                    data-tooltip="Proyek Saya">
+0166 |                     <i class="fa-solid fa-folder-open w-5 text-center transition-transform group-hover:scale-110"></i>
+0167 |                     <span class="tracking-wide text-sm">Proyek Saya</span>
+0168 |                 </a>
+0169 | 
+0170 |                 <a href="{{ route('company.projects.archive') }}"
+0171 |                    class="relative flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group
+0172 |                    {{ request()->routeIs('company.projects.archive')
+0173 |                        ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-[0_8px_20px_-6px_rgba(59,130,246,0.6)] font-bold'
+0174 |                        : 'text-blue-900/60 dark:text-slate-400 hover:bg-blue-50/80 dark:hover:bg-slate-800/80 hover:text-blue-700 dark:hover:text-blue-400 font-semibold' }}"
+0175 |                    data-tooltip="Arsip Proyek">
+0176 |                     <i class="fa-solid fa-box-archive w-5 text-center transition-transform group-hover:scale-110"></i>
+0177 |                     <span class="tracking-wide text-sm">Arsip Proyek</span>
+0178 |                 </a>
+0179 | 
+0180 |                 <a href="{{ route('company.workspaces.index') }}"
+0181 |                    class="relative flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group
+0182 |                    {{ request()->routeIs('company.workspaces.*')
+0183 |                        ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-[0_8px_20px_-6px_rgba(59,130,246,0.6)] font-bold'
+0184 |                        : 'text-blue-900/60 dark:text-slate-400 hover:bg-blue-50/80 dark:hover:bg-slate-800/80 hover:text-blue-700 dark:hover:text-blue-400 font-semibold' }}"
+0185 |                    data-tooltip="Workspace">
+0186 |                     <i class="fa-solid fa-layer-group w-5 text-center transition-transform group-hover:scale-110"></i>
+0187 |                     <span class="tracking-wide text-sm">Workspace</span>
+0188 |                 </a>
+0189 | 
+0190 |                 <a href="{{ route('company.reports.index') }}"
+0191 |                    class="relative flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group
+0192 |                    {{ request()->routeIs('company.reports.*')
+0193 |                        ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-[0_8px_20px_-6px_rgba(59,130,246,0.6)] font-bold'
+0194 |                        : 'text-blue-900/60 dark:text-slate-400 hover:bg-blue-50/80 dark:hover:bg-slate-800/80 hover:text-blue-700 dark:hover:text-blue-400 font-semibold' }}"
+0195 |                    data-tooltip="Laporan">
+0196 |                     <i class="fa-solid fa-flag w-5 text-center transition-transform group-hover:scale-110"></i>
+0197 |                     <span class="tracking-wide text-sm">Laporan</span>
+0198 |                 </a>
+0199 | 
+0200 |                 <div class="pt-4 pb-1">
+0201 |                     <div class="h-px w-full bg-gradient-to-r from-transparent via-blue-100 dark:via-slate-700 to-transparent"></div>
+0202 |                 </div>
+0203 | 
+0204 |                 <div>
+0205 |                     <button type="button" data-bantuan-toggle
+0206 |                         class="relative w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group text-blue-900/60 dark:text-slate-400 hover:bg-blue-50/80 dark:hover:bg-slate-800/80 hover:text-blue-700 dark:hover:text-blue-400 font-semibold"
+0207 |                         data-tooltip="Bantuan">
+0208 |                         <i class="fa-solid fa-circle-question w-5 text-center transition-transform group-hover:scale-110"></i>
+0209 |                         <span class="tracking-wide text-sm">Bantuan</span>
+0210 |                         <i class="fa-solid fa-chevron-down ml-auto text-[10px] opacity-50 transition-transform"></i>
+0211 |                     </button>
+0212 |                     <div class="bantuan-submenu hidden pl-12 space-y-1 mt-1">
+0213 |                         <a href="{{ route('reports.create') }}"
+0214 |                            class="relative flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group
+0215 |                            {{ request()->routeIs('reports.create')
+0216 |                                ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-[0_8px_20px_-6px_rgba(59,130,246,0.6)] font-bold'
+0217 |                                : 'text-blue-900/60 dark:text-slate-400 hover:bg-red-50/80 dark:hover:bg-red-950/50 hover:text-red-600 dark:hover:text-red-400 font-semibold' }}"
+0218 |                            data-tooltip="Laporkan Bug">
+0219 |                             <i class="fa-solid fa-bug w-5 text-center transition-transform group-hover:scale-110"></i>
+0220 |                             <span class="tracking-wide text-sm">Laporkan Bug</span>
+0221 |                         </a>
+0222 |                     </div>
+0223 |                 </div>
+0224 | 
+0225 |             {{-- ================= ADMIN MENU ================= --}}
+0226 |             @elseif(Auth::user()->role == 'admin')
+0227 | 
+0228 |                 <a href="{{ route('admin.dashboard') }}"
+0229 |                    class="relative flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group
+0230 |                    {{ request()->routeIs('admin.dashboard')
+0231 |                        ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-[0_8px_20px_-6px_rgba(59,130,246,0.6)] font-bold'
+0232 |                        : 'text-blue-900/60 dark:text-slate-400 hover:bg-blue-50/80 dark:hover:bg-slate-800/80 hover:text-blue-700 dark:hover:text-blue-400 font-semibold' }}"
+0233 |                    data-tooltip="Dashboard">
+0234 |                     <i class="fa-solid fa-chart-line w-5 text-center transition-transform group-hover:scale-110"></i>
+0235 |                     <span class="tracking-wide text-sm">Dashboard</span>
+0236 |                 </a>
+0237 | 
+0238 |                 <a href="{{ route('admin.users.index') }}"
+0239 |                    class="relative flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group
+0240 |                    {{ request()->routeIs('admin.users.*')
+0241 |                        ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-[0_8px_20px_-6px_rgba(59,130,246,0.6)] font-bold'
+0242 |                        : 'text-blue-900/60 dark:text-slate-400 hover:bg-blue-50/80 dark:hover:bg-slate-800/80 hover:text-blue-700 dark:hover:text-blue-400 font-semibold' }}"
+0243 |                    data-tooltip="Pengguna">
+0244 |                     <i class="fa-solid fa-users w-5 text-center transition-transform group-hover:scale-110"></i>
+0245 |                     <span class="tracking-wide text-sm">Pengguna</span>
+0246 |                 </a>
+0247 | 
+0248 |                 <a href="{{ route('admin.categories.index') }}"
+0249 |                    class="relative flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group
+0250 |                    {{ request()->routeIs('admin.categories.*')
+0251 |                        ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-[0_8px_20px_-6px_rgba(59,130,246,0.6)] font-bold'
+0252 |                        : 'text-blue-900/60 dark:text-slate-400 hover:bg-blue-50/80 dark:hover:bg-slate-800/80 hover:text-blue-700 dark:hover:text-blue-400 font-semibold' }}"
+0253 |                    data-tooltip="Kategori">
+0254 |                     <i class="fa-solid fa-tags w-5 text-center transition-transform group-hover:scale-110"></i>
+0255 |                     <span class="tracking-wide text-sm">Kategori</span>
+0256 |                 </a>
+0257 | 
+0258 |                 <a href="{{ route('admin.projects.index') }}"
+0259 |                    class="relative flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group
+0260 |                    {{ request()->routeIs('admin.projects.*')
+0261 |                        ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-[0_8px_20px_-6px_rgba(59,130,246,0.6)] font-bold'
+0262 |                        : 'text-blue-900/60 dark:text-slate-400 hover:bg-blue-50/80 dark:hover:bg-slate-800/80 hover:text-blue-700 dark:hover:text-blue-400 font-semibold' }}"
+0263 |                    data-tooltip="Proyek">
+0264 |                     <i class="fa-solid fa-folder-open w-5 text-center transition-transform group-hover:scale-110"></i>
+0265 |                     <span class="tracking-wide text-sm">Proyek</span>
+0266 |                 </a>
+0267 | 
+0268 |                 <a href="{{ route('admin.penawarans.index') }}"
+0269 |                    class="relative flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group
+0270 |                    {{ request()->routeIs('admin.penawarans.*')
+0271 |                        ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-[0_8px_20px_-6px_rgba(59,130,246,0.6)] font-bold'
+0272 |                        : 'text-blue-900/60 dark:text-slate-400 hover:bg-blue-50/80 dark:hover:bg-slate-800/80 hover:text-blue-700 dark:hover:text-blue-400 font-semibold' }}"
+0273 |                    data-tooltip="Penawaran">
+0274 |                     <i class="fa-solid fa-file-invoice w-5 text-center transition-transform group-hover:scale-110"></i>
+0275 |                     <span class="tracking-wide text-sm">Penawaran</span>
+0276 |                 </a>
+0277 | 
+0278 |                 <a href="{{ route('admin.hasil-pekerjaan.index') }}"
+0279 |                    class="relative flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group
+0280 |                    {{ request()->routeIs('admin.hasil-pekerjaan.*')
+0281 |                        ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-[0_8px_20px_-6px_rgba(59,130,246,0.6)] font-bold'
+0282 |                        : 'text-blue-900/60 dark:text-slate-400 hover:bg-blue-50/80 dark:hover:bg-slate-800/80 hover:text-blue-700 dark:hover:text-blue-400 font-semibold' }}"
+0283 |                    data-tooltip="Hasil Pekerjaan">
+0284 |                     <i class="fa-solid fa-layer-group w-5 text-center transition-transform group-hover:scale-110"></i>
+0285 |                     <span class="tracking-wide text-sm">Hasil Pekerjaan</span>
+0286 |                 </a>
+0287 | 
+0288 |                 <a href="{{ route('admin.reports.index') }}"
+0289 |                    class="relative flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group
+0290 |                    {{ request()->routeIs('admin.reports.*')
+0291 |                        ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-[0_8px_20px_-6px_rgba(59,130,246,0.6)] font-bold'
+0292 |                        : 'text-blue-900/60 dark:text-slate-400 hover:bg-blue-50/80 dark:hover:bg-slate-800/80 hover:text-blue-700 dark:hover:text-blue-400 font-semibold' }}"
+0293 |                    data-tooltip="Laporan">
+0294 |                     <i class="fa-solid fa-flag w-5 text-center transition-transform group-hover:scale-110"></i>
+0295 |                     <span class="tracking-wide text-sm">Laporan</span>
+0296 |                 </a>
+0297 | 
+0298 |                 <a href="{{ route('admin.company-account-requests.index') }}"
+0299 |                    class="relative flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group
+0300 |                    {{ request()->routeIs('admin.company-account-requests.*')
+0301 |                        ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-[0_8px_20px_-6px_rgba(59,130,246,0.6)] font-bold'
+0302 |                        : 'text-blue-900/60 dark:text-slate-400 hover:bg-blue-50/80 dark:hover:bg-slate-800/80 hover:text-blue-700 dark:hover:text-blue-400 font-semibold' }}"
+0303 |                    data-tooltip="Verifikasi Perusahaan">
+0304 |                     <i class="fa-solid fa-building w-5 text-center transition-transform group-hover:scale-110"></i>
+0305 |                     <span class="tracking-wide text-sm">Verifikasi Company</span>
+0306 |                 </a>
+0307 | 
+0308 |                 <a href="{{ route('admin.withdrawals.index') }}"
+0309 |                    class="relative flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group
+0310 |                    {{ request()->routeIs('admin.withdrawals.*')
+0311 |                        ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-[0_8px_20px_-6px_rgba(59,130,246,0.6)] font-bold'
+0312 |                        : 'text-blue-900/60 dark:text-slate-400 hover:bg-blue-50/80 dark:hover:bg-slate-800/80 hover:text-blue-700 dark:hover:text-blue-400 font-semibold' }}"
+0313 |                    data-tooltip="Penarikan Dana">
+0314 |                     <i class="fa-solid fa-money-bill-transfer w-5 text-center transition-transform group-hover:scale-110"></i>
+0315 |                     <span class="tracking-wide text-sm">Penarikan Dana</span>
+0316 |                 </a>
+0317 | 
+0318 |             @endif
+0319 | 
+0320 |         @endauth
