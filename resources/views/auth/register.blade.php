@@ -264,13 +264,11 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                     >
                 @endif
 
-                <!-- Pesan Success -->
-                @if (session('success'))
-                    <div class="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs flex items-center gap-2">
-                        <i class="fa-solid fa-circle-check"></i>
-                        <span>{{ session('success') }}</span>
-                    </div>
-                @endif
+                {{-- Flash Popup (success) --}}
+                @include('auth.partials.flash-popup', [
+                    'type'    => 'success',
+                    'message' => session('success'),
+                ])
 
                 <!-- Role Switcher Freelancer / Perusahaan -->
                 <div class="flex gap-1 p-1 bg-slate-800/80 border border-slate-700/60 rounded-xl">

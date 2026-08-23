@@ -484,13 +484,170 @@
 </style>
 
 {{-- =========================================================
+    NAVBAR NOTIFICATION TOAST (reusable — local navbar)
+    Mari task: ganti alert() native dengan popup modern.
+    Type: success | error | warning | info
+    Kecepatan: showNavbarNotification(type, message)
+    Responsive + dark mode + Escape/Tutup/auto-close.
+========================================================= --}}
+@auth
+<div id="navbarToastWrap"
+     class="hidden fixed inset-0 z-[9999] pointer-events-none"
+     role="alert" aria-live="assertive">
+    <div id="navbarToastPositioner"
+         class="pointer-events-auto absolute top-4 right-4 w-[min(94vw,360px)]">
+        <div id="navbarToastCard"
+             class="opacity-0 translate-y-2 scale-95 transition-all duration-300 ease-out
+                    overflow-hidden rounded-2xl border
+                    bg-blue-50/90 dark:bg-slate-900/90 backdrop-blur-xl
+                    shadow-[0_18px_45px_-18px_rgba(30,58,138,0.45)]">
+            <div class="flex items-start gap-3 px-4 py-4 sm:px-5">
+                <span id="navbarToastIconWrap"
+                    class="shrink-0 grid h-10 w-10 place-items-center rounded-full text-white shadow-lg bg-blue-600">
+                    <i id="navbarToastIcon" class="fa-solid fa-circle-info text-base"></i>
+                </span>
+                <div class="min-w-0 flex-1">
+                    <p id="navbarToastMsg" class="text-sm font-semibold text-blue-950 dark:text-white leading-snug break-words"></p>
+                </div>
+                <button type="button" id="navbarToastClose" aria-label="Tutup"
+                    class="shrink-0 text-blue-400 dark:text-slate-400 hover:text-blue-600 dark:hover:text-white transition-colors text-sm">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="px-4 py-3">
+                <button type="button" id="navbarToastBtnClose"
+                    class="w-full py-2.5 rounded-xl text-xs font-bold text-white hover:brightness-110 active:scale-[0.98] transition bg-blue-600 shadow-md shadow-blue-500/20">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@endauth
+
+{{-- =========================================================
     JAVASCRIPT
 ========================================================= --}}
 @auth
 <script>
+// ============= REUSABLE NAVBAR NOTIFICATION TOAST =============
+// Ganti alert() native. Type: success | error | warning | info
+const navbarToastState = { timer: null };
+
+// Variant per type. Class Tailwind ditulis FULLY literal agar
+// dikompilad/builed correktamente (Tailwind scan static string).
+const navbarToastVariant = {
+    success: {
+        wrap:   'bg-emerald-50/90 dark:bg-emerald-900/90',
+        border: 'border-emerald-200/60 dark:border-emerald-800/60',
+        iconBg: 'bg-emerald-500 shadow-emerald-900/30',
+        icon:   'fa-solid fa-circle-check',
+        msg:    'text-emerald-700 dark:text-emerald-200',
+        btnAccent: 'bg-gradient-to-r from-emerald-500 to-teal-600 shadow-emerald-500/30',
+        shadow: 'shadow-[0_18px_45px_-18px_rgba(16,185,129,0.5)]',
+        auto:   true
+    },
+    error: {
+        wrap:   'bg-rose-50/90 dark:bg-rose-900/90',
+        border: 'border-rose-200/60 dark:border-rose-800/60',
+        iconBg: 'bg-rose-500 shadow-rose-900/30',
+        icon:   'fa-solid fa-circle-xmark',
+        msg:    'text-rose-700 dark:text-rose-200',
+        btnAccent: 'bg-gradient-to-r from-rose-500 to-red-600 shadow-rose-500/30',
+        shadow: 'shadow-[0_18px_45px_-18px_rgba(244,63,94,0.5)]',
+        auto:   false
+    },
+    warning: {
+        wrap:   'bg-amber-50/90 dark:bg-amber-900/90',
+        border: 'border-amber-200/60 dark:border-amber-800/60',
+        iconBg: 'bg-amber-500 shadow-amber-900/30',
+        icon:   'fa-solid fa-triangle-exclamation',
+        msg:    'text-amber-700 dark:text-amber-200',
+        btnAccent: 'bg-gradient-to-r from-amber-500 to-orange-600 shadow-amber-500/30',
+        shadow: 'shadow-[0_18px_45px_-18px_rgba(245,158,11,0.5)]',
+        auto:   false
+    },
+    info: {
+        wrap:   'bg-blue-50/90 dark:bg-blue-900/90',
+        border: 'border-blue-100/60 dark:border-blue-800/60',
+        iconBg: 'bg-sky-500 shadow-sky-900/30',
+        icon:   'fa-solid fa-circle-info',
+        msg:    'text-blue-950 dark:text-blue-100',
+        btnAccent: 'bg-gradient-to-r from-sky-500 to-blue-600 shadow-sky-500/30',
+        shadow: 'shadow-[0_18px_45px_-18px_rgba(56,189,248,0.5)]',
+        auto:   true
+    }
+};
+
+function showNavbarNotification(type, message) {
+    const wrap = document.getElementById('navbarToastWrap');
+    const card = document.getElementById('navbarToastCard');
+    if (!wrap || !card) return;
+
+    const v = navbarToastVariant[type] || navbarToastVariant.info;
+
+    // Reset card: rebuild class cleanly from base each call.
+    card.className = 'opacity-0 translate-y-2 scale-95 transition-all duration-300 ease-out overflow-hidden rounded-2xl border ' + v.border + ' ' + v.wrap + ' ' + v.shadow;
+
+    wrap.classList.remove('hidden');
+
+    const iconWrap = document.getElementById('navbarToastIconWrap');
+    const iconEl = document.getElementById('navbarToastIcon');
+    const msgEl = document.getElementById('navbarToastMsg');
+    const btnEl = document.getElementById('navbarToastBtnClose');
+    const closeEl = document.getElementById('navbarToastClose');
+
+    if (iconWrap) iconWrap.className = 'shrink-0 grid h-10 w-10 place-items-center rounded-full text-white shadow-lg ' + v.iconBg;
+    if (iconEl) iconEl.className = v.icon + ' text-base';
+    if (msgEl) { msgEl.textContent = message; msgEl.className = 'text-sm font-semibold ' + v.msg + ' leading-snug break-words'; }
+    if (btnEl) btnEl.className = 'w-full py-2.5 rounded-xl text-xs font-bold text-white hover:brightness-110 active:scale-[0.98] transition ' + v.btnAccent;
+    if (closeEl) closeEl.className = 'shrink-0 ' + v.msg + ' hover:brightness-110 transition-colors text-sm';
+
+    setTimeout(function () {
+        card.classList.remove('opacity-0', 'translate-y-2', 'scale-95');
+        card.classList.add('opacity-100', 'translate-y-0', 'scale-100');
+    }, 50);
+
+    if (v.auto) {
+        if (navbarToastState.timer) clearTimeout(navbarToastState.timer);
+        navbarToastState.timer = setTimeout(closeNavbarNotification, 6000);
+    }
+}
+
+function closeNavbarNotification() {
+    const wrap = document.getElementById('navbarToastWrap');
+    const card = document.getElementById('navbarToastCard');
+    if (!wrap || !card) return;
+    if (navbarToastState.timer) { clearTimeout(navbarToastState.timer); navbarToastState.timer = null; }
+    card.classList.add('opacity-0', 'translate-y-2', 'scale-95');
+    setTimeout(function () { wrap.classList.add('hidden'); }, 280);
+}
+
+// Registo early (toast system agar terdedi sebelum password handler dipanggil).
+(function () {
+    const bootstrap = function () {
+        const wrap = document.getElementById('navbarToastWrap');
+        if (!wrap) return;
+        ['navbarToastClose', 'navbarToastBtnClose'].forEach(function (id) {
+            const b = document.getElementById(id);
+            if (b) b.addEventListener('click', closeNavbarNotification);
+        });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') closeNavbarNotification();
+        });
+    };
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bootstrap);
+    } else {
+        bootstrap();
+    }
+})();
+
 document.addEventListener('DOMContentLoaded', () => {
-    // ============= PERBAIKAN: PINDAHKAN MODAL KE <BODY> =============
-    ['modalSettings', 'modalUbahPassword'].forEach(function (id) {
+    // ============= PERBAIKAN: PINDAHKAN MODAL & TOAST KE <BODY> =============
+    // Toast "backdrop-filter"/transform parent bisa jerzaber (stacking context)
+    // e z-index tidak efektif. Ripindohkan ke <body> agar popup agar topmost.
+    ['modalSettings', 'modalUbahPassword', 'navbarToastWrap'].forEach(function (id) {
         const el = document.getElementById(id);
         if (el && el.parentNode && el.parentNode !== document.body) {
             document.body.appendChild(el);
@@ -652,7 +809,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const currentPassword = document.getElementById('currentPassword').value.trim();
 
             if (!currentPassword) {
-                alert('Password saat ini wajib diisi.');
+                showNavbarNotification('error', 'Password saat ini wajib diisi.');
                 return;
             }
 
@@ -683,7 +840,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             } catch (error) {
                 console.error('Verify error:', error);
-                alert(error.message);
+                showNavbarNotification('error', error.message);
             } finally {
                 btnNextStep.disabled = false;
                 btnNextStep.textContent = 'Lanjutkan';
@@ -698,17 +855,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const confirmPassword = document.getElementById('confirmPassword').value;
 
             if (!newPassword || !confirmPassword) {
-                alert('Semua kolom password baru wajib diisi.');
+                showNavbarNotification('error', 'Semua kolom password baru wajib diisi.');
                 return;
             }
 
             if (newPassword.length < 8) {
-                alert('Password baru minimal 8 karakter.');
+                showNavbarNotification('error', 'Password baru minimal 8 karakter.');
                 return;
             }
 
             if (newPassword !== confirmPassword) {
-                alert('Konfirmasi password tidak cocok.');
+                showNavbarNotification('error', 'Konfirmasi password tidak cocok.');
                 return;
             }
 
@@ -735,12 +892,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     throw new Error(updateData.message || 'Gagal memperbarui password.');
                 }
 
-                alert('Password berhasil diperbarui!');
+                showNavbarNotification('success', 'Password berhasil diperbarui!');
                 tutupModalUbahPassword();
 
             } catch (error) {
                 console.error('Password update error:', error);
-                alert(error.message);
+                showNavbarNotification('error', error.message);
             } finally {
                 btnSimpanPassword.disabled = false;
                 btnSimpanPassword.textContent = 'Simpan Password';

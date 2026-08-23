@@ -95,7 +95,7 @@
                     <h3 class="font-bold text-red-600 text-sm mb-1">Zona Berbahaya</h3>
                     <p class="text-xs text-slate-500 mb-3">Hapus akun pengguna ini secara permanen.</p>
                     <form method="POST" action="{{ route('admin.users.destroy', $user) }}"
-                          onsubmit="return confirm('Yakin ingin menghapus pengguna {{ $user->name }}? Semua data terkait akan ikut terhapus.')">
+                          onsubmit="return adminConfirm('Yakin ingin menghapus pengguna {{ $user->name }}? Semua data terkait akan ikut terhapus.', this)">
                         @csrf @method('DELETE')
                         <button type="submit" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl text-sm font-semibold transition">
                             <i class="fa-solid fa-trash-can mr-1"></i> Hapus Pengguna

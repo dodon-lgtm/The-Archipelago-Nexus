@@ -82,7 +82,7 @@
 
                                         @if($user->role !== 'admin')
                                             <form method="POST" action="{{ route('admin.users.destroy', $user) }}"
-                                                  onsubmit="return confirm('Hapus pengguna {{ $user->name }}?')" class="inline">
+                                                  onsubmit="return adminConfirm('Hapus pengguna {{ $user->name }}?', this)" class="inline">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit"

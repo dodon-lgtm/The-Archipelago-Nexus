@@ -302,7 +302,82 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
     .custom-setting-nav .nav-link.active i {
         color: #0d6efd !important;
     }
+.custom-setting-nav .nav-link.active i {
+        color: #0d6efd !important;
+    }
 </style>
+
+
+{{-- ==========================================================
+    ADMIN CONFIRM MODAL (reusable — pengganti confirm() native)
+    Dipakai via: adminConfirm('pesan', thisForm)
+    Z-index 9999 -> selalu di atas navbar/sidebar/modal.
+========================================================== --}}
+<div id="adminConfirmModal" class="fixed inset-0 z-[9999] hidden items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4">
+    <div class="w-full max-w-sm bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xl p-6 relative">
+        <button type="button" onclick="adminConfirmClose()" class="absolute top-3 right-3 w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-white transition-colors" aria-label="Tutup">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="flex items-start gap-4">
+            <span class="shrink-0 w-11 h-11 rounded-xl bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 flex items-center justify-center text-lg">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </span>
+            <div class="min-w-0 flex-1">
+                <h3 class="text-sm font-bold text-slate-800 dark:text-white">Konfirmasi</h3>
+                <p id="adminConfirmMessage" class="mt-1 text-xs text-slate-500 dark:text-slate-400 leading-relaxed break-words"></p>
+            </div>
+        </div>
+
+        <div class="mt-5 grid grid-cols-2 gap-2.5">
+            <button type="button" id="adminConfirmCancel" class="px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">Batal</button>
+            <button type="button" id="adminConfirmOk" class="px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-red-600 hover:bg-red-700 transition-colors">Ya, Lanjutkan</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        const modal          = document.getElementById('adminConfirmModal');
+        const messageEl      = document.getElementById('adminConfirmMessage');
+        const cancelBtn      = document.getElementById('adminConfirmCancel');
+        const okBtn          = document.getElementById('adminConfirmOk');
+        let   pendingForm    = null;
+
+        window.adminConfirm = function (message, formEl) {
+            pendingForm = formEl || null;
+            messageEl.textContent = message;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            okBtn.disabled = false;
+            okBtn.innerHTML = '<i class="fa-solid fa-check mr-1"></i>Ya, Lanjutkan';
+            return false;
+        };
+
+        window.adminConfirmClose = function () {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            pendingForm = null;
+        };
+
+        cancelBtn.addEventListener('click', adminConfirmClose);
+
+        okBtn.addEventListener('click', function () {
+            if (!pendingForm) { adminConfirmClose(); return; }
+            okBtn.disabled = true;
+            okBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i>Memproses...';
+            pendingForm.submit();
+        });
+
+        modal.addEventListener('click', function (e) {
+            if (e.target === modal) adminConfirmClose();
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && !modal.classList.contains('hidden')) adminConfirmClose();
+        });
+    })();
+</script>
 
 </body>
 </html>

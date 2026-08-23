@@ -157,7 +157,7 @@
                     <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
                         {{-- Verify --}}
                         <form method="POST" action="{{ route('admin.payments.verify', $payment) }}"
-                              onsubmit="return confirm('Yakin ingin memverifikasi pembayaran ini? Dana otomatis ditahan (escrow) dan workspace menjadi Sedang Dikerjakan.')">
+                              onsubmit="return adminConfirm('Yakin ingin memverifikasi pembayaran ini? Dana otomatis ditahan (escrow) dan workspace menjadi Sedang Dikerjakan.', this)">
                             @csrf
                             <button type="submit"
                                     class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-emerald-500 text-white rounded-xl text-sm font-semibold hover:bg-emerald-600 transition">

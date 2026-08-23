@@ -76,7 +76,7 @@
                                                 <i class="fa-solid fa-pen mr-1"></i> Edit
                                             </button>
                                             <form method="POST" action="{{ route('admin.categories.destroy', $category) }}"
-                                                  onsubmit="return confirm('Hapus kategori {{ $category->name }}?')" class="inline">
+                                                      onsubmit="return adminConfirm('Hapus kategori {{ $category->name }}?', this)" class="inline">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="px-3 py-1.5 text-xs font-semibold bg-red-50 text-red-600 hover:bg-red-100 rounded-lg transition"

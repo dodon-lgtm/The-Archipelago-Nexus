@@ -482,11 +482,11 @@
                                 Edit Proyek
                             </a>
 
-                            <form method="POST" action="{{ route('company.projects.destroy', $project) }}"
-                                  onsubmit="return confirm('Apakah Anda yakin ingin menghapus proyek ini?');">
+                            <form method="POST" action="{{ route('company.projects.destroy', $project) }}" id="deleteProjectForm">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit"
+                                <button type="button"
+                                        onclick="openDeleteModal()"
                                         class="inline-flex items-center gap-2 px-4 py-2.5 bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-900/50 rounded-lg text-sm font-semibold hover:bg-red-100 dark:hover:bg-red-900/60 transition-colors">
                                     <i class="fa-solid fa-trash"></i>
                                     Hapus Proyek
@@ -977,6 +977,87 @@
 
 
     {{-- ==========================================================
+        MODAL KONFIRMASI HAPUS PROYEK
+    ========================================================== --}}
+
+    <div
+        id="confirmDeleteProjectModal"
+        class="custom-modal"
+        aria-hidden="true"
+    >
+
+        <div
+            class="modal-box"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="confirmDeleteTitle"
+        >
+
+            {{-- CLOSE --}}
+            <button
+                type="button"
+                onclick="closeDeleteModal()"
+                class="modal-close"
+                aria-label="Tutup"
+            >
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            {{-- ICON --}}
+            <div class="modal-icon" style="background:#fef2f2;color:#dc2626;">
+                <i class="fa-solid fa-trash-can"></i>
+            </div>
+
+            {{-- TITLE --}}
+            <h3
+                id="confirmDeleteTitle"
+                class="modal-title"
+            >
+                Hapus Proyek?
+            </h3>
+
+            {{-- DESCRIPTION --}}
+            <p class="modal-description">
+                Apakah Anda yakin ingin menghapus proyek ini? Tindakan ini tidak dapat dibatalkan.
+            </p>
+
+            {{-- ACTION --}}
+            <div class="modal-actions">
+
+                {{-- BATAL --}}
+                <button
+                    type="button"
+                    onclick="closeDeleteModal()"
+                    class="
+                        modal-btn
+                        modal-cancel
+                    "
+                >
+                    Batal
+                </button>
+
+                {{-- KONFIRMASI --}}
+                <button
+                    type="button"
+                    onclick="confirmDeleteProject()"
+                    class="
+                        modal-btn
+                        modal-confirm
+                    "
+                    style="background:#dc2626;"
+                >
+                    <i class="fa-solid fa-trash-can mr-1"></i>
+                    Ya, Hapus
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    {{-- ==========================================================
         SCRIPT
     ========================================================== --}}
 
@@ -1175,6 +1256,81 @@
 
 
         /* ==========================================================
+           MODAL KONFIRMASI HAPUS PROYEK
+        ========================================================== */
+
+        function openDeleteModal() {
+
+            const modal =
+                document.getElementById(
+                    'confirmDeleteProjectModal'
+                );
+
+            modal.classList.add(
+                'active'
+            );
+
+            modal.setAttribute(
+                'aria-hidden',
+                'false'
+            );
+
+            document.body.style.overflow =
+                'hidden';
+
+        }
+
+        function closeDeleteModal() {
+
+            const modal =
+                document.getElementById(
+                    'confirmDeleteProjectModal'
+                );
+
+            modal.classList.remove(
+                'active'
+            );
+
+            modal.setAttribute(
+                'aria-hidden',
+                'true'
+            );
+
+            document.body.style.overflow =
+                '';
+
+        }
+
+        function confirmDeleteProject() {
+
+            const form =
+                document.getElementById(
+                    'deleteProjectForm'
+                );
+
+            if (!form) {
+                return;
+            }
+
+            const confirmButton =
+                document.querySelector(
+                    '#confirmDeleteProjectModal .modal-confirm'
+                );
+
+            confirmButton.innerHTML = `
+                <i class="fa-solid fa-spinner fa-spin mr-1"></i>
+                Menghapus...
+            `;
+
+            confirmButton.disabled =
+                true;
+
+            form.submit();
+
+        }
+
+
+        /* ==========================================================
            KLIK BACKDROP
         ========================================================== */
 
@@ -1189,6 +1345,26 @@
                         e.target === this
                     ) {
                         closeSelectModal();
+                    }
+                }
+            );
+
+
+        /* ==========================================================
+           KLIK BACKDROP (HAPUS PROYEK)
+        ========================================================== */
+
+        document
+            .getElementById(
+                'confirmDeleteProjectModal'
+            )
+            .addEventListener(
+                'click',
+                function (e) {
+                    if (
+                        e.target === this
+                    ) {
+                        closeDeleteModal();
                     }
                 }
             );
@@ -1215,6 +1391,19 @@
                         )
                     ) {
                         closeSelectModal();
+                    }
+
+                    const deleteModal =
+                        document.getElementById(
+                            'confirmDeleteProjectModal'
+                        );
+
+                    if (
+                        deleteModal.classList.contains(
+                            'active'
+                        )
+                    ) {
+                        closeDeleteModal();
                     }
                 }
             }
