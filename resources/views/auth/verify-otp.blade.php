@@ -213,6 +213,13 @@
                 </div>
             @endif
 
+            @error('otp')
+                <div class="p-4 bg-red-100 text-red-800 rounded-b-3xl mb-4 animate-fade-in">
+                    <i class="fa-solid fa-circle-exclamation text-lg mr-2"></i>
+                    <span>{{ $message }}</span>
+                </div>
+            @enderror
+
             @if (session('otp_invalid'))
                 <div class="p-4 bg-red-100 text-red-800 rounded-b-3xl mb-4 animate-fade-in">
                     <i class="fa-solid fa-circle-exclamation text-lg mr-2"></i>
@@ -229,7 +236,7 @@
                 <div class="flex gap-1">
                     {{-- 6 digit input boxes --}}
                     @for ($i = 1; $i <= 6; $i++)
-                        <input type="text" name="otp_digit_$i"
+                        <input type="text" name="otp_digit_{{ $i }}"
                             maxlength="1"
                             pattern="[0-9]"
                             inputmode="numeric"
@@ -263,23 +270,58 @@
         </form>
 
         <script>
-            // OTP digit input handling
-            const inputs = document.querySelectorAll('input[name^="otp_digit_"]');
+            // OTP digit input handling.
+            // JavaScript HANYA menangani: auto-focus, backspace, hanya-angka,
+            // dan paste 6 digit. TIDAK menyentuh submit form (form menggunakan
+            // POST native agar redirect Laravel berjalan normal).
+            const otpInputs = document.querySelectorAll('input[name^="otp_digit_"]');
 
-            inputs.forEach((input, index) => {
-                input.addEventListener('input', function() {
-                    if (input.value.length > 0 && index < inputs.length - 1) {
-                        inputs[index + 1].focus();
+            otpInputs.forEach((input, index) => {
+                input.addEventListener('input', function () {
+                    // Hanya izinkan 1 digit angka per kotak.
+                    input.value = input.value.replace(/\D/g, '').slice(0, 1);
+                    if (input.value.length === 1 && index < otpInputs.length - 1) {
+                        otpInputs[index + 1].focus();
                     }
                 });
 
-                input.addEventListener('keydown', function(e) {
+                input.addEventListener('keydown', function (e) {
                     if (e.key === 'Backspace' && input.value.length === 0 && index > 0) {
                         e.preventDefault();
-                        inputs[index - 1].focus();
+                        otpInputs[index - 1].focus();
                     }
                 });
+
+                // Saat kotak difokus ulang, pilih isinya agar mengetik mengganti OTP.
+                input.addEventListener('focus', function () {
+                    requestAnimationFrame(() => {
+                        if (input.value) {
+                            input.select();
+                        }
+                    });
+                });
             });
+
+            // Paste 6 digit OTP sekaligus (dari Gmail), terbagi ke 6 kotak.
+            const otpContainer = document.querySelector('.flex.gap-1');
+            const otpInputBoxes = Array.from(otpInputs);
+            if (otpContainer && otpInputBoxes.length === 6) {
+                otpContainer.addEventListener('paste', function (e) {
+                    e.preventDefault();
+                    const digits = (e.clipboardData || window.clipboardData)
+                        .getData('text')
+                        .replace(/\D/g, '')
+                        .slice(0, 6)
+                        .split('');
+
+                    otpInputBoxes.forEach((box, i) => {
+                        box.value = digits[i] || '';
+                    });
+
+                    const idx = digits.length > 0 ? Math.min(digits.length - 1, 5) : 0;
+                    otpInputBoxes[idx].focus();
+                });
+            }
 
             // Countdown logic
             const countdownEl = document.getElementById('resend-countdown');

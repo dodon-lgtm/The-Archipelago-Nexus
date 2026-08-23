@@ -62,17 +62,80 @@ class Workspace extends Model
     }
 
     /**
-     * Daftar stage custom terurut untuk workspace ini (source of truth).
-     * Dikembalikan selalu sebagai array string, dengan fallback aman bila kosong/null.
+     * Daftar stage custom terurut untuk workspace ini (source of truth),
+     * dinormalisasi menjadi item bertipe object:
+     *
+     *     [
+     *       'name'        => string,
+     *       'description' => ?string,
+     *       'created_by'  => ?int (users.id pembuat tahap),
+     *     ]
+     *
+     * Entry lama yang masih berbentuk string polos otomatis dianggap
+     * dibuat oleh freelancer workspace ini (backward-compatible, data aman).
+     */
+    public function stageItems(): array
+    {
+        $stages = $this->stages;
+
+        if (!is_array($stages) || count($stages) === 0) {
+            return [[
+                'name' => 'Analisis Kebutuhan',
+                'description' => null,
+                'created_by' => $this->freelancer_id ? (int) $this->freelancer_id : null,
+            ]];
+        }
+
+        $defaultCreator = $this->freelancer_id ? (int) $this->freelancer_id : null;
+        $items = [];
+
+        foreach (array_values($stages) as $entry) {
+            if (is_array($entry)) {
+                $name = trim((string) ($entry['name'] ?? ''));
+                if ($name === '') {
+                    continue;
+                }
+                $items[] = [
+                    'name' => $name,
+                    'description' => isset($entry['description']) && $entry['description'] !== ''
+                        ? (string) $entry['description']
+                        : null,
+                    'created_by' => isset($entry['created_by']) && $entry['created_by'] !== null
+                        ? (int) $entry['created_by']
+                        : $defaultCreator,
+                ];
+                continue;
+            }
+
+            $name = trim((string) $entry);
+            if ($name === '') {
+                continue;
+            }
+            $items[] = [
+                'name' => $name,
+                'description' => null,
+                'created_by' => $defaultCreator,
+            ];
+        }
+
+        if (count($items) === 0) {
+            return [[
+                'name' => 'Analisis Kebutuhan',
+                'description' => null,
+                'created_by' => $defaultCreator,
+            ]];
+        }
+
+        return $items;
+    }
+
+    /**
+     * Daftar nama stage terurut (array of string)
+     * — dipakai endpoint progress, JS, dan perhitungan persentase.
      */
     public function stageList(): array
     {
-        $stages = $this->stages;
-        if (!is_array($stages) || count($stages) === 0) {
-            return ['Analisis Kebutuhan'];
-        }
-
-        return array_values(array_map('strval', $stages));
+        return array_values(array_map(fn (array $item) => $item['name'], $this->stageItems()));
     }
 
     /**
@@ -90,11 +153,12 @@ class Workspace extends Model
     public function calculateProgressForStage(int $stageOrder): int
     {
         $total = $this->totalStages();
-        if ($total <= 0) {
+        if ($total <= 0 || $stageOrder <= 0) {
+            // stage_order <= 0 artinya pekerjaan belum dimulai → 0% (bukan 100%).
             return 0;
         }
 
-        $clampedOrder = max(1, min($stageOrder, $total));
+        $clampedOrder = min($stageOrder, $total);
 
         // Stage terakhir selalu 100%
         if ($clampedOrder >= $total) {
@@ -140,4 +204,3 @@ class Workspace extends Model
         return $this->hasOne(Review::class, 'workspace_id');
     }
 }
-

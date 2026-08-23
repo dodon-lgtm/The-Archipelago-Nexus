@@ -282,9 +282,10 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                         <label for="password" class="text-[10px] font-bold tracking-wider text-slate-400 uppercase block">
                             Password
                         </label>
-                        <a href="#" class="text-[10px] text-blue-400 hover:text-blue-300 hover:underline transition-colors">
-                            Lupa?
-                        </a>
+                        <a href="{{ route('password.request') }}"
+                    class="text-[10px] text-blue-400 hover:text-blue-300 hover:underline transition-colors">
+                    Lupa?
+                </a>
                     </div>
                     <div class="relative group">
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-500 text-xs group-focus-within:text-blue-400 transition-colors">

@@ -70,6 +70,27 @@ Route::post('/register', [RegisterController::class, 'register']);
 
 Route::post('/login/google', [AuthController::class, 'handleGoogleCallback'])->name('login.google');
 
+// ──────────────────────────────────────────────
+// FORGOT PASSWORD WITH OTP
+// ──────────────────────────────────────────────
+// ================================================================
+// FORGOT PASSWORD
+// ================================================================
+
+Route::get('/forgot-password', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'showRequestForm'])
+    ->name('password.request');
+Route::post('/forgot-password', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'sendOtp'])
+    ->name('password.email');
+Route::get('/verify-otp', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'showVerifyForm'])
+    ->name('password.verify');
+Route::post('/verify-otp', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'verifyOtp'])
+    ->name('password.verify.submit');
+Route::post('/resend-otp', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'resendOtp'])
+    ->name('password.resend');
+Route::get('/reset-password', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'showResetForm'])
+    ->name('password.reset');
+Route::post('/reset-password', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'resetPassword'])
+    ->name('password.reset.submit');
 
 // ──────────────────────────────────────────────
 // PUSAT BANTUAN (PUBLIC)
@@ -432,6 +453,11 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])
             WorkspaceController::class,
             'sendMessage'
         ])->name('workspaces.message');
+
+        Route::post('/workspaces/{workspace}/progress', [
+            WorkspaceController::class,
+            'updateProgress'
+        ])->name('workspaces.progress');
 
         // Freelancer Profile
         Route::get('/freelancer-profile/{id}', [
