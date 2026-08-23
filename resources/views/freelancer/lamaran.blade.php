@@ -329,6 +329,16 @@
                                     {{-- Actions --}}
                                     <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
                                         @if($item->project)
+                                            <button type="button"
+                                                data-negosiasi-open="{{ $item->id }}"
+                                                data-project-title="{{ $item->project->project_name ?? 'Proyek' }}"
+                                                data-peer-name="{{ $item->project->owner->name ?? 'Perusahaan' }}"
+                                                data-peer-type="company"
+                                                class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/40 dark:hover:bg-blue-900/60 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900/50 text-xs font-bold rounded-xl transition">
+                                                <i class="fa-regular fa-comments"></i>
+                                                <span>Negosiasi</span>
+                                            </button>
+
                                             <a href="{{ route('freelancer.projects.show', $item->project) }}"
                                                class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition">
                                                 <span>Detail Proyek</span>
@@ -430,6 +440,9 @@
             });
         }
     </script>
+
+    {{-- Modal Negosiasi Chat --}}
+    @include('negotiations.modal')
 
 </body>
 </html>

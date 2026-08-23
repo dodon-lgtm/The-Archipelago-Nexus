@@ -290,6 +290,17 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                       <span class="text-sm">Kebijakan &amp; Privasi</span>
                   </a>
 
+                  {{-- Footer Settings --}}
+                  <a href="{{ route('admin.footer-settings.edit') }}"
+                      class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all
+                    {{ request()->routeIs('admin.footer-settings.*')
+                        ? 'bg-blue-50 text-blue-700 font-bold shadow-sm border border-blue-100'
+                        : 'text-slate-600 hover:bg-blue-50 hover:text-slate-800' }}"
+                      data-tooltip="Pengaturan Footer">
+                      <i class="fa-solid fa-shoe-prints w-5 text-center"></i>
+                      <span class="text-sm">Pengaturan Footer</span>
+                  </a>
+
                   {{-- Separator --}}
                   <div class="pt-4 mt-4 border-t border-blue-50"></div>
 

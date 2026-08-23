@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
         $this->call(AdminUserSeeder::class);
         $this->call(\Database\Seeders\CategorySeeder::class);
         $this->call(\Database\Seeders\PolicySeeder::class);
+        $this->call(\Database\Seeders\FooterSettingSeeder::class);
         $this->call(\Database\Seeders\UserRoleSeeder::class);
 
 
