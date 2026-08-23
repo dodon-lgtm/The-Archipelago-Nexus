@@ -16,6 +16,10 @@ class Withdrawal extends Model
     public const METHOD_BANK = 'bank';
     public const METHOD_EWALLET = 'ewallet';
 
+    /** Jenis penarikan: freelancer (flow existing) atau admin (saldo platform). */
+    public const TYPE_FREELANCER = 'freelancer';
+    public const TYPE_ADMIN = 'admin';
+
     /** Pajak admin yang dipotong dari setiap penarikan (5%). */
     public const TAX_RATE = 0.05;
 
@@ -26,6 +30,7 @@ class Withdrawal extends Model
 
     protected $fillable = [
         'withdrawal_code',
+        'withdrawal_type',
         'user_id',
         'amount',
         'fee',
@@ -69,6 +74,32 @@ class Withdrawal extends Model
     public function scopeActive(Builder $query): Builder
     {
         return $query->whereIn('status', self::ACTIVE_STATUSES);
+    }
+
+    public function scopeOfType(Builder $query, string $type): Builder
+    {
+        return $query->where('withdrawal_type', $type);
+    }
+
+    public function isFreelancer(): bool
+    {
+        return $this->withdrawal_type === self::TYPE_FREELANCER;
+    }
+
+    /**
+     * Nomor rekening termasking untuk tampilan history (******7890).
+     */
+    public function getMaskedAccountNumberAttribute(): string
+    {
+        $number = (string) $this->account_number;
+
+        if ($number === '') {
+            return '-';
+        }
+
+        $tail = substr($number, -4);
+
+        return str_repeat('*', max(0, strlen($number) - 4)) . $tail;
     }
 
     public function getStatusLabelAttribute(): string

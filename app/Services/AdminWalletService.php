@@ -6,7 +6,9 @@ use App\Models\Payment;
 use App\Models\WalletLedger;
 use App\Models\Withdrawal;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+
 
 /**
  * AdminWalletService — PUSAT pencatatan pendapatan & pengeluaran Platform (Admin Wallet).
@@ -75,6 +77,7 @@ class AdminWalletService
         string $description,
         ?string $date = null,
         ?int $createdBy = null,
+        ?array $meta = null,
     ): ?WalletLedger {
         if ($amount <= 0) {
             return null;
@@ -89,6 +92,7 @@ class AdminWalletService
             withdrawalId: null,
             source: self::SOURCE_ADMIN_EXPENSE,
             createdBy: $createdBy,
+            meta: $meta,
         );
 
         if ($ledger && $date && strtotime($date) !== false) {
@@ -102,30 +106,41 @@ class AdminWalletService
     }
 
     /**
-     * Catat PENARIKAN SALDO ADMIN (simulasi/demo) sebagai DEBIT pada ledger platform.
+     * Buat PENARIKAN SALDO ADMIN — mengikuti pola withdrawal Freelancer.
      *
-     * Security server-side:
-     *  - DB::transaction + lockForUpdate pada seluruh baris platform agar
-     *    penarikan bersamaan terserialisasi.
-     *  - Saldo dihitung ULANG di dalam transaction; debit DITOLAK bila
-     *    nominal melebihi saldo (saldo tidak boleh negatif).
-     *  - balance_after dihitung melalui mekanisme ledger yang sama dengan
-     *    income/expense existing.
+     * Reuse tabel `withdrawals` (withdrawal_type='admin') sehingga:
+     *   - ada entity withdrawal berkode unik untuk history & audit;
+     *   - ledger debit selalu terikat `withdrawal_id` → unique
+     *     (withdrawal_id, type) membuat idempotensi BENAR-BENAR bekerja
+     *     (root cause bug "Gagal mencatat penarikan" adalah exists-check
+     *     tanpa filter ketika kedua id null).
+     *
+     * Aturan dana:
+     *   - fee = BIAYA PROVIDER dari config/withdrawal.php (bukan platform fee);
+     *   - TIDAK ada platform fee 5% untuk admin;
+     *   - debit wallet = amount PENUH; admin menerima = amount − fee provider;
+     *   - saldo dihitung ulang DI DALAM transaction + lockForUpdate baris
+     *     platform agar penarikan paralel tak bisa lolos validasi bersamaan.
      */
     public static function recordAdminWithdrawal(
         float $amount,
         string $method,
+        string $bankName,
         string $accountName,
         string $accountNumber,
         ?int $createdBy = null,
     ): array {
         if ($amount <= 0) {
-            return ['success' => false, 'message' => 'Nominal penarikan tidak valid.', 'ledger' => null];
+            return ['success' => false, 'message' => 'Nominal penarikan tidak valid.', 'withdrawal' => null];
         }
 
-        return DB::transaction(function () use ($amount, $method, $accountName, $accountNumber, $createdBy) {
-            // Kunci baris platform (user_id NULL) supaya penarikan paralel tidak
-            // bisa sama-sama lolos validasi saldo.
+        if (!in_array($method, \App\Services\WithdrawalService::providerMethods(), true)) {
+            return ['success' => false, 'message' => 'Metode/provider penarikan tidak valid.', 'withdrawal' => null];
+        }
+
+        return DB::transaction(function () use ($amount, $method, $bankName, $accountName, $accountNumber, $createdBy) {
+            // Kunci seluruh baris platform (user_id NULL) agar dua request
+            // paralel tidak sama-sama lolos validasi saldo.
             DB::table('wallet_ledger')
                 ->whereNull('user_id')
                 ->lockForUpdate()
@@ -138,32 +153,104 @@ class AdminWalletService
                     'success' => false,
                     'message' => 'Saldo Admin tidak cukup. Saldo tersedia: Rp '
                         . number_format($balance, 0, ',', '.'),
-                    'ledger'  => null,
+                    'withdrawal'  => null,
                 ];
             }
 
-            $methodLabel = $method === 'bank' ? 'Bank' : 'E-Wallet';
-
-            $ledger = static::record(
-                type: WalletLedger::TYPE_ADMIN_WITHDRAWAL,
-                amount: $amount,
-                description: 'Penarikan Saldo Admin via ' . $methodLabel . ' — '
-                    . $accountName . ' (' . $accountNumber . ').',
-                direction: WalletLedger::DIRECTION_DEBIT,
-                paymentId: null,
-                withdrawalId: null,
-                source: self::SOURCE_ADMIN_WITHDRAWAL,
-                createdBy: $createdBy,
-            );
-
-            return [
-                'success' => (bool) $ledger,
-                'message' => $ledger
-                    ? 'Penarikan Rp ' . number_format($amount, 0, ',', '.') . ' berhasil dicatat.'
-                    : 'Gagal mencatat penarikan.',
-                'ledger'  => $ledger,
-            ];
+            return static::finalizeAdminWithdrawal($amount, $method, $bankName, $accountName, $accountNumber, $createdBy);
         });
+    }
+
+    /**
+     * Tahap akhir (dalam transaction): buat entity Withdrawal + debit ledger.
+     * Tax rate 5% TIDAK diterapkan — hanya fee provider dari config.
+     */
+    protected static function finalizeAdminWithdrawal(
+        float $amount,
+        string $method,
+        string $bankName,
+        string $accountName,
+        string $accountNumber,
+        ?int $createdBy,
+    ): array {
+        $providerFee = \App\Services\WithdrawalService::calculateProviderFee($method, $amount);
+        $received    = round($amount - $providerFee, 2);
+
+        // 1) Entity Withdrawal (status langsung BERHASIL — simulasi payout,
+        //    konsisten dengan flow Freelancer existing).
+        $withdrawal = Withdrawal::create([
+            'withdrawal_code' => 'WDA-TMP-' . \Illuminate\Support\Str::upper(\Illuminate\Support\Str::random(10)),
+            'withdrawal_type' => Withdrawal::TYPE_ADMIN,
+            'user_id'         => $createdBy ?? Auth::id(),
+            'amount'          => $amount,          // total dipotong dari wallet
+            'fee'             => $providerFee,      // fee PROVIDER (eksternal)
+            'net_amount'      => $received,         // diterima admin
+            'method'          => $method,
+            'bank_name'       => $bankName,
+            'account_name'    => $accountName,
+            'account_number'  => $accountNumber,
+            'status'          => Withdrawal::STATUS_BERHASIL,
+            'processed_by'    => $createdBy ?? Auth::id(),
+            'processed_at'    => now(),
+            'paid_at'         => now(),
+        ]);
+
+        // Kode final deterministik WD-ADMIN-00001.
+        $withdrawal->update([
+            'withdrawal_code' => 'WD-ADMIN-' . str_pad((string) $withdrawal->id, 5, '0', STR_PAD_LEFT),
+        ]);
+
+        // 2) Debit ledger = AMOUNT PENUH, terikat withdrawal_id
+        //    → unique (withdrawal_id, type) menjamin tak ada debit ganda.
+        $ledger = static::record(
+            type: WalletLedger::TYPE_ADMIN_WITHDRAWAL,
+            amount: $amount,
+            description: 'Penarikan Saldo Admin ' . $withdrawal->withdrawal_code
+                . ' via ' . \App\Services\WithdrawalService::providerLabel($method)
+                . ' (' . $bankName . ', a/n ' . $accountName . ' ****' . substr($accountNumber, -4) . ').'
+                . ' Fee provider Rp ' . number_format($providerFee, 0, ',', '.')
+                . '; diterima Rp ' . number_format($received, 0, ',', '.') . '.',
+            direction: WalletLedger::DIRECTION_DEBIT,
+            paymentId: null,
+            withdrawalId: $withdrawal->id,
+            source: self::SOURCE_ADMIN_WITHDRAWAL,
+            createdBy: $createdBy,
+            meta: [
+                'method'         => $method,
+                'method_label'   => \App\Services\WithdrawalService::providerLabel($method),
+                'bank_name'      => $bankName,
+                'account_name'   => $accountName,
+                'account_number' => $accountNumber,
+                'provider_fee'   => $providerFee,
+                'received'       => $received,
+            ],
+        );
+
+        if (!$ledger) {
+            throw new \RuntimeException('Gagal mencatat ledger penarikan admin.');
+        }
+
+        return [
+            'success'    => true,
+            'message'    => 'Penarikan ' . $withdrawal->withdrawal_code . ' berhasil. Debit Rp '
+                . number_format($amount, 0, ',', '.') . ' (fee provider Rp '
+                . number_format($providerFee, 0, ',', '.') . '), diterima Rp '
+                . number_format($received, 0, ',', '.') . '.',
+            'withdrawal' => $withdrawal->fresh(),
+            'fee'        => $providerFee,
+            'received'   => $received,
+            'balance'    => self::balance(),
+        ];
+    }
+
+    /** Riwayat penarikan saldo admin (dari tabel withdrawals, type=admin). */
+    public static function adminWithdrawalHistory(int $perPage = 10): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    {
+        return Withdrawal::query()
+            ->ofType(Withdrawal::TYPE_ADMIN)
+            ->with('processedBy:id,name')
+            ->latest()
+            ->paginate($perPage, ['*'], 'withdraw_page');
     }
 
     // ─── STATISTIK SALDO (dihitung dari ledger, BUKAN kolom manual) ───
@@ -223,12 +310,13 @@ class AdminWalletService
         ?int $withdrawalId,
         string $source,
         ?int $createdBy,
+        ?array $meta = null,
     ): ?WalletLedger {
         if ($amount <= 0) {
             return null;
         }
 
-        return DB::transaction(function () use ($type, $amount, $description, $direction, $paymentId, $withdrawalId, $source, $createdBy) {
+        return DB::transaction(function () use ($type, $amount, $description, $direction, $paymentId, $withdrawalId, $source, $createdBy, $meta) {
             $exists = WalletLedger::query()
                 ->when($paymentId !== null, fn ($q) => $q->where('payment_id', $paymentId))
                 ->when($withdrawalId !== null, fn ($q) => $q->where('withdrawal_id', $withdrawalId))
@@ -253,6 +341,7 @@ class AdminWalletService
                         $direction === WalletLedger::DIRECTION_CREDIT ? $amount : -$amount
                     ),
                     'description' => $description,
+                    'meta' => $meta,
                     'created_by' => $createdBy,
                 ]);
             } catch (QueryException $e) {

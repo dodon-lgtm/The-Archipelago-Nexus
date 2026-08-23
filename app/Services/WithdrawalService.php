@@ -22,6 +22,48 @@ use Illuminate\Validation\ValidationException;
  */
 class WithdrawalService
 {
+    // ────────────────────────────────────────────────────────────
+    // PROVIDER FEE (terpusat di config/withdrawal.php)
+    // ----------------------------------------------------------------
+    // Fee provider adalah BIAYA EKSTERNAL provider pembayaran — berbeda
+    // dari platform fee 5% freelancer. Hanya dipakai penarikan ADMIN.
+    // Semua angka WAJIB dibaca lewat helper ini, dilarang hardcode.
+    // ────────────────────────────────────────────────────────────
+
+    /** Daftar metode provider yang valid dari config. */
+    public static function providerMethods(): array
+    {
+        return array_keys(config('withdrawal.providers', []));
+    }
+
+    public static function providerLabel(string $method): string
+    {
+        return config("withdrawal.providers.{$method}.label", ucfirst($method));
+    }
+
+    /**
+     * Hitung fee provider untuk sebuah metode & nominal.
+     * Hasil dibulatkan ke rupiah penuh.
+     */
+    public static function calculateProviderFee(string $method, float $amount): float
+    {
+        $fee = config("withdrawal.providers.{$method}.fee");
+
+        if (!is_array($fee) || $amount <= 0) {
+            return 0.0;
+        }
+
+        if (($fee['type'] ?? '') === 'fixed') {
+            return round((float) ($fee['amount'] ?? 0), 2);
+        }
+
+        if (($fee['type'] ?? '') === 'percent') {
+            return round($amount * ((float) ($fee['amount'] ?? 0)) / 100, 2);
+        }
+
+        return 0.0;
+    }
+
     /**
      * Buat pengajuan penarikan baru.
      *
@@ -195,8 +237,15 @@ class WithdrawalService
      */
     public function availableBalance(int $userId): float
     {
+        // Hanya dana escrow yang sudah resolved (released / released_partial)
+        // boleh dicairkan. Payment paid dengan funds_status held/disputed
+        // masih tertahan di escrow dan TIDAK boleh masuk saldo tersedia.
         $totalEarned = (float) \App\Models\Payment::where('freelancer_id', $userId)
             ->where('status', 'paid')
+            ->whereIn('funds_status', [
+                \App\Models\Payment::FUNDS_RELEASED,
+                \App\Models\Payment::FUNDS_RELEASED_PARTIAL,
+            ])
             ->sum('freelancer_receive');
 
         $reserved = (float) Withdrawal::forUser($userId)->active()->sum('amount');

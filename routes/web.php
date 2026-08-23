@@ -466,21 +466,33 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])
             'destroy'
         ])->name('projects.destroy');
 
-        // Project Quota (pay-per-additional-project, Rp10.000/slot) — reuse Payment+Midtrans
+        // ── Project Quota Payment (Rp10.000/slot) — reuse Payment+Midtrans ──
+        // Flow: form proyek → quota habis → modal → GATEWAY pembayaran kuota
+        //       → Snap Midtrans → webhook/status-check → paid → +1 slot.
         Route::get('/quota/payment/info', [
             CompanyPaymentController::class,
             'quotaPaymentInfo'
         ])->name('quota.payment.info');
 
-        Route::post('/quota-payment/midtrans', [
+        Route::get('/quota-payment/start', [
             CompanyPaymentController::class,
-            'createQuotaMidtransTransaction'
-        ])->name('quota.payment.midtrans');
+            'startQuotaPayment'
+        ])->name('quota.payment.start');
 
-        Route::post('/quota-payment/confirm', [
+        Route::get('/quota-payment/{payment}', [
             CompanyPaymentController::class,
-            'confirmQuotaPayment'
-        ])->name('quota.payment.confirm');
+            'showQuotaGateway'
+        ])->name('quota.payment.show');
+
+        Route::get('/quota-payment/{payment}/status', [
+            CompanyPaymentController::class,
+            'quotaPaymentStatus'
+        ])->name('quota.payment.status');
+
+        Route::post('/quota-payment/{payment}/midtrans', [
+            CompanyPaymentController::class,
+            'createQuotaTransaction'
+        ])->name('quota.payment.midtrans');
 
         // Review
         Route::get('/client/project/{project}/review', [

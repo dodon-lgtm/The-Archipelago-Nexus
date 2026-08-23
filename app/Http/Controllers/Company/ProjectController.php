@@ -165,13 +165,19 @@ class ProjectController extends Controller
 
                         $data['user_id'] = Auth::id();
 
-            // Kuota bulan berjalan: blokir pembuatan jika sudah melebihi batas
+            // Kuota bulan berjalan: blokir pembuatan jika sudah melebihi batas.
+            // BUKAN auto-pay: siapkan payment kuota pending lalu arahkan Company
+            // ke halaman GATEWAY pembayaran kuota (mirip gateway pembayaran proyek).
             $quotaService = new ProjectQuotaService();
             if (!$quotaService->canCreateProject(Auth::id())) {
+                $quotaPayment = \App\Http\Controllers\Company\PaymentController::ensurePendingQuotaPayment(Auth::id());
+
                 return redirect()
                     ->route('company.projects.create')
-                    ->with('quota_blocked', true)
-                    ->with('quota_message', 'Kuota proyek bulan ini telah penuh. Bayar Rp10.000 untuk menambah slot.');
+                    ->with('quota_payment_id', $quotaPayment->id)
+                    ->with('quota_used', $quotaService->usedSlots(Auth::id()))
+                    ->with('quota_free', ProjectQuotaService::FREE_QUOTA_PER_MONTH)
+                    ->with('quota_price', (int) round($quotaPayment->amount));
             }
 
             Project::create($data);

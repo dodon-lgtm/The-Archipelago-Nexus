@@ -19,6 +19,13 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
 
+        // Percayai reverse proxy (ngrok tunnel untuk pembayaran Midtrans, load balancer).
+        // Tanpa ini, route()/url() menghasilkan URL http:// di halaman HTTPS →
+        // Mixed Content memblokir fetch (Snap quota payment, notifikasi) dan
+        // notification_url webhook menjadi http://.
+        // CATATAN PRODUCTION: ganti '*' dengan IP load balancer/proxy yang dikenal.
+        $middleware->trustProxies(at: '*');
+
         $middleware->alias([
             'ensureAdmin' => EnsureAdmin::class,
             'ensureCompanyAdminOrAbort' => EnsureCompanyAdminOrAbort::class,

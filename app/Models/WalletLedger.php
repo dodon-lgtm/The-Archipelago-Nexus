@@ -42,12 +42,14 @@ class WalletLedger extends Model
         'direction',
         'balance_after',
         'description',
+        'meta',
         'created_by',
     ];
 
     protected $casts = [
         'amount' => 'decimal:2',
         'balance_after' => 'decimal:2',
+        'meta' => 'array',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
@@ -80,5 +82,77 @@ class WalletLedger extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    // ─── LABEL & KODE DISPLAY (untuk Admin Wallet dashboard) ─────────
+
+    /**
+     * Label bahasa Indonesia untuk jenis transaksi (kolom `type`).
+     */
+    public function getTypeLabelAttribute(): string
+    {
+        return match ($this->type) {
+            self::TYPE_ESCROW_HELD       => 'Escrow Ditahan',
+            self::TYPE_ESCROW_RELEASED   => 'Dana Dirilis',
+            self::TYPE_REFUND_ISSUED     => 'Refund',
+            self::TYPE_FEE_EARNED        => 'Platform Fee',
+            self::TYPE_ADMIN_ADJUSTMENT  => 'Penyesuaian Admin',
+            self::TYPE_PROJECT_QUOTA_FEE => 'Biaya Upload Project',
+            self::TYPE_WITHDRAWAL_FEE    => 'Fee Withdrawal',
+            self::TYPE_ADMIN_EXPENSE     => 'Pengeluaran Admin',
+            self::TYPE_ADMIN_WITHDRAWAL  => 'Tarik Saldo Admin',
+            default                      => (string) $this->type,
+        };
+    }
+
+    /**
+     * Label arah transaksi.
+     */
+    public function getDirectionLabelAttribute(): string
+    {
+        return $this->direction === self::DIRECTION_CREDIT ? 'Pendapatan' : 'Pengeluaran';
+    }
+
+    /**
+     * Kode referensi yang dapat ditampilkan pada riwayat wallet.
+     *
+     * - Pendapatan kuota / platform fee → invoice_number payment terkait.
+     * - Fee withdrawal                  → withdrawal_code penarikan terkait.
+     * - Pengeluaran admin               → EXP-00001 (diturunkan dari id ledger,
+     *                                     deterministik, tanpa kolom tambahan).
+     * - Penarikan admin                 → WD-ADMIN-00001 (idem).
+     */
+    public function getDisplayCodeAttribute(): string
+    {
+        return match ($this->type) {
+            self::TYPE_PROJECT_QUOTA_FEE,
+            self::TYPE_FEE_EARNED => $this->payment?->invoice_number
+                ?? ('PAY-' . str_pad((string) $this->payment_id, 5, '0', STR_PAD_LEFT)),
+
+            self::TYPE_WITHDRAWAL_FEE => $this->withdrawal?->withdrawal_code
+                ?? ('WD-' . str_pad((string) $this->withdrawal_id, 5, '0', STR_PAD_LEFT)),
+
+            self::TYPE_ADMIN_EXPENSE    => 'EXP-' . str_pad((string) $this->id, 5, '0', STR_PAD_LEFT),
+            self::TYPE_ADMIN_WITHDRAWAL => 'WD-ADMIN-' . str_pad((string) $this->id, 5, '0', STR_PAD_LEFT),
+
+            default => 'WL-' . str_pad((string) $this->id, 5, '0', STR_PAD_LEFT),
+        };
+    }
+
+    /**
+     * Saldo platform SEBELUM mutasi ini (untuk tampilan riwayat).
+     * Hanya bermakna untuk baris platform (user_id NULL).
+     */
+    public function getBalanceBeforeAttribute(): float
+    {
+        if ($this->balance_after === null) {
+            return 0.0;
+        }
+
+        $delta = $this->direction === self::DIRECTION_CREDIT
+            ? (float) $this->amount
+            : -(float) $this->amount;
+
+        return round((float) $this->balance_after - $delta, 2);
     }
 }

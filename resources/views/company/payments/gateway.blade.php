@@ -307,7 +307,17 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                             <div class="px-6 py-5 border-b border-blue-50 flex items-center justify-between">
                                 <div>
                                     <h2 class="font-bold text-base text-slate-800">Payment Gateway</h2>
-                                    <p class="text-xs text-slate-400 mt-0.5">Pilih metode pembayaran untuk melanjutkan</p>
+                                    <p class="text-xs text-slate-400 mt-0.5">
+                                        @if (in_array($payment->status, ['pending', 'rejected'], true))
+                                            Pilih metode pembayaran untuk melanjutkan
+                                        @elseif ($payment->status === 'waiting_verification')
+                                            Bukti pembayaran sedang diverifikasi admin
+                                        @elseif ($payment->status === 'paid')
+                                            Pembayaran telah selesai
+                                        @else
+                                            Status pembayaran: {{ $payment->status_label }}
+                                        @endif
+                                    </p>
                                 </div>
                                 <div class="w-10 h-10 rounded-xl bg-blue-50 text-brand flex items-center justify-center">
                                     <i class="fa-solid fa-lock"></i>
@@ -315,14 +325,95 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                             </div>
 
                             <div class="p-6 space-y-5">
-                                {{-- Payment Methods --}}
-                                <div>
-                                    <p class="text-xs font-semibold text-slate-600 mb-2.5">Metode Pembayaran</p>
-                                    
-                                    {{-- Include options partial --}}
-                                    @include('company.payments.options', ['workspace' => $workspace, 'payment' => $payment])
-                                    
+                                @if (in_array($payment->status, ['pending', 'rejected'], true))
+                                    {{-- Payment Methods --}}
+                                    <div>
+                                        <p class="text-xs font-semibold text-slate-600 mb-2.5">Metode Pembayaran</p>
+
+                                        @if ($payment->status === 'rejected')
+                                            <div class="mb-4 flex items-center gap-3 px-4 py-3 bg-red-50 border border-red-200 text-red-600 rounded-xl text-xs font-medium">
+                                                <i class="fa-solid fa-triangle-exclamation"></i>
+                                                Pembayaran sebelumnya gagal/dibatalkan. Silakan coba bayar kembali.
+                                            </div>
+                                        @endif
+
+                                        {{-- Include options partial --}}
+                                        @include('company.payments.options', ['workspace' => $workspace, 'payment' => $payment])
+                                    </div>
+                                @elseif ($payment->status === 'waiting_verification')
+                                    <div class="flex items-start gap-4 px-5 py-4 bg-amber-50 border border-amber-200 rounded-2xl">
+                                        <div class="w-10 h-10 shrink-0 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center">
+                                            <i class="fa-solid fa-hourglass-half"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-bold text-amber-700">Menunggu Verifikasi Admin</p>
+                                            <p class="text-xs text-amber-600/90 mt-1 leading-relaxed">
+                                                Bukti pembayaran Anda telah diterima dan sedang diperiksa oleh admin.
+                                                Anda akan menerima notifikasi setelah verifikasi selesai.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <a href="{{ route('company.workspaces.show', $workspace) }}"
+                                       class="inline-flex items-center gap-2 text-xs font-semibold text-brand hover:underline">
+                                        <i class="fa-solid fa-arrow-left text-[10px]"></i> Kembali ke Workspace
+                                    </a>
+                                @elseif ($payment->status === 'paid')
+                                    <div class="flex items-start gap-4 px-5 py-4 bg-emerald-50 border border-emerald-200 rounded-2xl">
+                                        <div class="w-10 h-10 shrink-0 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                                            <i class="fa-solid fa-check"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-bold text-emerald-700">Pembayaran Berhasil</p>
+                                            <p class="text-xs text-emerald-600/90 mt-1 leading-relaxed">
+                                                Dana tertahan di escrow platform dan akan dirilis ke freelancer
+                                                sesuai kesepakatan pekerjaan.
+                                            </p>
+                                            @if($payment->verified_at)
+                                                <p class="text-[11px] text-emerald-500 mt-1">
+                                                    Diverifikasi: {{ $payment->verified_at->translatedFormat('d M Y H:i') }}
+                                                </p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <a href="{{ route('company.workspaces.show', $workspace) }}"
+                                       class="inline-flex items-center justify-center gap-2 w-full px-4 py-3 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700">
+                                        <i class="fa-solid fa-folder-open text-xs"></i> Buka Workspace Proyek
+                                    </a>
+                                @endif
+                            </div>
+                        </div>
+
+                        {{-- Detail Pekerjaan --}}
+                        <div class="bg-white border border-blue-100 rounded-2xl shadow-sm overflow-hidden">
+                            <div class="px-6 py-4 border-b border-blue-50 flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-xl bg-blue-50 text-brand flex items-center justify-center">
+                                    <i class="fa-solid fa-briefcase text-sm"></i>
                                 </div>
+                                <h3 class="font-bold text-sm text-slate-800">Detail Pekerjaan</h3>
+                            </div>
+                            <div class="p-5 space-y-3">
+                                <div class="flex items-center justify-between gap-4">
+                                    <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Freelancer</p>
+                                    <span class="text-xs font-bold text-slate-700 text-right">{{ $workspace->freelancer->name ?? '-' }}</span>
+                                </div>
+                                <div class="flex items-center justify-between gap-4">
+                                    <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Workspace</p>
+                                    <span class="text-xs font-bold text-slate-700">#{{ $workspace->id }}</span>
+                                </div>
+                                <div class="flex items-center justify-between gap-4">
+                                    <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Status Pekerjaan</p>
+                                    <span class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-slate-50 text-slate-600 border border-slate-200">
+                                        {{ $workspace->status }}
+                                    </span>
+                                </div>
+                                @if(!empty($workspace->project->description))
+                                    <div class="pt-2 border-t border-blue-50">
+                                        <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Deskripsi Singkat</p>
+                                        <p class="text-xs text-slate-500 leading-relaxed">
+                                            {{ \Illuminate\Support\Str::limit(strip_tags($workspace->project->description), 180) }}
+                                        </p>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -351,23 +442,27 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
                                 <div class="border-t border-blue-50 pt-4 space-y-2">
                                     <div class="flex items-center justify-between">
-                                        <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Total Pembayaran</p>
-                                        <span class="text-sm font-bold text-slate-800">Rp {{ number_format($payment->amount, 0, ',', '.') }}</span>
+                                        <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Biaya Proyek (dari penawaran)</p>
+                                        <span class="text-xs font-semibold text-slate-600">Rp {{ number_format($payment->amount, 0, ',', '.') }}</span>
                                     </div>
                                     <div class="flex items-center justify-between">
-                                        <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Biaya Platform (5%)</p>
+                                        <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Platform Fee (5%)</p>
                                         <span class="text-xs font-semibold text-slate-600">Rp {{ number_format($payment->platform_fee, 0, ',', '.') }}</span>
                                     </div>
+                                    <div class="flex items-center justify-between">
+                                        <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Freelancer Menerima</p>
+                                        <span class="text-xs font-semibold text-slate-600">Rp {{ number_format($payment->freelancer_receive, 0, ',', '.') }}</span>
+                                    </div>
                                     <div class="flex items-center justify-between pt-2 border-t border-blue-100">
-                                        <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Total Dibayar</p>
+                                        <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Total Dibayar Company</p>
                                         <span class="text-lg font-extrabold text-emerald-600">Rp {{ number_format($payment->amount, 0, ',', '.') }}</span>
                                     </div>
                                 </div>
 
                                 <div class="flex items-center justify-between bg-[#f6f9ff] rounded-xl px-4 py-3">
                                     <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Status Pembayaran</p>
-                                    <span class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-amber-50 text-amber-600 border border-amber-200">
-                                        Belum Dibayar
+                                    <span class="text-[10px] font-bold px-2.5 py-1 rounded-full {{ $payment->status_color }}">
+                                        {{ $payment->status === 'pending' ? 'Menunggu Pembayaran' : $payment->status_label }}
                                     </span>
                                 </div>
                             </div>
