@@ -364,15 +364,15 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                 <input type="hidden" name="id_token" id="google_id_token">
             </form>
 
-            <!-- PERSETUJUAN KEBIJAKAN & PRIVASI -->
-            <div class="space-y-1 relative z-10 mt-1">
-                <label for="agreePolicy" class="flex items-start gap-2.5 cursor-pointer select-none group">
+           <!-- PERSETUJUAN KEBIJAKAN & PRIVASI -->
+            <div class="space-y-1 relative z-10 mt-1 text-center">
+                <label for="agreePolicy" class="inline-flex items-center justify-center gap-2 cursor-pointer select-none group">
                     <input
                         id="agreePolicy"
                         type="checkbox"
                         name="agree_policy"
                         value="1"
-                        class="mt-0.5 w-4 h-4 rounded border-slate-600 bg-slate-800 text-blue-600 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer"
+                        class="w-4 h-4 rounded border-slate-600 bg-slate-800 text-blue-600 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer shrink-0"
                     >
                     <span class="text-[11px] text-slate-400 leading-relaxed group-hover:text-slate-300 transition-colors">
                         Saya menyetujui
@@ -385,7 +385,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                         </button>
                     </span>
                 </label>
-                <p id="agreeHint" class="hidden text-[10px] text-amber-400/90 flex items-center gap-1 ml-6">
+                <p id="agreeHint" class="hidden text-[10px] text-amber-400/90 flex items-center justify-center gap-1">
                     <i class="fa-solid fa-circle-info"></i>
                     <span>Centang persetujuan ini terlebih dahulu untuk masuk.</span>
                 </p>
