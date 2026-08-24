@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @include('partials.theme-boot')
 
     <title>ApexForge Labs — Marketplace Freelance Indonesia</title>
 
@@ -17,17 +18,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     
     <!-- Script Anti-Flicker untuk Memuat Tema Lebih Cepat -->
-    <script>
-        (function() {
-            const savedTheme = localStorage.getItem('apexforge_theme');
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-            }
-        })();
-    </script>
+    
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -920,7 +911,7 @@
             Daftar Sebagai Perusahaan
         </a>
 
-        <a href="mailto:inauta753@gmail.com" class="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 font-bold rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs transition-all duration-200">
+        <a href="mailto:kitaayo94@gmail.com" class="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 font-bold rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs transition-all duration-200">
             <i class="fa-regular fa-envelope text-xs text-blue-600 dark:text-blue-400"></i>
             Hubungi Admin
         </a>
@@ -1089,10 +1080,10 @@
                     e.preventDefault();
                     if (htmlElement.classList.contains('dark')) {
                         htmlElement.classList.remove('dark');
-                        localStorage.setItem('apexforge_theme', 'light');
+                        localStorage.setItem('theme_user_', 'light');
                     } else {
                         htmlElement.classList.add('dark');
-                        localStorage.setItem('apexforge_theme', 'dark');
+                        localStorage.setItem('theme_user_', 'dark');
                     }
                     updateToggleIcons();
                 });

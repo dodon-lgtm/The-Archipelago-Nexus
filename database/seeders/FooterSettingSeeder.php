@@ -24,7 +24,7 @@ class FooterSettingSeeder extends Seeder
                 'Dilarang menggunakan platform untuk aktivitas ilegal, penipuan, spam, penyebaran konten melanggar hukum, serta tindakan yang merugikan pengguna lain atau platform. Pelanggaran dapat berakibat pada pemblokiran atau penghapusan akun.',
                 'Seluruh transaksi, negosiasi, dan interaksi antar pengguna dilakukan secara mandiri di dalam platform yang aman. ApexForge Labs berhak meninjau, menunda, atau menolak layanan apabila ditemukan indikasi pelanggaran atas ketentuan ini.',
             ]),
-            'support_email'            => 'inauta735@gmail.com',
+            'support_email'            => 'kitaayo94@gmail.com',
             'about_text'               => 'Infrastruktur marketplace freelance masa depan. Menghubungkan talenta berbakat Nusantara dengan ekosistem proyek industri kreatif dan teknologi global secara seamless.',
             'copyright_text'           => '© 2026 ApexForge Labs. Hak Cipta Dilindungi.',
         ]);

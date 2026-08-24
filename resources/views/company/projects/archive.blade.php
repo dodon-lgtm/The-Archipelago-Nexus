@@ -5,6 +5,7 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @include('partials.theme-boot')
     <title>Arsip Proyek | ApexForge Labs</title>
 
     <link
@@ -18,13 +19,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <script>
-        // Inisialisasi tema sebelum halaman dirender untuk mencegah efek flicker
-        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-
         tailwind.config = {
             darkMode: 'class',
             theme: {

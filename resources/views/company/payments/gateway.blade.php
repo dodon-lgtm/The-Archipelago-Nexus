@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @include('partials.theme-boot')
     <title>Payment Gateway - {{ $workspace->project->project_name }}</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -12,6 +13,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
@@ -234,7 +236,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 </style>
 </head>
 
-<body class="bg-surface text-slate-800 min-h-screen flex font-sans">
+<body class="bg-surface dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex font-sans transition-colors duration-300">
 
     @include('navbar.navigasi')
 
@@ -263,21 +265,21 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                     </div>
                     <div class="stepper-line bg-brand/30"></div>
                     <div class="flex flex-col items-center">
-                        <div class="stepper-dot bg-white text-slate-400 border border-blue-100">
+                        <div class="stepper-dot bg-white dark:bg-slate-900 text-slate-400 border border-blue-100 dark:border-slate-800">
                             <i class="fa-solid fa-upload text-xs"></i>
                         </div>
                         <span class="text-[10px] font-semibold text-slate-400 mt-1.5">Upload Proof</span>
                     </div>
                     <div class="stepper-line bg-slate-200"></div>
                     <div class="flex flex-col items-center">
-                        <div class="stepper-dot bg-white text-slate-400 border border-blue-100">
+                        <div class="stepper-dot bg-white dark:bg-slate-900 text-slate-400 border border-blue-100 dark:border-slate-800">
                             <i class="fa-solid fa-shield-halved text-xs"></i>
                         </div>
                         <span class="text-[10px] font-semibold text-slate-400 mt-1.5">Admin Verification</span>
                     </div>
                     <div class="stepper-line bg-slate-200"></div>
                     <div class="flex flex-col items-center">
-                        <div class="stepper-dot bg-white text-slate-400 border border-blue-100">
+                        <div class="stepper-dot bg-white dark:bg-slate-900 text-slate-400 border border-blue-100 dark:border-slate-800">
                             <i class="fa-solid fa-check text-xs"></i>
                         </div>
                         <span class="text-[10px] font-semibold text-slate-400 mt-1.5">Completed</span>
@@ -303,10 +305,10 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                     <div class="md:col-span-3 space-y-6">
 
                         {{-- Header --}}
-                        <div class="bg-white border border-blue-100 rounded-2xl shadow-sm overflow-hidden">
+                        <div class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
                             <div class="px-6 py-5 border-b border-blue-50 flex items-center justify-between">
                                 <div>
-                                    <h2 class="font-bold text-base text-slate-800">Payment Gateway</h2>
+                                    <h2 class="font-bold text-base text-slate-800 dark:text-slate-100">Payment Gateway</h2>
                                     <p class="text-xs text-slate-400 mt-0.5">
                                         @if (in_array($payment->status, ['pending', 'rejected'], true))
                                             Pilih metode pembayaran untuk melanjutkan
@@ -384,12 +386,12 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                         </div>
 
                         {{-- Detail Pekerjaan --}}
-                        <div class="bg-white border border-blue-100 rounded-2xl shadow-sm overflow-hidden">
+                        <div class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
                             <div class="px-6 py-4 border-b border-blue-50 flex items-center gap-3">
                                 <div class="w-9 h-9 rounded-xl bg-blue-50 text-brand flex items-center justify-center">
                                     <i class="fa-solid fa-briefcase text-sm"></i>
                                 </div>
-                                <h3 class="font-bold text-sm text-slate-800">Detail Pekerjaan</h3>
+                                <h3 class="font-bold text-sm text-slate-800 dark:text-slate-100">Detail Pekerjaan</h3>
                             </div>
                             <div class="p-5 space-y-3">
                                 <div class="flex items-center justify-between gap-4">
@@ -422,9 +424,9 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                     <div class="md:col-span-2 space-y-6">
 
                         {{-- Invoice Summary --}}
-                        <div class="bg-white border border-blue-100 rounded-2xl shadow-sm overflow-hidden">
+                        <div class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
                             <div class="px-5 py-4 border-b border-blue-50">
-                                <h3 class="font-bold text-sm text-slate-800">Ringkasan Pembayaran</h3>
+                                <h3 class="font-bold text-sm text-slate-800 dark:text-slate-100">Ringkasan Pembayaran</h3>
                             </div>
                             <div class="p-5 space-y-4">
                                 <div class="flex items-center justify-between">
@@ -440,7 +442,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                     <span class="text-xs font-bold text-slate-700">{{ $workspace->freelancer->name }}</span>
                                 </div>
 
-                                <div class="border-t border-blue-50 pt-4 space-y-2">
+                                <div class="border-t border-blue-50 dark:border-slate-800 pt-4 space-y-2">
                                     <div class="flex items-center justify-between">
                                         <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Biaya Proyek (dari penawaran)</p>
                                         <span class="text-xs font-semibold text-slate-600">Rp {{ number_format($payment->amount, 0, ',', '.') }}</span>
@@ -476,6 +478,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
     {{-- Midtrans Snap SDK (Sandbox) + External JS --}}
     <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.client_key') }}"></script>
+    <script src="{{ asset('js/toast.js') }}"></script>
     <script src="{{ asset('js/payments/midtrans.js') }}"></script>
 </body>
 

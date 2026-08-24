@@ -106,7 +106,7 @@
                     </div>
                     <div class="pr-4 relative z-10">
                         <p class="text-[11px] text-blue-300 uppercase font-black tracking-widest mb-0.5">Status Sistem</p>
-                        <p class="text-lg font-bold text-white">dodon lgtm</p>
+                        <p class="text-lg font-bold text-white">Keamanan</p>
                     </div>
                 </div>
             </div>

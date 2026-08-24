@@ -256,7 +256,7 @@
             priceInput.value = '';
             daysInput.value = '';
         })
-        .catch(err => alert(err.message))
+        .catch(err => showToast(err.message, 'error'))
         .finally(() => {
             sendBtn.disabled = false;
             sendBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Kirim';
@@ -280,7 +280,7 @@
             }
             loadMessages();
         })
-        .catch(err => alert(err.message));
+        .catch(err => showToast(err.message, 'error'));
     }
 
     document.addEventListener('click', function (e) {

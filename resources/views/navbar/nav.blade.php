@@ -130,7 +130,7 @@
 
                 <!-- NOTIFICATION DROPDOWN -->
                 <div id="notificationDropdown"
-                    class="hidden absolute right-0 mt-4 w-[380px] bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl rounded-[1.5rem] border border-blue-100 dark:border-slate-800 shadow-[0_20px_50px_-10px_rgba(30,58,138,0.15)] overflow-hidden z-[100] transform transition-all">
+                    class="hidden absolute right-0 mt-4 w-[min(380px,calc(100vw-1.5rem))] bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl rounded-[1.5rem] border border-blue-100 dark:border-slate-800 shadow-[0_20px_50px_-10px_rgba(30,58,138,0.15)] overflow-hidden z-[100] transform transition-all">
                     <div class="p-5 border-b border-blue-50/50 dark:border-slate-800 flex items-center justify-between bg-gradient-to-b from-blue-50/30 dark:from-slate-800/50 to-transparent">
                         <h3 class="font-black text-sm text-blue-950 dark:text-white tracking-wide">Notifikasi Sistem</h3>
                         <button id="markAllReadBtn" class="text-[11px] text-blue-500 font-bold hover:text-blue-700 dark:hover:text-blue-400 transition-colors">Tandai semua dibaca</button>
@@ -497,30 +497,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // ============= DARK MODE INITIALIZER & TOGGLE =============
+    // ============= THEME TOGGLE =============
     const darkModeToggle = document.getElementById('darkModeToggle');
     const htmlElement = document.documentElement;
-    
-    const currentUserId = "{{ Auth::id() }}";
-    const storageKey = 'theme_user_' + currentUserId;
-
-    if (localStorage.getItem(storageKey) === 'dark') {
-        htmlElement.classList.add('dark');
-        if (darkModeToggle) darkModeToggle.checked = true;
-    } else {
-        htmlElement.classList.remove('dark');
-        if (darkModeToggle) darkModeToggle.checked = false;
-    }
+    const storageKey = 'theme_user_{{ Auth::id() }}';
 
     if (darkModeToggle) {
+        darkModeToggle.checked = htmlElement.classList.contains('dark');
         darkModeToggle.addEventListener('change', () => {
-            if (darkModeToggle.checked) {
-                htmlElement.classList.add('dark');
-                localStorage.setItem(storageKey, 'dark');
-            } else {
-                htmlElement.classList.remove('dark');
-                localStorage.setItem(storageKey, 'light');
-            }
+            const isDark = darkModeToggle.checked;
+            htmlElement.classList.toggle('dark', isDark);
+            localStorage.setItem(storageKey, isDark ? 'dark' : 'light');
         });
     }
 
@@ -652,7 +639,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const currentPassword = document.getElementById('currentPassword').value.trim();
 
             if (!currentPassword) {
-                alert('Password saat ini wajib diisi.');
+                showToast('Password saat ini wajib diisi.', 'error');
                 return;
             }
 
@@ -683,7 +670,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             } catch (error) {
                 console.error('Verify error:', error);
-                alert(error.message);
+                showToast(error.message, 'error');
             } finally {
                 btnNextStep.disabled = false;
                 btnNextStep.textContent = 'Lanjutkan';
@@ -698,17 +685,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const confirmPassword = document.getElementById('confirmPassword').value;
 
             if (!newPassword || !confirmPassword) {
-                alert('Semua kolom password baru wajib diisi.');
+                showToast('Semua kolom password baru wajib diisi.', 'error');
                 return;
             }
 
             if (newPassword.length < 8) {
-                alert('Password baru minimal 8 karakter.');
+                showToast('Password baru minimal 8 karakter.', 'error');
                 return;
             }
 
             if (newPassword !== confirmPassword) {
-                alert('Konfirmasi password tidak cocok.');
+                showToast('Konfirmasi password tidak cocok.', 'error');
                 return;
             }
 
@@ -735,12 +722,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     throw new Error(updateData.message || 'Gagal memperbarui password.');
                 }
 
-                alert('Password berhasil diperbarui!');
+                showToast('Password berhasil diperbarui!', 'success');
                 tutupModalUbahPassword();
 
             } catch (error) {
                 console.error('Password update error:', error);
-                alert(error.message);
+                showToast(error.message, 'error');
             } finally {
                 btnSimpanPassword.disabled = false;
                 btnSimpanPassword.textContent = 'Simpan Password';
@@ -980,7 +967,11 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(res => res.ok ? res.json() : Promise.reject('Failed'))
         .then(data => updateBadge(data.unread_count || 0))
         .catch(() => {});
-    }, 60000);
+    }, 18000);
 });
 </script>
 @endauth
+
+<script src="{{ asset('js/toast.js') }}" defer></script>
+@include('partials.flash-toast')
+@include('partials.notification-toasts')

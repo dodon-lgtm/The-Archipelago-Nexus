@@ -5,24 +5,13 @@
  <head>
      <meta charset="UTF-8">
      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @include('partials.theme-boot')
      <title>@yield('title', 'Admin Panel') - ApexForge Labs</title>
-
      {{-- Tailwind CSS --}}
-     <script>
-         // Dark mode (class-based) — applies to elements with `dark:` variants.
-         // Existing light-only admin pages tanpa `dark:` tetap tampil terang (tidak berubah).
-         (function () {
-             var dark = localStorage.getItem('theme') === 'dark'
-                 || (!localStorage.getItem('theme')
-                     && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
-             if (dark) {
-                 document.documentElement.classList.add('dark');
-             }
-         })();
-     </script>
      <script src="https://cdn.tailwindcss.com"></script>
      <script>
          tailwind.config = tailwind.config || {};
+    tailwind.config.darkMode = 'class';
          tailwind.config.darkMode = 'class';
      </script>
 
@@ -137,11 +126,11 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
  <body class="bg-[#f6f9ff] text-slate-800 antialiased">
 
-     <div class="min-h-screen bg-[#f6f9ff] flex">
+     <div class="min-h-screen bg-[#f6f9ff] dark:bg-slate-950 flex transition-colors duration-300">
 
          {{-- =============== SIDEBAR =============== --}}
          <aside id="sidebar"
-             class="w-64 bg-white border-r border-blue-100 flex flex-col h-screen sticky top-0 shrink-0 z-30">
+             class="w-64 bg-white dark:bg-slate-900 border-r border-blue-100 dark:border-slate-800 flex flex-col h-screen sticky top-0 shrink-0 z-30 transition-colors duration-300">
 
              {{-- Logo --}}
              <div
@@ -342,7 +331,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
              {{-- Top Navbar --}}
              <header
-                 class="h-16 bg-white border-b border-blue-100 px-6 flex items-center justify-between sticky top-0 z-20">
+                 class="h-16 bg-white dark:bg-slate-900 border-b border-blue-100 dark:border-slate-800 px-6 flex items-center justify-between sticky top-0 z-20 transition-colors duration-300">
                  {{-- Left: Title + Breadcrumb --}}
                  <div>
                      <h1 class="text-lg font-extrabold text-slate-800">@yield('title', 'Admin Panel')</h1>
@@ -353,20 +342,24 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                      </nav>
                  </div>
 
-                 {{-- Right: Notifications + Profile --}}
+                 {{-- Right: Appearance + Notifications + Profile --}}
                  <div class="flex items-center gap-4">
+                     <button id="darkModeToggle" type="button" aria-label="Appearance"
+                         class="w-10 h-10 rounded-full border border-blue-100 dark:border-slate-700 hover:bg-blue-50 dark:hover:bg-slate-800 flex items-center justify-center transition">
+                         <i class="fa-solid fa-moon text-slate-600 dark:text-amber-400"></i>
+                     </button>
                      {{-- Notifications --}}
                      <div class="relative">
                          <button id="adminNotificationButton" aria-label="Notifikasi"
-                             class="relative w-10 h-10 rounded-full border border-blue-100 hover:bg-blue-50 flex items-center justify-center">
-                             <i class="fa-regular fa-bell text-slate-600"></i>
+                             class="relative w-10 h-10 rounded-full border border-blue-100 dark:border-slate-700 hover:bg-blue-50 dark:hover:bg-slate-800 flex items-center justify-center">
+                             <i class="fa-regular fa-bell text-slate-600 dark:text-blue-400"></i>
                              <span id="adminNotificationBadge"
                                  class="absolute -top-1 -right-1 min-w-[18px] h-[18px] rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center px-1"></span>
                          </button>
 
                          {{-- Dropdown Notifikasi Admin --}}
                          <div id="adminNotificationDropdown"
-                             class="hidden absolute right-0 mt-3 w-[380px] bg-white rounded-2xl border border-blue-100 shadow-xl overflow-hidden z-[100]">
+                             class="hidden absolute right-0 mt-3 w-[min(380px,calc(100vw-1.5rem))] bg-white dark:bg-slate-900 rounded-2xl border border-blue-100 dark:border-slate-800 shadow-xl overflow-hidden z-[100]">
                              <div class="p-4 border-b border-blue-50 flex items-center justify-between">
                                  <h3 class="font-bold text-sm text-slate-800">Notifikasi</h3>
                                  <button id="adminMarkAllReadBtn"
@@ -647,6 +640,10 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
      </script>
 
      @stack('scripts')
+
+     {{-- Toast global + popup notifikasi hasil aksi --}}
+     <script src="{{ asset('js/toast.js') }}" defer></script>
+     @include('partials.flash-toast')
 
      {{-- Sidebar CSS & JS (same as navigasi) --}}
      <style>
@@ -996,6 +993,8 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
              }, 100);
          });
      </script>
+
+     @include('partials.notification-toasts')
  </body>
 
  </html>

@@ -4,13 +4,10 @@
 @section('breadcrumb', 'Detail Penarikan Dana')
 
 @push('styles')
-    <script>
-        if (localStorage.getItem('theme') === 'dark') {
-            document.documentElement.classList.add('dark');
-        }
-    </script>
+    
     <script>
         tailwind.config = tailwind.config || {};
+    tailwind.config.darkMode = 'class';
         tailwind.config.darkMode = 'class';
     </script>
     <style>

@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @include('partials.theme-boot')
     <title>Pembayaran Kuota Proyek - {{ $payment->invoice_number }}</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -12,6 +13,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] }, colors: { brand: '#2563EB', surface: '#F8FAFC' } } }
         }
     </script>
@@ -23,7 +25,7 @@
     </style>
 </head>
 
-<body class="bg-surface text-slate-800 min-h-screen flex font-sans">
+<body class="bg-surface dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex font-sans transition-colors duration-300">
 
     @include('navbar.navigasi')
 
@@ -49,14 +51,14 @@
                     </div>
                     <div class="stepper-line {{ $payment->status === 'paid' ? 'bg-emerald-300' : 'bg-brand/30' }}"></div>
                     <div class="flex flex-col items-center">
-                        <div class="stepper-dot bg-white text-slate-400 border border-blue-100">
+                        <div class="stepper-dot bg-white dark:bg-slate-900 text-slate-400 border border-blue-100 dark:border-slate-800">
                             <i class="fa-solid fa-shield-halved text-xs"></i>
                         </div>
                         <span class="text-[10px] font-semibold text-slate-400 mt-1.5">Verification</span>
                     </div>
                     <div class="stepper-line bg-slate-200"></div>
                     <div class="flex flex-col items-center">
-                        <div class="stepper-dot bg-white text-slate-400 border border-blue-100">
+                        <div class="stepper-dot bg-white dark:bg-slate-900 text-slate-400 border border-blue-100 dark:border-slate-800">
                             <i class="fa-solid fa-plus text-xs"></i>
                         </div>
                         <span class="text-[10px] font-semibold text-slate-400 mt-1.5">+1 Slot Aktif</span>
@@ -76,10 +78,10 @@
 
                         @php $canPay = in_array($payment->status, ['pending', 'rejected'], true); @endphp
 
-                        <div class="bg-white border border-blue-100 rounded-2xl shadow-sm overflow-hidden">
+                        <div class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
                             <div class="px-6 py-5 border-b border-blue-50 flex items-center justify-between">
                                 <div>
-                                    <h2 class="font-bold text-base text-slate-800">Pembayaran Kuota Proyek</h2>
+                                    <h2 class="font-bold text-base text-slate-800 dark:text-slate-100">Pembayaran Kuota Proyek</h2>
                                     <p class="text-xs text-slate-400 mt-0.5">
                                         @if ($canPay)
                                             Pilih metode pembayaran untuk menambah slot proyek
@@ -107,7 +109,7 @@
                                         </div>
                                     @endif
 
-                                    <div id="quotaPayBox" class="rounded-2xl p-5 bg-white border border-blue-100">
+                                    <div id="quotaPayBox" class="rounded-2xl p-5 bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800">
                                         <div class="flex items-center justify-between mb-4">
                                             <div class="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-blue-50 text-brand">
                                                 <i class="fa-solid fa-bolt text-lg"></i>
@@ -185,9 +187,9 @@
                     </div>
                     {{-- RIGHT: RINGKASAN --}}
                     <div class="md:col-span-2 space-y-6">
-                        <div class="bg-white border border-blue-100 rounded-2xl shadow-sm overflow-hidden">
+                        <div class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
                             <div class="px-5 py-4 border-b border-blue-50">
-                                <h3 class="font-bold text-sm text-slate-800">Ringkasan Pembayaran</h3>
+                                <h3 class="font-bold text-sm text-slate-800 dark:text-slate-100">Ringkasan Pembayaran</h3>
                             </div>
                             <div class="p-5 space-y-4">
                                 <div class="flex items-center justify-between">
@@ -211,7 +213,7 @@
                                     <span class="text-xs font-bold text-emerald-600">+1 Proyek</span>
                                 </div>
 
-                                <div class="border-t border-blue-50 pt-4 space-y-2">
+                                <div class="border-t border-blue-50 dark:border-slate-800 pt-4 space-y-2">
                                     <div class="flex items-center justify-between">
                                         <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Harga</p>
                                         <span class="text-lg font-extrabold text-emerald-600">Rp {{ number_format($price, 0, ',', '.') }}</span>
@@ -228,7 +230,7 @@
                             </div>
                         </div>
 
-                        <div class="bg-white border border-blue-100 rounded-2xl shadow-sm p-5">
+                        <div class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl shadow-sm p-5">
                             <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-3">Informasi Kuota Bulan Ini</p>
                             <div class="space-y-2 text-xs">
                                 <div class="flex items-center justify-between">

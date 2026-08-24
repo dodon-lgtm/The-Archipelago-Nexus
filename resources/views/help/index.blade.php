@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @include('partials.theme-boot')
 
     <title>Pusat Bantuan - ApexForge Labs</title>
 
@@ -77,18 +78,7 @@
 
 <body>
     {{-- Anti-Flicker Script: Apply saved mode before render (Synchronized with Landing Page keys) --}}
-    <script>
-        (function() {
-            const htmlElement = document.documentElement;
-            const savedTheme = localStorage.getItem('apexforge_theme') || localStorage.getItem('theme') || localStorage.getItem('color-theme');
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-                htmlElement.classList.add('dark');
-            } else {
-                htmlElement.classList.remove('dark');
-            }
-        })();
-    </script>
+    
 
     {{-- =========================================================
         HEADER

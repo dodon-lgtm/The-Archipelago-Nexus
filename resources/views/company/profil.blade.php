@@ -3,18 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @include('partials.theme-boot')
 
-    <script>
-        @auth
-            const profileThemeUserId = "{{ Auth::id() }}";
-        @else
-            const profileThemeUserId = 'guest';
-        @endauth
-        const profileThemeKey = 'theme_user_' + profileThemeUserId;
-        if (localStorage.getItem(profileThemeKey) === 'dark') {
-            document.documentElement.classList.add('dark');
-        }
-    </script>
+    
 
     <title>Profil Perusahaan - Ultra Modern Dashboard</title>
 
@@ -22,6 +13,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = tailwind.config || {};
+    tailwind.config.darkMode = 'class';
         tailwind.config.darkMode = 'class';
     </script>
 

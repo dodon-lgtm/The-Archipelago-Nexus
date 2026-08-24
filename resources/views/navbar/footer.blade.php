@@ -52,20 +52,20 @@
 
                 <div class="flex flex-col gap-3 text-sm font-semibold text-blue-900/70 dark:text-slate-400">
 
-                    <a href="#" class="hover:text-blue-600 dark:hover:text-blue-400 hover:translate-x-1 transition-all duration-300 flex items-center gap-2">
+                    {{-- <a href="#" class="hover:text-blue-600 dark:hover:text-blue-400 hover:translate-x-1 transition-all duration-300 flex items-center gap-2">
                         <span class="w-1 h-1 rounded-full bg-blue-300 dark:bg-slate-600"></span>
                         Cari Lowongan
-                    </a>
+                    </a> --}}
 
                     <a href="#" class="hover:text-blue-600 dark:hover:text-blue-400 hover:translate-x-1 transition-all duration-300 flex items-center gap-2">
                         <span class="w-1 h-1 rounded-full bg-blue-300 dark:bg-slate-600"></span>
                         Database Talent
                     </a>
 
-                    <a href="#" class="hover:text-blue-600 dark:hover:text-blue-400 hover:translate-x-1 transition-all duration-300 flex items-center gap-2">
+                    {{-- <a href="#" class="hover:text-blue-600 dark:hover:text-blue-400 hover:translate-x-1 transition-all duration-300 flex items-center gap-2">
                         <span class="w-1 h-1 rounded-full bg-blue-300 dark:bg-slate-600"></span>
                         Protokol Kerja
-                    </a>
+                    </a> --}}
 
                     <a href="#" class="hover:text-blue-600 dark:hover:text-blue-400 hover:translate-x-1 transition-all duration-300 flex items-center gap-2">
                         <span class="w-1 h-1 rounded-full bg-blue-300 dark:bg-slate-600"></span>
@@ -88,7 +88,7 @@
 
                     {{-- SUPPORT APEX --}}
                     <a
-                        href="mailto:{{ $footerSettings->support_email ?: 'support@example.com' }}"
+                        href="mailto:{{ $footerSettings->support_email ?: 'kitsune1838@gmail.com' }}"
                         class="flex items-start gap-3 hover:text-blue-600 dark:hover:text-blue-400 transition-colors group"
                     >
 
@@ -102,7 +102,7 @@
                             </span>
 
                             <span class="block text-[11px] text-blue-900/50 dark:text-slate-500 font-medium">
-                                {{ $footerSettings->support_email ?: 'support@example.com' }}
+                                {{ $footerSettings->support_email ?: 'kitsune.com' }}
                             </span>
                         </div>
 
