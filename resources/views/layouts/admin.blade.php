@@ -342,13 +342,9 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                      </nav>
                  </div>
 
-                 {{-- Right: Appearance + Notifications + Profile --}}
-                 <div class="flex items-center gap-4">
-                     <button id="darkModeToggle" type="button" aria-label="Appearance"
-                         class="w-10 h-10 rounded-full border border-blue-100 dark:border-slate-700 hover:bg-blue-50 dark:hover:bg-slate-800 flex items-center justify-center transition">
-                         <i class="fa-solid fa-moon text-slate-600 dark:text-amber-400"></i>
-                     </button>
-                     {{-- Notifications --}}
+                  {{-- Right: Notifications + Profile --}}
+                  <div class="flex items-center gap-4">
+                      {{-- Notifications --}}
                      <div class="relative">
                          <button id="adminNotificationButton" aria-label="Notifikasi"
                              class="relative w-10 h-10 rounded-full border border-blue-100 dark:border-slate-700 hover:bg-blue-50 dark:hover:bg-slate-800 flex items-center justify-center">
@@ -994,7 +990,132 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
          });
      </script>
 
-     @include('partials.notification-toasts')
+      {{-- ApexForge Labs — Global Custom Confirmation Popup --}}
+      <div id="afConfirmOverlay" class="af-confirm-overlay" role="dialog" aria-modal="true" aria-labelledby="afConfirmTitle" aria-describedby="afConfirmMessage">
+          <div class="af-confirm-card">
+              <button type="button" class="af-confirm-close" id="afConfirmClose" aria-label="Tutup">&times;</button>
+              <div class="af-confirm-icon">
+                  <i class="fa-solid fa-triangle-exclamation"></i>
+              </div>
+              <h3 id="afConfirmTitle" class="af-confirm-title">Konfirmasi</h3>
+              <p id="afConfirmMessage" class="af-confirm-message"></p>
+              <div class="af-confirm-actions">
+                  <button type="button" id="afConfirmCancel" class="af-btn af-btn-cancel">Batal</button>
+                  <button type="button" id="afConfirmOk" class="af-btn af-btn-ok">Ya, Lanjutkan</button>
+              </div>
+          </div>
+      </div>
+
+      <style>
+          .af-confirm-overlay{
+              position:fixed;inset:0;z-index:99999;
+              display:flex;align-items:center;justify-content:center;padding:1rem;
+              background:rgba(15,23,42,.55);
+              backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+              opacity:0;visibility:hidden;pointer-events:none;
+              transition:opacity .2s ease,visibility .2s ease;
+          }
+          .af-confirm-overlay.af-open{opacity:1;visibility:visible;pointer-events:auto}
+          .af-confirm-card{
+              position:relative;width:100%;max-width:26rem;
+              background:#ffffff;border:1px solid #dbeafe;border-radius:1.25rem;
+              padding:2rem;box-shadow:0 25px 60px -15px rgba(30,64,175,.45);
+              transform:translateY(12px) scale(.96);
+              transition:transform .2s ease;
+          }
+          .af-open .af-confirm-card{transform:translateY(0) scale(1)}
+          .af-confirm-close{
+              position:absolute;top:.85rem;right:.95rem;
+              width:2rem;height:2rem;display:flex;align-items:center;justify-content:center;
+              border:none;background:transparent;color:#94a3b8;font-size:1.35rem;line-height:1;
+              border-radius:.6rem;cursor:pointer;
+          }
+          .af-confirm-close:hover{background:#f1f5f9;color:#475569}
+          .af-confirm-icon{
+              width:3.25rem;height:3.25rem;margin-bottom:1rem;
+              display:flex;align-items:center;justify-content:center;
+              background:#fef3c7;color:#d97706;font-size:1.35rem;border-radius:1rem;
+          }
+          .af-confirm-title{font-weight:800;font-size:1.125rem;color:#0f172a;margin:0 0 .5rem}
+          .af-confirm-message{font-size:.9rem;line-height:1.55;color:#64748b;margin:0 0 1.5rem}
+          .af-confirm-actions{display:flex;justify-content:flex-end;gap:.65rem}
+          .af-btn{
+              padding:.625rem 1.25rem;font-size:.875rem;font-weight:600;
+              border-radius:.75rem;cursor:pointer;border:none;transition:all .2s ease;
+          }
+          .af-btn-cancel{background:#f1f5f9;color:#475569}
+          .af-btn-cancel:hover{background:#e2e8f0}
+          .af-btn-ok{background:#2563eb;color:#ffffff;box-shadow:0 8px 22px -12px rgba(37,99,235,.72)}
+          .af-btn-ok:hover{background:#1d4ed8}
+
+          /* Varian destruktif (reject/delete) */
+          .af-confirm-overlay.af-danger .af-confirm-icon{background:#fee2e2;color:#dc2626}
+          .af-confirm-overlay.af-danger .af-btn-ok{background:#dc2626;box-shadow:0 8px 22px -12px rgba(220,38,38,.72)}
+          .af-confirm-overlay.af-danger .af-btn-ok:hover{background:#b91c1c}
+
+          /* Dark mode (class-based, sesuai tailwind.config.darkMode='class') */
+          html.dark .af-confirm-card{background:#0f172a;border-color:#1e293b;box-shadow:0 25px 60px -15px rgba(0,0,0,.7)}
+          html.dark .af-confirm-title{color:#f1f5f9}
+          html.dark .af-confirm-message{color:#94a3b8}
+          html.dark .af-confirm-close:hover{background:#1e293b;color:#cbd5e1}
+          html.dark .af-btn-cancel{background:#1e293b;color:#cbd5e1}
+          html.dark .af-btn-cancel:hover{background:#334155}
+          html.dark .af-confirm-overlay.af-danger .af-confirm-icon{background:#450a0a;color:#f87171}
+      </style>
+
+      <script>
+          window.adminConfirm = function (message, formElement, options) {
+              options = options || {};
+              if (formElement && formElement.dataset.afConfirmed === '1') {
+                  delete formElement.dataset.afConfirmed;
+                  return true;
+              }
+
+              var overlay = document.getElementById('afConfirmOverlay');
+              var msgEl = document.getElementById('afConfirmMessage');
+              var okBtn = document.getElementById('afConfirmOk');
+              var cancelBtn = document.getElementById('afConfirmCancel');
+              var closeBtn = document.getElementById('afConfirmClose');
+              var pendingForm = null;
+
+              function open() {
+                  overlay.classList.toggle('af-danger', !!options.danger);
+                  okBtn.textContent = options.confirmText || 'Ya, Lanjutkan';
+                  overlay.classList.add('af-open');
+                  cancelBtn.focus();
+              }
+              function close() {
+                  overlay.classList.remove('af-open');
+                  pendingForm = null;
+                  document.removeEventListener('keydown', onKeydown);
+              }
+              function confirmNow() {
+                  var form = pendingForm;
+                  close();
+                  if (form) {
+                      form.dataset.afConfirmed = '1';
+                      if (typeof form.requestSubmit === 'function') { form.requestSubmit(); } else { form.submit(); }
+                  }
+              }
+              function onKeydown(e) {
+                  if (e.key === 'Escape') { e.preventDefault(); close(); }
+              }
+
+              msgEl.textContent = message || 'Apakah Anda yakin?';
+
+              okBtn.onclick = confirmNow;
+              cancelBtn.onclick = close;
+              closeBtn.onclick = close;
+              overlay.onclick = function (e) { if (e.target === overlay) close(); };
+              document.addEventListener('keydown', onKeydown);
+
+              pendingForm = formElement || null;
+              open();
+              return false;
+          };
+      </script>
+
+      @include('partials.notification-toasts')
  </body>
 
  </html>

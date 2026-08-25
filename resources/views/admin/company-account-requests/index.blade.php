@@ -54,12 +54,14 @@
                                     <a class="px-3 py-1.5 text-xs font-semibold bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg transition" href="{{ route('admin.company-account-requests.show', $r) }}">Lihat Detail</a>
 
                                     @if($r->request_status==='menunggu')
-                                        <form method="POST" action="{{ route('admin.company-account-requests.approve', $r) }}" class="inline">
+                                        <form method="POST" action="{{ route('admin.company-account-requests.approve', $r) }}"
+                                              onsubmit="return adminConfirm('Setujui permintaan akun perusahaan {{ $r->company_name }}?', this, { confirmText: 'Ya, Setujui' })" class="inline">
                                             @csrf
                                             <button class="px-3 py-1.5 text-xs font-semibold bg-emerald-50 text-emerald-600 hover:bg-emerald-100 rounded-lg transition" type="submit">Setujui</button>
                                         </form>
 
-                                        <form method="POST" action="{{ route('admin.company-account-requests.reject', $r) }}" class="inline">
+                                        <form method="POST" action="{{ route('admin.company-account-requests.reject', $r) }}"
+                                              onsubmit="return adminConfirm('Tolak permintaan akun perusahaan {{ $r->company_name }}? Aksi ini tidak dapat dibatalkan.', this, { danger: true, confirmText: 'Ya, Tolak' })" class="inline">
                                             @csrf
                                             <input type="hidden" name="note" value="Tolak oleh admin">
                                             <button class="px-3 py-1.5 text-xs font-semibold bg-red-50 text-red-600 hover:bg-red-100 rounded-lg transition" type="submit">Tolak</button>
