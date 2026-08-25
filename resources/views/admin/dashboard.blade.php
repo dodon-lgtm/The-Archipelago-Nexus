@@ -120,8 +120,8 @@
                 $metrics = [
                     ['title' => 'Pengguna', 'value' => $totalUsers, 'icon' => 'fa-users', 'color' => 'blue', 'desc' => 'Akun Terdaftar'],
                     ['title' => 'Freelancer', 'value' => $totalFreelancers, 'icon' => 'fa-user-tie', 'color' => 'cyan', 'desc' => 'Talenta Aktif'],
-                    ['title' => 'Perusahaan', 'value' => $totalCompanies, 'icon' => 'fa-building', 'color' => 'indigo', 'desc' => 'Mitra Usaha'],
-                    ['title' => 'Total Proyek', 'value' => $totalProjects, 'icon' => 'fa-folder-open', 'color' => 'sky', 'desc' => 'Proyek Terbuka'],
+                    ['title' => 'Perusahaan', 'value' => $totalCompanies, 'icon' => 'fa-building', 'color' => 'blue', 'desc' => 'Mitra Usaha'],
+                    ['title' => 'Total Proyek', 'value' => $totalProjects, 'icon' => 'fa-folder-open', 'color' => 'cyan', 'desc' => 'Proyek Terbuka'],
                     ['title' => 'Penawaran', 'value' => $totalPenawarans, 'icon' => 'fa-file-invoice', 'color' => 'blue', 'desc' => 'Proposal Masuk'],
                     ['title' => 'Laporan', 'value' => $totalReports, 'icon' => 'fa-flag', 'color' => 'cyan', 'desc' => 'Aduan Sistem']
                 ];
@@ -175,7 +175,7 @@
                 </div>
 
                 {{-- Mini Stats --}}
-                <div class="grid grid-cols-2 gap-x-12 gap-y-5">
+                <div class="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 gap-x-8 xl:gap-x-12 gap-y-5">
                     <div>
                         <p class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 mb-1">Total Pemasukan</p>
                         <p id="statIncome" data-value="{{ $walletIncome }}" class="text-lg font-black text-emerald-400 tracking-tight">+ Rp {{ number_format($walletIncome, 0, ',', '.') }}</p>
@@ -303,12 +303,17 @@
                                 </div>
                             </div>
                         @empty
-                            <div class="pl-12 py-8 text-sm font-semibold text-slate-400">Belum ada proyek terbaru.</div>
+                            <div class="pl-12 py-10 flex flex-col items-start gap-2.5 text-slate-400">
+                                <div class="w-12 h-12 rounded-2xl bg-[#f6f9ff] border border-blue-50 flex items-center justify-center">
+                                    <i class="fa-solid fa-folder-open text-lg text-slate-300"></i>
+                                </div>
+                                <p class="text-sm font-bold">Belum ada proyek terbaru.</p>
+                            </div>
                         @endforelse
                     </div>
                 </div>
 
-                <div class="p-6 bg-[#f6f9ff] text-center">
+                <div class="p-6 border-t border-blue-50 bg-white/50 text-center backdrop-blur-md mt-auto">
                     <a href="{{ route('admin.projects.index') }}" class="text-xs font-black tracking-widest uppercase text-blue-600 hover:text-blue-800 transition-colors">
                         Eksplorasi Proyek <i class="fa-solid fa-arrow-right ml-1"></i>
                     </a>
@@ -319,7 +324,7 @@
             <div class="lg:col-span-5 glass-panel-light rounded-[2.5rem] flex flex-col overflow-hidden relative">
                 <div class="px-8 py-6 flex items-center justify-between border-b border-blue-50">
                     <div class="flex items-center gap-3">
-                        <div class="w-3 h-8 rounded-full bg-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.5)]"></div>
+                        <div class="w-3 h-8 rounded-full bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.5)]"></div>
                         <div>
                             <h2 class="font-black text-slate-900 text-lg tracking-tight">Proposal Masuk</h2>
                             <p class="text-xs font-medium text-slate-500">Tawaran freelancer terkini</p>
@@ -329,13 +334,13 @@
 
                 <div class="flex-1 p-6 space-y-3">
                     @forelse($recentPenawarans as $penawaran)
-                        <div class="flex items-center justify-between p-4 rounded-2xl bg-white border border-blue-50 hover:border-indigo-200 hover:shadow-md transition-all group">
+                        <div class="flex items-center justify-between p-4 rounded-2xl bg-white border border-blue-50 hover:border-blue-200 hover:shadow-md transition-all group">
                             <div class="flex-1 min-w-0 pr-4">
                                 <p class="text-sm font-extrabold text-slate-900 truncate">{{ $penawaran->freelancer->name ?? '—' }}</p>
                                 <p class="text-xs text-slate-500 mt-1 truncate">
                                     {{ $penawaran->project->project_name ?? '—' }}
                                 </p>
-                                <p class="text-xs font-black text-indigo-600 mt-1">Rp {{ number_format($penawaran->harga_penawaran) }}</p>
+                                <p class="text-xs font-black text-blue-600 mt-1">Rp {{ number_format($penawaran->harga_penawaran) }}</p>
                             </div>
                             <div class="shrink-0">
                                 <span class="text-[10px] px-3 py-1.5 rounded-xl font-bold border
@@ -352,7 +357,7 @@
                 </div>
 
                 <div class="p-6 bg-[#f6f9ff] text-center mt-auto">
-                    <a href="{{ route('admin.penawarans.index') }}" class="text-xs font-black tracking-widest uppercase text-indigo-600 hover:text-indigo-800 transition-colors">
+                    <a href="{{ route('admin.penawarans.index') }}" class="text-xs font-black tracking-widest uppercase text-blue-600 hover:text-blue-800 transition-colors">
                         Kelola Proposal <i class="fa-solid fa-arrow-right ml-1"></i>
                     </a>
                 </div>
@@ -608,6 +613,10 @@
                 document.getElementById('withdrawModal').classList.add('hidden');
                 document.getElementById('withdrawModal').classList.remove('flex');
             }
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') closeWithdrawModal();
+            });
 
             function formatWithdrawAmount(input) {
                 const digits = input.value.replace(/[^\d]/g, '');
