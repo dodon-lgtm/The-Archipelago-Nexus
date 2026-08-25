@@ -211,7 +211,7 @@
                         <div class="space-y-4">
                             {{-- Release Full --}}
                             <form method="POST" action="{{ route('admin.reports.release-funds', $report) }}"
-                                  onsubmit="return confirm('Yakin merilis SELURUH dana ke freelancer? Aksi tercatat di ledger dan tidak dapat dibatalkan.')">
+                                  onsubmit="return adminConfirm('Yakin merilis SELURUH dana ke freelancer? Aksi tercatat di ledger dan tidak dapat dibatalkan.', this)">
                                 @csrf
                                 <textarea name="admin_note" rows="2" required placeholder="Alasan keputusan (wajib)..."
                                           class="w-full rounded-xl border-blue-100 bg-[#f6f9ff] px-4 py-2.5 text-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none"></textarea>
@@ -223,7 +223,7 @@
 
                             {{-- Refund Full --}}
                             <form method="POST" action="{{ route('admin.reports.refund-funds', $report) }}"
-                                  onsubmit="return confirm('Yakin merefund SELURUH dana ke company? Aksi tercatat di ledger dan tidak dapat dibatalkan.')">
+                                  onsubmit="return adminConfirm('Yakin merefund SELURUH dana ke company? Aksi tercatat di ledger dan tidak dapat dibatalkan.', this)">
                                 @csrf
                                 <textarea name="admin_note" rows="2" required placeholder="Alasan keputusan (wajib)..."
                                           class="w-full rounded-xl border-blue-100 bg-[#f6f9ff] px-4 py-2.5 text-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none"></textarea>
@@ -235,7 +235,7 @@
 
                             {{-- Split / Partial --}}
                             <form method="POST" action="{{ route('admin.reports.split-funds', $report) }}"
-                                  onsubmit="return confirm('Yakin melakukan pembagian dana (split)? Aksi tercatat di ledger dan tidak dapat dibatalkan.')">
+                                  onsubmit="return adminConfirm('Yakin melakukan pembagian dana (split)? Aksi tercatat di ledger dan tidak dapat dibatalkan.', this)">
                                 @csrf
                                 <textarea name="admin_note" rows="2" required placeholder="Alasan keputusan (wajib)..."
                                           class="w-full rounded-xl border-blue-100 bg-[#f6f9ff] px-4 py-2.5 text-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none"></textarea>
@@ -281,7 +281,7 @@
 
                 @if($report->penawaran_id)
                     {{-- Laporan memiliki penawaran -> tombol Hapus Penawaran --}}
-                    <form method="POST" action="{{ route('admin.reports.destroy-penawaran', $report) }}" onsubmit="return confirm('Yakin ingin menghapus penawaran ini? Penawaran yang dihapus tidak dapat dikembalikan.')">
+                    <form method="POST" action="{{ route('admin.reports.destroy-penawaran', $report) }}" onsubmit="return adminConfirm('Yakin ingin menghapus penawaran ini? Penawaran yang dihapus tidak dapat dikembalikan.', this)">
                         @csrf
                         <button type="submit" class="w-full px-4 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-xl text-sm font-semibold transition flex items-center justify-center gap-2">
                             <i class="fa-solid fa-trash-can"></i>
@@ -290,7 +290,7 @@
                     </form>
                 @elseif($report->project_id)
                     {{-- Laporan memiliki project (tanpa penawaran) -> tombol Hapus Project --}}
-                    <form method="POST" action="{{ route('admin.reports.destroy-project', $report) }}" onsubmit="return confirm('Yakin ingin menghapus project ini? Project yang dihapus tidak dapat dikembalikan.')">
+                    <form method="POST" action="{{ route('admin.reports.destroy-project', $report) }}" onsubmit="return adminConfirm('Yakin ingin menghapus project ini? Project yang dihapus tidak dapat dikembalikan.', this)">
                         @csrf
                         <button type="submit" class="w-full px-4 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-xl text-sm font-semibold transition flex items-center justify-center gap-2">
                             <i class="fa-solid fa-trash-can"></i>

@@ -22,7 +22,7 @@
                 {{-- Release to Freelancer --}}
                 @if($canRelease)
                     <form method="POST" action="{{ route('admin.workspace.resolution.decide', $workspace) }}"
-                      onsubmit="return confirm('Yakin merilis dana ke Freelancer? Aksi tercatat di ledger dan tidak dapat dibatalkan.')">
+                      onsubmit="return adminConfirm('Yakin merilis dana ke Freelancer? Aksi tercatat di ledger dan tidak dapat dibatalkan.', this)">
                         @csrf
                         @method('POST')
                         <input type="hidden" name="action" value="release_to_freelancer">
@@ -40,7 +40,7 @@
                 {{-- Refund to Company --}}
                 @if($canRefund)
                     <form method="POST" action="{{ route('admin.workspace.resolution.decide', $workspace) }}"
-                      onsubmit="return confirm('Yakin merefund dana ke Company? Aksi tercatat di ledger dan tidak dapat dibatalkan.')">
+                      onsubmit="return adminConfirm('Yakin merefund dana ke Company? Aksi tercatat di ledger dan tidak dapat dibatalkan.', this)">
                         @csrf
                         @method('POST')
                         <input type="hidden" name="action" value="refund_to_company">
@@ -250,7 +250,7 @@
             <div class="space-y-3">
                 {{-- Minta Respons Company --}}
                 <form method="POST" action="{{ route('admin.workspace.resolution.request-company-response', $workspace) }}"
-                  onsubmit="return confirm('Yakin ingin meminta respons dari Company?')">
+                  onsubmit="return adminConfirm('Yakin ingin meminta respons dari Company?', this)">
                     @csrf
                     <textarea name="message" rows="2" required placeholder="Pesan untuk Company..."
                       class="w-full rounded-xl border-blue-100 bg-[#f6f9ff] px-4 py-2.5 text-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none"></textarea>
@@ -266,7 +266,7 @@
 
                 {{-- Minta Respons Freelancer --}}
                 <form method="POST" action="{{ route('admin.workspace.resolution.request-freelancer-response', $workspace) }}"
-                  onsubmit="return confirm('Yakin ingin meminta respons dari Freelancer?')">
+                  onsubmit="return adminConfirm('Yakin ingin meminta respons dari Freelancer?', this)">
                     @csrf
                     <textarea name="message" rows="2" required placeholder="Pesan untuk Freelancer..."
                       class="w-full rounded-xl border-blue-100 bg-[#f6f9ff] px-4 py-2.5 text-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none"></textarea>
@@ -282,7 +282,7 @@
 
                 {{-- Mulai Review --}}
                 <form method="POST" action="{{ route('admin.workspace.resolution.start-review', $workspace) }}"
-                  onsubmit="return confirm('Yakin ingin memulai peninjauan resolusi?')">
+                  onsubmit="return adminConfirm('Yakin ingin memulai peninjauan resolusi?', this)">
                     @csrf
                     <button type="submit"
                             class="w-full px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-sm font-semibold transition">

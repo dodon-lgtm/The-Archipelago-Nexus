@@ -119,7 +119,7 @@
                     <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                         @if($withdrawal->status === 'menunggu')
                             <form method="POST" action="{{ route('admin.withdrawals.process', $withdrawal) }}"
-                                  onsubmit="return confirm('Proses penarikan ini? Status berubah menjadi Diproses.')">
+                                  onsubmit="return adminConfirm('Proses penarikan ini? Status berubah menjadi Diproses.', this)">
                                 @csrf
                                 <button type="submit"
                                         class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 bg-blue-500 text-white rounded-xl text-sm font-semibold hover:bg-blue-600 transition">
@@ -129,7 +129,7 @@
                         @endif
 
                         <form method="POST" action="{{ route('admin.withdrawals.approve', $withdrawal) }}"
-                              onsubmit="return confirm('Setujui dan cairkan dana ini? Ini hanya simulasi payout, tidak ada uang sungguhan yang dikirim.')">
+                              onsubmit="return adminConfirm('Setujui dan cairkan dana ini? Ini hanya simulasi payout, tidak ada uang sungguhan yang dikirim.', this)">
                             @csrf
                             <button type="submit"
                                     class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 bg-emerald-500 text-white rounded-xl text-sm font-semibold hover:bg-emerald-600 transition">

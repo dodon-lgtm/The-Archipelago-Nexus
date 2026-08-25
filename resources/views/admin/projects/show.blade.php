@@ -87,7 +87,7 @@
             <div class="bg-white rounded-2xl border border-red-200 shadow-sm p-5">
                 <h3 class="font-bold text-red-600 text-sm mb-1">Hapus Proyek</h3>
                 <p class="text-xs text-slate-500 mb-3">Tindakan ini permanen.</p>
-                <form method="POST" action="{{ route('admin.projects.destroy', $project) }}" onsubmit="return confirm('Yakin ingin menghapus?')">
+                <form method="POST" action="{{ route('admin.projects.destroy', $project) }}" onsubmit="return adminConfirm('Yakin ingin menghapus?', this)">
                     @csrf @method('DELETE')
                     <button type="submit" class="w-full px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl text-sm font-semibold transition"><i class="fa-solid fa-trash-can mr-1"></i> Hapus Proyek</button>
                 </form>
