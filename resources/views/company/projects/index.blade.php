@@ -265,6 +265,14 @@
                                                     {{ $project->penawarans->count() }} Penawaran
                                                 </span>
                                             @endif
+                                            @if(($negoUnreadByProject[$project->id] ?? 0) > 0)
+                                                <span data-nego-unread-project="{{ $project->id }}"
+                                                    class="inline-flex items-center gap-1.5 text-white bg-red-500 border border-red-500 px-2.5 py-1 rounded-lg shadow-sm">
+                                                    <i class="fa-solid fa-comment-dots text-[10px]"></i>
+                                                    {{ $negoUnreadByProject[$project->id] }}
+                                                    Pesan Negosiasi
+                                                </span>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>

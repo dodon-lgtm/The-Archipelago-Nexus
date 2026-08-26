@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\NegotiationMessage;
+use App\Models\Notification;
 use App\Models\Penawaran;
+use App\Models\User;
+use App\Services\NotificationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,6 +19,15 @@ class NegotiationController extends Controller
     public function getMessages(Penawaran $penawaran): JsonResponse
     {
         $this->authorizeAccess($penawaran);
+
+        // Membuka percakapan = membaca pesan: tandai notifikasi negosiasi
+        // milik user ini untuk penawaran INI saja sebagai sudah dibaca,
+        // memakai mekanisme read/unread Notification yang sudah ada.
+        Notification::where('user_id', Auth::id())
+            ->where('type', 'negotiation.message')
+            ->where('penawaran_id', $penawaran->id)
+            ->where('is_read', false)
+            ->update(['is_read' => true, 'read_at' => now()]);
 
         $messages = NegotiationMessage::with('sender:id,name')
             ->where('penawaran_id', $penawaran->id)
@@ -34,6 +46,8 @@ class NegotiationController extends Controller
                 'estimasi_hari'  => (int) $penawaran->estimasi_hari,
                 'status'         => $penawaran->status,
             ],
+            // Selalu 0: percakapan baru saja ditandai seluruhnya terbaca.
+            'unread_negotiation_count' => 0,
         ]);
     }
 
@@ -78,6 +92,8 @@ class NegotiationController extends Controller
                 : null,
             'status'         => NegotiationMessage::STATUS_PENDING,
         ]);
+
+        $this->notifyCounterparty($penawaran, $user, $senderType);
 
         return response()->json([
             'success' => true,
@@ -128,6 +144,39 @@ class NegotiationController extends Controller
             'success' => true,
             'message' => $this->serialize($negotiation),
         ]);
+    }
+
+    /**
+     * Kirim notifikasi ke pihak LAWAN pengirim pesan negosiasi.
+     *
+     * Company mengirim  → recipient = freelancer pemilik penawaran.
+     * Freelancer mengirim → recipient = company pemilik proyek.
+     */
+    private function notifyCounterparty(Penawaran $penawaran, User $user, string $senderType): void
+    {
+        $project = $penawaran->project;
+
+        $recipientId = $senderType === 'company'
+            ? (int) $penawaran->freelancer_id
+            : (int) ($project?->user_id ?? 0);
+
+        // Jangan kirim notifikasi ke diri sendiri / jika penerima tidak valid.
+        if ($recipientId <= 0 || $recipientId === (int) $user->id) {
+            return;
+        }
+
+        NotificationService::sendTo(
+            user: $recipientId,
+            type: 'negotiation.message',
+            title: 'Pesan Negosiasi Baru',
+            message: $user->name . ' mengirim pesan negosiasi untuk proyek "' . ($project?->project_name ?? '-') . '".',
+            redirect: $senderType === 'company'
+                ? route('freelancer.lamaran')
+                : route('company.projects.show', $project),
+            senderId: $user->id,
+            penawaranId: $penawaran->id,
+            projectId: $project?->id,
+        );
     }
 
     /**

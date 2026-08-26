@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Freelancer;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use App\Models\Penawaran;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -27,7 +28,19 @@ class ProjectOfferController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view('freelancer.lamaran', compact('lamaran'));
+        // Jumlah pesan negosiasi unread per lamaran (satu query agregat,
+        // diambil dari tabel notifications yang sudah ada — bukan sistem baru).
+        $penawaranIds = $lamaran->getCollection()->pluck('id');
+        $negoUnread = Notification::query()
+            ->where('user_id', Auth::id())
+            ->where('type', 'negotiation.message')
+            ->where('is_read', false)
+            ->whereIn('penawaran_id', $penawaranIds)
+            ->selectRaw('penawaran_id, COUNT(*) as total')
+            ->groupBy('penawaran_id')
+            ->pluck('total', 'penawaran_id');
+
+        return view('freelancer.lamaran', compact('lamaran', 'negoUnread'));
     }
 
     /**

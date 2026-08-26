@@ -498,7 +498,10 @@
                 ========================================================== --}}
                 @php
                     $hasAccepted = $project->penawarans->contains(fn($p) => $p->status === 'Diterima');
-                    
+
+                    // Statistik harga dari database (bukan disimpan sebagai penawaran baru).
+                    $rataRataHarga = $project->penawarans->avg('harga_penawaran');
+
                     // Siapkan array JSON untuk Alpine.js
                     $penawaranData = $project->penawarans->map(function($p) {
                         $foto = optional($p->freelancer->freelanceProfile)->photo;
@@ -509,7 +512,7 @@
                             'freelancer_id' => $p->freelancer_id,
                             'nama' => optional($p->freelancer)->name,
                             'foto' => $photoUrl,
-                            'harga' => $p->harga_penawaran,
+                            'harga' => (float) $p->harga_penawaran,
                             'pesan' => $p->pesan ?? '',
                             'status' => $p->status,
                         ];
@@ -545,9 +548,17 @@
                             </div>
                         </div>
 
-                        <div class="inline-flex items-center gap-2 px-3 py-2 bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded-lg text-xs font-semibold w-fit">
-                            <i class="fa-solid fa-users"></i>
-                            <span x-text="filteredItems.length"></span> / {{ $project->penawarans->count() }} Penawaran
+                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full md:w-auto">
+                            <div class="inline-flex items-center gap-2 px-3 py-2 bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded-lg text-xs font-semibold w-fit">
+                                <i class="fa-solid fa-users"></i>
+                                <span x-text="filteredItems.length"></span> / {{ $project->penawarans->count() }} Penawaran
+                            </div>
+                            @if($project->penawarans->isNotEmpty())
+                                <div class="inline-flex items-center gap-2 px-3 py-2 bg-emerald-50 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 rounded-lg text-xs font-semibold w-fit">
+                                    <i class="fa-solid fa-chart-simple"></i>
+                                    Rata-rata: Rp {{ number_format($rataRataHarga, 0, ',', '.') }}
+                                </div>
+                            @endif
                         </div>
                     </div>
 
@@ -597,6 +608,24 @@
                                         class="px-3 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors">
                                     Ditolak
                                 </button>
+
+                                <span class="w-px h-6 bg-slate-200 dark:bg-slate-700 mx-1 shrink-0"></span>
+
+                                <a href="{{ route('company.projects.show', $project) }}"
+                                   :class="priceSort === 'default' ? 'bg-blue-600 text-white' : 'bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700'"
+                                   class="px-3 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors">
+                                    Terbaru
+                                </a>
+                                <a href="{{ route('company.projects.show', array_merge([$project], ['sort' => 'harga_tertinggi'])) }}"
+                                   :class="'{{ request('sort') }}' === 'harga_tertinggi' ? 'bg-blue-600 text-white' : 'bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700'"
+                                   class="px-3 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors">
+                                    Harga Tertinggi
+                                </a>
+                                <a href="{{ route('company.projects.show', array_merge([$project], ['sort' => 'harga_terendah'])) }}"
+                                   :class="'{{ request('sort') }}' === 'harga_terendah' ? 'bg-blue-600 text-white' : 'bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700'"
+                                   class="px-3 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors">
+                                    Harga Terendah
+                                </a>
                             </div>
                         </div>
                     @endif
@@ -698,8 +727,9 @@
                                     >
 
                                         {{-- BARIS RINGKAS (SELALU TAMPIL) --}}
+                                        {{-- Klik pada tombol chat negosiasi tidak men-toggle dropdown --}}
                                         <div
-                                            @click="open = !open"
+                                            @click="if (! $event.target.closest('[data-negosiasi-row-chat]')) open = !open"
                                             @keydown.enter="open = !open"
                                             role="button"
                                             tabindex="0"
@@ -742,6 +772,27 @@
                                                     Rp {{ number_format($penawaran->harga_penawaran, 0, ',', '.') }}
                                                 </p>
                                             </div>
+
+                                            {{-- CHAT NEGOSIASI + BADGE UNREAD (terlihat tanpa membuka dropdown) --}}
+                                            @php
+                                                $negoCount = (int) ($negoUnread[$penawaran->id] ?? 0);
+                                            @endphp
+                                            <button type="button"
+                                                data-negosiasi-row-chat="1"
+                                                data-negosiasi-open="{{ $penawaran->id }}"
+                                                data-project-title="{{ $project->project_name }}"
+                                                data-peer-name="{{ $penawaran->freelancer->name ?? 'Freelancer' }}"
+                                                data-peer-type="freelancer"
+                                                class="relative shrink-0 w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900/50 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/60 flex items-center justify-center transition-colors"
+                                                aria-label="Chat negosiasi dengan {{ $penawaran->freelancer->name ?? 'Freelancer' }}">
+                                                <i class="fa-regular fa-comment-dots"></i>
+                                                @if($negoCount > 0)
+                                                    <span data-nego-unread="{{ $penawaran->id }}"
+                                                        class="absolute -top-1.5 -right-1.5 inline-flex items-center justify-center min-w-[1.15rem] h-[1.15rem] px-1 rounded-full bg-red-500 text-white text-[10px] font-extrabold leading-none border-2 border-white dark:border-slate-900 shadow-sm">
+                                                        {{ $negoCount > 9 ? '9+' : $negoCount }}
+                                                    </span>
+                                                @endif
+                                            </button>
 
                                             {{-- STATUS --}}
                                             <div class="shrink-0">
@@ -823,6 +874,12 @@
                                                         data-peer-type="freelancer"
                                                         class="inline-flex items-center gap-2 px-4 py-2 border border-blue-200 dark:border-blue-900/50 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 rounded-lg text-xs font-bold hover:bg-blue-100 dark:hover:bg-blue-900/60 transition-colors">
                                                         <i class="fa-regular fa-comments"></i> Negosiasi
+                                                        @if(($negoUnread[$penawaran->id] ?? 0) > 0)
+                                                            <span data-nego-unread="{{ $penawaran->id }}"
+                                                                class="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full bg-red-500 text-white text-[10px] font-extrabold leading-none shadow-sm">
+                                                                {{ ($negoUnread[$penawaran->id] > 9) ? '9+' : $negoUnread[$penawaran->id] }}
+                                                            </span>
+                                                        @endif
                                                     </button>
 
                                                     <a href="{{ route('company.reports.create', ['penawaran_id' => $penawaran->id]) }}"

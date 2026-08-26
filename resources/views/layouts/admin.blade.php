@@ -533,7 +533,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                      const icon = getNotifIcon(notif.type);
 
                      html += `
-                        <div class="notification-item p-4 border-b border-slate-50 cursor-pointer hover:bg-[#f6f9ff] transition ${isUnread ? 'bg-blue-50/40' : ''}" data-url="${redirectUrl}">
+                        <div class="notification-item p-4 border-b border-slate-50 cursor-pointer hover:bg-[#f6f9ff] transition ${isUnread ? 'bg-blue-50/40' : ''}" data-id="${notif.id}" data-url="${redirectUrl}">
                             <div class="flex items-start gap-3">
                                 <div class="w-8 h-8 rounded-full bg-brand/10 text-brand flex items-center justify-center shrink-0 text-sm">
                                     <i class="${icon}"></i>
@@ -555,10 +555,34 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
                  document.querySelectorAll('.notification-item').forEach(item => {
                      item.addEventListener('click', function() {
+                         const id = this.dataset.id;
                          const url = this.dataset.url;
-                         if (url && url !== '#') {
-                             window.location.href = url;
-                         }
+
+                         fetch('{{ url("/notifications") }}/' + id + '/read', {
+                                 method: 'POST',
+                                 headers: {
+                                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                     'Content-Type': 'application/json',
+                                     'Accept': 'application/json'
+                                 }
+                             })
+                             .then(res => res.ok ? res.json() : Promise.reject('Failed'))
+                             .then(data => {
+                                 if (typeof data.unread_count !== 'undefined') {
+                                     updateBadge(data.unread_count);
+                                 }
+                                 if (data.redirect_url) {
+                                     window.location.href = data.redirect_url;
+                                 } else if (url && url !== '#') {
+                                     window.location.href = url;
+                                 }
+                             })
+                             .catch(err => {
+                                 console.error('Mark read error:', err);
+                                 if (url && url !== '#') {
+                                     window.location.href = url;
+                                 }
+                             });
                      });
                  });
              }

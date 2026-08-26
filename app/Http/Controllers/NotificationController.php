@@ -101,8 +101,14 @@ class NotificationController extends Controller
             }
         }
 
+        // Hitung ulang jumlah unread aktual milik user (sinkron dengan database).
+        $unreadCount = Notification::where('user_id', Auth::id())
+            ->where('is_read', false)
+            ->count();
+
         return response()->json([
             'redirect_url' => $redirectUrl ?? url('/'),
+            'unread_count' => $unreadCount,
         ]);
     }
 

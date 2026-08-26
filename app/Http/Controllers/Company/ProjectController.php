@@ -5,16 +5,18 @@ namespace App\Http\Controllers\Company;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Company\ProjectStoreRequest;
 use App\Http\Requests\Company\ProjectUpdateRequest;
+use App\Models\Message;
+use App\Models\Notification;
+use App\Models\Payment;
 use App\Models\Penawaran;
+use App\Models\ProgressHistory;
 use App\Models\Project;
 use App\Models\Workspace;
-use App\Models\Payment;
-use App\Models\ProgressHistory;
-use App\Models\Message;
 use App\Services\NotificationService;
 use App\Services\ProfileCompletionService;
 use App\Services\ProjectQuotaService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -32,7 +34,34 @@ class ProjectController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view('company.projects.index', compact('projects'));
+        // Badge negosiasi unread per project (2 query agregat, tanpa N+1).
+        // Sumber data: tabel notifications existing (type negotiation.message),
+        // selalu dibatasi user_id = company yang sedang login.
+        $projectIds = $projects->getCollection()->pluck('id');
+        $negoUnreadByProject = collect();
+
+        if ($projectIds->isNotEmpty()) {
+            $penawaranProjectMap = Penawaran::whereIn('project_id', $projectIds)
+                ->pluck('project_id', 'id');
+
+            $unreadPerPenawaran = Notification::query()
+                ->where('user_id', Auth::id())
+                ->where('type', 'negotiation.message')
+                ->where('is_read', false)
+                ->whereIn('penawaran_id', $penawaranProjectMap->keys())
+                ->selectRaw('penawaran_id, COUNT(*) as total')
+                ->groupBy('penawaran_id')
+                ->pluck('total', 'penawaran_id');
+
+            foreach ($penawaranProjectMap as $penawaranId => $projectId) {
+                $total = (int) ($unreadPerPenawaran[$penawaranId] ?? 0);
+                if ($total > 0) {
+                    $negoUnreadByProject[$projectId] = ($negoUnreadByProject[$projectId] ?? 0) + $total;
+                }
+            }
+        }
+
+        return view('company.projects.index', compact('projects', 'negoUnreadByProject'));
     }
 
     /**
@@ -195,14 +224,42 @@ class ProjectController extends Controller
         }
     }
 
-    public function show(Project $project): View
+    public function show(Project $project, Request $request): View
     {
         $this->authorizeCompanyProject($project);
-        $project->load(['penawarans.freelancer', 'workspace']);
+
+        // Urutan daftar penawaran:
+        // - default : terbaru di atas (created_at desc)
+        // - harga_tertinggi / harga_terendah : diurutkan di database
+        $sort = $request->query('sort');
+
+        $penawaranQuery = $project->penawarans()->with('freelancer.freelanceProfile');
+
+        $penawaranQuery = match ($sort) {
+            'harga_tertinggi' => $penawaranQuery->orderByDesc('harga_penawaran')->latest(),
+            'harga_terendah'  => $penawaranQuery->orderBy('harga_penawaran')->latest(),
+            default           => $penawaranQuery->latest(),
+        };
+
+        $project->setRelation('penawarans', $penawaranQuery->get());
+
+        // Jumlah pesan negosiasi unread per penawaran milik company ini
+        // (satu query agregat ke tabel notifications existing).
+        $penawaranIds = $project->penawarans->pluck('id');
+        $negoUnread = $penawaranIds->isNotEmpty()
+            ? Notification::query()
+                ->where('user_id', Auth::id())
+                ->where('type', 'negotiation.message')
+                ->where('is_read', false)
+                ->whereIn('penawaran_id', $penawaranIds)
+                ->selectRaw('penawaran_id, COUNT(*) as total')
+                ->groupBy('penawaran_id')
+                ->pluck('total', 'penawaran_id')
+            : collect();
 
         $lock = $this->workflowLock($project);
 
-        return view('company.projects.show', compact('project', 'lock'));
+        return view('company.projects.show', compact('project', 'lock', 'negoUnread'));
     }
 
     public function edit(Project $project): View

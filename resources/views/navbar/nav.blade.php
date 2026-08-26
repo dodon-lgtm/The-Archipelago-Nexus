@@ -909,11 +909,20 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .then(res => res.ok ? res.json() : Promise.reject('Failed'))
         .then(data => {
+            // Badge diupdate dari unread_count aktual di database, bukan count--.
+            if (typeof data.unread_count !== 'undefined') {
+                updateBadge(data.unread_count);
+            }
             if (data.redirect_url) window.location.href = data.redirect_url;
             else if (redirectUrl) window.location.href = redirectUrl;
             else fetchNotifications();
         })
-        .catch(err => console.error('Mark read error:', err));
+        .catch(err => {
+            console.error('Mark read error:', err);
+            // UX redirect tetap dijaga, tapi notifikasi tetap unread di server.
+            if (redirectUrl) window.location.href = redirectUrl;
+            else fetchNotifications();
+        });
     }
 
     if (markAllBtn) {

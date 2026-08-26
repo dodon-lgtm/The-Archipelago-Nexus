@@ -88,6 +88,31 @@
         return div.innerHTML;
     }
 
+    // Hanya menerima angka; tampil dengan pemisah ribuan id-ID (1.000.000).
+    // Nilai yang dikirim ke backend tetap angka bersih (digit saja).
+    function formatRibuan(value) {
+        const digits = String(value ?? '').replace(/[^\d]/g, '').replace(/^0+(?=\d)/, '');
+        return digits === '' ? '' : Number(digits).toLocaleString('id-ID');
+    }
+
+    function initPriceFormatter() {
+        const priceEl = document.getElementById('negoProposedPrice');
+        if (!priceEl || priceEl.dataset.ribuanBound === '1') return;
+        priceEl.dataset.ribuanBound = '1';
+        priceEl.addEventListener('input', function () {
+            const cursorAtEnd = this.selectionStart === this.value.length;
+            const formatted = formatRibuan(this.value);
+            if (formatted !== this.value) {
+                this.value = formatted;
+                if (cursorAtEnd) this.setSelectionRange(this.value.length, this.value.length);
+            }
+        });
+        // Pengaman terakhir sebelum kirim: pastikan isinya angka berformat.
+        priceEl.addEventListener('blur', function () {
+            this.value = formatRibuan(this.value);
+        });
+    }
+
     function offerCard(msg) {
         const price = formatRp(msg.proposed_price);
         const days = msg.proposed_days;
@@ -178,6 +203,12 @@
             }
             messagesLoaded = true;
             scrollToBottom();
+
+            // Percakapan sudah dibuka → server menandai notifikasi terkait
+            // sebagai read. Hilangkan badge unread untuk penawaran ini di
+            // halaman agar konsisten dengan database.
+            document.querySelectorAll('[data-nego-unread="' + currentPenawaranId + '"]')
+                .forEach(function (badgeEl) { badgeEl.remove(); });
         })
         .catch(err => {
             box.innerHTML = '<div class="text-center py-10 text-red-500 text-xs">' + esc(err.message || 'Terjadi kesalahan') + '</div>';
@@ -195,6 +226,7 @@
         document.getElementById('negoProposedPrice').value = '';
         document.getElementById('negoProposedDays').value = '';
         document.getElementById('negoOfferInputs').style.display = (CURRENT_ROLE === 'company') ? 'grid' : 'none';
+        initPriceFormatter();
         modal.classList.remove('hidden');
         modal.classList.add('flex');
         document.body.style.overflow = 'hidden';

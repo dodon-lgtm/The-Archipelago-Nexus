@@ -332,6 +332,12 @@
                                                 class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/40 dark:hover:bg-blue-900/60 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900/50 text-xs font-bold rounded-xl transition">
                                                 <i class="fa-regular fa-comments"></i>
                                                 <span>Negosiasi</span>
+                                                @if(($negoUnread[$item->id] ?? 0) > 0)
+                                                    <span data-nego-unread="{{ $item->id }}"
+                                                        class="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full bg-red-500 text-white text-[10px] font-extrabold leading-none shadow-sm">
+                                                        {{ $negoUnread[$item->id] > 9 ? '9+' : $negoUnread[$item->id] }}
+                                                    </span>
+                                                @endif
                                             </button>
 
                                             <a href="{{ route('freelancer.projects.show', $item->project) }}"

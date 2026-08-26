@@ -45,10 +45,10 @@
             {{-- NAVIGASI --}}
             <div class="md:col-span-3 md:col-start-7 space-y-5">
 
-                <h4 class="text-[11px] font-black text-blue-400 dark:text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                {{-- <h4 class="text-[11px] font-black text-blue-400 dark:text-slate-400 uppercase tracking-widest flex items-center gap-2">
                     <i class="fa-solid fa-compass text-blue-300 dark:text-slate-500"></i>
                     Navigasi Inti
-                </h4>
+                </h4> --}}
 
                 <div class="flex flex-col gap-3 text-sm font-semibold text-blue-900/70 dark:text-slate-400">
 
@@ -57,20 +57,20 @@
                         Cari Lowongan
                     </a> --}}
 
-                    <a href="#" class="hover:text-blue-600 dark:hover:text-blue-400 hover:translate-x-1 transition-all duration-300 flex items-center gap-2">
+                    {{-- <a href="#" class="hover:text-blue-600 dark:hover:text-blue-400 hover:translate-x-1 transition-all duration-300 flex items-center gap-2">
                         <span class="w-1 h-1 rounded-full bg-blue-300 dark:bg-slate-600"></span>
                         Database Talent
-                    </a>
+                    </a> --}}
 
                     {{-- <a href="#" class="hover:text-blue-600 dark:hover:text-blue-400 hover:translate-x-1 transition-all duration-300 flex items-center gap-2">
                         <span class="w-1 h-1 rounded-full bg-blue-300 dark:bg-slate-600"></span>
                         Protokol Kerja
                     </a> --}}
 
-                    <a href="#" class="hover:text-blue-600 dark:hover:text-blue-400 hover:translate-x-1 transition-all duration-300 flex items-center gap-2">
+                    {{-- <a href="#" class="hover:text-blue-600 dark:hover:text-blue-400 hover:translate-x-1 transition-all duration-300 flex items-center gap-2">
                         <span class="w-1 h-1 rounded-full bg-blue-300 dark:bg-slate-600"></span>
                         Laporkan Bug
-                    </a>
+                    </a> --}}
 
                 </div>
             </div>
