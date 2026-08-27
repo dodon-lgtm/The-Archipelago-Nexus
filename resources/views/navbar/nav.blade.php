@@ -9,17 +9,44 @@
 <header class="flex md:hidden h-14 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-b border-blue-100 dark:border-slate-800 px-3 items-center justify-between sticky top-0 z-40 shadow-sm">
     <a href="{{ url('/') }}" class="text-base font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-blue-500 tracking-tight">LABS</a>
     <div class="flex items-center gap-2">
-        <button id="notificationButtonMobile" aria-label="Notifikasi" class="relative w-8 h-8 rounded-xl border border-blue-100 dark:border-slate-700 flex items-center justify-center text-blue-600">
-            <i class="fa-regular fa-bell text-sm"></i>
-            <span id="notificationBadgeMobile" class="absolute -top-1 -right-1 min-w-[16px] h-[16px] rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center px-1 hidden"></span>
-        </button>
-        <button id="userButtonMobile" aria-label="Profil" class="w-8 h-8 rounded-lg overflow-hidden bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white">
-            @if(Auth::user()->companyProfile && Auth::user()->companyProfile->company_logo)
-                <img src="{{ asset('storage/' . Auth::user()->companyProfile->company_logo) }}" class="w-full h-full object-cover">
-            @else
-                <i class="fa-solid fa-user text-xs"></i>
-            @endif
-        </button>
+        <div class="relative">
+            <button id="notificationButtonMobile" aria-label="Notifikasi" class="relative w-8 h-8 rounded-xl border border-blue-100 dark:border-slate-700 flex items-center justify-center text-blue-600">
+                <i class="fa-regular fa-bell text-sm"></i>
+                <span id="notificationBadgeMobile" class="absolute -top-1 -right-1 min-w-[16px] h-[16px] rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center px-1 hidden"></span>
+            </button>
+            <div id="notificationDropdownMobile" class="hidden absolute right-0 mt-3 w-[min(340px,calc(100vw-1rem))] bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl rounded-2xl border border-blue-100 dark:border-slate-800 shadow-[0_20px_50px_-10px_rgba(30,58,138,0.2)] overflow-hidden z-[100]">
+                <div class="p-4 border-b border-blue-50/50 dark:border-slate-800 flex items-center justify-between">
+                    <h3 class="font-black text-xs text-blue-950 dark:text-white">Notifikasi</h3>
+                    <button id="markAllReadBtnMobile" class="text-[10px] text-blue-500 font-bold">Tandai dibaca</button>
+                </div>
+                <div id="notificationListMobile" class="max-h-[320px] overflow-y-auto">
+                    <div class="p-6 text-center text-xs text-slate-400">Tidak ada notifikasi</div>
+                </div>
+            </div>
+        </div>
+        <div class="relative">
+            <button id="userButtonMobile" aria-label="Profil" class="w-8 h-8 rounded-lg overflow-hidden bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white">
+                @if(Auth::user()->companyProfile && Auth::user()->companyProfile->company_logo)
+                    <img src="{{ asset('storage/' . Auth::user()->companyProfile->company_logo) }}" class="w-full h-full object-cover">
+                @else
+                    <i class="fa-solid fa-user text-xs"></i>
+                @endif
+            </button>
+            <div id="userDropdownMobile" class="hidden absolute right-0 mt-3 w-64 bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl rounded-2xl border border-blue-100 dark:border-slate-800 shadow-[0_20px_50px_-10px_rgba(30,58,138,0.2)] overflow-hidden z-[100]">
+                <div class="p-4 border-b border-blue-50 dark:border-slate-800">
+                    <h2 class="font-black text-sm text-blue-950 dark:text-white">{{ Auth::user()->name }}</h2>
+                    <p class="text-[11px] text-blue-500/70 truncate">{{ Auth::user()->email }}</p>
+                </div>
+                <div class="p-2 space-y-1">
+                    <a href="{{ route('company.profile') }}" class="flex items-center gap-2 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-blue-50">Profil Perusahaan</a>
+                    <a href="{{ route('company.projects.create') }}" class="flex items-center gap-2 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-blue-50">Tambah Proyek</a>
+                    <a href="#" id="btnBukaPengaturanMobile" class="flex items-center gap-2 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-blue-50">Pengaturan</a>
+                </div>
+                <div class="p-2 border-t border-blue-50 dark:border-slate-800">
+                    <form action="{{ url('/logout') }}" method="POST">@csrf<button type="submit" class="w-full text-left px-3 py-2.5 rounded-xl text-xs font-bold text-red-600 hover:bg-red-50">Logout</button></form>
+                </div>
+            </div>
+        </div>
     </div>
 </header>
 @endif
@@ -536,14 +563,40 @@ document.addEventListener('DOMContentLoaded', () => {
     // ============= USER DROPDOWN =============
     const userButton = document.getElementById('userButton');
     const userDropdown = document.getElementById('userDropdown');
+    const userButtonMobile = document.getElementById('userButtonMobile');
+    const userDropdownMobile = document.getElementById('userDropdownMobile');
 
     if (userButton && userDropdown) {
         userButton.addEventListener('click', function (e) {
             e.stopPropagation();
             userDropdown.classList.toggle('hidden');
+            if(userDropdownMobile) userDropdownMobile.classList.add('hidden');
 
             const notifDropdown = document.getElementById('notificationDropdown');
             if (notifDropdown) notifDropdown.classList.add('hidden');
+            const notifDropdownMobile = document.getElementById('notificationDropdownMobile');
+            if(notifDropdownMobile) notifDropdownMobile.classList.add('hidden');
+        });
+    }
+    if (userButtonMobile && userDropdownMobile) {
+        userButtonMobile.addEventListener('click', function (e) {
+            e.stopPropagation();
+            userDropdownMobile.classList.toggle('hidden');
+            if(userDropdown) userDropdown.classList.add('hidden');
+            const notifDropdownMobile = document.getElementById('notificationDropdownMobile');
+            if(notifDropdownMobile) notifDropdownMobile.classList.add('hidden');
+            const notifDropdown = document.getElementById('notificationDropdown');
+            if(notifDropdown) notifDropdown.classList.add('hidden');
+        });
+    }
+    // Pengaturan dari mobile dropdown
+    const btnBukaPengaturanMobile = document.getElementById('btnBukaPengaturanMobile');
+    if(btnBukaPengaturanMobile && modalSettings){
+        btnBukaPengaturanMobile.addEventListener('click', (e)=>{
+            e.preventDefault();
+            modalSettings.classList.remove('hidden');
+            if(userDropdownMobile) userDropdownMobile.classList.add('hidden');
+            if(userDropdown) userDropdown.classList.add('hidden');
         });
     }
 
@@ -790,14 +843,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const notifList = document.getElementById('notificationList');
     const notifBadge = document.getElementById('notificationBadge');
     const markAllBtn = document.getElementById('markAllReadBtn');
+    const notifButtonMobile = document.getElementById('notificationButtonMobile');
+    const notifDropdownMobile = document.getElementById('notificationDropdownMobile');
+    const notifListMobile = document.getElementById('notificationListMobile');
+    const notifBadgeMobile = document.getElementById('notificationBadgeMobile');
 
     if (notifButton && notifDropdown) {
         notifButton.addEventListener('click', (e) => {
             e.stopPropagation();
             notifDropdown.classList.toggle('hidden');
+            if(notifDropdownMobile) notifDropdownMobile.classList.add('hidden');
 
             if (!notifDropdown.classList.contains('hidden')) {
                 if (userDropdown) userDropdown.classList.add('hidden');
+                if (userDropdownMobile) userDropdownMobile.classList.add('hidden');
+                fetchNotifications();
+            }
+        });
+    }
+    if (notifButtonMobile && notifDropdownMobile) {
+        notifButtonMobile.addEventListener('click', (e) => {
+            e.stopPropagation();
+            notifDropdownMobile.classList.toggle('hidden');
+            if(notifDropdown) notifDropdown.classList.add('hidden');
+
+            if (!notifDropdownMobile.classList.contains('hidden')) {
+                if (userDropdown) userDropdown.classList.add('hidden');
+                if (userDropdownMobile) userDropdownMobile.classList.add('hidden');
                 fetchNotifications();
             }
         });
@@ -807,6 +879,9 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('click', () => {
         if (userDropdown) userDropdown.classList.add('hidden');
         if (notifDropdown) notifDropdown.classList.add('hidden');
+        const userDropdownMobileEl = document.getElementById('userDropdownMobile');
+        if (userDropdownMobileEl) userDropdownMobileEl.classList.add('hidden');
+        if (notifDropdownMobile) notifDropdownMobile.classList.add('hidden');
     });
 
     // ── Web Audio API untuk badge polling (fallback jika toast tidak bunyi) ──
@@ -856,7 +931,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateBadge(count) {
-        if (!notifBadge) return;
         count = parseInt(count) || 0;
 
         // Bunyi hanya jika benar-benar ada kenaikan unread (bukan load awal / refresh)
@@ -868,14 +942,19 @@ document.addEventListener('DOMContentLoaded', () => {
             if (Date.now() - lastTing > 900) playBadgeTing();
         }
 
-        if (count > 0) {
-            notifBadge.textContent = count > 99 ? '99+' : count;
-            notifBadge.classList.remove('scale-0');
-            notifBadge.classList.add('scale-100');
-        } else {
-            notifBadge.classList.remove('scale-100');
-            notifBadge.classList.add('scale-0');
-        }
+        [notifBadge, notifBadgeMobile].forEach(function(b){
+            if(!b) return;
+            if (count > 0) {
+                b.textContent = count > 99 ? '99+' : count;
+                b.classList.remove('scale-0','hidden');
+                b.classList.add('scale-100');
+            } else {
+                b.classList.remove('scale-100');
+                b.classList.add('scale-0');
+                // untuk mobile yang pakai hidden
+                if(b.id==='notificationBadgeMobile') b.classList.add('hidden');
+            }
+        });
 
         badgeLastUnread = count;
         badgeIsFirst = false;
@@ -898,10 +977,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderNotifications(notifications) {
-        if (!notifList) return;
+        const lists = [notifList, notifListMobile].filter(Boolean);
+        if (lists.length===0) return;
 
         if (!notifications || notifications.length === 0) {
-            notifList.innerHTML = `
+            const emptyHtml = `
                 <div class="p-8 text-center text-sm text-blue-300 dark:text-slate-500 font-semibold">
                     <div class="w-12 h-12 rounded-full bg-blue-50 dark:bg-slate-800 flex items-center justify-center mx-auto mb-3 text-blue-400 dark:text-slate-400">
                         <i class="fa-regular fa-bell-slash text-xl"></i>
@@ -909,6 +989,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     Sistem bersih. Tidak ada notifikasi.
                 </div>
             `;
+            lists.forEach(l=> l.innerHTML = emptyHtml);
             return;
         }
 
@@ -969,7 +1050,9 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         });
 
-        notifList.innerHTML = html;
+        lists.forEach(l=> l.innerHTML = html);
+        // Jika ada list mobile terpisah, isi juga
+        if(notifListMobile && notifListMobile !== notifList) notifListMobile.innerHTML = html;
 
         document.querySelectorAll('.notification-item').forEach(item => {
             item.addEventListener('click', function () {
@@ -1024,6 +1107,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             })
             .catch(err => console.error('Mark all read error:', err));
+        });
+    }
+    const markAllBtnMobile = document.getElementById('markAllReadBtnMobile');
+    if (markAllBtnMobile) {
+        markAllBtnMobile.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if(markAllBtn) markAllBtn.click();
+            else {
+                fetch('{{ route("notifications.mark-all-read") }}', {
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Content-Type': 'application/json', 'Accept': 'application/json' }
+                }).then(res=>res.ok?res.json():Promise.reject('Failed')).then(data=>{ if(data.success){ updateBadge(0); fetchNotifications(); } }).catch(err=>console.error(err));
+            }
         });
     }
 
