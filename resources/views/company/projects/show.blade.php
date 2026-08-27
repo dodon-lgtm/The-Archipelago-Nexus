@@ -374,6 +374,43 @@
                     </div>
                 @endif
 
+                {{-- =================================================
+                    BANNER: NEGOSIASI SELESAI / WORKSPACE AKTIF
+                ================================================== --}}
+                @if($project->workspace)
+                    @php $ws = $project->workspace; @endphp
+                    <div class="mb-6 animate-pop rounded-2xl border border-emerald-200 dark:border-emerald-800 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/40 dark:to-teal-950/30 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div class="flex items-start gap-3 min-w-0">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-sm">
+                                <i class="fa-solid fa-lock"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-sm font-extrabold text-emerald-800 dark:text-emerald-200 flex flex-wrap items-center gap-2">
+                                    <span>Negosiasi Selesai — Deal Terkunci</span>
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500 text-white text-[11px] font-bold">Selesai / Deal</span>
+                                </p>
+                                <p class="text-xs leading-relaxed text-emerald-700 dark:text-emerald-300/90 mt-1">
+                                    Freelancer telah dipilih. Riwayat negosiasi tetap tersimpan (read-only). Komunikasi pengerjaan dilanjutkan di Workspace.
+                                </p>
+                                @php
+                                    $winner = $project->penawarans->firstWhere('status', 'Diterima');
+                                @endphp
+                                @if($winner)
+                                    <p class="text-[11px] text-slate-600 dark:text-slate-400 mt-2">
+                                        <span class="font-semibold">Freelancer terpilih:</span> {{ $winner->freelancer->name ?? '-' }} ·
+                                        <span class="font-semibold">Harga deal:</span> Rp {{ number_format($winner->harga_penawaran, 0, ',', '.') }} ·
+                                        <span class="font-semibold">Estimasi:</span> {{ $winner->estimasi_hari }} hari
+                                    </p>
+                                @endif
+                            </div>
+                        </div>
+                        <a href="{{ route('company.workspaces.show', $ws) }}"
+                           class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-colors shrink-0 shadow-sm">
+                            <i class="fa-solid fa-comments"></i> Buka Chat Workspace
+                        </a>
+                    </div>
+                @endif
+
 
                 {{-- =================================================
                     INFORMASI PROYEK
@@ -705,6 +742,7 @@
                                             'Menunggu' => 'border-l-amber-400',
                                             default => 'border-l-red-400',
                                         };
+                                        $isNegoLocked = $penawaran->isNegotiationLocked();
                                     @endphp
 
                                     <div
@@ -783,9 +821,10 @@
                                                 data-project-title="{{ $project->project_name }}"
                                                 data-peer-name="{{ $penawaran->freelancer->name ?? 'Freelancer' }}"
                                                 data-peer-type="freelancer"
-                                                class="relative shrink-0 w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900/50 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/60 flex items-center justify-center transition-colors"
-                                                aria-label="Chat negosiasi dengan {{ $penawaran->freelancer->name ?? 'Freelancer' }}">
-                                                <i class="fa-regular fa-comment-dots"></i>
+                                                class="relative shrink-0 w-10 h-10 rounded-xl {{ $isNegoLocked ? 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400' : 'bg-blue-50 dark:bg-blue-950/40 border-blue-100 dark:border-blue-900/50 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/60' }} border flex items-center justify-center transition-colors"
+                                                aria-label="{{ $isNegoLocked ? 'Lihat riwayat negosiasi (read-only)' : 'Chat negosiasi' }} dengan {{ $penawaran->freelancer->name ?? 'Freelancer' }}"
+                                                title="{{ $isNegoLocked ? 'Negosiasi dikunci — klik untuk lihat riwayat (read-only)' : 'Buka chat negosiasi' }}">
+                                                <i class="fa-{{ $isNegoLocked ? ($penawaran->status === 'Diterima' ? 'solid fa-handshake' : 'solid fa-lock') : 'regular fa-comment-dots' }} text-xs"></i>
                                                 @if($negoCount > 0)
                                                     <span data-nego-unread="{{ $penawaran->id }}"
                                                         class="absolute -top-1.5 -right-1.5 inline-flex items-center justify-center min-w-[1.15rem] h-[1.15rem] px-1 rounded-full bg-red-500 text-white text-[10px] font-extrabold leading-none border-2 border-white dark:border-slate-900 shadow-sm">
@@ -793,9 +832,14 @@
                                                     </span>
                                                 @endif
                                             </button>
+                                            @if($isNegoLocked)
+                                                <span class="hidden sm:inline-flex items-center gap-1 px-2 py-1 rounded-full {{ $penawaran->status === 'Diterima' ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/50' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700' }} border text-[10px] font-bold">
+                                                    <i class="fa-solid {{ $penawaran->status === 'Diterima' ? 'fa-handshake' : 'fa-lock' }} text-[10px]"></i> {{ $penawaran->status === 'Diterima' ? 'Deal' : 'Dikunci' }}
+                                                </span>
+                                            @endif
 
-                                            {{-- STATUS --}}
-                                            <div class="shrink-0">
+                                            {{-- STATUS + LOCK --}}
+                                            <div class="shrink-0 flex items-center gap-1.5">
                                                 @if($penawaran->status === 'Menunggu')
                                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 border border-amber-100 dark:border-amber-900/50 text-[11px] font-bold">
                                                         <span class="w-1.5 h-1.5 rounded-full bg-amber-500 status-dot-live-amber"></span>
@@ -865,6 +909,30 @@
                                                     @endif
                                                 </div>
 
+                                                {{-- Ringkasan Deal (hanya tampil saat terkunci) --}}
+                                                @if($isNegoLocked)
+                                                    <div class="w-full mt-3 rounded-xl border {{ $penawaran->status === 'Diterima' ? 'border-emerald-200 dark:border-emerald-800/50 bg-emerald-50/60 dark:bg-emerald-950/20' : 'border-amber-200 dark:border-amber-800/40 bg-amber-50/60 dark:bg-amber-950/20' }} p-3 flex flex-col gap-2">
+                                                        <p class="text-[11px] font-extrabold {{ $penawaran->status === 'Diterima' ? 'text-emerald-700 dark:text-emerald-300' : 'text-amber-700 dark:text-amber-300' }} flex items-center gap-1.5">
+                                                            <i class="fa-solid {{ $penawaran->status === 'Diterima' ? 'fa-circle-check' : 'fa-lock' }}"></i>
+                                                            {{ $penawaran->status === 'Diterima' ? 'Deal — Harga Disepakati' : 'Negosiasi Dikunci' }}
+                                                            <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded-full bg-white dark:bg-slate-900 border text-[10px] font-bold {{ $penawaran->status === 'Diterima' ? 'text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800' : 'text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700' }}">{{ $penawaran->status }}</span>
+                                                        </p>
+                                                        <div class="grid grid-cols-2 gap-2 text-[11px]">
+                                                            <div class="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 p-2">
+                                                                <p class="text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-wide font-semibold">Harga Deal</p>
+                                                                <p class="font-extrabold text-emerald-600 dark:text-emerald-400">Rp {{ number_format($penawaran->harga_penawaran, 0, ',', '.') }}</p>
+                                                            </div>
+                                                            <div class="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 p-2">
+                                                                <p class="text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-wide font-semibold">Estimasi</p>
+                                                                <p class="font-bold text-slate-800 dark:text-white">{{ $penawaran->estimasi_hari }} hari</p>
+                                                            </div>
+                                                        </div>
+                                                        <p class="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
+                                                            Riwayat negosiasi tetap tersimpan di bawah. Klik <span class="font-bold">Lihat Riwayat Negosiasi</span> untuk membaca percakapan (read-only). Komunikasi pengerjaan dilanjutkan di Workspace.
+                                                        </p>
+                                                    </div>
+                                                @endif
+
                                                 <div class="flex flex-wrap items-center gap-2">
 
                                                     <button type="button"
@@ -872,15 +940,24 @@
                                                         data-project-title="{{ $project->project_name }}"
                                                         data-peer-name="{{ $penawaran->freelancer->name ?? 'Freelancer' }}"
                                                         data-peer-type="freelancer"
-                                                        class="inline-flex items-center gap-2 px-4 py-2 border border-blue-200 dark:border-blue-900/50 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 rounded-lg text-xs font-bold hover:bg-blue-100 dark:hover:bg-blue-900/60 transition-colors">
-                                                        <i class="fa-regular fa-comments"></i> Negosiasi
-                                                        @if(($negoUnread[$penawaran->id] ?? 0) > 0)
+                                                        class="inline-flex items-center gap-2 px-4 py-2 border {{ $isNegoLocked ? 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700' : 'border-blue-200 dark:border-blue-900/50 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/60' }} rounded-lg text-xs font-bold transition-colors">
+                                                        <i class="fa-{{ $isNegoLocked ? 'solid fa-clock-rotate-left' : 'regular fa-comments' }}"></i> {{ $isNegoLocked ? 'Lihat Riwayat Negosiasi' : 'Negosiasi' }}
+                                                        @if(!$isNegoLocked && ($negoUnread[$penawaran->id] ?? 0) > 0)
                                                             <span data-nego-unread="{{ $penawaran->id }}"
                                                                 class="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full bg-red-500 text-white text-[10px] font-extrabold leading-none shadow-sm">
                                                                 {{ ($negoUnread[$penawaran->id] > 9) ? '9+' : $negoUnread[$penawaran->id] }}
                                                             </span>
+                                                        @elseif($isNegoLocked)
+                                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-[10px] font-bold"><i class="fa-solid fa-lock text-[9px]"></i> Read-Only</span>
                                                         @endif
                                                     </button>
+
+                                                    @if($isNegoLocked && $project->workspace)
+                                                        <a href="{{ route('company.workspaces.show', $project->workspace) }}"
+                                                           class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-colors shadow-sm">
+                                                            <i class="fa-solid fa-comments"></i> Chat Workspace
+                                                        </a>
+                                                    @endif
 
                                                     <a href="{{ route('company.reports.create', ['penawaran_id' => $penawaran->id]) }}"
                                                        class="inline-flex items-center gap-2 px-3 py-2 border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40 rounded-lg text-xs font-semibold hover:bg-red-100 dark:hover:bg-red-900/60 transition-colors"
@@ -903,6 +980,8 @@
                                                                 <i class="fa-solid fa-external-link-alt"></i> Buka Workspace
                                                             </a>
                                                         @endif
+                                                    @elseif($isNegoLocked)
+                                                        <span class="text-xs text-slate-400 flex items-center gap-1"><i class="fa-solid fa-lock"></i> Penawaran terkunci</span>
                                                     @else
                                                         <span class="text-xs text-slate-400">Penawaran tidak tersedia</span>
                                                     @endif
