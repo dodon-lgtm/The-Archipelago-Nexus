@@ -44,7 +44,7 @@ class ProjectBrowseController extends Controller
             $query->where('category_id', $category);
         }
 
-        // 3. Filter budget
+        // 3. Filter budget — preset + angka bebas (≥ nilai) — tetap backward compatible
         $budgetRanges = [
             'under-1m' => fn ($q) =>
                 $q->where('budget', '<', 1_000_000),
@@ -65,6 +65,15 @@ class ProjectBrowseController extends Controller
 
         if (isset($budgetRanges[$budget])) {
             $budgetRanges[$budget]($query);
+        } elseif ($budget !== null && $budget !== '') {
+            // Angka bebas: ketik sendiri mis. 2500000 / Rp 2.500.000 / 1_000_000 -> filter budget ≥ nilai
+            $digits = preg_replace('/[^\d]/', '', (string) $budget);
+            if ($digits !== '' && $digits !== '0') {
+                $amount = (int) $digits;
+                if ($amount > 0) {
+                    $query->where('budget', '>=', $amount);
+                }
+            }
         }
 
         // 4. Sorting

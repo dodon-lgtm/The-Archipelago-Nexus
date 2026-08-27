@@ -43,21 +43,69 @@ class WorkspaceController extends Controller
     /**
      * Daftar workspace (company), lengkap dengan status red-dot per workspace
      * berdasarkan notifikasi unread milik user saat ini.
+     * + FILTER PROJECT OTOMATIS: chip diambil dari project yang sudah memiliki Workspace milik company login.
      */
-    public function companyIndex(): View
+    public function companyIndex(Request $request): View
     {
-        $workspaces = Workspace::with([
+        $projectFilter = $request->query('project');
+        $search = trim((string) $request->query('search', ''));
+        $statusFilter = $request->query('status');
+
+        // Sumber filter: distinct project_id dari workspace milik company ini saja
+        $projectIds = Workspace::where('company_id', Auth::id())
+            ->distinct()
+            ->pluck('project_id')
+            ->filter()
+            ->values();
+
+        $filterProjects = collect();
+        if ($projectIds->isNotEmpty()) {
+            $filterProjects = \App\Models\Project::whereIn('id', $projectIds)
+                ->where('user_id', Auth::id())
+                ->orderBy('project_name')
+                ->get(['id', 'project_name']);
+        }
+
+        // Validasi filter: hanya izinkan project milik company yang memang ada di filterProjects
+        $validIds = $filterProjects->pluck('id')->map(fn($v) => (string) $v)->all();
+        if ($projectFilter && $projectFilter !== 'all' && $projectFilter !== '' && !in_array((string) $projectFilter, $validIds, true)) {
+            $projectFilter = 'all';
+        }
+
+        $validStatuses = ['Sedang Dikerjakan','Menunggu Review','Menunggu Revisi','Menunggu Pembayaran','Menunggu Verifikasi Admin','Selesai'];
+        if ($statusFilter && $statusFilter !== 'all' && $statusFilter !== '' && !in_array($statusFilter, $validStatuses, true)) {
+            $statusFilter = 'all';
+        }
+
+        $query = Workspace::with([
             'project',
             'freelancer',
             'latestProgress',
         ])
-            ->where('company_id', Auth::id())
-            ->latest()
-            ->paginate(10);
+            ->where('company_id', Auth::id());
+
+        if ($projectFilter && $projectFilter !== 'all' && $projectFilter !== '') {
+            $query->where('project_id', $projectFilter);
+        }
+
+        if ($statusFilter && $statusFilter !== 'all' && $statusFilter !== '') {
+            $query->where('status', $statusFilter);
+        }
+
+        if ($search !== '') {
+            $query->whereHas('project', function($q) use ($search) {
+                $q->where('project_name', 'like', "%{$search}%");
+            });
+        }
+
+        $workspaces = $query->latest()->paginate(10)->withQueryString();
 
         $unreadByWorkspace = $this->unreadCountForUser($workspaces, Auth::id());
 
-        return view('workspace.company-index', compact('workspaces', 'unreadByWorkspace'));
+        $activeProject = ($projectFilter && $projectFilter !== '' ) ? (string) $projectFilter : 'all';
+        $activeStatus = ($statusFilter && $statusFilter !== '' ) ? (string) $statusFilter : 'all';
+
+        return view('workspace.company-index', compact('workspaces', 'unreadByWorkspace', 'filterProjects', 'activeProject', 'activeStatus', 'search'));
     }
 
     /**
