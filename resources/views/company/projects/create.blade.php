@@ -528,6 +528,15 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
     {{-- Script untuk auto-format input angka & Sistem Modern Toast Notification --}}
     <script>
+        // Memastikan batasan deadline tanggal minimal hari ini berdasarkan waktu lokal perangkat user
+        document.addEventListener('DOMContentLoaded', function() {
+            const deadlineInput = document.querySelector('input[name="deadline"]');
+            if (deadlineInput) {
+                const today = new Date().toLocaleDateString('en-CA');
+                deadlineInput.setAttribute('min', today);
+            }
+        });
+
         // Fungsi untuk memunculkan Toast Notification secara modern
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
