@@ -281,8 +281,8 @@ private function unreadCountForUser(LengthAwarePaginator $workspaces, int $userI
                 if ($pos === null) {
                     return $this->backWithError('Tahap "' . $oldStage . '" tidak ditemukan.');
                 }
-                if (!$this->userOwnsStage($stageItems[$pos], $userId)) {
-                    abort(403, 'Anda hanya dapat mengubah tahap yang Anda buat sendiri.');
+                if (!$this->canMutateStage($workspace, $stageItems[$pos], $userId)) {
+                    abort(403, 'Anda hanya dapat mengubah tahap pada project yang Anda kelola.');
                 }
                 if ($oldStage !== $newStage && in_array($newStage, $stages, true)) {
                     return $this->backWithError('Tahap "' . $newStage . '" sudah ada.');
@@ -307,8 +307,8 @@ private function unreadCountForUser(LengthAwarePaginator $workspaces, int $userI
                 if ($pos === null) {
                     return $this->backWithError('Tahap "' . $deleteStage . '" tidak ditemukan.');
                 }
-                if (!$this->userOwnsStage($stageItems[$pos], $userId)) {
-                    abort(403, 'Anda hanya dapat menghapus tahap yang Anda buat sendiri.');
+                if (!$this->canMutateStage($workspace, $stageItems[$pos], $userId)) {
+                    abort(403, 'Anda hanya dapat menghapus tahap pada project yang Anda kelola.');
                 }
                 unset($stageItems[$pos]);
                 // Re-index otomatis: urutan tahap yang belak naik 1 (pekerjaan lama aman).
@@ -453,6 +453,27 @@ private function unreadCountForUser(LengthAwarePaginator $workspaces, int $userI
         $creator = $stageItem['created_by'] ?? null;
 
         return $creator !== null && (int) $creator === $userId;
+    }
+
+    /**
+     * Otorisasi mutasi tahap pada workspace ini (REVISI Tahap Pengerjaan).
+     *
+     * Kebijakan (keep existing behavior untuk freelancer):
+     * - Company PEMILIK workspace (company_id === user) boleh mengubah/menghapus
+     *   SEMUA tahap pada project miliknya (full CRUD atas workflow project).
+     *   Akses lintas-company tetap diblokir oleh `authorizeAccess()`.
+     * - Freelancer hanya boleh mengubah/menghapus tahap yang ia buat sendiri
+     *   (perilaku lama dipertahankan).
+     */
+    private function canMutateStage(Workspace $workspace, array $stageItem, int $userId): bool
+    {
+        $isCompanyOwner = (int) $workspace->company_id === $userId;
+
+        if ($isCompanyOwner) {
+            return true;
+        }
+
+        return $this->userOwnsStage($stageItem, $userId);
     }
 
     /**

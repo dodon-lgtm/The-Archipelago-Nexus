@@ -194,6 +194,13 @@ class ProjectController extends Controller
 
                         $data['user_id'] = Auth::id();
 
+            // ── Tahap Pengerjaan (REVISI) ───────────────────────────────
+            // Company menentukan daftar tahap saat create project. Daftar ini
+            // disimpan ke `projects.stages` (milik project, terisolasi) dan
+            // nanti di-snapshot ke project_workspaces.stages saat Company
+            // memilih freelancer. Jika kosong → null (default lama terpakai).
+            $data['stages'] = $this->buildProjectStages($request);
+
             // Kuota bulan berjalan: blokir pembuatan jika sudah melebihi batas.
             // BUKAN auto-pay: siapkan payment kuota pending lalu arahkan Company
             // ke halaman GATEWAY pembayaran kuota (mirip gateway pembayaran proyek).
@@ -517,13 +524,15 @@ class ProjectController extends Controller
             $invoiceNumber = 'INV-' . $date . '-' . $newNumber;
 
             // Buat Workspace untuk project dengan status Menunggu Pembayaran
-            // `stages` diinisialisasi sejak awal agar workspace memiliki daftar tahap yang valid
+            // `stages` diinisialisasi sejak awal agar workspace memiliki daftar tahap yang valid.
+            // REVISI: stage aktif = snapshot konfigurasi dari projects.stages bila ada;
+            // bila tidak ada, pakai daftar default lama (backward compatible).
             $workspace = Workspace::create([
                 'project_id' => $project->id,
                 'company_id' => Auth::id(),
                 'freelancer_id' => $penawaran->freelancer_id,
                 'status' => 'Menunggu Pembayaran',
-                'stages' => ['Analisis Kebutuhan', 'Desain', 'Backend', 'Frontend', 'Testing'],
+                'stages' => $this->workspaceStageSnapshot($project),
             ]);
 
             // Buat record Payment awal dengan status pending
@@ -618,5 +627,72 @@ class ProjectController extends Controller
     private function authorizeCompanyProject(Project $project): void
     {
         abort_unless((int) $project->user_id === (int) Auth::id(), 403);
+    }
+
+    /**
+     * Bangun daftar stage (source of truth per-project) dari input form
+     * "Tambah Proyek" (array paralel stage_name[] / stage_desc[]).
+     *
+     * Aturan:
+     * - Nama kosong di-skip.
+     * - Duplikat nama di-skip (pertahankan kemunculan pertama).
+     * - Urutan = urutan form (posisi di daftar).
+     * - Return null bila tidak ada stage valid → default lama tetap terpakai.
+     */
+    private function buildProjectStages(Request $request): ?array
+    {
+        $rawNames = $request->input('stage_name', []);
+        $rawDescs = $request->input('stage_desc', []);
+
+        if (!is_array($rawNames)) {
+            $rawNames = [];
+        }
+        if (!is_array($rawDescs)) {
+            $rawDescs = [];
+        }
+
+        $items = [];
+        $seen = [];
+
+        foreach (array_values($rawNames) as $i => $rawName) {
+            $name = trim((string) $rawName);
+            if ($name === '') {
+                continue;
+            }
+            if (in_array($name, $seen, true)) {
+                continue;
+            }
+            $seen[] = $name;
+
+            $desc = isset($rawDescs[$i]) ? trim((string) $rawDescs[$i]) : '';
+            $items[] = [
+                'name' => $name,
+                'description' => $desc !== '' ? $desc : null,
+                'created_by' => Auth::id(),
+            ];
+        }
+
+        return count($items) > 0 ? $items : null;
+    }
+
+    /**
+     * Snapshot tahap kerja untuk Workspace yang baru.
+     *
+     * REVISI: workspace dibuat dari konfigurasi `projects.stages` (milik
+     * project) yang sudah ditentukan Company saat create-project. Ini adalah
+     * COPY/snapshot — mengubah stage di workspace TIDAK memengaruhi
+     * `projects.stages`, dan sebaliknya. Jika project tidak punya stage
+     * (berarti Company tidak mengisinya), fallback ke daftar default lama
+     * agar backward compatible dengan project eksisting.
+     */
+    private function workspaceStageSnapshot(Project $project): array
+    {
+        $projectStageItems = $project->stageItems();
+
+        if (count($projectStageItems) === 0) {
+            return ['Analisis Kebutuhan', 'Desain', 'Backend', 'Frontend', 'Testing'];
+        }
+
+        return $projectStageItems;
     }
 }

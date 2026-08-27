@@ -35,6 +35,13 @@ class ProjectStoreRequest extends FormRequest
 
             'status' => ['required', Rule::in(Project::STATUSES)],
 
+            // Tahap Pengerjaan (REVISI): boleh kosong, tapi bila diisi harus
+            // berupa array paralel stage_name[] / stage_desc[].
+            'stage_name' => ['nullable', 'array'],
+            'stage_name.*' => ['nullable', 'string', 'max:255'],
+            'stage_desc' => ['nullable', 'array'],
+            'stage_desc.*' => ['nullable', 'string', 'max:2000'],
+
         ];
     }
 }

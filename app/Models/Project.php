@@ -34,6 +34,11 @@ class Project extends Model
         'image',
         'attachment',
         'status',
+        'stages',
+    ];
+
+    protected $casts = [
+        'stages' => 'array',
     ];
 
     public function owner(): BelongsTo
@@ -64,6 +69,73 @@ class Project extends Model
     public function review()
     {
         return $this->hasOne(Review::class);
+    }
+
+    // ─── STAGE / WORKFLOW (REVISI Tahap Pengerjaan) ───────────────────
+
+    /**
+     * Daftar tahap pengerjaan MILIK project ini, dinormalisasi menjadi item
+     * bertipe object (format sama dengan project_workspaces.stages):
+     *
+     *     [
+     *       'name'        => string,
+     *       'description' => ?string,
+     *       'created_by'  => ?int (default: pemilik project),
+     *     ]
+     *
+     * Konfigurasi ini adalah snapshot per-project. Saat Workspace dibuat,
+     * snapshot disalin ke `project_workspaces.stages` (source of truth aktif
+     * yang dipakai Company & Freelancer). Project tanpa stage → array kosong.
+     */
+    public function stageItems(): array
+    {
+        $stages = $this->stages;
+
+        if (!is_array($stages) || count($stages) === 0) {
+            return [];
+        }
+
+        $defaultCreator = $this->user_id ? (int) $this->user_id : null;
+        $items = [];
+
+        foreach (array_values($stages) as $entry) {
+            if (is_array($entry)) {
+                $name = trim((string) ($entry['name'] ?? ''));
+                if ($name === '') {
+                    continue;
+                }
+                $items[] = [
+                    'name' => $name,
+                    'description' => isset($entry['description']) && $entry['description'] !== ''
+                        ? (string) $entry['description']
+                        : null,
+                    'created_by' => isset($entry['created_by']) && $entry['created_by'] !== null
+                        ? (int) $entry['created_by']
+                        : $defaultCreator,
+                ];
+                continue;
+            }
+
+            $name = trim((string) $entry);
+            if ($name === '') {
+                continue;
+            }
+            $items[] = [
+                'name' => $name,
+                'description' => null,
+                'created_by' => $defaultCreator,
+            ];
+        }
+
+        return $items;
+    }
+
+    /**
+     * Daftar nama stage terurut (array of string) milik project ini.
+     */
+    public function stageList(): array
+    {
+        return array_values(array_map(fn (array $item) => $item['name'], $this->stageItems()));
     }
 
     // ─── STATUS HELPERS ────────────────────────────────────────────

@@ -7,11 +7,9 @@
     @include('partials.theme-boot')
     <title>Workspace - {{ $workspace->project->project_name }}</title>
 
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = tailwind.config || {};
-    tailwind.config.darkMode = 'class';
         tailwind.config.darkMode = 'class';
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -533,6 +531,11 @@
                                             $isCompleted = $order < $displayActiveOrder;
                                             $isActive = $order === $displayActiveOrder;
                                             $isOwner = (int) ($stageItem['created_by'] ?? 0) === (int) auth()->id();
+                                            // REVISI: Company pemilik workspace boleh kelola SEMUA tahap project
+                                            // (full CRUD workflow), selain tahap yang dia buat sendiri.
+                                            $isCompanyWorkspaceOwner = auth()->user()
+                                                && (int) $workspace->company_id === (int) auth()->id();
+                                            $canManageStage = $isCompanyWorkspaceOwner || $isOwner;
 
                                             // PURE BLUE LOGIC
                                             if ($isCompleted) {
@@ -563,13 +566,13 @@
                                                 </div>
                                                 <div class="min-w-0 flex-1 flex items-center justify-between">
                                                     <p class="text-xs font-bold truncate {{ $isActive ? 'text-white' : 'text-blue-900 dark:text-white' }}">
-                                                    {{ $stage }}
-                                                </p>
-                                                @if ($label)
-                                                    <span
-                                                        class="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md {{ $labelColor }} ml-2 shrink-0">{{ $label }}</span>
-                                                @endif
-                                            </div>
+                                                        {{ $stage }}
+                                                    </p>
+                                                    @if ($label)
+                                                        <span
+                                                            class="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md {{ $labelColor }} ml-2 shrink-0">{{ $label }}</span>
+                                                    @endif
+                                                </div>
                                             </div>
 
                                             @if ($stageItem['description'] ?? null)
@@ -582,17 +585,20 @@
                                                 </p>
                                             @endif
 
-                                            @if ($isOwner)
+                                            @if ($canManageStage)
                                                 <div class="flex flex-wrap items-center gap-2 mt-2">
                                                     <button type="button" onclick="document.getElementById('editItem-{{ $order }}').classList.toggle('hidden')"
                                                         class="inline-flex items-center gap-1 px-2.5 py-1 text-[9px] font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-slate-800 border border-blue-200 dark:border-slate-700 rounded-md transition">
                                                         <i class="fa-solid fa-pen-to-square"></i> Edit
                                                     </button>
-                                                    <form method="POST" action="{{ route($stageActionRoute, $workspace) }}" onsubmit="return confirm('Hapus tahap &quot;{{ $stage }}&quot;?');" class="inline">
+                                                    
+                                                    {{-- FORM HAPUS (MODIFIED UNTUK MODAL) --}}
+                                                    <form method="POST" action="{{ route($stageActionRoute, $workspace) }}" class="inline delete-stage-form">
                                                         @csrf
                                                         <input type="hidden" name="action" value="delete">
                                                         <input type="hidden" name="old_stage" value="{{ $stage }}">
-                                                        <button type="submit" class="inline-flex items-center gap-1 px-2.5 py-1 text-[9px] font-bold text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/40 rounded-md transition">
+                                                        <button type="button" onclick="openDeleteStageModal(this.closest('form'), '{{ addslashes($stage) }}')" 
+                                                            class="inline-flex items-center gap-1 px-2.5 py-1 text-[9px] font-bold text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/40 rounded-md transition">
                                                             <i class="fa-solid fa-trash"></i> Hapus
                                                         </button>
                                                     </form>
@@ -1233,7 +1239,86 @@
         </div>
     @endif
 
+    {{-- Delete Stage Confirmation Modal --}}
+    <div id="deleteStageModal" class="fixed inset-0 z-[250] flex items-center justify-center bg-black/60 hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm">
+        <div class="glass-card rounded-3xl w-full max-w-sm mx-4 transform scale-95 transition-transform duration-300 bg-white/95 dark:bg-slate-900/95 border border-blue-100 dark:border-slate-800 overflow-hidden shadow-2xl">
+            <div class="p-6">
+                <div class="w-12 h-12 mx-auto mb-4 bg-red-50 dark:bg-red-500/10 border border-red-100 dark:border-red-500/20 rounded-full flex items-center justify-center shadow-sm">
+                    <i class="fa-solid fa-trash-can text-xl text-red-500"></i>
+                </div>
+                <h3 class="font-black text-blue-950 dark:text-white text-lg text-center tracking-tight mb-2">Hapus tahap?</h3>
+                <p class="text-sm font-medium text-slate-600 dark:text-slate-400 text-center leading-relaxed">
+                    Apakah kamu yakin ingin menghapus tahap ini?<br>
+                    <span id="deleteStageName" class="font-black text-blue-600 dark:text-blue-400 mt-1.5 block"></span>
+                </p>
+            </div>
+            <div class="p-4 border-t border-blue-50 dark:border-slate-800 flex justify-end gap-3 bg-blue-50/30 dark:bg-slate-800/30">
+                <button type="button" onclick="closeDeleteStageModal()" 
+                    class="px-5 py-2.5 text-sm font-bold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-xl transition-colors shadow-sm">
+                    Batal
+                </button>
+                <button type="button" id="btnConfirmDeleteStage" 
+                    class="px-5 py-2.5 bg-red-600 text-white rounded-xl text-sm font-bold hover:bg-red-700 transition shadow-[0_5px_15px_rgba(220,38,38,0.3)] inline-flex items-center gap-2 border border-transparent">
+                    <i class="fa-solid fa-trash-can"></i> Hapus
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // Logika Modal Konfirmasi Hapus Tahap
+        let formToSubmit = null;
+
+        function openDeleteStageModal(formElement, stageName) {
+            formToSubmit = formElement;
+            document.getElementById('deleteStageName').textContent = `"${stageName}"`;
+            
+            const modal = document.getElementById('deleteStageModal');
+            const modalInner = modal.querySelector('div.glass-card');
+            
+            modal.classList.remove('hidden');
+            // Sedikit delay untuk memicu animasi Tailwind
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modalInner.classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeDeleteStageModal() {
+            const modal = document.getElementById('deleteStageModal');
+            const modalInner = modal.querySelector('div.glass-card');
+            
+            modal.classList.add('opacity-0');
+            modalInner.classList.add('scale-95');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                formToSubmit = null;
+            }, 300);
+        }
+
+        // Action Klik Confirm Hapus
+        document.getElementById('btnConfirmDeleteStage')?.addEventListener('click', function() {
+            if (formToSubmit) {
+                formToSubmit.submit();
+            }
+        });
+
+        // Menutup Modal dengan Klik Backdrop atau tombol Escape
+        document.getElementById('deleteStageModal')?.addEventListener('click', function(e) {
+            if (e.target === this) closeDeleteStageModal();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const deleteModal = document.getElementById('deleteStageModal');
+                if (deleteModal && !deleteModal.classList.contains('hidden')) {
+                    closeDeleteStageModal();
+                }
+            }
+        });
+
+        // Logika Auto-Scroll Obrolan
         document.addEventListener('DOMContentLoaded', function() {
             const chatBody = document.getElementById('chatBody');
             if (chatBody) {
