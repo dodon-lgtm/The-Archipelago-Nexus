@@ -589,6 +589,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if(notifDropdown) notifDropdown.classList.add('hidden');
         });
     }
+    // ============= MODAL SETTINGS =============
+    const modalSettings = document.getElementById('modalSettings');
+
     // Pengaturan dari mobile dropdown
     const btnBukaPengaturanMobile = document.getElementById('btnBukaPengaturanMobile');
     if(btnBukaPengaturanMobile && modalSettings){
@@ -602,7 +605,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ============= MODAL SETTINGS =============
     const btnPengaturan = document.getElementById('btnBukaPengaturan');
-    const modalSettings = document.getElementById('modalSettings');
     const closeBtn = document.getElementById('closeModalSettings');
     const closeBtnMobile = document.getElementById('closeModalSettingsMobile');
 

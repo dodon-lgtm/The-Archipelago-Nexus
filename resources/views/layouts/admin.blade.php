@@ -286,7 +286,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                         ? 'bg-blue-50 text-blue-700 font-bold shadow-sm border border-blue-100'
                         : 'text-slate-600 hover:bg-blue-50 hover:text-slate-800' }}"
                       data-tooltip="Pengaturan Footer">
-                      <i class="fa-solid fa-shoe-prints w-5 text-center"></i>
+                      <i class="fa-solid fa-sliders w-5 text-center"></i>
                       <span class="text-sm">Pengaturan Footer</span>
                   </a>
 
