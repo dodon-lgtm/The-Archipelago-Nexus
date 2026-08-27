@@ -50,7 +50,18 @@ class PaymentController extends Controller
 
     $payments = $query->paginate(15)->withQueryString();
 
-    return view('admin.payments.index', compact('payments'));
+    // Daftar perusahaan yang memiliki transaksi (opsi "Cetak Per Akun").
+    $companyIds = Payment::query()
+        ->whereNotNull('company_id')
+        ->distinct()
+        ->pluck('company_id');
+
+    $companyOptions = \App\Models\User::query()
+        ->whereIn('id', $companyIds)
+        ->orderBy('name')
+        ->get();
+
+    return view('admin.payments.index', compact('payments', 'companyOptions'));
 }
     public function show(Payment $payment): View
     {
@@ -389,14 +400,31 @@ message: 'Pembayaran untuk proyek "' . ($workspace->project->project_name ?? '')
             }
         }
 
+        // Filter per akun (perusahaan) bila dipilih.
+        $filterCompany = null;
+        if ($request->filled('company_id')) {
+            $query->where('company_id', (int) $request->company_id);
+            $filterCompany = \App\Models\User::find((int) $request->company_id);
+        }
+
         $payments = $query
             ->latest()
             ->get();
 
+        $filterStatus = strtolower((string) $request->status);
+
+        $companySlug = $filterCompany
+            ? preg_replace('/[^A-Za-z0-9_-]+/', '-', strtolower($filterCompany->name ?? 'akun'))
+            : null;
+
         $filename =
-            'laporan-pembayaran-' .
-            ($request->status ?? 'semua') .
+            'laporan-pembayaran' .
+            ($companySlug ? '-' . $companySlug : '') .
+            '-' .
+            ($filterStatus === '' ? 'semua' : $filterStatus) .
             '.pdf';
+
+        $pdfData = compact('payments', 'filterStatus', 'filterCompany');
 
         /*
         |--------------------------------------------------------------------------
@@ -405,17 +433,12 @@ message: 'Pembayaran untuk proyek "' . ($workspace->project->project_name ?? '')
         */
 
         if (class_exists('Barryvdh\DomPDF\Facade\Pdf')) {
-            $pdf = Pdf::loadView(
-                'admin.payments.pdf-all',
-                compact('payments')
-            );
+            $pdf = Pdf::loadView('admin.payments.pdf-all', $pdfData)
+                ->setPaper('a4', 'landscape');
 
             return $pdf->download($filename);
         }
 
-        return view(
-            'admin.payments.pdf-all',
-            compact('payments')
-        );
+        return view('admin.payments.pdf-all', $pdfData);
     }
 }
