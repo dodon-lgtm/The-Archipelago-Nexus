@@ -3,8 +3,30 @@
     Support: Guest, Freelancer, Company, Admin
 ========================================================= --}}
 
+@auth
+@if(Auth::user()->role === 'company')
+{{-- MOBILE HEADER COMPANY MINIMALIS (< md) --}}
+<header class="flex md:hidden h-14 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-b border-blue-100 dark:border-slate-800 px-3 items-center justify-between sticky top-0 z-40 shadow-sm">
+    <a href="{{ url('/') }}" class="text-base font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-blue-500 tracking-tight">LABS</a>
+    <div class="flex items-center gap-2">
+        <button id="notificationButtonMobile" aria-label="Notifikasi" class="relative w-8 h-8 rounded-xl border border-blue-100 dark:border-slate-700 flex items-center justify-center text-blue-600">
+            <i class="fa-regular fa-bell text-sm"></i>
+            <span id="notificationBadgeMobile" class="absolute -top-1 -right-1 min-w-[16px] h-[16px] rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center px-1 hidden"></span>
+        </button>
+        <button id="userButtonMobile" aria-label="Profil" class="w-8 h-8 rounded-lg overflow-hidden bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white">
+            @if(Auth::user()->companyProfile && Auth::user()->companyProfile->company_logo)
+                <img src="{{ asset('storage/' . Auth::user()->companyProfile->company_logo) }}" class="w-full h-full object-cover">
+            @else
+                <i class="fa-solid fa-user text-xs"></i>
+            @endif
+        </button>
+    </div>
+</header>
+@endif
+@endauth
+
 <header id="mainHeader"
-    class="h-16 bg-white/90 dark:bg-slate-900/90 backdrop-blur-3xl border-b border-blue-100 dark:border-slate-800 px-6 flex items-center justify-between sticky top-0 z-40 shadow-[0_10px_30px_-15px_rgba(59,130,246,0.1)] transition-colors duration-300">
+    class="h-16 bg-white/90 dark:bg-slate-900/90 backdrop-blur-3xl border-b border-blue-100 dark:border-slate-800 px-6 items-center justify-between sticky top-0 z-40 shadow-[0_10px_30px_-15px_rgba(59,130,246,0.1)] transition-colors duration-300 @auth @if(Auth::user()->role === 'company') hidden md:flex @else flex @endif @else flex @endauth">
 
     <!-- LEFT -->
     <div class="flex items-center gap-8">

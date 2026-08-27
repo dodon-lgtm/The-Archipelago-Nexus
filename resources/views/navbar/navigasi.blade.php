@@ -363,6 +363,9 @@
 {{-- MOBILE OVERLAY --}}
 <div id="sidebarOverlay" class="hidden fixed inset-0 bg-blue-950/40 backdrop-blur-sm z-40 lg:hidden transition-opacity duration-300"></div>
 
+{{-- COMPANY MOBILE BOTTOM NAV (hanya company, hanya < md) --}}
+@include('company.partials.mobile-nav')
+
 {{-- CUSTOM CSS FOR SIDEBAR --}}
 <style>
     /* Custom Scrollbar for Sidebar */
