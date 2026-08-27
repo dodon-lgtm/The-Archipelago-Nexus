@@ -24,15 +24,31 @@ use Illuminate\Support\Facades\Auth;
 
 class ProjectController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
         // Hanya project berstatus open / closed yang tampil di halaman utama.
         // Project 'archived' masuk ke halaman arsip.
-        $projects = Project::with('workspace')
+        $status = $request->input('status');
+        $search = trim((string) $request->input('search'));
+
+        $query = Project::with('workspace')
             ->where('user_id', Auth::id())
-            ->whereIn('status', [Project::STATUS_OPEN, Project::STATUS_CLOSED])
-            ->latest()
-            ->paginate(10);
+            ->whereIn('status', [Project::STATUS_OPEN, Project::STATUS_CLOSED]);
+
+        // Filter berdasarkan status (open / closed)
+        if (in_array($status, [Project::STATUS_OPEN, Project::STATUS_CLOSED], true)) {
+            $query->where('status', $status);
+        }
+
+        // Pencarian berdasarkan nama / deskripsi proyek
+        if ($search !== '') {
+            $query->where(function ($q) use ($search) {
+                $q->where('project_name', 'like', "%{$search}%")
+                    ->orWhere('project_description', 'like', "%{$search}%");
+            });
+        }
+
+        $projects = $query->latest()->paginate(10)->withQueryString();
 
         // Badge negosiasi unread per project (2 query agregat, tanpa N+1).
         // Sumber data: tabel notifications existing (type negotiation.message),

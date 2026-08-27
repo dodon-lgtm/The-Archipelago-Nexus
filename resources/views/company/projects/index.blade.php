@@ -179,6 +179,49 @@
                     </div>
                 @endif
 
+                {{-- FILTER PROJECT --}}
+                <form method="GET" action="{{ route('company.projects.index') }}"
+                    class="reveal reveal-2 flex flex-col sm:flex-row gap-2.5 items-stretch sm:items-center flex-wrap">
+                    
+                    {{-- Pencarian nama proyek --}}
+                    <div class="relative flex-1 min-w-[200px]">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400 text-sm">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </span>
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama proyek..."
+                            class="w-full text-sm pl-10 pr-4 py-2.5 bg-white border border-blue-100 rounded-xl text-slate-700 placeholder-slate-400 focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition shadow-sm dark:bg-slate-900 dark:border-slate-800 dark:text-white dark:placeholder-slate-500">
+                    </div>
+
+                    {{-- Filter status --}}
+                    <div class="relative">
+                        <select name="status"
+                            class="appearance-none text-sm pl-4 pr-9 py-2.5 bg-white border border-blue-100 rounded-xl text-slate-700 focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition shadow-sm cursor-pointer dark:bg-slate-900 dark:border-slate-800 dark:text-white">
+                            <option value="">Semua Status</option>
+                            <option value="open" {{ request('status') === 'open' ? 'selected' : '' }}>Open (Menerima Penawaran)</option>
+                            <option value="closed" {{ request('status') === 'closed' ? 'selected' : '' }}>Closed (Ditutup)</option>
+                        </select>
+                        <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-400 text-xs">
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </span>
+                    </div>
+
+                    {{-- Tombol Terapkan --}}
+                    <button type="submit"
+                        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-brand text-white rounded-xl text-sm font-bold shadow-md shadow-brand/20 hover:bg-brand-dark transition shrink-0">
+                        <i class="fa-solid fa-filter text-xs"></i>
+                        Terapkan
+                    </button>
+
+                    {{-- Tombol Reset (muncul jika ada filter aktif) --}}
+                    @if(request()->filled('status') || request()->filled('search'))
+                        <a href="{{ route('company.projects.index') }}"
+                            class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-xl text-sm font-bold hover:bg-slate-50 transition shrink-0 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-300">
+                            <i class="fa-solid fa-rotate-left text-xs"></i>
+                            Reset
+                        </a>
+                    @endif
+                </form>
+
                 {{-- SUB HEADER & TITLE --}}
                 <div class="reveal reveal-2 flex items-center justify-between">
                     <div>
