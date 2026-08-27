@@ -142,7 +142,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                      <i class="fa-solid fa-bars text-slate-600 text-lg"></i>
                  </button>
 
-                 <div class="w-10 h-10 rounded-full overflow-hidden shrink-0">
+                 <div class="sidebar-logo-circle w-10 h-10 rounded-full overflow-hidden shrink-0">
                      <img src="{{ asset('images/nexus.jpg') }}" alt="ApexForge Labs Logo" class="w-full h-full object-cover">
                  </div>
                  <div class="sidebar-logo-text transition-all duration-300 overflow-hidden">
@@ -154,12 +154,6 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                      class="sidebar-toggle-desktop w-8 h-8 rounded-lg hover:bg-blue-50 flex items-center justify-center shrink-0 ml-auto transition">
                      <i
                          class="sidebar-toggle-icon fa-solid fa-chevron-left text-slate-400 text-sm transition-transform duration-300"></i>
-                 </button>
-
-                 {{-- Collapsed toggle --}}
-                 <button id="sidebarToggleCollapsed"
-                     class="sidebar-toggle-collapsed w-8 h-8 rounded-lg hover:bg-blue-50 flex items-center justify-center shrink-0 mx-auto transition">
-                     <i class="sidebar-toggle-icon fa-solid fa-chevron-right text-slate-400 text-sm"></i>
                  </button>
              </div>
 
@@ -673,7 +667,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
          }
 
          #sidebar.collapsed {
-             width: 72px !important;
+             width: 88px !important;
          }
 
          #sidebar.collapsed .sidebar-logo-text {
@@ -729,7 +723,9 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
          #sidebar.collapsed .sidebar-logo-wrapper {
              justify-content: center;
-             padding: 12px 4px;
+             padding: 16px 0;
+             gap: 0;
+             position: relative;
          }
 
          #sidebar.collapsed .sidebar-logo-wrapper>button,
@@ -737,12 +733,32 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
              display: none;
          }
 
-         #sidebar.collapsed .sidebar-logo-wrapper>.sidebar-toggle-collapsed {
-             display: flex !important;
+         #sidebar.collapsed .sidebar-logo-circle {
+             display: flex;
+             margin: 0;
          }
 
-         #sidebar:not(.collapsed) .sidebar-logo-wrapper>.sidebar-toggle-collapsed {
-             display: none;
+         /* Single floating toggle (desktop) with flipped chevron */
+         @media (min-width: 1024px) {
+             #sidebar.collapsed .sidebar-logo-wrapper>.sidebar-toggle-desktop {
+                 display: flex;
+                 position: absolute;
+                 top: 50%;
+                 right: -14px;
+                 transform: translateY(-50%);
+                 margin: 0;
+                 width: 26px;
+                 height: 26px;
+                 border-radius: 9999px;
+                 background: #ffffff;
+                 border: 1px solid #e2e8f0;
+                 box-shadow: 0 4px 12px rgba(30, 58, 138, 0.18);
+                 color: #475569;
+                 z-index: 20;
+                 align-items: center;
+                 justify-content: center;
+                 padding: 0;
+             }
          }
 
          /* Tooltip on collapsed hover */
@@ -753,7 +769,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
          #sidebar.collapsed nav a:hover::after {
              content: attr(data-tooltip);
              position: fixed;
-             left: 84px;
+             left: 104px;
              top: var(--tooltip-top, 50%);
              transform: translateY(-50%);
              background: #1e293b;
@@ -772,7 +788,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
          #sidebar.collapsed nav a:hover::before {
              content: '';
              position: fixed;
-             left: 78px;
+             left: 96px;
              top: var(--tooltip-top, 50%);
              transform: translateY(-50%);
              border: 6px solid transparent;
@@ -863,10 +879,6 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
              #sidebar.collapsed .sidebar-logo-wrapper>button,
              #sidebar.collapsed .sidebar-logo-wrapper>.sidebar-logo-text {
                  display: flex;
-             }
-
-             #sidebar.collapsed .sidebar-logo-wrapper>.sidebar-toggle-collapsed {
-                 display: none !important;
              }
 
              #sidebar.collapsed nav a:hover::after,
