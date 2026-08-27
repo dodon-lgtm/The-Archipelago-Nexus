@@ -787,9 +787,64 @@ document.addEventListener('DOMContentLoaded', () => {
         if (notifDropdown) notifDropdown.classList.add('hidden');
     });
 
+    // ── Web Audio API untuk badge polling (fallback jika toast tidak bunyi) ──
+    let badgeAudioCtx = null;
+    let badgeAudioUnlocked = false;
+    let badgeLastUnread = null;
+    let badgeIsFirst = true;
+    function getBadgeAudioCtx() {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return null;
+        if (!badgeAudioCtx) { try { badgeAudioCtx = new AC(); } catch (e) { return null; } }
+        return badgeAudioCtx;
+    }
+    function unlockBadgeAudio() {
+        badgeAudioUnlocked = true;
+        const c = getBadgeAudioCtx();
+        if (c && c.state === 'suspended') { try { c.resume(); } catch (e) {} }
+    }
+    ['click','keydown','touchstart'].forEach(ev => document.addEventListener(ev, unlockBadgeAudio, { once:true, passive:true }));
+    function playBadgeTing() {
+        try {
+            if (typeof window.__playNotificationTing === 'function') {
+                window.__playNotificationTing();
+                return;
+            }
+            const AC = window.AudioContext || window.webkitAudioContext;
+            if (!AC) return;
+            const ctx = getBadgeAudioCtx();
+            if (!ctx) return;
+            if (ctx.state === 'suspended' && !badgeAudioUnlocked) return;
+            if (ctx.state === 'suspended') { try { ctx.resume(); } catch(e){ return; } if (ctx.state === 'suspended') return; }
+            const now = ctx.currentTime;
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            const filt = ctx.createBiquadFilter();
+            filt.type='lowpass'; filt.frequency.value=3200;
+            osc.type='sine';
+            osc.frequency.setValueAtTime(880, now);
+            osc.frequency.exponentialRampToValueAtTime(1320, now+0.09);
+            osc.connect(filt); filt.connect(gain); gain.connect(ctx.destination);
+            gain.gain.setValueAtTime(0, now);
+            gain.gain.linearRampToValueAtTime(0.16, now+0.012);
+            gain.gain.exponentialRampToValueAtTime(0.001, now+0.36);
+            osc.start(now); osc.stop(now+0.4);
+            window.__lastNotificationSoundAt = Date.now();
+        } catch(e) {}
+    }
+
     function updateBadge(count) {
         if (!notifBadge) return;
         count = parseInt(count) || 0;
+
+        // Bunyi hanya jika benar-benar ada kenaikan unread (bukan load awal / refresh)
+        const prev = badgeLastUnread;
+        const shouldPlay = !badgeIsFirst && prev !== null && count > prev && count > 0;
+        // Hindari dobel jika toast sudah bunyi <1 detik yang lalu
+        if (shouldPlay) {
+            const lastTing = window.__lastNotificationSoundAt || 0;
+            if (Date.now() - lastTing > 900) playBadgeTing();
+        }
 
         if (count > 0) {
             notifBadge.textContent = count > 99 ? '99+' : count;
@@ -799,6 +854,9 @@ document.addEventListener('DOMContentLoaded', () => {
             notifBadge.classList.remove('scale-100');
             notifBadge.classList.add('scale-0');
         }
+
+        badgeLastUnread = count;
+        badgeIsFirst = false;
     }
 
     function fetchNotifications() {

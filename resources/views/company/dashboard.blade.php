@@ -326,14 +326,14 @@
                     @endphp
 
                     <div class="reveal reveal-5 stat-card bg-white dark:bg-slate-900 border border-blue-100/80 dark:border-slate-800 rounded-2xl p-5 sm:p-6 shadow-sm relative overflow-hidden transition-colors duration-300">
-                        <div class="flex items-center justify-between">
-                            <div class="space-y-1 min-w-0">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="space-y-1 min-w-0 flex-1">
                                 <p class="text-xs font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider">Total Pengeluaran</p>
-                                <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight mt-1 whitespace-nowrap truncate">
+                                <h3 class="text-lg sm:text-xl lg:text-[1.35rem] font-extrabold text-slate-900 dark:text-white tracking-tight mt-1 leading-tight break-words whitespace-normal" title="{{ $formattedSpending }}">
                                     {{ $formattedSpending }}
                                 </h3>
                             </div>
-                            <div class="stat-icon w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-rose-50 dark:bg-rose-900/40 text-rose-600 dark:text-rose-300 flex items-center justify-center text-xl shadow-inner border border-rose-100/50 dark:border-rose-900 shrink-0 ml-2">
+                            <div class="stat-icon w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-rose-50 dark:bg-rose-900/40 text-rose-600 dark:text-rose-300 flex items-center justify-center text-xl shadow-inner border border-rose-100/50 dark:border-rose-900 shrink-0">
                                 <i class="fa-solid fa-wallet"></i>
                             </div>
                         </div>
