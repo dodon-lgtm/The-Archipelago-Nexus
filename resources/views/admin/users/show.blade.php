@@ -53,7 +53,7 @@
                     <form method="POST" action="{{ route('admin.users.update-role', $user) }}">
                         @csrf
                         <select name="role" class="w-full rounded-xl border-blue-100 dark:border-slate-700 bg-[#f6f9ff] dark:bg-slate-800 dark:text-white px-4 py-2.5 text-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none mb-2 cursor-pointer transition">
-                            <option value="admin" @selected($user->role == 'admin')>Admin</option>
+                            {{-- <option value="admin" @selected($user->role == 'admin')>Admin</option> --}}
                             <option value="company" @selected($user->role == 'company')>Company</option>
                             <option value="freelancer" @selected($user->role == 'freelancer')>Freelancer</option>
                         </select>
