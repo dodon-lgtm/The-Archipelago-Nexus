@@ -824,7 +824,7 @@
                                                 class="relative shrink-0 w-10 h-10 rounded-xl {{ $isNegoLocked ? 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400' : 'bg-blue-50 dark:bg-blue-950/40 border-blue-100 dark:border-blue-900/50 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/60' }} border flex items-center justify-center transition-colors"
                                                 aria-label="{{ $isNegoLocked ? 'Lihat riwayat negosiasi (read-only)' : 'Chat negosiasi' }} dengan {{ $penawaran->freelancer->name ?? 'Freelancer' }}"
                                                 title="{{ $isNegoLocked ? 'Negosiasi dikunci — klik untuk lihat riwayat (read-only)' : 'Buka chat negosiasi' }}">
-                                                <i class="fa-{{ $isNegoLocked ? 'solid fa-lock' : 'regular fa-comment-dots' }} text-xs"></i>
+                                                <i class="fa-{{ $isNegoLocked ? ($penawaran->status === 'Diterima' ? 'solid fa-handshake' : 'solid fa-lock') : 'regular fa-comment-dots' }} text-xs"></i>
                                                 @if($negoCount > 0)
                                                     <span data-nego-unread="{{ $penawaran->id }}"
                                                         class="absolute -top-1.5 -right-1.5 inline-flex items-center justify-center min-w-[1.15rem] h-[1.15rem] px-1 rounded-full bg-red-500 text-white text-[10px] font-extrabold leading-none border-2 border-white dark:border-slate-900 shadow-sm">
@@ -834,7 +834,7 @@
                                             </button>
                                             @if($isNegoLocked)
                                                 <span class="hidden sm:inline-flex items-center gap-1 px-2 py-1 rounded-full {{ $penawaran->status === 'Diterima' ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/50' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700' }} border text-[10px] font-bold">
-                                                    <i class="fa-solid fa-lock text-[10px]"></i> {{ $penawaran->status === 'Diterima' ? 'Deal' : 'Dikunci' }}
+                                                    <i class="fa-solid {{ $penawaran->status === 'Diterima' ? 'fa-handshake' : 'fa-lock' }} text-[10px]"></i> {{ $penawaran->status === 'Diterima' ? 'Deal' : 'Dikunci' }}
                                                 </span>
                                             @endif
 
