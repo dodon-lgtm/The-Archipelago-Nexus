@@ -166,7 +166,7 @@ class ProjectBrowseController extends Controller
             'owner',
         ]);
 
-        $user = auth()->user();
+        $user = Auth::user();
 
         $hasOffered = Penawaran::where(
             'project_id',
