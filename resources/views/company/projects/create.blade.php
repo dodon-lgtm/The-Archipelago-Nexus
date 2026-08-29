@@ -319,7 +319,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                 {{-- Deadline --}}
                                 <div>
                                     <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2 dark:text-blue-400">Deadline <span class="text-blue-500">*</span></label>
-                                    <input type="date" name="deadline" value="{{ old('deadline') }}"
+                                    <input type="date" name="deadline" value="{{ old('deadline') }}" min="{{ date('Y-m-d') }}"
                                         class="w-full px-5 py-3.5 bg-blue-50/50 border @error('deadline') border-blue-500 ring-2 ring-blue-500/20 @else border-blue-100 @enderror rounded-xl text-sm font-bold text-blue-950 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 focus:bg-white transition-all cursor-pointer dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:focus:bg-slate-800" required>
                                     @error('deadline')
                                         <p class="text-[10px] font-bold tracking-wide text-blue-600 mt-1.5 dark:text-blue-400">{{ $message }}</p>
@@ -581,6 +581,15 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
     {{-- Script untuk auto-format input angka & Sistem Modern Toast Notification --}}
     <script>
+        // Memastikan batasan deadline tanggal minimal hari ini berdasarkan waktu lokal perangkat user
+        document.addEventListener('DOMContentLoaded', function() {
+            const deadlineInput = document.querySelector('input[name="deadline"]');
+            if (deadlineInput) {
+                const today = new Date().toLocaleDateString('en-CA');
+                deadlineInput.setAttribute('min', today);
+            }
+        });
+
         // Fungsi untuk memunculkan Toast Notification secara modern
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');

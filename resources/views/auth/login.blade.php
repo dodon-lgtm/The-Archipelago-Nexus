@@ -300,6 +300,11 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                             required 
                             class="w-full text-xs pl-10 pr-10 py-2.5 bg-slate-800/80 border {{ $errors->has('password') ? 'border-red-500' : 'border-slate-700/60' }} rounded-xl text-white placeholder-slate-500 focus:bg-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition shadow-inner"
                         >
+                        <button type="button" id="togglePassword"
+                            class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-500 hover:text-blue-400 transition-colors focus:outline-none"
+                            aria-label="Tampilkan atau sembunyikan password">
+                            <i id="togglePasswordIcon" class="fa-regular fa-eye"></i>
+                        </button>
                     </div>
                     @error('password')
                         <p class="text-[10px] text-red-400 mt-0.5">{{ $message }}</p>
@@ -491,6 +496,19 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     // Mulai dengan tombol login nonaktif (checkbox belum dicentang).
     syncLoginButton();
+
+    // 1b) Toggle tampil/sembunyikan password
+    var passwordInput = document.getElementById('password');
+    var togglePassword = document.getElementById('togglePassword');
+    var togglePasswordIcon = document.getElementById('togglePasswordIcon');
+    if (passwordInput && togglePassword && togglePasswordIcon) {
+        togglePassword.addEventListener('click', function () {
+            var isHidden = passwordInput.type === 'password';
+            passwordInput.type = isHidden ? 'text' : 'password';
+            togglePasswordIcon.classList.toggle('fa-eye', !isHidden);
+            togglePasswordIcon.classList.toggle('fa-eye-slash', isHidden);
+        });
+    }
 
     // 2) Buka modal
     function openModal() {

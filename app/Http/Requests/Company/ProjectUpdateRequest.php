@@ -31,7 +31,7 @@ class ProjectUpdateRequest extends FormRequest
 
             'budget' => ['nullable', 'numeric'],
 
-            'deadline' => ['nullable', 'date'],
+            'deadline' => ['nullable', 'date', 'after_or_equal:today'],
 
             'skills' => ['nullable', 'string'],
 

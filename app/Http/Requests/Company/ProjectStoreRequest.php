@@ -25,7 +25,7 @@ class ProjectStoreRequest extends FormRequest
 
             'budget' => ['required', 'numeric'],
 
-            'deadline' => ['required', 'date'],
+            'deadline' => ['required', 'date', 'after_or_equal:today'],
 
             'skills' => ['required', 'string'],
 

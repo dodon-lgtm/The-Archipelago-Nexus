@@ -11,6 +11,76 @@
     var seeded = false;
     var activeTimers = {};
 
+    // ── Web Audio API: ting halus tanpa file audio (programmatic) ──
+    var audioCtx = null;
+    var audioUnlocked = false;
+    var lastSoundAt = 0;
+
+    function getAudioContext() {
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return null;
+        if (!audioCtx) {
+            try { audioCtx = new AC(); } catch (e) { return null; }
+        }
+        return audioCtx;
+    }
+
+    function unlockAudio() {
+        audioUnlocked = true;
+        var ctx = getAudioContext();
+        if (ctx && ctx.state === 'suspended') {
+            try { ctx.resume(); } catch (e) {}
+        }
+    }
+
+    // Aktifkan AudioContext secara aman setelah interaksi pertama (autoplay policy)
+    ['click', 'keydown', 'touchstart'].forEach(function (ev) {
+        document.addEventListener(ev, unlockAudio, { once: true, passive: true });
+    });
+
+    function playNotificationSound() {
+        try {
+            // Debounce: jangan bunyi bertubi-tubi jika beberapa notifikasi datang bersamaan
+            var nowMs = Date.now();
+            if (nowMs - lastSoundAt < 900) return;
+            lastSoundAt = nowMs;
+
+            var AC = window.AudioContext || window.webkitAudioContext;
+            if (!AC) return;
+            var ctx = getAudioContext();
+            if (!ctx) return;
+            // Jika masih suspended dan belum ada interaksi user, tunda tanpa error
+            if (ctx.state === 'suspended' && !audioUnlocked) return;
+            if (ctx.state === 'suspended') {
+                try { ctx.resume(); } catch (e) { return; }
+                if (ctx.state === 'suspended') return;
+            }
+            var now = ctx.currentTime;
+            // Oscillator halus + lowpass + gain envelope → "ting" pendek tidak mengganggu
+            var osc = ctx.createOscillator();
+            var gain = ctx.createGain();
+            var filter = ctx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.value = 3200;
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(880, now);
+            osc.frequency.exponentialRampToValueAtTime(1320, now + 0.09);
+            osc.connect(filter);
+            filter.connect(gain);
+            gain.connect(ctx.destination);
+            gain.gain.setValueAtTime(0, now);
+            gain.gain.linearRampToValueAtTime(0.16, now + 0.012);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.36);
+            osc.start(now);
+            osc.stop(now + 0.4);
+            // Global hook agar badge polling tidak bunyikan dobel
+            window.__lastNotificationSoundAt = nowMs;
+        } catch (e) {}
+    }
+
+    // Expose global agar polling badge di nav.blade.php bisa pakai helper yang sama tanpa dobel
+    window.__playNotificationTing = playNotificationSound;
+
     function seenIds() {
         try {
             var raw = sessionStorage.getItem(storageKey);
@@ -185,6 +255,7 @@
                 return;
             }
 
+            var newCount = 0;
             list.forEach(function (n) {
                 if (!n || n.id == null) {
                     return;
@@ -199,7 +270,12 @@
                 }
                 markSeen(id);
                 showToast(n);
+                newCount++;
             });
+            // Bunyi hanya jika benar-benar ada notifikasi BARU (bukan seed / bukan refresh)
+            if (newCount > 0) {
+                playNotificationSound();
+            }
         }
     };
 

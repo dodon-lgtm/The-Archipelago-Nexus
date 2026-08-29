@@ -835,7 +835,7 @@
                     </div>
 
                     <div class="pt-2">
-                        <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-7 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl shadow-md shadow-emerald-500/20 transition hover:shadow-lg">
+                        <a href="{{ route('register', ['is_company' => 0]) }}" class="inline-flex items-center gap-2 px-7 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl shadow-md shadow-emerald-500/20 transition hover:shadow-lg">
                             <i class="fa-solid fa-user-plus text-xs"></i>
                             Daftar Sebagai Freelancer
                         </a>
@@ -906,7 +906,7 @@
 
     {{-- Tombol Aksi Berdampingan --}}
     <div class="flex flex-col sm:flex-row gap-3 pt-2">
-        <a href="{{ route('register') }}" class="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold rounded-2xl shadow-md shadow-blue-500/20 transition-all duration-200">
+        <a href="{{ route('register', ['is_company' => 1]) }}" class="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold rounded-2xl shadow-md shadow-blue-500/20 transition-all duration-200">
             <i class="fa-solid fa-building text-xs"></i>
             Daftar Sebagai Perusahaan
         </a>

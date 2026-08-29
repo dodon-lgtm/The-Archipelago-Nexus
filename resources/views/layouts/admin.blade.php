@@ -212,9 +212,8 @@
                      <i class="fa-solid fa-bars text-slate-600 text-lg"></i>
                  </button>
 
-                 <div class="w-10 h-10 rounded-full overflow-hidden shrink-0">
-                     <img src="{{ asset('images/nexus.jpg') }}" alt="ApexForge Labs Logo"
-                         class="w-full h-full object-cover">
+                 <div class="sidebar-logo-circle w-10 h-10 rounded-full overflow-hidden shrink-0">
+                     <img src="{{ asset('images/nexus.jpg') }}" alt="ApexForge Labs Logo" class="w-full h-full object-cover">
                  </div>
                  <div class="sidebar-logo-text transition-all duration-300 overflow-hidden">
                      <h2 class="font-extrabold text-sm leading-tight text-slate-800 whitespace-nowrap">
@@ -226,12 +225,6 @@
                      class="sidebar-toggle-desktop w-8 h-8 rounded-lg hover:bg-blue-50 flex items-center justify-center shrink-0 ml-auto transition">
                      <i
                          class="sidebar-toggle-icon fa-solid fa-chevron-left text-slate-400 text-sm transition-transform duration-300"></i>
-                 </button>
-
-                 {{-- Collapsed toggle --}}
-                 <button id="sidebarToggleCollapsed"
-                     class="sidebar-toggle-collapsed w-8 h-8 rounded-lg hover:bg-blue-50 flex items-center justify-center shrink-0 mx-auto transition">
-                     <i class="sidebar-toggle-icon fa-solid fa-chevron-right text-slate-400 text-sm"></i>
                  </button>
              </div>
 
@@ -368,10 +361,10 @@
                     {{ request()->routeIs('admin.footer-settings.*')
                         ? 'bg-blue-50 text-blue-700 font-bold shadow-sm border border-blue-100'
                         : 'text-slate-600 hover:bg-blue-50 hover:text-slate-800' }}"
-                     data-tooltip="Pengaturan Footer">
-                     <i class="fa-solid fa-shoe-prints w-5 text-center"></i>
-                     <span class="text-sm">Pengaturan Footer</span>
-                 </a>
+                      data-tooltip="Pengaturan Footer">
+                      <i class="fa-solid fa-sliders w-5 text-center"></i>
+                      <span class="text-sm">Pengaturan Footer</span>
+                  </a>
 
                  {{-- Separator --}}
                  <div class="pt-4 mt-4 border-t border-blue-50"></div>
@@ -756,7 +749,7 @@
          }
 
          #sidebar.collapsed {
-             width: 72px !important;
+             width: 88px !important;
          }
 
          #sidebar.collapsed .sidebar-logo-text {
@@ -812,7 +805,9 @@
 
          #sidebar.collapsed .sidebar-logo-wrapper {
              justify-content: center;
-             padding: 12px 4px;
+             padding: 16px 0;
+             gap: 0;
+             position: relative;
          }
 
          #sidebar.collapsed .sidebar-logo-wrapper>button,
@@ -820,12 +815,32 @@
              display: none;
          }
 
-         #sidebar.collapsed .sidebar-logo-wrapper>.sidebar-toggle-collapsed {
-             display: flex !important;
+         #sidebar.collapsed .sidebar-logo-circle {
+             display: flex;
+             margin: 0;
          }
 
-         #sidebar:not(.collapsed) .sidebar-logo-wrapper>.sidebar-toggle-collapsed {
-             display: none;
+         /* Single floating toggle (desktop) with flipped chevron */
+         @media (min-width: 1024px) {
+             #sidebar.collapsed .sidebar-logo-wrapper>.sidebar-toggle-desktop {
+                 display: flex;
+                 position: absolute;
+                 top: 50%;
+                 right: -14px;
+                 transform: translateY(-50%);
+                 margin: 0;
+                 width: 26px;
+                 height: 26px;
+                 border-radius: 9999px;
+                 background: #ffffff;
+                 border: 1px solid #e2e8f0;
+                 box-shadow: 0 4px 12px rgba(30, 58, 138, 0.18);
+                 color: #475569;
+                 z-index: 20;
+                 align-items: center;
+                 justify-content: center;
+                 padding: 0;
+             }
          }
 
          /* Tooltip on collapsed hover */
@@ -836,7 +851,7 @@
          #sidebar.collapsed nav a:hover::after {
              content: attr(data-tooltip);
              position: fixed;
-             left: 84px;
+             left: 104px;
              top: var(--tooltip-top, 50%);
              transform: translateY(-50%);
              background: #1e293b;
@@ -855,7 +870,7 @@
          #sidebar.collapsed nav a:hover::before {
              content: '';
              position: fixed;
-             left: 78px;
+             left: 96px;
              top: var(--tooltip-top, 50%);
              transform: translateY(-50%);
              border: 6px solid transparent;
@@ -946,10 +961,6 @@
              #sidebar.collapsed .sidebar-logo-wrapper>button,
              #sidebar.collapsed .sidebar-logo-wrapper>.sidebar-logo-text {
                  display: flex;
-             }
-
-             #sidebar.collapsed .sidebar-logo-wrapper>.sidebar-toggle-collapsed {
-                 display: none !important;
              }
 
              #sidebar.collapsed nav a:hover::after,

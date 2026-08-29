@@ -216,6 +216,60 @@
 
                 </a>
 
+
+                {{-- PEMISAH --}}
+                <div class="my-2 border-t border-slate-100"></div>
+
+
+                {{-- CETAK PER AKUN --}}
+                <div class="px-4 py-2">
+
+                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                        Cetak Per Akun
+                    </p>
+
+                    <form
+                        method="GET"
+                        action="{{ route('admin.payments.pdf.all') }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="flex flex-col gap-2"
+                    >
+
+                        <select
+                            name="company_id"
+                            class="w-full appearance-none bg-[#f6f9ff] border border-blue-100 text-slate-700 text-[11px] font-semibold rounded-lg px-2.5 py-1.5 outline-none cursor-pointer"
+                        >
+                            <option value="">— Pilih Perusahaan —</option>
+                            @foreach($companyOptions as $company)
+                                <option value="{{ $company->id }}">
+                                    {{ $company->name ?: $company->email }}
+                                </option>
+                            @endforeach
+                        </select>
+
+                        <select
+                            name="status"
+                            class="w-full appearance-none bg-[#f6f9ff] border border-blue-100 text-slate-700 text-[11px] font-semibold rounded-lg px-2.5 py-1.5 outline-none cursor-pointer"
+                        >
+                            <option value="">Semua Status</option>
+                            <option value="paid">Dibayar / Lunas</option>
+                            <option value="pending">Pending</option>
+                            <option value="rejected">Ditolak</option>
+                        </select>
+
+                        <button
+                            type="submit"
+                            class="w-full inline-flex items-center justify-center gap-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-semibold px-2.5 py-1.5 transition"
+                        >
+                            <i class="fa-solid fa-print text-[10px]"></i>
+                            Cetak
+                        </button>
+
+                    </form>
+
+                </div>
+
             </div>
 
         </details>

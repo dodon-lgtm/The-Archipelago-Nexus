@@ -157,12 +157,12 @@
                     Pusat Bantuan
                 </a>
 
-                <a
+                {{-- <a
                     href="#"
                     class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                 >
                     Keamanan Sistem
-                </a>
+                </a> --}}
 
             </div>
 
