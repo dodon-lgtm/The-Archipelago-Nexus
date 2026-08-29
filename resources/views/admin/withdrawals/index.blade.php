@@ -3,30 +3,10 @@
 @section('title', 'Permintaan Penarikan Dana')
 @section('breadcrumb', 'Permintaan Penarikan Dana')
 
-@push('styles')
-    
-    <script>
-        tailwind.config = tailwind.config || {};
-    tailwind.config.darkMode = 'class';
-        tailwind.config.darkMode = 'class';
-    </script>
-    <style>
-        html.dark body { background: #020617; color: #f1f5f9; }
-    </style>
-@endpush
-
 @section('content')
-    @if(session('success'))
-        <div class="flex items-center gap-3 px-4 py-3 mb-4 bg-emerald-50 dark:bg-emerald-900/40 border border-emerald-200 dark:border-emerald-900 text-emerald-700 dark:text-emerald-300 rounded-xl text-sm font-medium">
-            <i class="fa-solid fa-check-circle"></i> {{ session('success') }}
-        </div>
-    @endif
-
-    @if(session('error'))
-        <div class="flex items-center gap-3 px-4 py-3 mb-4 bg-red-50 dark:bg-red-900/40 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-300 rounded-xl text-sm font-medium">
-            <i class="fa-solid fa-xmark-circle"></i> {{ session('error') }}
-        </div>
-    @endif
+    <x-admin.page-header icon="fa-money-bill-transfer" title="Permintaan Penarikan Dana"
+        description="Kelola pencairan dana freelancer" :count="$withdrawals->total()" countLabel="penarikan"
+        countIcon="fa-money-bill-transfer" />
 
     <div class="bg-white dark:bg-slate-900 rounded-2xl border border-blue-100 dark:border-slate-800 p-4 mb-4 shadow-sm">
         <form method="GET" action="{{ url()->current() }}" class="flex flex-wrap gap-3 items-end">
@@ -70,8 +50,7 @@
                         <tr class="hover:bg-[#f6f9ff]/70 dark:hover:bg-slate-800/50 transition-colors">
                             <td class="px-5 py-4 font-semibold text-slate-800 dark:text-white whitespace-nowrap">{{ $wd->withdrawal_code }}</td>
                             <td class="px-5 py-4">
-                                <p class="font-semibold text-slate-800 dark:text-white">{{ $wd->user->name ?? '-' }}</p>
-                                <p class="text-[10px] text-slate-400 dark:text-slate-500">{{ $wd->user->email ?? '-' }}</p>
+                                <x-admin.user-cell :user="$wd->user" :name="$wd->user->name ?? '-'" :email="$wd->user->email ?? null" />
                             </td>
                             <td class="px-5 py-4">
                                 <div class="flex items-center gap-3">
@@ -114,9 +93,5 @@
         </div>
     </div>
 
-    <div class="mt-5 flex justify-center">
-        <div class="[&_nav]:!m-0 [&_nav]:!p-0">
-            {{ $withdrawals->links() }}
-        </div>
-    </div>
+    <x-admin.pagination :paginator="$withdrawals" />
 @endsection

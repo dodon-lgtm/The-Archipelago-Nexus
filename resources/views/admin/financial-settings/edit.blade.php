@@ -22,16 +22,6 @@
         </div>
 
 
-        {{-- Success Message --}}
-        @if (session('success'))
-
-            <div class="p-3.5 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 mb-4 text-xs">
-                {{ session('success') }}
-            </div>
-
-        @endif
-
-
         {{-- Validation Errors --}}
         @if ($errors->any())
 

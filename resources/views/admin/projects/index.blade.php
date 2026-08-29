@@ -4,20 +4,8 @@
 @section('breadcrumb', 'Proyek')
 
 @section('content')
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-        <div class="flex items-center gap-3">
-            <div class="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center shadow-sm">
-                <i class="fa-solid fa-folder-open"></i>
-            </div>
-            <div>
-                <h1 class="text-lg font-bold text-slate-800 leading-tight">Daftar Proyek</h1>
-                <p class="text-xs text-slate-500">Kelola seluruh proyek di platform</p>
-            </div>
-        </div>
-        <span class="inline-flex items-center gap-1.5 self-start sm:self-auto px-3 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-xs font-semibold text-blue-600">
-            <i class="fa-solid fa-layer-group text-[10px]"></i> Total {{ $projects->total() }} proyek
-        </span>
-    </div>
+    <x-admin.page-header icon="fa-folder-open" title="Daftar Proyek" description="Kelola seluruh proyek di platform"
+        :count="$projects->total()" countLabel="proyek" countIcon="fa-layer-group" />
 
     {{-- Search & Filter --}}
     <div class="bg-white rounded-2xl border border-blue-100 p-4 mb-4 shadow-sm">
@@ -82,14 +70,19 @@
                     @forelse($projects as $project)
                         <tr class="hover:bg-[#f6f9ff]/70 transition-colors">
                             <td class="px-5 py-4 max-w-[240px]">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-100 to-blue-50 ring-1 ring-blue-100 text-blue-600 flex items-center justify-center shrink-0">
+                                <a href="{{ route('admin.projects.show', $project) }}"
+                                    class="flex items-center gap-3 group">
+                                    <div
+                                        class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-100 to-blue-50 ring-1 ring-blue-100 text-blue-600 flex items-center justify-center shrink-0">
                                         <i class="fa-solid fa-briefcase text-xs"></i>
                                     </div>
-                                    <span class="font-semibold text-slate-800 truncate">{{ $project->project_name }}</span>
-                                </div>
+                                    <span
+                                        class="font-semibold text-slate-800 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 truncate transition">{{ $project->project_name }}</span>
+                                </a>
                             </td>
-                            <td class="px-5 py-4 text-slate-600">{{ $project->owner->name ?? '—' }}</td>
+                            <td class="px-5 py-4">
+                                <x-admin.user-cell :user="$project->owner" :name="$project->owner->name ?? '—'" />
+                            </td>
                             <td class="px-5 py-4">
                                 <span class="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full border bg-slate-50 text-slate-600 border-slate-200 font-semibold whitespace-nowrap">
                                     <i class="fa-solid fa-tag text-[10px] text-slate-400"></i> {{ $project->category->name ?? 'Tanpa Kategori' }}
@@ -147,9 +140,5 @@
         </div>
     </div>
 
-    <div class="mt-5 flex justify-center">
-        <div class="[&_nav]:!m-0 [&_nav]:!p-0">
-            {{ $projects->links() }}
-        </div>
-    </div>
+    <x-admin.pagination :paginator="$projects" />
 @endsection

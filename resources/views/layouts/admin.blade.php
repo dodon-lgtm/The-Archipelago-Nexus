@@ -11,7 +11,6 @@
      <script>
          tailwind.config = tailwind.config || {};
          tailwind.config.darkMode = 'class';
-         tailwind.config.darkMode = 'class';
      </script>
 
      {{-- FontAwesome --}}
@@ -190,6 +189,17 @@
                  transition-duration: .01ms !important;
                  scroll-behavior: auto !important
              }
+         }
+
+         /* Profile control — state terbuka (menyatu dengan topbar, light + dark) */
+         #adminProfileButton.profile-open {
+             border-color: rgba(37, 99, 235, .45) !important;
+             background: #eff6ff !important;
+         }
+
+         html.dark #adminProfileButton.profile-open {
+             border-color: rgba(59, 130, 246, .5) !important;
+             background: #1e293b !important;
          }
      </style>
  </head>
@@ -407,19 +417,30 @@
 
              {{-- Top Navbar --}}
              <header
-                 class="h-16 bg-white dark:bg-slate-900 border-b border-blue-100 dark:border-slate-800 px-6 flex items-center justify-between sticky top-0 z-20 transition-colors duration-300">
+                 class="h-16 bg-white dark:bg-slate-900 border-b border-blue-100 dark:border-slate-800 px-3 sm:px-6 flex items-center justify-between gap-2 sm:gap-4 sticky top-0 z-20 transition-colors duration-300">
                  {{-- Left: Title + Breadcrumb --}}
-                 <div>
-                     <h1 class="text-lg font-extrabold text-slate-800">@yield('title', 'Admin Panel')</h1>
-                     <nav class="flex items-center gap-1 text-xs text-slate-400 mt-0.5">
-                         <a href="{{ route('admin.dashboard') }}" class="hover:text-blue-600 transition">Admin</a>
-                         <i class="fa-solid fa-chevron-right text-[9px] mx-1"></i>
-                         <span class="text-slate-600 font-medium">@yield('breadcrumb', 'Dashboard')</span>
+                 <div class="min-w-0 flex-1">
+                     <h1 class="text-base sm:text-lg font-extrabold text-slate-800 dark:text-white truncate">@yield('title', 'Admin Panel')</h1>
+                     <nav class="flex items-center gap-1 text-xs text-slate-400 mt-0.5 min-w-0" aria-label="Breadcrumb">
+                         <a href="{{ route('admin.dashboard') }}" class="hover:text-blue-600 transition shrink-0">Admin</a>
+                         <i class="fa-solid fa-chevron-right text-[9px] mx-1 shrink-0"></i>
+                         <span class="text-slate-600 dark:text-slate-300 font-medium truncate">@yield('breadcrumb', 'Dashboard')</span>
                      </nav>
                  </div>
 
                  {{-- Right: Notifications + Profile --}}
-                 <div class="flex items-center gap-4">
+                 <div class="flex items-center gap-2 sm:gap-4 shrink-0">
+
+                     {{-- Theme Toggle --}}
+                     <div class="flex items-center">
+                         <button id="adminThemeToggle" type="button" aria-label="Ganti tema terang/gelap"
+                             title="Ganti tema terang/gelap"
+                             class="relative w-10 h-10 rounded-full border border-blue-100 dark:border-slate-700 hover:bg-blue-50 dark:hover:bg-slate-800 flex items-center justify-center transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
+                             <i id="adminThemeIconMoon" class="fa-regular fa-moon text-slate-600 dark:text-slate-300"></i>
+                             <i id="adminThemeIconSun" class="fa-solid fa-sun text-amber-400 hidden"></i>
+                         </button>
+                     </div>
+
                      {{-- Notifications --}}
                      <div class="relative">
                          <button id="adminNotificationButton" aria-label="Notifikasi"
@@ -447,44 +468,44 @@
                          </div>
                      </div>
 
-                     {{-- Profile Dropdown --}}
-                     <div class="relative" x-data="{ open: false }">
-                         <button onclick="toggleProfileDropdown()"
-                             class="flex items-center gap-3 hover:bg-[#f6f9ff] rounded-xl px-3 py-2 transition border border-transparent hover:border-blue-50">
-                             <div
-                                 class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-400 to-teal-500 flex items-center justify-center text-white text-sm font-bold shadow-sm">
-                                 {{ strtoupper(substr(auth()->user()->name ?? 'A', 0, 1)) }}
-                             </div>
-                             <div class="text-left hidden sm:block">
-                                 <p class="text-sm font-bold text-slate-800 leading-tight">
-                                     {{ auth()->user()->name ?? 'Admin' }}</p>
-                                 <p class="text-[10px] text-blue-600 font-semibold uppercase tracking-wider">
-                                     Administrator</p>
-                             </div>
-                             <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
-                         </button>
+                     {{-- Profile Dropdown — satu control menyatu dengan topbar --}}
+                    <div class="relative">
+                        <button id="adminProfileButton" type="button" onclick="toggleProfileDropdown()"
+                            aria-haspopup="true" aria-expanded="false" aria-label="Menu profil admin"
+                            class="flex items-center gap-2 sm:gap-2.5 rounded-full pl-1 pr-1.5 sm:pr-3 py-1 border border-blue-100 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 hover:bg-blue-50 dark:hover:bg-slate-700/80 hover:border-blue-200 dark:hover:border-slate-600 shadow-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500">
+                            <div
+                                class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-400 to-teal-500 flex items-center justify-center text-white text-sm font-bold shadow-sm shrink-0">
+                                {{ strtoupper(substr(auth()->user()->name ?? 'A', 0, 1)) }}
+                            </div>
+                            <span class="text-left hidden sm:block leading-tight">
+                                <span class="block text-sm font-bold text-slate-800 dark:text-white">{{ auth()->user()->name ?? 'Admin' }}</span>
+                                <span class="block text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Administrator</span>
+                            </span>
+                            <i id="adminProfileChevron"
+                                class="fa-solid fa-chevron-down text-[10px] text-slate-500 dark:text-slate-400 transition-transform duration-200"></i>
+                        </button>
 
-                         {{-- Dropdown --}}
-                         <div id="profileDropdown"
-                             class="hidden absolute right-0 mt-2 w-56 bg-white rounded-2xl border border-blue-100 shadow-xl overflow-hidden z-50">
-                             <div class="p-4 border-b border-blue-50">
-                                 <p class="font-bold text-sm text-slate-800">{{ auth()->user()->name ?? 'Admin' }}</p>
-                                 <p class="text-xs text-slate-500">{{ auth()->user()->email ?? '' }}</p>
-                             </div>
-                             <a href="{{ route('admin.dashboard') }}"
-                                 class="flex items-center gap-3 px-4 py-3 text-sm text-slate-600 hover:bg-[#f6f9ff] transition">
-                                 <i class="fa-solid fa-chart-line w-4 text-blue-500"></i> Dashboard
-                             </a>
-                             <div class="border-t border-blue-50"></div>
-                             <form action="{{ route('logout') }}" method="POST">
-                                 @csrf
-                                 <button type="submit"
-                                     class="w-full text-left flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition">
-                                     <i class="fa-solid fa-right-from-bracket w-4"></i> Logout
-                                 </button>
-                             </form>
-                         </div>
-                     </div>
+                        {{-- Dropdown --}}
+                        <div id="profileDropdown"
+                            class="hidden absolute right-0 mt-2 w-60 max-w-[calc(100vw-1.5rem)] bg-white dark:bg-slate-900 rounded-2xl border border-blue-100 dark:border-slate-800 shadow-xl dark:shadow-black/40 overflow-hidden z-50">
+                            <div class="p-4 border-b border-blue-50 dark:border-slate-800">
+                                <p class="font-bold text-sm text-slate-800 dark:text-white truncate">{{ auth()->user()->name ?? 'Admin' }}</p>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 truncate">{{ auth()->user()->email ?? '' }}</p>
+                            </div>
+                            <a href="{{ route('admin.dashboard') }}"
+                                class="flex items-center gap-3 px-4 py-3 text-sm text-slate-600 dark:text-slate-300 hover:bg-[#f6f9ff] dark:hover:bg-slate-800 transition">
+                                <i class="fa-solid fa-chart-line w-4 text-blue-500 dark:text-blue-400"></i> Dashboard
+                            </a>
+                            <div class="border-t border-blue-50 dark:border-slate-800"></div>
+                            <form action="{{ route('logout') }}" method="POST">
+                                @csrf
+                                <button type="submit"
+                                    class="w-full text-left flex items-center gap-3 px-4 py-3 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 transition">
+                                    <i class="fa-solid fa-right-from-bracket w-4"></i> Logout
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                  </div>
              </header>
 
@@ -493,14 +514,20 @@
                  {{-- Flash Messages --}}
                  @if (session('success'))
                      <div
-                         class="flash-message mb-4 bg-emerald-50 border border-emerald-200 text-emerald-700 px-5 py-3 rounded-xl text-sm font-medium flex items-center gap-2">
+                         class="flash-message mb-4 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 px-5 py-3 rounded-xl text-sm font-medium flex items-center gap-2">
                          <i class="fa-regular fa-circle-check"></i> {{ session('success') }}
                      </div>
                  @endif
                  @if (session('error'))
                      <div
-                         class="flash-message mb-4 bg-red-50 border border-red-200 text-red-700 px-5 py-3 rounded-xl text-sm font-medium flex items-center gap-2">
+                         class="flash-message mb-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-5 py-3 rounded-xl text-sm font-medium flex items-center gap-2">
                          <i class="fa-regular fa-circle-xmark"></i> {{ session('error') }}
+                     </div>
+                 @endif
+                 @if (session('warning'))
+                     <div
+                         class="flash-message mb-4 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300 px-5 py-3 rounded-xl text-sm font-medium flex items-center gap-2">
+                         <i class="fa-solid fa-triangle-exclamation"></i> {{ session('warning') }}
                      </div>
                  @endif
 
@@ -513,11 +540,30 @@
 
      {{-- Profile Dropdown Script --}}
      <script>
+         function closeProfileDropdown() {
+             const dropdown = document.getElementById('profileDropdown');
+             const button = document.getElementById('adminProfileButton');
+             const chevron = document.getElementById('adminProfileChevron');
+             if (dropdown) dropdown.classList.add('hidden');
+             if (button) {
+                 button.classList.remove('profile-open');
+                 button.setAttribute('aria-expanded', 'false');
+             }
+             if (chevron) chevron.classList.remove('rotate-180');
+         }
+
          function toggleProfileDropdown() {
              const dropdown = document.getElementById('profileDropdown');
-             if (dropdown) {
-                 dropdown.classList.toggle('hidden');
+             const button = document.getElementById('adminProfileButton');
+             const chevron = document.getElementById('adminProfileChevron');
+             if (!dropdown) return;
+             const willOpen = dropdown.classList.contains('hidden');
+             dropdown.classList.toggle('hidden');
+             if (button) {
+                 button.classList.toggle('profile-open', willOpen);
+                 button.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
              }
+             if (chevron) chevron.classList.toggle('rotate-180', willOpen);
          }
 
          // Close dropdown when clicking outside
@@ -526,7 +572,17 @@
              if (dropdown && !dropdown.classList.contains('hidden')) {
                  const button = e.target.closest('[onclick="toggleProfileDropdown()"]');
                  if (!button && !dropdown.contains(e.target)) {
-                     dropdown.classList.add('hidden');
+                     closeProfileDropdown();
+                 }
+             }
+         });
+
+         // Escape menutup profile dropdown
+         document.addEventListener('keydown', function(e) {
+             if (e.key === 'Escape') {
+                 const dropdown = document.getElementById('profileDropdown');
+                 if (dropdown && !dropdown.classList.contains('hidden')) {
+                     closeProfileDropdown();
                  }
              }
          });
@@ -1366,6 +1422,46 @@
      </script>
 
      @include('partials.notification-toasts')
+
+     {{-- Theme toggle (single instance). Key localStorage: theme_user_{id} SAMA dengan theme-boot. --}}
+     <script>
+         (function() {
+             function adminThemeKey() {
+                 var uid = @json(Auth::id());
+                 return uid ? ('theme_user_' + uid) : 'theme_user_';
+             }
+
+             function adminThemeSyncIcon() {
+                 var root = document.documentElement;
+                 var moon = document.getElementById('adminThemeIconMoon');
+                 var sun = document.getElementById('adminThemeIconSun');
+                 if (!moon || !sun) return;
+                 var dark = root.classList.contains('dark');
+                 moon.classList.toggle('hidden', dark);
+                 sun.classList.toggle('hidden', !dark);
+             }
+
+             function adminThemeInit() {
+                 adminThemeSyncIcon();
+                 var toggle = document.getElementById('adminThemeToggle');
+                 if (!toggle) return;
+                 toggle.addEventListener('click', function() {
+                     var root = document.documentElement;
+                     var dark = root.classList.toggle('dark');
+                     try {
+                         localStorage.setItem(adminThemeKey(), dark ? 'dark' : 'light');
+                     } catch (e) {}
+                     adminThemeSyncIcon();
+                 });
+             }
+
+             if (document.readyState === 'loading') {
+                 document.addEventListener('DOMContentLoaded', adminThemeInit);
+             } else {
+                 adminThemeInit();
+             }
+         })();
+     </script>
 
      @yield('script')
  </body>

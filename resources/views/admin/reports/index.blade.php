@@ -4,6 +4,8 @@
 @section('breadcrumb', 'Laporan')
 
 @section('content')
+<x-admin.page-header icon="fa-flag" title="Laporan" description="Kelola laporan pengguna platform"
+        :count="$reports->total()" countLabel="laporan" countIcon="fa-flag" />
     <div class="bg-white rounded-2xl border border-blue-100 p-4 mb-4 shadow-sm">
         <form method="GET" action="{{ route('admin.reports.index') }}" class="flex flex-wrap gap-3 items-end">
             <div class="flex-1 min-w-[200px]">
@@ -75,24 +77,22 @@
                         <tr class="hover:bg-[#f6f9ff]/70 transition-colors">
                             <td class="px-5 py-4 font-semibold text-slate-800 max-w-[200px] truncate">{{ $report->subject }}</td>
                             <td class="px-5 py-4">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-xs font-bold shrink-0">{{ strtoupper(substr($report->reporter->name ?? '?', 0, 1)) }}</div>
-                                    <div class="min-w-0">
-                                        <span class="block font-semibold text-slate-800 truncate">{{ $report->reporter->name ?? '—' }}</span>
-                                        <span class="block text-[10px] font-bold uppercase tracking-wide text-slate-400">{{ $report->reporter->role ?? '' }}</span>
-                                    </div>
-                                </div>
+                                <x-admin.user-cell :user="$report->reporter" avatarClass="bg-red-100 text-red-600" :sub="strtoupper($report->reporter->role ?? '')" />
                             </td>
                             <td class="px-5 py-4">
                                 <span class="inline-block text-xs px-2.5 py-1 rounded-full border border-slate-200 bg-slate-50 text-slate-600 font-semibold whitespace-nowrap">{{ \App\Models\Report::categoryLabel($report->category) }}</span>
                             </td>
                             <td class="px-5 py-4 text-slate-600">
-                                @if($report->workspace)
-                                    <span class="inline-flex items-center gap-1 text-xs font-semibold text-blue-600">
-                                        <i class="fa-solid fa-layer-group"></i> {{ $report->workspace->project->project_name ?? 'Workspace' }}
-                                    </span>
+                                @if($report->workspace && $report->workspace->project)
+                                    <a href="{{ route('admin.projects.show', $report->workspace->project) }}"
+                                        class="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700 hover:underline transition">
+                                        <i class="fa-solid fa-layer-group"></i> {{ $report->workspace->project->project_name }}
+                                    </a>
+                                @elseif($report->project)
+                                    <a href="{{ route('admin.projects.show', $report->project) }}"
+                                        class="text-xs font-semibold text-blue-600 hover:text-blue-700 hover:underline transition">{{ $report->project->project_name }}</a>
                                 @else
-                                    {{ $report->project->project_name ?? '—' }}
+                                    <span class="text-slate-400">—</span>
                                 @endif
                             </td>
                             <td class="px-5 py-4 text-center">
@@ -132,9 +132,5 @@
         </div>
     </div>
 
-    <div class="mt-5 flex justify-center">
-        <div class="[&_nav]:!m-0 [&_nav]:!p-0">
-            {{ $reports->links() }}
-        </div>
-    </div>
+    <x-admin.pagination :paginator="$reports" />
 @endsection

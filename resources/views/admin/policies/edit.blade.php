@@ -12,12 +12,6 @@
             <h2 class="text-xl font-extrabold text-slate-800 dark:text-white">Edit Kebijakan</h2>
         </div>
 
-        @if (session('success'))
-            <div class="p-3.5 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 mb-4 text-xs">
-                {{ session('success') }}
-            </div>
-        @endif
-
         <form method="POST" action="{{ route('admin.policies.update', $policy) }}">
             @csrf
             @method('PUT')

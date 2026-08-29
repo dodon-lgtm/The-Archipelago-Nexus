@@ -4,6 +4,8 @@
 @section('breadcrumb', 'Hasil Pekerjaan')
 
 @section('content')
+<x-admin.page-header icon="fa-layer-group" title="Hasil Pekerjaan" description="Pantau progress dan status workspace"
+        :count="$workspaces->total()" countLabel="workspace" countIcon="fa-diagram-project" />
     <div class="bg-white rounded-2xl border border-blue-100 p-4 mb-4 shadow-sm">
         <form method="GET" action="{{ route('admin.hasil-pekerjaan.index') }}" class="flex flex-wrap gap-3 items-end">
             <div class="flex-1 min-w-[200px]">
@@ -49,13 +51,20 @@
                 <tbody class="divide-y divide-slate-100">
                     @forelse($workspaces as $workspace)
                         <tr class="hover:bg-[#f6f9ff]/70 transition-colors">
-                            <td class="px-5 py-4 font-semibold text-slate-800 max-w-[220px] truncate">{{ $workspace->project->project_name ?? '—' }}</td>
-                            <td class="px-5 py-4 text-slate-600">{{ $workspace->company->name ?? '—' }}</td>
+                            <td class="px-5 py-4 max-w-[220px]">
+                                @if ($workspace->project)
+                                    <a href="{{ route('admin.projects.show', $workspace->project) }}"
+                                        class="font-semibold text-slate-800 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 truncate block transition"
+                                        title="{{ $workspace->project->project_name }}">{{ $workspace->project->project_name }}</a>
+                                @else
+                                    <span class="text-slate-400">—</span>
+                                @endif
+                            </td>
                             <td class="px-5 py-4">
-                                <div class="flex items-center gap-2.5">
-                                    <div class="w-7 h-7 rounded-full bg-gradient-to-br from-emerald-100 to-emerald-50 ring-1 ring-emerald-100 text-emerald-600 flex items-center justify-center text-xs font-bold shrink-0">{{ strtoupper(substr($workspace->freelancer->name ?? '?', 0, 1)) }}</div>
-                                    <span class="font-semibold text-slate-700 truncate">{{ $workspace->freelancer->name ?? '—' }}</span>
-                                </div>
+                                <x-admin.user-cell :user="$workspace->company" :name="$workspace->company->name ?? '—'" />
+                            </td>
+                            <td class="px-5 py-4">
+                                <x-admin.user-cell :user="$workspace->freelancer" avatarClass="bg-gradient-to-br from-emerald-100 to-emerald-50 ring-1 ring-emerald-100 text-emerald-600" />
                             </td>
                             <td class="px-5 py-4">
                                 <div class="flex items-center gap-2 justify-center">
@@ -103,9 +112,5 @@
         </div>
     </div>
 
-    <div class="mt-5 flex justify-center">
-        <div class="[&_nav]:!m-0 [&_nav]:!p-0">
-            {{ $workspaces->links() }}
-        </div>
-    </div>
+    <x-admin.pagination :paginator="$workspaces" />
 @endsection

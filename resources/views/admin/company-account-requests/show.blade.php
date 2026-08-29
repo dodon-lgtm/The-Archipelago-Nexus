@@ -17,7 +17,10 @@
                 <dl class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                     <div class="md:col-span-2">
                         <dt class="text-xs text-slate-500 font-semibold">Nama Perusahaan</dt>
-                        <dd class="font-semibold text-slate-800 mt-1">{{ $companyRequest->company_name }}</dd>
+                        <dd class="font-semibold text-slate-800 mt-1">
+                            <a href="{{ route('admin.users.index', ['search' => $companyRequest->company_email]) }}"
+                                class="hover:text-blue-600 hover:underline transition">{{ $companyRequest->company_name }}</a>
+                        </dd>
                     </div>
                     <div>
                         <dt class="text-xs text-slate-500 font-semibold">Nama Penanggung Jawab</dt>

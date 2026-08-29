@@ -6,8 +6,15 @@
 @php($status = $project->status ?? 'open')
 
 @section('content')
-    <div class="mb-4">
-        <a href="{{ route('admin.projects.index') }}" class="text-sm text-blue-600 hover:text-blue-700 font-semibold inline-flex items-center gap-1.5 transition">
+    <div class="mb-4 flex flex-col gap-2">
+        <nav class="flex items-center gap-1.5 text-xs text-slate-400 min-w-0" aria-label="Breadcrumb">
+            <a href="{{ route('admin.dashboard') }}" class="hover:text-blue-600 transition shrink-0">Admin</a>
+            <i class="fa-solid fa-chevron-right text-[9px] shrink-0"></i>
+            <a href="{{ route('admin.projects.index') }}" class="hover:text-blue-600 transition shrink-0">Proyek</a>
+            <i class="fa-solid fa-chevron-right text-[9px] shrink-0"></i>
+            <span class="text-slate-600 dark:text-slate-300 font-medium truncate">{{ $project->project_name }}</span>
+        </nav>
+        <a href="{{ route('admin.projects.index') }}" class="text-sm text-blue-600 hover:text-blue-700 font-semibold inline-flex items-center gap-1.5 transition w-fit">
             <i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Proyek
         </a>
     </div>
@@ -15,18 +22,23 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {{-- Main Info --}}
         <div class="lg:col-span-2 space-y-6">
-            <div class="bg-white rounded-2xl border border-blue-100 shadow-sm overflow-hidden">
-                <div class="bg-gradient-to-r from-[#f6f9ff] to-white border-b border-blue-100 p-6">
+            <div class="bg-white dark:bg-slate-900 rounded-2xl border border-blue-100 dark:border-slate-800 shadow-sm overflow-hidden">
+                <div class="bg-gradient-to-r from-[#f6f9ff] to-white dark:from-slate-800 dark:to-slate-900 border-b border-blue-100 dark:border-slate-800 p-6">
                     <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-                        <div class="flex items-start gap-4">
-                            <div class="w-12 h-12 rounded-xl bg-blue-50 border border-blue-100 text-blue-600 flex items-center justify-center shrink-0">
+                        <div class="flex items-start gap-4 min-w-0">
+                            <div class="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/40 border border-blue-100 dark:border-blue-900 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
                                 <i class="fa-solid fa-briefcase"></i>
                             </div>
-                            <div>
-                                <h2 class="text-xl font-bold text-slate-800 leading-tight">{{ $project->project_name }}</h2>
-                                <p class="text-sm text-slate-500 mt-1">
-                                    oleh <span class="font-semibold text-slate-700">{{ $project->owner->name ?? '—' }}</span>
-                                </p>
+                            <div class="min-w-0">
+                                <h2 class="text-xl font-bold text-slate-800 dark:text-white leading-tight break-words">{{ $project->project_name }}</h2>
+                                @if ($project->owner)
+                                    <div class="mt-2">
+                                        <x-admin.user-cell :user="$project->owner" with-photo size="sm"
+                                            :sub="$project->owner->role ? ucfirst($project->owner->role) : null" />
+                                    </div>
+                                @else
+                                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Tanpa owner.</p>
+                                @endif
                             </div>
                         </div>
                         <span class="inline-flex items-center gap-1.5 self-start px-3 py-1.5 rounded-full border text-xs font-semibold
@@ -85,17 +97,11 @@
                 </div>
                 <div class="divide-y divide-slate-50">
                     @forelse($project->penawarans as $penawaran)
-                        <div class="px-5 py-3.5 hover:bg-[#f6f9ff]/70 transition-colors">
+                        <div class="px-5 py-3.5 hover:bg-[#f6f9ff]/70 dark:hover:bg-slate-800/50 transition-colors">
                             <div class="flex items-center justify-between gap-3">
-                                <div class="flex items-center gap-3 min-w-0">
-                                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-100 to-blue-50 ring-1 ring-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold shrink-0">
-                                        {{ strtoupper(substr(($penawaran->freelancer->name ?? '?'), 0, 1)) }}
-                                    </div>
-                                    <div class="min-w-0">
-                                        <p class="text-sm font-semibold text-slate-800 truncate">{{ $penawaran->freelancer->name ?? '—' }}</p>
-                                        <p class="text-xs text-slate-500 whitespace-nowrap">Rp {{ number_format($penawaran->harga_penawaran) }} • {{ $penawaran->estimasi_hari }} hari</p>
-                                    </div>
-                                </div>
+                                <x-admin.user-cell :user="$penawaran->freelancer" with-photo size="sm"
+                                    :sub="$penawaran->freelancer ? ('Rp ' . number_format($penawaran->harga_penawaran) . ' • ' . $penawaran->estimasi_hari . ' hari') : null"
+                                    avatar-class="bg-gradient-to-br from-emerald-100 to-emerald-50 ring-1 ring-emerald-100 text-emerald-600" />
                                 <span class="text-xs px-2.5 py-1 rounded-full border font-semibold shrink-0
                                     @if($penawaran->status == 'Diterima') bg-emerald-50 text-emerald-600 border-emerald-100
                                     @elseif($penawaran->status == 'Ditolak') bg-red-50 text-red-600 border-red-100
@@ -128,9 +134,10 @@
                             <span class="text-slate-500">Status</span>
                             <span class="font-semibold px-2 py-0.5 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-xs">{{ $project->workspace->status }}</span>
                         </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-slate-500">Freelancer</span>
-                            <span class="font-semibold text-right">{{ $project->workspace->freelancer->name ?? '—' }}</span>
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-slate-500 dark:text-slate-400 shrink-0">Freelancer</span>
+                            <x-admin.user-cell :user="$project->workspace->freelancer" with-photo size="sm"
+                                avatar-class="bg-gradient-to-br from-emerald-100 to-emerald-50 ring-1 ring-emerald-100 text-emerald-600" />
                         </div>
                     </div>
                 @else

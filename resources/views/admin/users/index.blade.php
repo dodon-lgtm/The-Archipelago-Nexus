@@ -4,20 +4,8 @@
 @section('breadcrumb', 'Pengguna')
 
 @section('content')
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-        <div class="flex items-center gap-3">
-            <div class="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center shadow-sm">
-                <i class="fa-solid fa-users"></i>
-            </div>
-            <div>
-                <h1 class="text-lg font-bold text-slate-800 leading-tight">Daftar Pengguna</h1>
-                <p class="text-xs text-slate-500">Kelola pengguna dan role platform</p>
-            </div>
-        </div>
-        <span class="inline-flex items-center gap-1.5 self-start sm:self-auto px-3 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-xs font-semibold text-blue-600">
-            <i class="fa-solid fa-user-group text-[10px]"></i> Total {{ $users->total() }} pengguna
-        </span>
-    </div>
+    <x-admin.page-header icon="fa-users" title="Daftar Pengguna" description="Kelola pengguna dan role platform"
+        :count="$users->total()" countLabel="pengguna" countIcon="fa-user-group" />
 
     <div class="bg-white rounded-2xl border border-blue-100 p-4 mb-4 shadow-sm">
         <form method="GET" action="{{ route('admin.users.index') }}" class="flex flex-wrap gap-3 items-end">
@@ -67,12 +55,7 @@
                     @forelse($users as $user)
                         <tr class="hover:bg-[#f6f9ff]/70 transition-colors">
                             <td class="px-5 py-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-100 to-blue-50 ring-1 ring-blue-100 text-blue-600 flex items-center justify-center text-sm font-bold shrink-0">
-                                        {{ strtoupper(substr($user->name, 0, 1)) }}
-                                    </div>
-                                    <span class="font-semibold text-slate-800">{{ $user->name }}</span>
-                                </div>
+                                <x-admin.user-cell :user="$user" />
                             </td>
                             <td class="px-5 py-4 text-slate-600">{{ $user->email }}</td>
                             <td class="px-5 py-4">
@@ -145,9 +128,5 @@
         </div>
     </div>
 
-    <div class="mt-5 flex justify-center">
-        <div class="[&_nav]:!m-0 [&_nav]:!p-0">
-            {{ $users->links() }}
-        </div>
-    </div>
+    <x-admin.pagination :paginator="$users" />
 @endsection

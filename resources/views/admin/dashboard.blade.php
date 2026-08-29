@@ -60,8 +60,8 @@
 
     {{-- DYNAMIC BACKGROUND WITH SHADER LIGHTING --}}
     <div class="fixed inset-0 z-0 pointer-events-none hologram-grid-bg overflow-hidden">
-        {{-- Deep Navy/Blue Base Gradient overlay at the top --}}
-        <div class="absolute top-0 inset-x-0 h-[60vh] bg-gradient-to-b from-slate-900 via-blue-900/10 to-transparent"></div>
+        {{-- Soft tint di light mode / navy di dark mode (tema-aware) --}}
+        <div class="absolute top-0 inset-x-0 h-[60vh] bg-gradient-to-b from-blue-100/70 via-blue-100/30 to-transparent dark:from-slate-900 dark:via-blue-900/10"></div>
         
         {{-- Ambient Glowing Orbs (Shader Highlights) --}}
         <div class="absolute -top-32 -left-32 w-[40rem] h-[40rem] bg-gradient-to-br from-blue-600/20 to-blue-400/20 rounded-full blur-[100px] animate-drift-slow mix-blend-multiply"></div>
@@ -72,7 +72,7 @@
     </div>
 
     {{-- MAIN CONTENT --}}
-    <div class="relative z-10 px-4 sm:px-6 lg:px-8 py-8 max-w-[1600px] mx-auto space-y-12">
+    <div class="relative z-10 px-4 sm:px-6 lg:px-8 py-6 sm:py-8 max-w-[1600px] mx-auto space-y-8 sm:space-y-12">
 
         {{-- HERO SECTION: COMMAND CENTER --}}
         <div class="glass-panel-dark relative overflow-hidden rounded-[2.5rem] p-8 sm:p-12 text-white">
@@ -427,7 +427,7 @@
                     </div>
                     <div>
                         <h2 class="font-black text-slate-900 text-lg tracking-tight">Riwayat Transaksi Terbaru</h2>
-                        <p class="text-xs font-medium text-slate-500 mt-0.5">8 mutasi terakhir wallet platform (user_id = NULL)</p>
+                        <p class="text-xs font-medium text-slate-500 mt-0.5">{{ $recentWalletTransactions->count() }} mutasi terakhir wallet platform</p>
                     </div>
                 </div>
             </div>
@@ -442,21 +442,9 @@
                         </div>
 
                         {{-- Tipe + Sumber --}}
-                        <div>
-                            @php
-                                $typeLabel = match($tx->type) {
-                                    \App\Models\WalletLedger::TYPE_PROJECT_QUOTA_FEE => 'Fee Kuota Proyek',
-                                    \App\Models\WalletLedger::TYPE_WITHDRAWAL_FEE   => 'Fee Withdrawal',
-                                    \App\Models\WalletLedger::TYPE_ADMIN_EXPENSE    => 'Pengeluaran Admin',
-                                    \App\Models\WalletLedger::TYPE_ADMIN_WITHDRAWAL => 'Tarik Saldo Admin',
-                                    \App\Models\WalletLedger::TYPE_ESCROW_HELD      => 'Escrow Ditahan',
-                                    \App\Models\WalletLedger::TYPE_ESCROW_RELEASED  => 'Escrow Dirilis',
-                                    \App\Models\WalletLedger::TYPE_FEE_EARNED       => 'Fee Earned',
-                                    default                                          => $tx->type,
-                                };
-                            @endphp
-                            <p class="text-xs font-black text-slate-700">{{ $typeLabel }}</p>
-                            <p class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mt-0.5">{{ $tx->source ?? '-' }}</p>
+                        <div class="min-w-0">
+                            <p class="text-xs font-black text-slate-700 dark:text-slate-200">{{ $tx->type_label }}</p>
+                            <p class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mt-0.5">{{ $tx->source ?? $tx->display_code }}</p>
                         </div>
 
                         {{-- Keterangan --}}

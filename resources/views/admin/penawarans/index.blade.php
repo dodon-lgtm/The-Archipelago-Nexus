@@ -4,6 +4,8 @@
 @section('breadcrumb', 'Penawaran')
 
 @section('content')
+<x-admin.page-header icon="fa-file-invoice" title="Penawaran" description="Daftar penawaran freelancer pada proyek"
+        :count="$penawarans->total()" countLabel="penawaran" countIcon="fa-file-invoice" />
     {{-- Search & Filter --}}
     <div class="bg-white rounded-2xl border border-blue-100 p-4 mb-4 shadow-sm">
         <form method="GET" action="{{ route('admin.penawarans.index') }}" class="flex flex-wrap gap-3 items-end">
@@ -53,13 +55,20 @@
                     @forelse($penawarans as $penawaran)
                         <tr class="hover:bg-[#f6f9ff]/70 transition-colors">
                             <td class="px-5 py-4">
-                                <div class="flex items-center gap-2.5">
-                                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-100 to-emerald-50 ring-1 ring-emerald-100 text-emerald-600 flex items-center justify-center text-xs font-bold shrink-0">{{ strtoupper(substr($penawaran->freelancer->name ?? '?', 0, 1)) }}</div>
-                                    <span class="font-semibold text-slate-800 truncate">{{ $penawaran->freelancer->name ?? '—' }}</span>
-                                </div>
+                                <x-admin.user-cell :user="$penawaran->freelancer" avatarClass="bg-gradient-to-br from-emerald-100 to-emerald-50 ring-1 ring-emerald-100 text-emerald-600" />
                             </td>
-                            <td class="px-5 py-4 font-semibold text-slate-700 max-w-[200px] truncate">{{ $penawaran->project->project_name ?? '—' }}</td>
-                            <td class="px-5 py-4 text-slate-600">{{ $penawaran->project->owner->name ?? '—' }}</td>
+                            <td class="px-5 py-4 max-w-[200px]">
+                                @if ($penawaran->project)
+                                    <a href="{{ route('admin.projects.show', $penawaran->project) }}"
+                                        class="font-semibold text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 truncate block transition"
+                                        title="{{ $penawaran->project->project_name }}">{{ $penawaran->project->project_name }}</a>
+                                @else
+                                    <span class="text-slate-400">—</span>
+                                @endif
+                            </td>
+                            <td class="px-5 py-4">
+                                <x-admin.user-cell :user="$penawaran->project?->owner" :name="$penawaran->project?->owner?->name ?? '—'" />
+                            </td>
                             <td class="px-5 py-4 text-right font-bold text-slate-700 whitespace-nowrap">Rp {{ number_format($penawaran->harga_penawaran) }}</td>
                             <td class="px-5 py-4 text-center text-slate-600 whitespace-nowrap">{{ $penawaran->estimasi_hari }} hari</td>
                             <td class="px-5 py-4 text-center">
@@ -96,9 +105,5 @@
         </div>
     </div>
 
-    <div class="mt-5 flex justify-center">
-        <div class="[&_nav]:!m-0 [&_nav]:!p-0">
-            {{ $penawarans->links() }}
-        </div>
-    </div>
+    <x-admin.pagination :paginator="$penawarans" />
 @endsection

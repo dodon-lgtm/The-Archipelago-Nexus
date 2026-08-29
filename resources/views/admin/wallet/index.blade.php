@@ -75,24 +75,6 @@
         </div>
     </div>
 
-    {{-- ===== Alerts ===== --}}
-    @if(session('success') || session('error'))
-        <div class="flex gap-4">
-            @if(session('success'))
-                <div class="flex-1 flex items-center gap-3 px-5 py-4 rounded-2xl bg-emerald-50 border border-emerald-100 text-emerald-700 animate-fade-in">
-                    <i class="fa-solid fa-circle-check text-xl"></i>
-                    <p class="font-medium text-sm">{{ session('success') }}</p>
-                </div>
-            @endif
-            @if(session('error'))
-                <div class="flex-1 flex items-center gap-3 px-5 py-4 rounded-2xl bg-red-50 border border-red-100 text-red-700 animate-fade-in">
-                    <i class="fa-solid fa-circle-exclamation text-xl"></i>
-                    <p class="font-medium text-sm">{{ session('error') }}</p>
-                </div>
-            @endif
-        </div>
-    @endif
-
     {{-- ===== Riwayat Wallet Platform ===== --}}
     <div class="bg-white border border-slate-200/60 rounded-3xl shadow-sm overflow-hidden">
         {{-- Header & Toolbar --}}
@@ -212,7 +194,7 @@
 
         @if($ledgers->count())
             <div class="px-7 py-5 border-t border-slate-100 bg-slate-50/30">
-                {{ $ledgers->links() }}
+                <x-admin.pagination :paginator="$ledgers" />
             </div>
         @endif
     </div>
@@ -298,7 +280,7 @@
         
         @if($adminWithdrawals->count())
             <div class="px-7 py-5 border-t border-slate-100 bg-slate-50/30">
-                {{ $adminWithdrawals->links() }}
+                <x-admin.pagination :paginator="$adminWithdrawals" />
             </div>
         @endif
     </div>

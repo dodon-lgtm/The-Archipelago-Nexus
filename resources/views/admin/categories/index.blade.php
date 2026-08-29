@@ -4,6 +4,8 @@
 @section('breadcrumb', 'Kategori')
 
 @section('content')
+<x-admin.page-header icon="fa-tags" title="Kategori" description="Kelola kategori proyek platform"
+        :count="$categories->total()" countLabel="kategori" countIcon="fa-tags" />
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {{-- Add Category Form --}}
         <div class="bg-white rounded-2xl border border-blue-100 shadow-sm p-5 self-start">
@@ -119,11 +121,7 @@
                 </div>
             </div>
 
-            <div class="mt-5 flex justify-center">
-                <div class="[&_nav]:!m-0 [&_nav]:!p-0">
-                    {{ $categories->links() }}
-                </div>
-            </div>
+            <x-admin.pagination :paginator="$categories" />
         </div>
     </div>
 

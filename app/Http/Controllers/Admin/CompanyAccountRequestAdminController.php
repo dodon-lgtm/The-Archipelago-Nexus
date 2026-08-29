@@ -17,6 +17,7 @@ class CompanyAccountRequestAdminController extends Controller
     public function index(Request $request): View
     {
         $status = $request->query('status', 'menunggu');
+        $search = trim((string) $request->query('search', ''));
 
         $allowed = ['menunggu', 'disetujui', 'ditolak'];
         if (!in_array($status, $allowed, true)) {
@@ -25,12 +26,20 @@ class CompanyAccountRequestAdminController extends Controller
 
         $companyRequests = CompanyAccountRequest::query()
             ->where('request_status', $status)
+            ->when($search !== '', function ($q) use ($search) {
+                $q->where(function ($sub) use ($search) {
+                    $sub->where('company_name', 'like', "%{$search}%")
+                        ->orWhere('company_email', 'like', "%{$search}%")
+                        ->orWhere('contact_person', 'like', "%{$search}%");
+                });
+            })
             ->latest()
             ->paginate(10)
             ->withQueryString();
 
         return view('admin.company-account-requests.index', [
             'status' => $status,
+            'search' => $search,
             'companyRequests' => $companyRequests,
         ]);
     }

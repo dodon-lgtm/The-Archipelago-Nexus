@@ -292,58 +292,6 @@
 
 
 {{-- ============================================================= --}}
-{{-- ALERT SUCCESS --}}
-{{-- ============================================================= --}}
-@if(session('success'))
-
-    <div
-        class="mx-6 mt-4 flex items-center gap-3
-               px-4 py-3
-               bg-emerald-50
-               border border-emerald-200
-               text-emerald-700
-               rounded-xl
-               text-sm
-               font-medium
-               print:hidden"
-    >
-
-        <i class="fa-solid fa-check-circle"></i>
-
-        {{ session('success') }}
-
-    </div>
-
-@endif
-
-
-{{-- ============================================================= --}}
-{{-- ALERT ERROR --}}
-{{-- ============================================================= --}}
-@if(session('error'))
-
-    <div
-        class="mx-6 mt-4 flex items-center gap-3
-               px-4 py-3
-               bg-red-50
-               border border-red-200
-               text-red-700
-               rounded-xl
-               text-sm
-               font-medium
-               print:hidden"
-    >
-
-        <i class="fa-solid fa-xmark-circle"></i>
-
-        {{ session('error') }}
-
-    </div>
-
-@endif
-
-
-{{-- ============================================================= --}}
 {{-- TABEL PEMBAYARAN --}}
 {{-- ============================================================= --}}
 <div class="p-6">
@@ -432,31 +380,28 @@
 
                             {{-- PERUSAHAAN --}}
                             <td class="py-3.5 px-4">
-
-                                <span class="text-xs text-slate-600">
-                                    {{ $payment->company->name ?? '-' }}
-                                </span>
-
+                                <x-admin.user-cell :user="$payment->company" :name="$payment->company->name ?? '-'" />
                             </td>
 
 
                             {{-- FREELANCER --}}
                             <td class="py-3.5 px-4">
-
-                                <span class="text-xs text-slate-600">
-                                    {{ $payment->freelancer->name ?? '-' }}
-                                </span>
-
+                                <x-admin.user-cell :user="$payment->freelancer" :name="$payment->freelancer->name ?? '-'" avatarClass="bg-gradient-to-br from-emerald-100 to-emerald-50 ring-1 ring-emerald-100 text-emerald-600" />
                             </td>
 
 
                             {{-- PROJECT --}}
-                            <td class="py-3.5 px-4 max-w-[180px] truncate">
-
-                                <span class="text-xs text-slate-600">
-                                                                        {{ $payment->workspace?->project?->project_name ?? ($payment->isQuotaPayment() ? 'Kuota Proyek' : '-') }}
-                                </span>
-
+                            <td class="py-3.5 px-4 max-w-[180px]">
+                                @if ($payment->workspace?->project)
+                                    <a href="{{ route('admin.projects.show', $payment->workspace->project) }}"
+                                        class="text-xs text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 truncate inline-block max-w-full transition">
+                                        {{ $payment->workspace->project->project_name }}
+                                    </a>
+                                @else
+                                    <span class="text-xs text-slate-600">
+                                        {{ $payment->isQuotaPayment() ? 'Kuota Proyek' : '-' }}
+                                    </span>
+                                @endif
                             </td>
 
 
@@ -578,12 +523,10 @@
 
 
         {{-- PAGINATION --}}
-        @if(method_exists($payments, 'links'))
+        @if(method_exists($payments, 'links') && $payments->total() > 0)
 
-            <div class="mt-6 flex justify-center print:hidden">
-                <div class="[&_nav]:!m-0 [&_nav]:!p-0">
-                    {{ $payments->links() }}
-                </div>
+            <div class="mt-6 print:hidden">
+                <x-admin.pagination :paginator="$payments" />
             </div>
 
         @endif
