@@ -50,6 +50,7 @@ class Payment extends Model
         'invoice_number',
         'amount',
         'platform_fee',
+        'platform_fee_rate',
         'freelancer_receive',
         'payment_method',
         'payment_proof',
@@ -73,6 +74,7 @@ class Payment extends Model
     protected $casts = [
         'amount' => 'decimal:2',
         'platform_fee' => 'decimal:2',
+        'platform_fee_rate' => 'decimal:2',
         'freelancer_receive' => 'decimal:2',
         'midtrans_response' => 'array',
         'verified_at' => 'datetime',

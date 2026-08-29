@@ -258,4 +258,189 @@ class ProjectQuotaPaymentFlowTest extends TestCase
         $this->assertEquals(0.0, AdminWalletService::balance());
         $this->assertSame(0, WalletLedger::where('type', WalletLedger::TYPE_PROJECT_QUOTA_FEE)->count());
     }
+
+    // ────────────────────────────────────────────────────────────
+    // TEST 6 — Admin mengubah harga: payment quota BARU pakai harga
+    // terbaru, payment lama (pending/paid) tetap immutable.
+    // ────────────────────────────────────────────────────────────
+    public function test_price_change_creates_new_quota_payment_with_new_price(): void
+    {
+        $company = $this->completeCompany();
+        Project::factory()->count(3)->create(['user_id' => $company->id]);
+
+        // Default price = 10000 (QUOTA_PRICE constant)
+        $payment1 = \App\Http\Controllers\Company\PaymentController::ensurePendingQuotaPayment($company->id);
+        $this->assertEquals(10000.0, (float) $payment1->amount);
+        $this->assertEquals('pending', $payment1->status);
+
+        // Admin mengubah harga ke 100000 via Financial Settings
+        \App\Models\FinancialSetting::query()->delete();
+        \App\Models\FinancialSetting::create([
+            'project_fee_rate' => 5,
+            'withdrawal_fee_rate' => 5,
+            'free_project_uploads_per_month' => 3,
+            'paid_project_upload_price' => 100000,
+        ]);
+
+        // Company butuh quota baru → HARUS dapat payment BARU dengan harga 100000
+        $payment2 = \App\Http\Controllers\Company\PaymentController::ensurePendingQuotaPayment($company->id);
+
+        // Payment BARU dibuat (ID berbeda)
+        $this->assertNotEquals($payment1->id, $payment2->id);
+        // Payment baru amount = 100000
+        $this->assertEquals(100000.0, (float) $payment2->amount);
+        $this->assertEquals('pending', $payment2->status);
+
+        // Payment LAMA tetap immutable: amount = 10000, status = pending
+        $this->assertEquals(10000.0, (float) $payment1->fresh()->amount);
+        $this->assertEquals('pending', $payment1->fresh()->status);
+    }
+
+    public function test_gateway_shows_correct_price_after_admin_changes_setting(): void
+    {
+        $company = $this->completeCompany();
+        Project::factory()->count(3)->create(['user_id' => $company->id]);
+
+        // Default: 10000
+        $payment1 = \App\Http\Controllers\Company\PaymentController::ensurePendingQuotaPayment($company->id);
+        $this->assertEquals(10000.0, (float) $payment1->amount);
+
+        // Admin ubah ke 100000
+        \App\Models\FinancialSetting::query()->delete();
+        \App\Models\FinancialSetting::create([
+            'project_fee_rate' => 5,
+            'withdrawal_fee_rate' => 5,
+            'free_project_uploads_per_month' => 3,
+            'paid_project_upload_price' => 100000,
+        ]);
+
+        // Payment baru untuk gateway
+        $payment2 = \App\Http\Controllers\Company\PaymentController::ensurePendingQuotaPayment($company->id);
+
+        // Gateway harus menampilkan harga BARU (dari $payment->amount di database)
+        $response = $this->actingAs($company)->get(route('company.quota.payment.show', $payment2));
+        $response->assertOk();
+        $response->assertSee('100.000'); // formatted price
+
+        // Pastikan price di view diambil dari $payment->amount
+        $response->assertSee('Bayar Sekarang');
+    }
+
+    public function test_manual_demo_payment_uses_database_amount_not_client_input(): void
+    {
+        config(['services.midtrans.temporary_confirmation' => true]);
+
+        $company = $this->completeCompany();
+        Project::factory()->count(3)->create(['user_id' => $company->id]);
+
+        // Admin set harga 100000
+        \App\Models\FinancialSetting::query()->delete();
+        \App\Models\FinancialSetting::create([
+            'project_fee_rate' => 5,
+            'withdrawal_fee_rate' => 5,
+            'free_project_uploads_per_month' => 3,
+            'paid_project_upload_price' => 100000,
+        ]);
+
+        $payment = \App\Http\Controllers\Company\PaymentController::ensurePendingQuotaPayment($company->id);
+        $this->assertEquals(100000.0, (float) $payment->amount);
+
+        // Manual confirm — amount HARUS dari database ($payment->amount)
+        $response = $this->actingAs($company)->postJson(route('company.quota.payment.confirm', $payment));
+        $response->assertJson(['success' => true, 'status' => 'paid']);
+
+        $payment->refresh();
+        $this->assertEquals('paid', $payment->status);
+        $this->assertEquals(100000.0, (float) $payment->amount);
+
+        // Income Admin Wallet harus pakai amount dari database (100000)
+        $ledger = \App\Models\WalletLedger::where('type', \App\Models\WalletLedger::TYPE_PROJECT_QUOTA_FEE)->first();
+        $this->assertNotNull($ledger);
+        $this->assertEquals(100000.0, (float) $ledger->amount);
+    }
+
+    public function test_paid_quota_payments_not_affected_by_financial_settings_change(): void
+    {
+        $company = $this->completeCompany();
+        Project::factory()->count(3)->create(['user_id' => $company->id]);
+
+        // Harga awal 10000
+        $payment = \App\Http\Controllers\Company\PaymentController::ensurePendingQuotaPayment($company->id);
+        $this->assertEquals(10000.0, (float) $payment->amount);
+
+        // Simulasikan payment PAID (via webhook atau manual)
+        $payment->update(['status' => 'paid', 'verified_at' => now()]);
+        \App\Services\AdminWalletService::recordProjectQuotaIncome($payment, $company->id);
+
+        $this->assertEquals('paid', $payment->fresh()->status);
+        $this->assertEquals(10000.0, (float) $payment->fresh()->amount);
+
+        // Admin ubah harga ke 100000
+        \App\Models\FinancialSetting::query()->delete();
+        \App\Models\FinancialSetting::create([
+            'project_fee_rate' => 5,
+            'withdrawal_fee_rate' => 5,
+            'free_project_uploads_per_month' => 3,
+            'paid_project_upload_price' => 100000,
+        ]);
+
+        // Payment yang sudah PAID TIDAK BERUBAH
+        $payment->refresh();
+        $this->assertEquals('paid', $payment->status);
+        $this->assertEquals(10000.0, (float) $payment->amount);
+
+        // Income yang sudah tercatat juga tidak berubah
+        $ledger = \App\Models\WalletLedger::where('type', \App\Models\WalletLedger::TYPE_PROJECT_QUOTA_FEE)->first();
+        $this->assertEquals(10000.0, (float) $ledger->amount);
+
+        // Payment QUOTA BARU (untuk proyek selanjutnya) pakai harga 100000
+        $newPayment = \App\Http\Controllers\Company\PaymentController::ensurePendingQuotaPayment($company->id);
+        $this->assertEquals(100000.0, (float) $newPayment->amount);
+    }
+
+    public function test_waiting_verification_payment_reused_if_price_matches(): void
+    {
+        $company = $this->completeCompany();
+        Project::factory()->count(3)->create(['user_id' => $company->id]);
+
+        $payment = \App\Http\Controllers\Company\PaymentController::ensurePendingQuotaPayment($company->id);
+        $this->assertEquals('pending', $payment->status);
+
+        // Simulasikan company upload bukti → status waiting_verification
+        $payment->update(['status' => 'waiting_verification']);
+
+        // Panggil lagi → HARUS reuse payment yang sama (price masih sama 10000)
+        $reused = \App\Http\Controllers\Company\PaymentController::ensurePendingQuotaPayment($company->id);
+        $this->assertEquals($payment->id, $reused->id);
+        $this->assertEquals('waiting_verification', $reused->status);
+    }
+
+    public function test_waiting_verification_payment_not_reused_if_price_changed(): void
+    {
+        $company = $this->completeCompany();
+        Project::factory()->count(3)->create(['user_id' => $company->id]);
+
+        $payment = \App\Http\Controllers\Company\PaymentController::ensurePendingQuotaPayment($company->id);
+        $payment->update(['status' => 'waiting_verification']);
+        $this->assertEquals(10000.0, (float) $payment->amount);
+
+        // Admin ubah harga
+        \App\Models\FinancialSetting::query()->delete();
+        \App\Models\FinancialSetting::create([
+            'project_fee_rate' => 5,
+            'withdrawal_fee_rate' => 5,
+            'free_project_uploads_per_month' => 3,
+            'paid_project_upload_price' => 100000,
+        ]);
+
+        // Panggil lagi → HARUS buat payment BARU (price beda)
+        $newPayment = \App\Http\Controllers\Company\PaymentController::ensurePendingQuotaPayment($company->id);
+        $this->assertNotEquals($payment->id, $newPayment->id);
+        $this->assertEquals(100000.0, (float) $newPayment->amount);
+        $this->assertEquals('pending', $newPayment->status);
+
+        // Payment lama tetap waiting_verification & amount 10000
+        $this->assertEquals('waiting_verification', $payment->fresh()->status);
+        $this->assertEquals(10000.0, (float) $payment->fresh()->amount);
+    }
 }

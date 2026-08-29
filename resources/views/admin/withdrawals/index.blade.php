@@ -58,7 +58,7 @@
                         <th class="text-left px-5 py-3.5 font-bold text-slate-600 dark:text-slate-300 text-[11px] uppercase tracking-wider">Metode</th>
                         <th class="text-left px-5 py-3.5 font-bold text-slate-600 dark:text-slate-300 text-[11px] uppercase tracking-wider">Rekening</th>
                         <th class="text-right px-5 py-3.5 font-bold text-slate-600 dark:text-slate-300 text-[11px] uppercase tracking-wider">Nominal</th>
-                        <th class="text-right px-5 py-3.5 font-bold text-slate-600 dark:text-slate-300 text-[11px] uppercase tracking-wider">Pajak 5%</th>
+                        <th class="text-right px-5 py-3.5 font-bold text-slate-600 dark:text-slate-300 text-[11px] uppercase tracking-wider">Fee Admin</th>
                         <th class="text-right px-5 py-3.5 font-bold text-slate-600 dark:text-slate-300 text-[11px] uppercase tracking-wider">Nominal Bersih</th>
                         <th class="text-center px-5 py-3.5 font-bold text-slate-600 dark:text-slate-300 text-[11px] uppercase tracking-wider">Status</th>
                         <th class="text-center px-5 py-3.5 font-bold text-slate-600 dark:text-slate-300 text-[11px] uppercase tracking-wider">Tanggal</th>

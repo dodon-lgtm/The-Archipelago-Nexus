@@ -29,6 +29,7 @@ use App\Http\Controllers\Admin\WithdrawalController as AdminWithdrawalController
 use App\Http\Controllers\Admin\WalletController as AdminWalletController;
 use App\Http\Controllers\Admin\PolicyController as AdminPolicyController;
 use App\Http\Controllers\Admin\FooterSettingController as AdminFooterSettingController;
+use App\Http\Controllers\Admin\FinancialSettingController as AdminFinancialSettingController;
 use App\Http\Controllers\LegalPageController;
 use App\Http\Controllers\Admin\ResolutionController as AdminResolutionController;
 
@@ -173,6 +174,7 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])->prefix('company')->nam
     Route::get('/quota-payment/{payment}', [CompanyPaymentController::class, 'showQuotaGateway'])->name('quota.payment.show');
     Route::get('/quota-payment/{payment}/status', [CompanyPaymentController::class, 'quotaPaymentStatus'])->name('quota.payment.status');
     Route::post('/quota-payment/{payment}/midtrans', [CompanyPaymentController::class, 'createQuotaTransaction'])->name('quota.payment.midtrans');
+    Route::post('/quota-payment/{payment}/confirm', [CompanyPaymentController::class, 'confirmQuotaPayment'])->name('quota.payment.confirm');
 
     Route::get('/client/project/{project}/review', [ReviewController::class, 'create'])->name('client.review.create');
     Route::post('/client/project/{project}/review', [ReviewController::class, 'store'])->name('client.review.store');
@@ -226,6 +228,9 @@ Route::middleware(['auth', 'ensureAdmin'])->prefix('admin')->name('admin.')->gro
 
     Route::get('/footer-settings/edit', [AdminFooterSettingController::class, 'edit'])->name('footer-settings.edit');
     Route::put('/footer-settings', [AdminFooterSettingController::class, 'update'])->name('footer-settings.update');
+
+    Route::get('/financial-settings', [AdminFinancialSettingController::class, 'edit'])->name('financial-settings.edit');
+    Route::put('/financial-settings', [AdminFinancialSettingController::class, 'update'])->name('financial-settings.update');
 
     Route::get('/projects', [AdminProjectController::class, 'index'])->name('projects.index');
     Route::get('/projects/{project}', [AdminProjectController::class, 'show'])->name('projects.show');

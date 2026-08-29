@@ -140,6 +140,24 @@
                                             <span>Cek Status Lagi</span>
                                         </button>
                                         <p id="midtransError" class="text-[11px] text-slate-600 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 leading-relaxed mt-3 hidden"></p>
+
+                                        @if ((bool) config('services.midtrans.temporary_confirmation', false))
+                                            {{-- MANUAL / DEMO PAYMENT (KUOTA) — hanya saat mode temporary confirmation aktif.
+                                                 Nominal TIDAK dikirim dari sini; server memakai amount dari database. --}}
+                                            <div class="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3.5">
+                                                <p class="text-[11px] font-bold text-amber-800 mb-0.5">
+                                                    <i class="fa-solid fa-flask"></i> Bayar Manual (Mode Demo)
+                                                </p>
+                                                <p class="text-[10px] text-amber-700 leading-relaxed mb-2">
+                                                    Konfirmasi tanpa Midtrans untuk demo/testing. Nominal tetap dari database.
+                                                </p>
+                                                <button type="button" id="manualQuotaConfirmBtn"
+                                                    class="w-full px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-xs font-bold transition disabled:opacity-60">
+                                                    <i class="fa-solid fa-circle-check"></i>
+                                                    Konfirmasi Manual — Rp {{ number_format($price, 0, ',', '.') }}
+                                                </button>
+                                            </div>
+                                        @endif
                                     </div>
 
                                     <a href="{{ route('company.projects.create') }}"
@@ -266,6 +284,38 @@
         {{-- Midtrans Snap SDK + handler khusus kuota (polling status server-side) --}}
         <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.client_key') }}"></script>
         <script src="{{ asset('js/payments/quota-midtrans.js') }}"></script>
+    @endif
+
+    @if ((bool) config('services.midtrans.temporary_confirmation', false) && in_array($payment->status, ['pending','rejected','waiting_verification'], true))
+        <script>
+            (function () {
+                var btn = document.getElementById('manualQuotaConfirmBtn');
+                if (!btn) return;
+                btn.addEventListener('click', function () {
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses…';
+                    fetch("{{ route('company.quota.payment.confirm', $payment) }}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({})
+                    }).then(function (r) { return r.json(); }).then(function (data) {
+                        if (data.success && data.status === 'paid') {
+                            window.location.href = "{{ route('company.projects.create') }}";
+                            return;
+                        }
+                        alert((data && data.message) || 'Gagal mengonfirmasi pembayaran.');
+                        btn.disabled = false;
+                    }).catch(function () {
+                        alert('Gagal menghubungi server.');
+                        btn.disabled = false;
+                    });
+                });
+            })();
+        </script>
     @endif
 </body>
 

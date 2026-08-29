@@ -382,7 +382,7 @@
                                         <th class="px-6 py-3">Nama Tujuan</th>
                                         <th class="px-6 py-3">Nomor Rekening / E-Wallet</th>
                                         <th class="px-6 py-3 text-right">Nominal Penarikan</th>
-                                        <th class="px-6 py-3 text-right">Pajak 5%</th>
+                                        <th class="px-6 py-3 text-right">Fee Admin</th>
                                         <th class="px-6 py-3 text-right">Nominal Bersih</th>
                                         <th class="px-6 py-3">Tanggal</th>
                                         <th class="px-6 py-3">Status</th>

@@ -393,29 +393,34 @@ class PaymentController extends Controller
             'can_create'      => $quotaService->canCreateProject($userId),
             'used_slots'      => $quotaService->usedSlots($userId),
             'available_slots' => $quotaService->availableSlots($userId),
-            'free_quota'      => ProjectQuotaService::FREE_QUOTA_PER_MONTH,
+            'free_quota'      => $quotaService->freeQuota(),
             'paid_slots'      => $quotaService->paidSlotsThisMonth($userId),
         ]);
     }
 
     /**
      * Pastikan ada TEPAT SATU Payment kuota aktif (pending/waiting_verification)
-     * untuk company. Idempotent — reuse payment pending yang ada (anti double
-     * payment). Amount SELALU dari konstanta server AdminWalletService::QUOTA_PRICE.
+     * untuk company. Idempotent — reuse payment pending yang ada JIKA amount-nya
+     * SESUAI dengan Financial Settings saat ini. Jika price berubah, buat payment
+     * BARU dengan amount terbaru (payment lama tetap immutable).
      */
     public static function ensurePendingQuotaPayment(int $userId): Payment
     {
         return DB::transaction(function () use ($userId) {
+            $currentPrice = AdminWalletService::quotaPrice();
+
             $existing = Payment::where('company_id', $userId)
                 ->where('payment_type', Payment::PAYMENT_TYPE_QUOTA)
                 ->whereIn('status', ['pending', 'waiting_verification'])
-                ->latest()
+                ->latest('id')
                 ->first();
 
-            if ($existing) {
+            if ($existing && (float) $existing->amount === (float) $currentPrice) {
                 return $existing;
             }
 
+            // Price berubah atau tidak ada pending payment → buat payment BARU.
+            // Payment lama (amount berbeda) tetap immutable di DB.
             $seq = (int) (Payment::max('id') ?? 0) + 1;
             $invoiceNumber = 'INV-QOT-' . now()->format('Ymd') . '-' . str_pad($seq, 4, '0', STR_PAD_LEFT);
 
@@ -424,7 +429,7 @@ class PaymentController extends Controller
                 'freelancer_id'  => null,
                 'workspace_id'   => null,
                 'invoice_number' => $invoiceNumber,
-                'amount'         => AdminWalletService::QUOTA_PRICE, // server-side truth
+                'amount'         => $currentPrice,
                 'payment_type'   => Payment::PAYMENT_TYPE_QUOTA,
                 'status'         => 'pending',
                 'payment_method' => 'Midtrans',
@@ -464,7 +469,7 @@ class PaymentController extends Controller
             'quota'   => [
                 'used_slots'      => $quotaService->usedSlots(Auth::id()),
                 'available_slots' => $quotaService->availableSlots(Auth::id()),
-                'free_quota'      => ProjectQuotaService::FREE_QUOTA_PER_MONTH,
+                'free_quota'      => $quotaService->freeQuota(),
                 'paid_slots'      => $quotaService->paidSlotsThisMonth(Auth::id()),
                 'can_create'      => $quotaService->canCreateProject(Auth::id()),
             ],
@@ -673,5 +678,66 @@ class PaymentController extends Controller
         };
 
         return response()->json(['success' => true, 'status' => $payment->status, 'detail' => $detail]);
+    }
+
+    /* ─── MANUAL / DEMO PAYMENT (KUOTA) ─────────────────────────────
+    | Konfirmasi pembayaran kuota TANPA Midtrans/ngrok/webhook — khusus
+    | mode demo/testing (config services.midtrans.temporary_confirmation).
+    |
+    | Keamanan (identik dengan confirmPayment milik workspace):
+    |   - Wajib authenticated + pemilik payment (company_id = user login).
+    |   - Nominal SELALU dari DATABASE ($payment->amount) — input browser diabaikan.
+    |   - Idempotent: payment paid tidak diproses ulang.
+    |   - Income Admin Wallet dicatat SEKALI (unique payment_id+type pada wallet_ledger).
+    */
+    public function confirmQuotaPayment(Payment $payment)
+    {
+        // 1. Flag demo harus aktif
+        if (!(bool) config('services.midtrans.temporary_confirmation', false)) {
+            abort(404, 'Manual payment confirmation tidak aktif.');
+        }
+
+        // 2. Authorization: hanya company pemilik payment & hanya type quota
+        abort_unless(
+            (int) $payment->company_id === (int) Auth::id()
+                && $payment->payment_type === Payment::PAYMENT_TYPE_QUOTA,
+            403
+        );
+
+        // 3. Idempotensi: payment lunas tidak diproses ulang
+        if ($payment->status === 'paid') {
+            return response()->json([
+                'success' => true,
+                'status'  => 'paid',
+                'message' => 'Pembayaran sudah selesai sebelumnya.',
+            ]);
+        }
+
+        try {
+            DB::transaction(function () use ($payment) {
+                // Status paid — nominal tetap dari database (bukan request).
+                $payment->update([
+                    'status'      => 'paid',
+                    'verified_by' => Auth::id(),
+                    'verified_at' => now(),
+                ]);
+
+                // Income Admin Wallet — idempotent (unique payment_id+type).
+                AdminWalletService::recordProjectQuotaIncome($payment, Auth::id());
+            });
+        } catch (\Throwable $e) {
+            Log::error('Manual quota confirmation gagal: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengonfirmasi pembayaran.',
+            ], 500);
+        }
+
+        return response()->json([
+            'success' => true,
+            'status'  => 'paid',
+            'message' => 'Pembayaran berhasil dikonfirmasi. Slot proyek Anda telah ditambah.',
+        ]);
     }
 }

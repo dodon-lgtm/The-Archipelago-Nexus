@@ -400,7 +400,7 @@
                                                 {{ formatRupiahShort($wd->amount) }}
                                             </p>
                                             @if($wd->fee > 0)
-                                                <p class="text-[10px] text-red-400 dark:text-red-400 mt-0.5">Pajak 5%: -{{ formatRupiahShort($wd->fee) }}</p>
+                                                <p class="text-[10px] text-red-400 dark:text-red-400 mt-0.5">Fee Admin: -{{ formatRupiahShort($wd->fee) }}</p>
                                                 <p class="text-[10px] font-bold text-emerald-600 dark:text-emerald-300 mt-0.5" title="Rp {{ number_format($wd->net_amount, 0, ',', '.') }}">
                                                     Diterima: {{ formatRupiahShort($wd->net_amount) }}
                                                 </p>
@@ -658,7 +658,7 @@
                         <span class="font-black text-slate-800 dark:text-white text-sm" id="summaryAmount">Rp 0</span>
                     </div>
                     <div class="flex items-center justify-between text-[11px]">
-                        <span class="text-slate-500 dark:text-slate-400">Pajak admin 5%</span>
+                        <span class="text-slate-500 dark:text-slate-400">Fee withdrawal admin ({{ rtrim(rtrim(number_format($withdrawalFeeRate, 2, '.', ''), '0'), '.') }}%)</span>
                         <span class="font-bold text-amber-600 dark:text-amber-400" id="summaryTax">-Rp 0</span>
                     </div>
                     <div class="flex items-center justify-between text-xs">
@@ -789,6 +789,9 @@
     const withdrawSubmitBtn = document.getElementById('withdrawSubmitBtn');
     const withdrawForm = document.getElementById('withdrawForm');
 
+    // Rate fee withdrawal dari Financial Settings (server-side truth).
+    window.__withdrawalFeeRate = {{ (float) ($withdrawalFeeRate ?? 5) }};
+
     let amountState = 'empty'; // empty | ok | error
 
     function updateAmountState() {
@@ -819,7 +822,7 @@
         amountHint.className = 'text-[10px] mt-2.5 ' +
             (state === 'error' ? 'text-red-500 dark:text-red-400' : 'text-slate-400 dark:text-slate-500');
 
-        const fee = value > 0 ? Math.round(value * 0.05) : 0;
+        const fee = value > 0 ? Math.round(value * (window.__withdrawalFeeRate ?? 5) / 100) : 0;
         const received = value - fee;
 
         summaryAmount.textContent = formatShortRupiahJS(value);

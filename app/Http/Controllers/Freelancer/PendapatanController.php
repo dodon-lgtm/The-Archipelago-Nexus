@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Freelancer;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Freelancer\WithdrawalStoreRequest;
+use App\Models\FinancialSetting;
 use App\Models\Payment;
 use App\Models\Withdrawal;
 use App\Services\WithdrawalService;
@@ -69,6 +70,9 @@ class PendapatanController extends Controller
 
         $minWithdraw = WithdrawalStoreRequest::MIN_WITHDRAW;
 
+        // Rate fee withdrawal saat ini (untuk ringkasan form penarikan).
+        $withdrawalFeeRate = FinancialSetting::getSettings()->withdrawalFeeRate();
+
         return view('freelancer.pendapatan.index', compact(
             'payments',
             'totalEarned',
@@ -79,7 +83,8 @@ class PendapatanController extends Controller
             'availableBalance',
             'heldBalance',
             'withdrawnBalance',
-            'minWithdraw'
+            'minWithdraw',
+            'withdrawalFeeRate'
         ));
     }
 }

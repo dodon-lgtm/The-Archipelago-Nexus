@@ -448,7 +448,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                         <span class="text-xs font-semibold text-slate-600">Rp {{ number_format($payment->amount, 0, ',', '.') }}</span>
                                     </div>
                                     <div class="flex items-center justify-between">
-                                        <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Platform Fee (5%)</p>
+                                        <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Fee Platform{{ ($payment->platform_fee_rate !== null && $payment->platform_fee_rate !== '') ? ' (' . rtrim(rtrim(number_format((float) $payment->platform_fee_rate, 2, '.', ''), '0'), '.') . '%)' : '' }}</p>
                                         <span class="text-xs font-semibold text-slate-600">Rp {{ number_format($payment->platform_fee, 0, ',', '.') }}</span>
                                     </div>
                                     <div class="flex items-center justify-between">
@@ -480,6 +480,58 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
     <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.client_key') }}"></script>
     <script src="{{ asset('js/toast.js') }}"></script>
     <script src="{{ asset('js/payments/midtrans.js') }}"></script>
+
+    @if ((bool) config('services.midtrans.temporary_confirmation', false) && $payment->status !== 'paid')
+        {{-- MANUAL / DEMO PAYMENT — hanya saat mode temporary confirmation aktif.
+             Nominal TIDAK dikirim dari sini; server memakai amount dari database. --}}
+        <div class="max-w-4xl mx-auto px-4 pb-10">
+            <div class="rounded-2xl border border-amber-200 bg-amber-50 p-5">
+                <div class="flex items-center gap-2 mb-1">
+                    <i class="fa-solid fa-flask text-amber-600"></i>
+                    <h3 class="font-bold text-sm text-amber-800">Bayar Manual (Mode Demo)</h3>
+                </div>
+                <p class="text-[11px] text-amber-700 leading-relaxed mb-3">
+                    Konfirmasi pembayaran tanpa Midtrans untuk kebutuhan demo/testing. Nominal tetap dibaca dari
+                    database (Rp {{ number_format($payment->amount, 0, ',', '.') }}).
+                </p>
+                <button type="button" id="manualConfirmBtn"
+                    class="px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold transition disabled:opacity-60">
+                    <i class="fa-solid fa-circle-check"></i> Konfirmasi Manual
+                </button>
+            </div>
+        </div>
+        <script>
+            (function () {
+                var btn = document.getElementById('manualConfirmBtn');
+                if (!btn) return;
+                btn.addEventListener('click', function () {
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses…';
+                    fetch("{{ route('payments.confirm', $workspace) }}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({})
+                    }).then(function (r) { return r.json(); }).then(function (data) {
+                        if (data.success && data.redirect_url) {
+                            window.location.href = data.redirect_url;
+                            return;
+                        }
+                        alert((data && data.message) || 'Gagal mengonfirmasi pembayaran.');
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Konfirmasi Manual';
+                    }).catch(function () {
+                        alert('Gagal menghubungi server.');
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Konfirmasi Manual';
+                    });
+                });
+            })();
+        </script>
+    @endif
 </body>
 
 </html>

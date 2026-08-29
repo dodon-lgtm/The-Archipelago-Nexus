@@ -2,14 +2,15 @@
 
 namespace App\Services;
 
+use App\Models\FinancialSetting;
 use App\Models\Payment;
 use App\Models\Project;
 
 /**
  * ProjectQuotaService — Aturan "Company Project Upload Quota".
  *
- * FREE  : 3 proyek gratis per bulan kalender.
- * PAID  : setiap proyek tambahan setelah kuota gratis = Rp10.000/per proyek.
+ * FREE  : N proyek gratis per bulan kalender (diatur Admin via Financial Settings).
+ * PAID  : setiap proyek tambahan setelah kuota gratis dibayar (harga dari Financial Settings).
  *
  * Penghitungan SELALU berbasis bulan kalender berjalan (bukan total sepanjang
  * waktu), dan dihitung ulang dari database — bukan disimpan sebagai counter,
@@ -17,7 +18,14 @@ use App\Models\Project;
  */
 class ProjectQuotaService
 {
+    /** Fallback bila tabel financial_settings belum ada/berisi. */
     public const FREE_QUOTA_PER_MONTH = 3;
+
+    /** Batas gratis per bulan dari pengaturan aktif (fallback ke konstanta). */
+    public function freeQuota(): int
+    {
+        return FinancialSetting::getSettings()->freeUploadsPerMonth();
+    }
 
     /** Jumlah proyek yang dibuat company pada bulan berjalan. */
     public function projectsCreatedThisMonth(int $userId): int
@@ -39,10 +47,10 @@ class ProjectQuotaService
             ->count();
     }
 
-    /** Total slot yang tersedia bulan ini = 3 gratis + slot berbayar. */
+    /** Total slot yang tersedia bulan ini = N gratis + slot berbayar. */
     public function availableSlots(int $userId): int
     {
-        return self::FREE_QUOTA_PER_MONTH + $this->paidSlotsThisMonth($userId);
+        return $this->freeQuota() + $this->paidSlotsThisMonth($userId);
     }
 
     /** Kuota yang sudah terpakai bulan ini. */
@@ -53,7 +61,7 @@ class ProjectQuotaService
 
     /**
      * Apakah company masih boleh membuat proyek bulan ini?
-     * projectCount bulan ini < (3 + jumlah payment quota paid bulan ini).
+     * projectCount bulan ini < (N + jumlah payment quota paid bulan ini).
      */
     public function canCreateProject(int $userId): bool
     {

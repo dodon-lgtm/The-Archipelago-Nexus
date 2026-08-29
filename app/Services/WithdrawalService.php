@@ -71,8 +71,9 @@ class WithdrawalService
      * (status "berhasil" + paid_at diisi saat itu juga). Akibatnya saldo
      * tersedia freelancer langsung berkurang sesuai nominal penarikan.
      *
-     * Pajak admin 5% dihitung DI SINI (backend) dan disimpan ke kolom
-     * `fee` serta `net_amount` agar konsisten di seluruh tampilan.
+     * Fee withdrawal platform dihitung DI SINI (backend) dari Financial Settings
+     * dan disimpan (snapshot) ke kolom `fee`, `fee_rate`, serta `net_amount`
+     * agar konsisten di seluruh tampilan.
      *
      * @param  array  $data  Data yang sudah lolos WithdrawalStoreRequest
      * @return Withdrawal
@@ -93,9 +94,11 @@ class WithdrawalService
                 ]);
             }
 
-            // Pajak admin 5% dihitung dari nominal penarikan (sekali saja).
+            // Fee withdrawal dihitung dari rate Financial Settings (sekali saja saat dibuat),
+            // dan di-snapshot ke kolom fee_rate agar transaksi lama tidak berubah.
             $amount    = (float) $data['amount'];
-            $fee       = round($amount * Withdrawal::TAX_RATE, 2);
+            $feeRate   = (float) \App\Models\FinancialSetting::getSettings()->withdrawalFeeRate();
+            $fee       = round($amount * $feeRate / 100, 2);
             $netAmount = round($amount - $fee, 2);
 
             $withdrawal = Withdrawal::create([
@@ -103,6 +106,7 @@ class WithdrawalService
                 'user_id'         => $userId,
                 'amount'          => $amount,
                 'fee'             => $fee,
+                'fee_rate'        => $feeRate,
                 'net_amount'      => $netAmount,
                 'method'          => $data['method'],
                 'bank_name'       => $data['bank_name'],
@@ -123,7 +127,7 @@ class WithdrawalService
                 title: 'Penarikan Dana Berhasil',
                 message: 'Penarikan ' . $withdrawal->withdrawal_code
                     . ' sebesar Rp ' . number_format($amount, 0, ',', '.')
-                    . ' berhasil dicairkan (simulasi). Pajak admin 5% sebesar Rp '
+                    . ' berhasil dicairkan (simulasi). Fee admin sebesar Rp '
                     . number_format($fee, 0, ',', '.')
                     . ' dipotong, dan Rp ' . number_format($netAmount, 0, ',', '.')
                     . ' diterima ke ' . $withdrawal->bank_name

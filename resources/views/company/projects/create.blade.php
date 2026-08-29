@@ -426,6 +426,59 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                         {{-- DIVIDER --}}
                         <div class="h-px w-full bg-gradient-to-r from-transparent via-blue-100 dark:via-slate-800 to-transparent mb-8"></div>
 
+                        {{-- QUOTA INDICATOR --}}
+                        <div class="mb-6">
+                            <div class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
+                                <div class="flex items-start justify-between gap-4 mb-4">
+                                    <div>
+                                        <h3 class="font-bold text-slate-800 dark:text-white text-sm">Kuota Proyek Bulan Ini</h3>
+                                        <p class="text-[10px] font-bold text-blue-400 uppercase tracking-widest mt-0.5 dark:text-slate-400">
+                                            {{ $quotaData['used_slots'] ?? 0 }} / {{ $quotaData['free_quota'] ?? 3 }} tersisa
+                                        </p>
+                                    </div>
+                                    <div class="flex items-center gap-2 shrink-0">
+                                        <span class="text-lg font-extrabold {{ ($quotaData['remaining'] ?? ($quotaData['free_quota'] ?? 3) - ($quotaData['used_slots'] ?? 0)) > 0 ? 'text-emerald-600' : 'text-red-500' }}">
+                                            {{ max(0, ($quotaData['available_slots'] ?? ($quotaData['free_quota'] ?? 3)) - ($quotaData['used_slots'] ?? 0)) }}
+                                        </span>
+                                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Slot</span>
+                                    </div>
+                                </div>
+                                
+                                {{-- Progress Bar --}}
+                                <div class="mb-3">
+                                    <div class="w-full h-2.5 bg-blue-50 dark:bg-slate-800 rounded-full overflow-hidden">
+                                        @php
+                                            $used = $quotaData['used_slots'] ?? 0;
+                                            $limit = $quotaData['free_quota'] ?? 3;
+                                            $available = $quotaData['available_slots'] ?? $limit;
+                                            $percentage = $available > 0 ? min(100, round(($used / $available) * 100)) : 100;
+                                            $isExhausted = ($available - $used) <= 0;
+                                        @endphp
+                                        <div class="h-full {{ $isExhausted ? 'bg-red-500' : 'bg-gradient-to-r from-blue-500 to-blue-600' }} rounded-full transition-all duration-500"
+                                             style="width: {{ $percentage }}%;"
+                                             role="progressbar"
+                                             aria-valuenow="{{ $percentage }}"
+                                             aria-valuemin="0"
+                                             aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs">
+                                    <p class="text-slate-500 dark:text-slate-400">
+                                        {{ $used }} proyek sudah digunakan
+                                    </p>
+                                    <p class="text-slate-500 dark:text-slate-400">
+                                        Kuota gratis direset setiap awal bulan.
+                                    </p>
+                                    @if($isExhausted)
+                                    <p class="text-red-500 font-semibold">
+                                        Kuota gratis habis. Proyek tambahan: Rp {{ number_format($quotaData['quota_price'], 0, ',', '.') }}
+                                    </p>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+
                         {{-- SECTION 4: STATUS & SUBMIT --}}
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6 bg-blue-50/50 p-5 rounded-2xl border border-blue-100 dark:bg-slate-800/50 dark:border-slate-800">
                             {{-- Status --}}
@@ -468,7 +521,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
         <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-xl w-full max-w-md mx-4">
             <div class="p-6 border-b border-blue-100 dark:border-slate-700">
                 <h3 class="font-bold text-slate-800 text-lg dark:text-white">Batas Kuota Proyek Bulan Ini</h3>
-                <p class="text-xs text-slate-500 mt-1 dark:text-slate-400">Anda telah mencapai batas kuota gratis (3 proyek/bulan).</p>
+                <p class="text-xs text-slate-500 mt-1 dark:text-slate-400">Anda telah mencapai batas kuota gratis ({{ $quotaData['free_quota'] ?? 3 }} proyek/bulan).</p>
             </div>
             <div class="p-6 text-center">
                 <div class="w-16 h-16 mx-auto mb-4 bg-blue-50 rounded-full flex items-center justify-center dark:bg-slate-800">
@@ -483,7 +536,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                 </p>
                 <p class="text-sm text-slate-600 dark:text-slate-300 mb-6">
                     Untuk membuat proyek tambahan, diperlukan pembayaran
-                    <span class="font-bold text-blue-600">Rp {{ number_format(session('quota_price', 10000), 0, ',', '.') }}</span>.
+                    <span class="font-bold text-blue-600" id="quotaPriceDisplay">Rp {{ number_format($quotaData['quota_price'], 0, ',', '.') }}</span>.
                 </p>
             </div>
             <div class="p-4 border-t border-blue-100 dark:border-slate-700 flex justify-end gap-3">
@@ -491,10 +544,10 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                         class="px-4 py-2 text-sm font-semibold text-slate-600 bg-slate-50 rounded-xl hover:bg-slate-100 transition">
                     Nanti Saja
                 </button>
-                <a href="{{ session('quota_payment_id') ? route('company.quota.payment.show', session('quota_payment_id')) : route('company.quota.payment.start') }}"
+<a href="{{ session('quota_payment_id') ? route('company.quota.payment.show', session('quota_payment_id')) : route('company.quota.payment.start') }}"
                         id="btnPayQuota"
                         class="px-6 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 inline-flex items-center gap-2 transition shadow-[0_5px_15px_rgba(37,99,235,0.3)]">
-                    <i class="fa-solid fa-credit-card"></i> Bayar Rp{{ number_format(session('quota_price', 10000), 0, ',', '.') }}
+                        <i class="fa-solid fa-credit-card"></i> <span id="btnPayQuotaText">Bayar Rp{{ number_format($quotaData['quota_price'], 0, ',', '.') }}</span>
                 </a>
             </div>
         </div>
@@ -668,12 +721,22 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
         // Quota data dari server (embed via PHP)
         const quotaData = @json($quotaData ?? null);
 
+        function formatPrice(price) {
+            return 'Rp ' + parseInt(price, 10).toLocaleString('id-ID');
+        }
+
         function openQuotaModal() {
             document.getElementById('quotaModal').classList.remove('hidden');
             if (quotaData) {
                 document.getElementById('quotaUsedInfo').textContent = quotaData.used_slots;
                 const free = document.getElementById('quotaFreeInfo'); 
                 if(free && quotaData.free_quota !== undefined) free.textContent = quotaData.free_quota;
+                // Update price displays - use quota_price from embedded server data
+                const price = quotaData.quota_price ?? 10000;
+                const priceDisplay = document.getElementById('quotaPriceDisplay');
+                if (priceDisplay) priceDisplay.textContent = formatPrice(price);
+                const btnText = document.getElementById('btnPayQuotaText');
+                if (btnText) btnText.textContent = 'Bayar ' + formatPrice(price);
             }
         }
         function closeQuotaModal() { document.getElementById('quotaModal').classList.add('hidden'); }

@@ -84,7 +84,7 @@
                                 <span class="font-semibold text-slate-700 dark:text-white">Rp {{ number_format($withdrawal->amount, 0, ',', '.') }}</span>
                             </div>
                             <div class="flex items-center justify-between text-xs">
-                                <span class="text-slate-500 dark:text-slate-400">Pajak Admin 5%</span>
+                                <span class="text-slate-500 dark:text-slate-400">Fee Withdrawal (Admin)</span>
                                 <span class="font-semibold text-red-500 dark:text-red-400">-Rp {{ number_format($withdrawal->fee, 0, ',', '.') }}</span>
                             </div>
                             <div class="flex items-center justify-between text-xs border-t border-blue-100 dark:border-slate-700 pt-2">

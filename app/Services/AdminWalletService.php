@@ -22,8 +22,16 @@ use Illuminate\Support\Facades\DB;
  */
 class AdminWalletService
 {
-    /** Harga per proyek tambahan (kuota) — DITENTUKAN SERVER, tidak pernah percaya input. */
+    /** Harga per proyek tambahan (kuota) — DITENTUKAN SERVER, tidak pernah percaya input. Fallback default. */
     public const QUOTA_PRICE = 10000;
+
+    /** Harga upload proyek dari Financial Settings (fallback ke konstanta). */
+    public static function quotaPrice(): float
+    {
+        $setting = \App\Models\FinancialSetting::getSettings();
+
+        return max(0.0, $setting->paidUploadPrice());
+    }
 
     // Kolom wallet_ledger.source
     public const SOURCE_QUOTA_PAYMENT  = 'quota_payment';
@@ -41,7 +49,8 @@ class AdminWalletService
         return static::record(
             type: WalletLedger::TYPE_PROJECT_QUOTA_FEE,
             amount: (float) $payment->amount,
-            description: 'Pendapatan biaya kuota proyek tambahan (Rp 10.000/proyek). Invoice: ' . $payment->invoice_number,
+            description: 'Pendapatan biaya kuota proyek tambahan (Rp '
+                . number_format((float) $payment->amount, 0, ',', '.') . '/proyek). Invoice: ' . $payment->invoice_number,
             direction: WalletLedger::DIRECTION_CREDIT,
             paymentId: $payment->id,
             withdrawalId: null,

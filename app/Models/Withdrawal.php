@@ -20,7 +20,9 @@ class Withdrawal extends Model
     public const TYPE_FREELANCER = 'freelancer';
     public const TYPE_ADMIN = 'admin';
 
-    /** Pajak admin yang dipotong dari setiap penarikan (5%). */
+    /** FEE withdrawal (komisi platform) yang dipotong dari penarikan — fallback lama 5%.
+     *  Source of truth saat ini adalah FinancialSetting::withdrawal_fee_rate;
+     *  konstanta ini hanya fallback backward compatibility bila settings tidak tersedia. */
     public const TAX_RATE = 0.05;
 
     public const ACTIVE_STATUSES = [
@@ -34,6 +36,7 @@ class Withdrawal extends Model
         'user_id',
         'amount',
         'fee',
+        'fee_rate',
         'net_amount',
         'method',
         'bank_name',
@@ -49,6 +52,7 @@ class Withdrawal extends Model
     protected $casts = [
         'amount' => 'decimal:2',
         'fee' => 'decimal:2',
+        'fee_rate' => 'decimal:2',
         'net_amount' => 'decimal:2',
         'processed_at' => 'datetime',
         'paid_at' => 'datetime',

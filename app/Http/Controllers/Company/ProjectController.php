@@ -161,11 +161,20 @@ class ProjectController extends Controller
         $categories = \App\Models\Category::query()->orderBy('name')->get();
 
         $quota = new ProjectQuotaService();
+        $usedSlots = $quota->usedSlots(Auth::id());
+        $freeQuota = $quota->freeQuota();
+        $availableSlots = $quota->availableSlots(Auth::id());
+        $setting = \App\Models\FinancialSetting::getSettings();
+        $quotaPrice = (int) round($setting->paidUploadPrice());
+
         $quotaData = [
             'can_create'      => $quota->canCreateProject(Auth::id()),
-            'used_slots'      => $quota->usedSlots(Auth::id()),
-            'available_slots' => $quota->availableSlots(Auth::id()),
-            'free_quota'      => ProjectQuotaService::FREE_QUOTA_PER_MONTH,
+            'used_slots'      => $usedSlots,
+            'available_slots' => $availableSlots,
+            'free_quota'      => $freeQuota,
+            'remaining'       => max(0, $availableSlots - $usedSlots),
+            'quota_price'     => $quotaPrice,
+            'quota_setting'   => $setting,
         ];
 
         return view('company.projects.create', compact('categories', 'quotaData'));
@@ -212,7 +221,7 @@ class ProjectController extends Controller
                     ->route('company.projects.create')
                     ->with('quota_payment_id', $quotaPayment->id)
                     ->with('quota_used', $quotaService->usedSlots(Auth::id()))
-                    ->with('quota_free', ProjectQuotaService::FREE_QUOTA_PER_MONTH)
+                    ->with('quota_free', $quotaService->freeQuota())
                     ->with('quota_price', (int) round($quotaPayment->amount));
             }
 
@@ -504,8 +513,10 @@ class ProjectController extends Controller
                 ->update(['status' => 'Ditolak']);
 
 // Hitung biaya pembayaran berdasarkan harga penawaran
+            // Rate fee platform dari Financial Settings; di-snapshot ke payment.
             $amount = (float) $penawaran->harga_penawaran;
-            $platformFee = round($amount * 5 / 100, 2);
+            $platformFeeRate = (float) \App\Models\FinancialSetting::getSettings()->projectFeeRate();
+            $platformFee = round($amount * $platformFeeRate / 100, 2);
             $freelancerReceive = $amount - $platformFee;
 
             // Generate invoice number unik per tanggal
@@ -543,6 +554,7 @@ class ProjectController extends Controller
                 'invoice_number' => $invoiceNumber,
                 'amount' => $amount,
                 'platform_fee' => $platformFee,
+                'platform_fee_rate' => $platformFeeRate,
                 'freelancer_receive' => $freelancerReceive,
                 'status' => 'pending',
             ]);
