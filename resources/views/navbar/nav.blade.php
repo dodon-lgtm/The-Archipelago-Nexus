@@ -34,7 +34,7 @@
             </button>
             <div id="userDropdownMobile" class="hidden absolute right-0 mt-3 w-64 bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl rounded-2xl border border-blue-100 dark:border-slate-800 shadow-[0_20px_50px_-10px_rgba(30,58,138,0.2)] overflow-hidden z-[100]">
                 <div class="p-4 border-b border-blue-50 dark:border-slate-800">
-                    <h2 class="font-black text-sm text-blue-950 dark:text-white">{{ Auth::user()->name }}</h2>
+                    <h2 class="font-black text-sm text-blue-950 dark:text-white">{{ Auth::user()->companyProfile->company_name ?? Auth::user()->name }}</h2>
                     <p class="text-[11px] text-blue-500/70 truncate">{{ Auth::user()->email }}</p>
                 </div>
                 <div class="p-2 space-y-1">
@@ -199,7 +199,7 @@
             <div class="relative">
                 <button id="userButton" class="flex items-center gap-3 border border-transparent hover:border-blue-100 dark:hover:border-slate-800 hover:bg-blue-50/50 dark:hover:bg-slate-800/50 rounded-2xl px-2 py-1.5 transition-all duration-300 group">
                     <div class="text-right hidden sm:block pr-1">
-                        <h2 class="text-[13px] font-black text-blue-950 dark:text-white leading-tight">{{ Auth::user()->name }}</h2>
+                        <h2 class="text-[13px] font-black text-blue-950 dark:text-white leading-tight">{{ Auth::user()->companyProfile->company_name ?? Auth::user()->name }}</h2>
                         <p class="text-[10px] font-bold tracking-widest uppercase text-blue-400 dark:text-slate-400">{{ ucfirst(Auth::user()->role) }}</p>
                     </div>
                     <div class="w-10 h-10 rounded-[0.9rem] overflow-hidden bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white shrink-0 shadow-[0_4px_15px_rgba(59,130,246,0.3)] group-hover:scale-105 transition-transform">
@@ -218,7 +218,7 @@
                     class="hidden absolute right-0 mt-4 w-72 bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl rounded-[1.5rem] border border-blue-100 dark:border-slate-800 shadow-[0_20px_50px_-10px_rgba(30,58,138,0.15)] overflow-hidden z-[100]">
                     
                     <div class="p-6 border-b border-blue-50/50 dark:border-slate-800 bg-gradient-to-b from-blue-50/50 dark:from-slate-800/50 to-transparent">
-                        <h2 class="font-black text-blue-950 dark:text-white tracking-tight">{{ Auth::user()->name }}</h2>
+                        <h2 class="font-black text-blue-950 dark:text-white tracking-tight">{{ Auth::user()->companyProfile->company_name ?? Auth::user()->name }}</h2>
                         <p class="text-xs font-semibold text-blue-500/70 truncate">{{ Auth::user()->email }}</p>
                     </div>
 
