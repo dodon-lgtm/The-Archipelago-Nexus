@@ -154,7 +154,7 @@
                             </div>
                             <div class="min-w-0">
                                 <p class="text-xs text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider">Saldo Tersedia</p>
-                                <h3 class="text-2xl font-black text-emerald-600 dark:text-emerald-300 truncate" title="Rp {{ number_format($availableBalance ?? 0, 0, ',', '.') }}">
+                                <h3 class="text-2xl font-black text-emerald-600 dark:text-emerald-300" title="Rp {{ number_format($availableBalance ?? 0, 0, ',', '.') }}">
                                     {{ formatRupiahShort($availableBalance ?? 0) }}
                                 </h3>
                             </div>
@@ -169,11 +169,11 @@
                             </div>
                             <div class="min-w-0">
                                 <p class="text-xs text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider">Saldo Tertahan (Escrow)</p>
-                                <h3 class="text-2xl font-black text-amber-600 dark:text-amber-300 truncate" title="Rp {{ number_format($totalHeld ?? 0, 0, ',', '.') }}">
+                                <h3 class="text-2xl font-black text-amber-600 dark:text-amber-300" title="Rp {{ number_format($totalHeld ?? 0, 0, ',', '.') }}">
                                     {{ formatRupiahShort($totalHeld ?? 0) }}
                                 </h3>
                                 @if((float) ($totalPending ?? 0) > 0)
-                                    <p class="text-[10px] text-slate-400 dark:text-slate-400 mt-1 truncate" title="Rp {{ number_format($totalPending, 0, ',', '.') }}">
+                                    <p class="text-[10px] text-slate-400 dark:text-slate-400 mt-1" title="Rp {{ number_format($totalPending, 0, ',', '.') }}">
                                         + {{ formatRupiahShort($totalPending) }} menunggu pembayaran
                                     </p>
                                 @endif
@@ -189,7 +189,7 @@
                             </div>
                             <div class="min-w-0">
                                 <p class="text-xs text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider">Total Pendapatan</p>
-                                <h3 class="text-2xl font-black text-blue-600 dark:text-blue-300 truncate" title="Rp {{ number_format($totalEarned ?? 0, 0, ',', '.') }}">
+                                <h3 class="text-2xl font-black text-blue-600 dark:text-blue-300" title="Rp {{ number_format($totalEarned ?? 0, 0, ',', '.') }}">
                                     {{ formatRupiahShort($totalEarned ?? 0) }}
                                 </h3>
                             </div>
@@ -204,7 +204,7 @@
                             </div>
                             <div class="min-w-0">
                                 <p class="text-xs text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider">Direfund ke Company</p>
-                                <h3 class="text-2xl font-black text-red-600 dark:text-red-300 truncate" title="Rp {{ number_format($totalRefunded ?? 0, 0, ',', '.') }}">
+                                <h3 class="text-2xl font-black text-red-600 dark:text-red-300" title="Rp {{ number_format($totalRefunded ?? 0, 0, ',', '.') }}">
                                     {{ formatRupiahShort($totalRefunded ?? 0) }}
                                 </h3>
                             </div>
