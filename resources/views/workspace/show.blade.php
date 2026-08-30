@@ -448,6 +448,21 @@
                                     </div>
                                 </div>
                                 @if ($workspace->project->deadline)
+                                    @php
+                                        // Deadline tersimpan sebagai tanggal (tanpa jam). Batas deadline = akhir hari
+                                        // tersebut (23:59:59) sesuai timezone aplikasi (UTC). Dihitung sekali di server
+                                        // agar target konsisten, lalu JS menghitung mundur realtime tiap detik.
+                                        $deadlineEnd   = \Carbon\Carbon::parse($workspace->project->deadline)->endOfDay();
+                                        $deadlineMs    = $deadlineEnd->getTimestamp() * 1000;
+                                        $remainingSec  = $deadlineEnd->getTimestamp() - \Carbon\Carbon::now()->getTimestamp();
+                                        $initialText   = 'Deadline telah lewat';
+                                        if ($remainingSec > 0) {
+                                            $initialText = '⏳ ' . intdiv($remainingSec, 86400) . ' Hari '
+                                                . intdiv($remainingSec % 86400, 3600) . ' Jam '
+                                                . intdiv($remainingSec % 3600, 60) . ' Menit '
+                                                . ($remainingSec % 60) . ' Detik lagi';
+                                        }
+                                    @endphp
                                     <div class="flex items-center gap-4">
                                         <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-slate-800 flex items-center justify-center shrink-0">
                                             <i class="fa-regular fa-calendar-days text-sm"></i>
@@ -457,8 +472,35 @@
                                             <p class="text-xs font-bold text-blue-900 dark:text-white">
                                                 {{ \Carbon\Carbon::parse($workspace->project->deadline)->format('d M Y') }}
                                             </p>
+                                            <p id="deadlineCountdown" class="text-[11px] font-semibold mt-1 {{ $remainingSec > 0 ? 'text-blue-600 dark:text-blue-300' : 'text-red-500 dark:text-red-400' }}">
+                                                {{ $initialText }}
+                                            </p>
                                         </div>
                                     </div>
+                                    <script>
+                                        (function () {
+                                            var el = document.getElementById('deadlineCountdown');
+                                            if (!el) return;
+                                            var targetMs = {{ $deadlineMs }};
+                                            function tick() {
+                                                var diff = targetMs - Date.now();
+                                                if (diff <= 0) {
+                                                    el.innerHTML = 'Deadline telah lewat';
+                                                    el.classList.remove('text-blue-600', 'dark:text-blue-300');
+                                                    el.classList.add('text-red-500', 'dark:text-red-400');
+                                                    return;
+                                                }
+                                                var s  = Math.floor(diff / 1000);
+                                                var d  = Math.floor(s / 86400);
+                                                var h  = Math.floor((s % 86400) / 3600);
+                                                var m  = Math.floor((s % 3600) / 60);
+                                                var sc = s % 60;
+                                                el.innerHTML = '⏳ ' + d + ' Hari ' + h + ' Jam ' + m + ' Menit ' + sc + ' Detik lagi';
+                                            }
+                                            tick();
+                                            setInterval(tick, 1000);
+                                        })();
+                                    </script>
                                 @endif
                             </div>
                         </div>

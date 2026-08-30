@@ -507,7 +507,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                 btn.addEventListener('click', function () {
                     btn.disabled = true;
                     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses…';
-                    fetch("{{ route('payments.confirm', $workspace) }}", {
+                    fetch("{{ route('company.payments.confirm', $workspace) }}", {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

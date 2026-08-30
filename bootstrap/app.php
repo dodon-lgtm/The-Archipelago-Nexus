@@ -2,6 +2,7 @@
 
 require_once __DIR__.'/../app/helpers.php';
 
+use App\Console\Commands\SendProjectDeadlineNotifications;
 use App\Http\Middleware\EnsureAdmin;
 use App\Http\Middleware\EnsureCompanyAdminOrAbort;
 use App\Http\Middleware\EnsureProfileComplete;
@@ -11,6 +12,9 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 
 return Application::configure(basePath: dirname(__DIR__))
+    ->withCommands([
+        SendProjectDeadlineNotifications::class,
+    ])
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
         api: __DIR__.'/../routes/api.php',
