@@ -52,6 +52,8 @@ $reports = Report::with([
         $project = null;
         $reportedUser = null;
         $workspace = null;
+        $presetCategory = null;
+        $presetSubject = null;
 
         // Konteks: reported_user_id murni (Company melaporkan Freelancer dari
         // halaman profil freelancer view-only). Target ditentukan backend,
@@ -73,7 +75,9 @@ $reports = Report::with([
                 'penawaran',
                 'project',
                 'reportedUser',
-                'workspace'
+                'workspace',
+                'presetCategory',
+                'presetSubject'
             ));
         }
 
@@ -115,11 +119,20 @@ $reports = Report::with([
             }
         }
 
+        // Alur "Laporkan Keterlambatan" (tombol di halaman Workspace).
+        // Pre-fill kategori & subjek agar company tinggal menambah penjelasan.
+        if (!empty($workspace) && $request->query('reason') === 'late') {
+            $presetCategory = Report::CATEGORY_KETERLAMBATAN;
+            $presetSubject = 'Keterlambatan penyelesaian proyek "' . ($workspace->project->project_name ?? '') . '"';
+        }
+
         return view('company.reports.create', compact(
             'penawaran',
             'project',
             'reportedUser',
-            'workspace'
+            'workspace',
+            'presetCategory',
+            'presetSubject'
         ));
     }
 
@@ -133,12 +146,21 @@ public function store(ReportStoreRequest $request): RedirectResponse
         // Semua validasi otorisasi relasi (project/penawaran/workspace) ditangani
         // oleh ReportService::store() -> authorizeStore().
         try {
-            $this->reportService->store($validated);
+            $report = $this->reportService->store($validated);
         } catch (ValidationException $e) {
             // Laporan ditolak (mis. duplikat) -> tampilkan pesan yang jelas.
             return Redirect::back()
                 ->withErrors($e->errors())
                 ->withInput();
+        }
+
+        // Alur "Laporkan Keterlambatan": kembalikan company ke halaman
+        // workspace (bukan daftar laporan) agar konteks & flash lebih relevan.
+        if (($validated['category'] ?? null) === Report::CATEGORY_KETERLAMBATAN
+            && !empty($validated['workspace_id'])) {
+            return redirect()
+                ->route('company.workspaces.show', $validated['workspace_id'])
+                ->with('success', 'Laporan keterlambatan berhasil dikirim. Tim Admin akan meninjau laporan Anda, dan freelancer telah diberi tahu melalui notifikasi.');
         }
 
         return redirect()

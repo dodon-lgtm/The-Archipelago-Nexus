@@ -502,6 +502,22 @@
                                         })();
                                     </script>
                                 @endif
+
+                                {{-- Aksi Company: Laporkan Keterlambatan (hanya saat Melewati Batas Waktu) --}}
+                                @if (auth()->user()->role === 'company' && $workspace->status === 'Melewati Batas Waktu')
+                                    <div class="rounded-2xl bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 p-4">
+                                        <p class="text-xs font-extrabold text-red-700 dark:text-red-300 flex items-center gap-1.5">
+                                            <i class="fa-solid fa-triangle-exclamation text-[11px]"></i> Deadline Terlewat
+                                        </p>
+                                        <p class="text-[11px] font-medium text-red-500 dark:text-red-400 mt-1 leading-relaxed">
+                                            Freelancer belum menyelesaikan pekerjaan hingga batas akhir. Anda dapat melaporkan keterlambatan ini ke Admin.
+                                        </p>
+                                        <a href="{{ route('company.reports.create', ['workspace_id' => $workspace->id, 'reason' => 'late']) }}"
+                                            class="mt-3 inline-flex items-center gap-1.5 px-3.5 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold transition shadow-md shadow-red-600/20">
+                                            <i class="fa-solid fa-flag text-[11px]"></i> Laporkan Keterlambatan
+                                        </a>
+                                    </div>
+                                @endif
                             </div>
                         </div>
 
