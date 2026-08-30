@@ -23,23 +23,23 @@ class ProjectUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'project_name' => ['required', 'string', 'max:255'],
+            'project_name' => ['sometimes', 'string', 'max:255'],
 
-            'project_description' => ['nullable', 'string'],
+            'project_description' => ['sometimes', 'nullable', 'string'],
 
-            'category_id' => ['nullable', 'integer', 'exists:categories,id'],
+            'category_id' => ['sometimes', 'nullable', 'integer', 'exists:categories,id'],
 
-            'budget' => ['nullable', 'numeric'],
+            'budget' => ['sometimes', 'nullable', 'numeric'],
 
-            'deadline' => ['nullable', 'date', 'after_or_equal:today'],
+            'deadline' => ['sometimes', 'nullable', 'date', 'after_or_equal:today'],
 
-            'skills' => ['nullable', 'string'],
+            'skills' => ['sometimes', 'nullable', 'string'],
 
-            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'image' => ['sometimes', 'nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
 
-            'attachment' => ['nullable', 'mimes:pdf,doc,docx,zip,rar', 'max:10240'],
+            'attachment' => ['sometimes', 'nullable', 'mimes:pdf,doc,docx,zip,rar', 'max:10240'],
 
-            'status' => ['nullable', Rule::in(Project::STATUSES)],
+            'status' => ['sometimes', Rule::in(Project::STATUSES)],
         ];
     }
 }

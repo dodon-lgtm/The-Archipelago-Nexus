@@ -308,13 +308,6 @@ class ProjectController extends Controller
     {
         $this->authorizeCompanyProject($project);
 
-        // Project yang sudah SELESAI (Workspace.status = Selesai) tidak boleh diedit lagi.
-        if ($project->isCompleted()) {
-            return redirect()
-                ->route('company.projects.show', $project)
-                ->with('error', 'Proyek sudah selesai dan tidak dapat diubah lagi.');
-        }
-
         $data = $request->validated();
 
         // ── Backend source of truth: kunci field sesuai workflow ────────────
@@ -405,18 +398,18 @@ class ProjectController extends Controller
             return [
                 'locked' => [
                     'project_name', 'project_description', 'category_id',
-                    'budget', 'deadline', 'skills', 'image', 'attachment', 'status',
+                    'budget', 'deadline', 'skills', 'image', 'attachment',
                 ],
-                'note' => 'Proyek sudah selesai dan tidak dapat diubah lagi.',
+                'note' => 'Proyek sudah selesai. Hanya status yang dapat diubah.',
             ];
         }
 
         if ($hasWorkspace) {
             return [
                 'locked' => [
-                    'budget', 'deadline', 'skills', 'status',
+                    'budget', 'deadline', 'skills',
                 ],
-                'note' => 'Proyek sedang dikerjakan. Budget, deadline, skill, dan status tidak dapat diubah.',
+                'note' => 'Proyek sedang dikerjakan. Budget, deadline, dan skill tidak dapat diubah.',
             ];
         }
 

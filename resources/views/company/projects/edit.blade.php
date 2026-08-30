@@ -419,6 +419,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                             <input type="radio" name="status" value="{{ $value }}"
                                                 {{ $isSelected ? 'checked' : '' }}
                                                 {{ $isLocked('status') ? 'disabled' : '' }}
+                                                onclick="return confirm('Apakah Anda yakin ingin mengubah status menjadi {{ $label }}? Proyek akan dipindahkan ke halaman yang sesuai.')"
                                                 class="w-4 h-4 accent-blue-600">
                                             <span class="text-sm font-bold">{{ $label }}</span>
                                         </label>
