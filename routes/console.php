@@ -1,5 +1,6 @@
 <?php
 
+use App\Console\Commands\MarkOverdueWorkspaces;
 use App\Console\Commands\SendProjectDeadlineNotifications;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
@@ -13,4 +14,10 @@ Artisan::command('inspire', function () {
 // ke company dan freelancer setiap hari pukul 09:00.
 Schedule::command(SendProjectDeadlineNotifications::class)
     ->dailyAt('09:00')
+    ->withoutOverlapping();
+
+// Tandai workspace "Melewati Batas Waktu" + kirim notifikasi saat deadline lewat
+// dan pekerjaan belum selesai. Dijalankan setelah pengingat deadline.
+Schedule::command(MarkOverdueWorkspaces::class)
+    ->dailyAt('09:05')
     ->withoutOverlapping();

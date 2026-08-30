@@ -146,6 +146,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                         'Menunggu Pembayaran' => 'Menunggu Pembayaran',
                         'Menunggu Verifikasi Admin' => 'Menunggu Verifikasi',
                         'Selesai' => 'Selesai',
+                        'Melewati Batas Waktu' => 'Melewati Batas Waktu',
                     ];
                 @endphp
                 <div class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl shadow-sm p-4 sm:p-5 space-y-4 overflow-visible">
@@ -257,6 +258,7 @@ $stageColors = [
                                     'Menunggu Pembayaran' => 'bg-purple-50 text-purple-600 border-purple-200 dark:bg-purple-900/40 dark:text-purple-300 dark:border-purple-900',
                                     'Menunggu Verifikasi Admin' => 'bg-orange-50 text-orange-600 border-orange-200 dark:bg-orange-900/40 dark:text-orange-300 dark:border-orange-900',
                                     'Selesai' => 'bg-emerald-50 text-emerald-600 border-emerald-200 dark:bg-emerald-900/40 dark:text-emerald-300 dark:border-emerald-900',
+                                    'Melewati Batas Waktu' => 'bg-red-50 text-red-600 border-red-200 dark:bg-red-900/40 dark:text-red-300 dark:border-red-900',
                                 ];
                                 $wsStatusColor = $stageColors[$ws->status] ?? 'bg-[#f6f9ff] text-slate-600 border-blue-100 dark:bg-slate-950 dark:text-slate-300 dark:border-slate-800';
                             @endphp
@@ -420,7 +422,8 @@ $stageColors = [
             'Menunggu Revisi': 'Menunggu Revisi',
             'Menunggu Pembayaran': 'Menunggu Pembayaran',
             'Menunggu Verifikasi Admin': 'Menunggu Verifikasi',
-            'Selesai': 'Selesai'
+            'Selesai': 'Selesai',
+            'Melewati Batas Waktu': 'Melewati Batas Waktu'
         };
         statusLabel.textContent = map[val] || 'Semua Status';
         statusPanel.querySelectorAll('.status-option').forEach(opt=>{

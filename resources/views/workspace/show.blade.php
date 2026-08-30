@@ -741,6 +741,7 @@
                                     'Menunggu Pembayaran' => ['label' => 'Menunggu Pembayaran', 'dot' => 'bg-blue-700 shadow-[0_0_8px_rgba(29,78,216,0.8)]', 'box' => 'bg-blue-50 border-blue-200 text-blue-800 dark:bg-slate-800 dark:border-slate-700 dark:text-blue-400'],
                                     'Menunggu Verifikasi Admin' => ['label' => 'Menunggu Verifikasi Admin', 'dot' => 'bg-blue-300 shadow-[0_0_8px_rgba(147,197,253,0.8)]', 'box' => 'bg-white border-blue-100 text-blue-500 dark:bg-slate-900 dark:border-slate-800 dark:text-blue-400'],
                                     'Selesai' => ['label' => 'Selesai', 'dot' => 'bg-white', 'box' => 'bg-blue-600 border-blue-600 text-white shadow-md'],
+                                    'Melewati Batas Waktu' => ['label' => 'Melewati Batas Waktu', 'dot' => 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.9)]', 'box' => 'bg-red-50 border-red-200 text-red-600 dark:bg-red-900/40 dark:border-red-900 dark:text-red-300'],
                                 ];
                                 $statusStyle = $chatStatusMap[$workspace->status] ?? ['label' => $workspace->status, 'dot' => 'bg-blue-300', 'box' => 'bg-white text-blue-400 border-blue-100 dark:bg-slate-900 dark:text-slate-400 dark:border-slate-800'];
                             @endphp

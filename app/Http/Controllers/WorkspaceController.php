@@ -92,7 +92,7 @@ class WorkspaceController extends Controller
             $projectFilter = 'all';
         }
 
-        $validStatuses = ['Sedang Dikerjakan','Menunggu Review','Menunggu Revisi','Menunggu Pembayaran','Menunggu Verifikasi Admin','Selesai'];
+        $validStatuses = ['Sedang Dikerjakan','Menunggu Review','Menunggu Revisi','Menunggu Pembayaran','Menunggu Verifikasi Admin','Selesai','Melewati Batas Waktu'];
         if ($statusFilter && $statusFilter !== 'all' && $statusFilter !== '' && !in_array($statusFilter, $validStatuses, true)) {
             $statusFilter = 'all';
         }

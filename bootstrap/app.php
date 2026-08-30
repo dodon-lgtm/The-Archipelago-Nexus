@@ -2,6 +2,7 @@
 
 require_once __DIR__.'/../app/helpers.php';
 
+use App\Console\Commands\MarkOverdueWorkspaces;
 use App\Console\Commands\SendProjectDeadlineNotifications;
 use App\Http\Middleware\EnsureAdmin;
 use App\Http\Middleware\EnsureCompanyAdminOrAbort;
@@ -13,6 +14,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withCommands([
+        MarkOverdueWorkspaces::class,
         SendProjectDeadlineNotifications::class,
     ])
     ->withRouting(
