@@ -7,6 +7,7 @@ use App\Models\Message;
 use App\Models\Notification;
 use App\Models\ProgressHistory;
 use App\Services\NotificationService;
+use App\Services\OverdueWorkspaceService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -26,6 +27,10 @@ class WorkspaceController extends Controller
      */
     public function freelancerIndex(Request $request): View
     {
+        // Proses pengecekan deadline saat halaman dibuka/di-refresh, tanpa
+        // bergantung pada scheduler / `php artisan schedule:work`.
+        OverdueWorkspaceService::process();
+
         $search = trim((string) $request->query('search', ''));
         $statusFilter = $request->query('status');
 
@@ -67,6 +72,10 @@ class WorkspaceController extends Controller
      */
     public function companyIndex(Request $request): View
     {
+        // Proses pengecekan deadline saat halaman dibuka/di-refresh, tanpa
+        // bergantung pada scheduler / `php artisan schedule:work`.
+        OverdueWorkspaceService::process();
+
         $projectFilter = $request->query('project');
         $search = trim((string) $request->query('search', ''));
         $statusFilter = $request->query('status');
@@ -166,6 +175,15 @@ class WorkspaceController extends Controller
                 'is_read' => true,
                 'read_at' => now(),
             ]);
+
+        // Proses pengecekan deadline saat halaman dibuka/di-refresh, tanpa
+        // bergantung pada scheduler / `php artisan schedule:work`. Diletakkan
+        // SETELAH penandaan notifikasi read agar notifikasi overdue yang baru
+        // dibuat tidak ikut tertandai read (perilaku sama seperti command
+        // `workspaces:mark-overdue`), lalu segarkan data workspace supaya
+        // status yang dirender selalu mutakhir.
+        OverdueWorkspaceService::process();
+        $workspace->refresh();
 
         $workspace->load([
             'project',

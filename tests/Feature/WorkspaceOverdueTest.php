@@ -254,4 +254,54 @@ class WorkspaceOverdueTest extends TestCase
 
         $this->assertSame(0, Notification::where('type', 'workspace.overdue')->count());
     }
+
+    public function test_opening_company_index_marks_overdue_without_command(): void
+    {
+        $workspace = $this->createWorkspace('Sedang Dikerjakan', -2);
+
+        // Tanpa command/scheduler: cukup buka halaman Workspace.
+        $this->actingAs($this->company)
+            ->get(route('company.workspaces.index'))
+            ->assertOk();
+
+        $fresh = $workspace->fresh();
+        $this->assertSame('Melewati Batas Waktu', $fresh->status);
+        $this->assertSame('Sedang Dikerjakan', $fresh->overdue_previous_status);
+        $this->assertSame(2, Notification::where('type', 'workspace.overdue')->count());
+    }
+
+    public function test_opening_freelancer_show_marks_overdue_without_command(): void
+    {
+        $workspace = $this->createWorkspace('Menunggu Revisi', -2);
+
+        // Tanpa command/scheduler: buka halaman detail workspace.
+        $this->actingAs($this->freelancer)
+            ->get(route('freelancer.workspaces.show', $workspace))
+            ->assertOk();
+
+        $fresh = $workspace->fresh();
+        $this->assertSame('Melewati Batas Waktu', $fresh->status);
+        $this->assertSame('Menunggu Revisi', $fresh->overdue_previous_status);
+    }
+
+    public function test_opening_workspace_page_reverts_when_deadline_moved_to_future(): void
+    {
+        $workspace = $this->createWorkspace('Sedang Dikerjakan', -2);
+
+        // FLAG terjadi otomatis hanya dengan membuka halaman Workspace.
+        $this->actingAs($this->company)->get(route('company.workspaces.index'))->assertOk();
+        $this->assertSame('Melewati Batas Waktu', $workspace->fresh()->status);
+
+        // Deadline dimundurkan ke masa depan → refresh halaman → REVERT otomatis.
+        $workspace->project->update(['deadline' => Carbon::today()->addDays(3)->toDateString()]);
+
+        $this->actingAs($this->freelancer)->get(route('freelancer.workspaces.show', $workspace))->assertOk();
+
+        $fresh = $workspace->fresh();
+        $this->assertSame('Sedang Dikerjakan', $fresh->status);
+        $this->assertNull($fresh->overdue_previous_status);
+
+        // Revert tidak menambah notifikasi (tetap 2 dari proses FLAG).
+        $this->assertSame(2, Notification::where('type', 'workspace.overdue')->count());
+    }
 }
