@@ -22,18 +22,38 @@ class WorkspaceController extends Controller
 
     /**
      * Daftar workspace (freelancer), lengkap dengan status red-dot per workspace
-     * berdasarkan notifikasi unread milik user saat ini.
+     * berdasarkan notifikasi unread milik user saat ini & FILTER pencarian/status.
      */
-    public function freelancerIndex(): View
+    public function freelancerIndex(Request $request): View
     {
-        $workspaces = Workspace::with([
+        $search = trim((string) $request->query('search', ''));
+        $statusFilter = $request->query('status');
+
+        $query = Workspace::with([
             'project',
             'company',
             'latestProgress',
         ])
-            ->where('freelancer_id', Auth::id())
-            ->latest()
-            ->paginate(10);
+            ->where('freelancer_id', Auth::id());
+
+        // Filter berdasarkan status
+        if ($statusFilter && $statusFilter !== 'all' && $statusFilter !== '') {
+            $query->where('status', $statusFilter);
+        }
+
+        // Filter berdasarkan kata kunci pencarian (nama proyek / nama perusahaan)
+        if ($search !== '') {
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('project', function ($p) use ($search) {
+                    $p->where('project_name', 'like', "%{$search}%");
+                })
+                ->orWhereHas('company', function ($c) use ($search) {
+                    $c->where('name', 'like', "%{$search}%");
+                });
+            });
+        }
+
+        $workspaces = $query->latest()->paginate(10)->withQueryString();
 
         $unreadByWorkspace = $this->unreadCountForUser($workspaces, Auth::id());
 
@@ -112,7 +132,7 @@ class WorkspaceController extends Controller
      * Hitung jumlah notifikasi unread per workspace untuk user tertentu.
      * Dipetakan array: [workspace_id => jumlah]. Tidak memicu N+1.
      */
-private function unreadCountForUser(LengthAwarePaginator $workspaces, int $userId): array
+    private function unreadCountForUser(LengthAwarePaginator $workspaces, int $userId): array
     {
         $ids = collect($workspaces->items())->pluck('id')->filter()->values()->all();
         if (empty($ids)) {
@@ -538,4 +558,3 @@ private function unreadCountForUser(LengthAwarePaginator $workspaces, int $userI
         }
     }
 }
-
