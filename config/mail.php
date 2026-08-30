@@ -18,6 +18,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Penerima Pesan Pusat Bantuan
+    |--------------------------------------------------------------------------
+    |
+    | Alamat email tujuan untuk form "Hubungi Kami via Email" pada Pusat Bantuan.
+    | Dikonfigurasi lewat environment agar tidak ada alamat tujuan yang
+    | di-hardcode di dalam controller atau source code.
+    |
+    */
+
+    'help_to' => env('MAIL_HELP_TO', 'kitaayo94@gmail.com'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Mailer Configurations
     |--------------------------------------------------------------------------
     |

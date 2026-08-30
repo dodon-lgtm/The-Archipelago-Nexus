@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,18 +18,13 @@
 
 
     {{-- Font Awesome --}}
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-    >
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     {{-- Google Font --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
-        rel="stylesheet"
-    >
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
 
     <style>
         * {
@@ -78,7 +74,7 @@
 
 <body>
     {{-- Anti-Flicker Script: Apply saved mode before render (Synchronized with Landing Page keys) --}}
-    
+
 
     {{-- =========================================================
         HEADER
@@ -88,26 +84,19 @@
             <div class="h-20 flex items-center justify-between">
 
                 {{-- BRAND --}}
-                <a
-                    href="{{ url('/') }}"
-                    class="flex items-center gap-3 group"
-                >
-                  <div 
-    class="w-12 h-12 rounded-2xl overflow-hidden flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform duration-300"
->
-    <img 
-        src="{{ asset('images/nexus.jpg') }}" 
-        alt="Nexus"
-        class="w-full h-full object-cover"
-    >
-</div>
+                <a href="{{ url('/') }}" class="flex items-center gap-3 group">
+                    <div
+                        class="w-12 h-12 rounded-2xl overflow-hidden flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform duration-300">
+                        <img src="{{ asset('images/nexus.jpg') }}" alt="Nexus" class="w-full h-full object-cover">
+                    </div>
 
                     <div class="leading-tight">
                         <h1 class="text-base sm:text-lg font-black text-slate-900 dark:text-slate-100">
                             ApexForge Labs
                         </h1>
 
-                        <p class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-300">
+                        <p
+                            class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-300">
                             Pusat Bantuan
                         </p>
                     </div>
@@ -115,20 +104,21 @@
 
 
                 {{-- KEMBALI KE BERANDA --}}
-                <a
-                    href="{{ url('/') }}"
-                    class="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl border border-blue-100 bg-white text-slate-700 font-bold text-sm hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition-all duration-300 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-700 dark:hover:text-blue-300 shadow-sm"
-                >
-                    <i class="fa-solid fa-arrow-left text-blue-500 dark:text-slate-300"></i>
-
-                    <span class="hidden sm:inline">
-                        Kembali ke Beranda
-                    </span>
-
-                    <span class="sm:hidden">
-                        Beranda
-                    </span>
-                </a>
+                @auth
+                    @if (Auth::user()->role === 'freelancer')
+                        <a href="{{ route('freelancer.dashboard') }}">
+                            Kembali ke Dashboard
+                        </a>
+                    @elseif(Auth::user()->role === 'company')
+                        <a href="{{ route('company.dashboard') }}">
+                            Kembali ke Dashboard
+                        </a>
+                    @elseif(Auth::user()->role === 'admin')
+                        <a href="{{ route('admin.dashboard') }}">
+                            Kembali ke Dashboard
+                        </a>
+                    @endif
+                @endauth
 
             </div>
         </div>
@@ -139,27 +129,21 @@
         HERO
     ========================================================== --}}
     <section
-        class="relative overflow-hidden bg-white dark:bg-slate-900 dark:text-slate-100 bg-gradient-to-br from-blue-50 via-white to-sky-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900"
-    >
+        class="relative overflow-hidden bg-white dark:bg-slate-900 dark:text-slate-100 bg-gradient-to-br from-blue-50 via-white to-sky-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
 
         {{-- Decorative background --}}
-        <div
-            class="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-blue-200/30 blur-3xl dark:bg-slate-800/30"
-        ></div>
+        <div class="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-blue-200/30 blur-3xl dark:bg-slate-800/30">
+        </div>
 
-        <div
-            class="absolute -bottom-40 -left-32 w-96 h-96 rounded-full bg-indigo-200/20 blur-3xl dark:bg-slate-800/20"
-        ></div>
+        <div class="absolute -bottom-40 -left-32 w-96 h-96 rounded-full bg-indigo-200/20 blur-3xl dark:bg-slate-800/20">
+        </div>
 
 
-        <div
-            class="relative max-w-5xl mx-auto px-5 sm:px-6 py-20 sm:py-24 text-center dark:text-slate-100"
-        >
+        <div class="relative max-w-5xl mx-auto px-5 sm:px-6 py-20 sm:py-24 text-center dark:text-slate-100">
 
             {{-- Badge --}}
             <div
-                class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-blue-100 bg-blue-50 text-blue-600 text-sm font-bold mb-7 dark:border-slate-700 dark:bg-slate-800 dark:text-blue-400"
-            >
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-blue-100 bg-blue-50 text-blue-600 text-sm font-bold mb-7 dark:border-slate-700 dark:bg-slate-800 dark:text-blue-400">
                 <i class="fa-solid fa-circle-question"></i>
                 Pusat Bantuan
             </div>
@@ -167,16 +151,13 @@
 
             {{-- Heading --}}
             <h2
-                class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-950 dark:text-white leading-tight"
-            >
+                class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-950 dark:text-white leading-tight">
                 Ada yang bisa kami bantu?
             </h2>
 
 
             {{-- Description --}}
-            <p
-                class="mt-5 max-w-3xl mx-auto text-base sm:text-lg leading-8 text-slate-500 dark:text-slate-300"
-            >
+            <p class="mt-5 max-w-3xl mx-auto text-base sm:text-lg leading-8 text-slate-500 dark:text-slate-300">
                 Temukan informasi lengkap mengenai penggunaan ApexForge Labs,
                 mulai dari akun, proyek, proses pengerjaan, pembayaran,
                 keamanan, hingga berbagai hal yang berkaitan dengan layanan
@@ -196,13 +177,10 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
 
                 {{-- AKUN --}}
-                <a
-                    href="#akun"
-                    class="group rounded-2xl border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800 p-6 hover:border-blue-200 hover:shadow-lg hover:shadow-blue-100/40 dark:hover:border-blue-500/50 dark:hover:shadow-blue-900/30 transition-all duration-300"
-                >
+                <a href="#akun"
+                    class="group rounded-2xl border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800 p-6 hover:border-blue-200 hover:shadow-lg hover:shadow-blue-100/40 dark:hover:border-blue-500/50 dark:hover:shadow-blue-900/30 transition-all duration-300">
                     <div
-                        class="w-12 h-12 rounded-xl bg-blue-50 dark:bg-slate-700 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform"
-                    >
+                        class="w-12 h-12 rounded-xl bg-blue-50 dark:bg-slate-700 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
                         <i class="fa-solid fa-user text-lg"></i>
                     </div>
 
@@ -218,13 +196,10 @@
 
 
                 {{-- PROYEK --}}
-                <a
-                    href="#proyek"
-                    class="group rounded-2xl border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800 p-6 hover:border-indigo-200 hover:shadow-lg hover:shadow-indigo-100/40 dark:hover:border-indigo-500/50 dark:hover:shadow-indigo-900/30 transition-all duration-300"
-                >
+                <a href="#proyek"
+                    class="group rounded-2xl border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800 p-6 hover:border-indigo-200 hover:shadow-lg hover:shadow-indigo-100/40 dark:hover:border-indigo-500/50 dark:hover:shadow-indigo-900/30 transition-all duration-300">
                     <div
-                        class="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform"
-                    >
+                        class="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
                         <i class="fa-solid fa-briefcase text-lg"></i>
                     </div>
 
@@ -240,13 +215,10 @@
 
 
                 {{-- PEMBAYARAN --}}
-                <a
-                    href="#pembayaran"
-                    class="group rounded-2xl border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800 p-6 hover:border-sky-200 hover:shadow-lg hover:shadow-sky-100/40 dark:hover:border-sky-500/50 dark:hover:shadow-sky-900/30 transition-all duration-300"
-                >
+                <a href="#pembayaran"
+                    class="group rounded-2xl border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800 p-6 hover:border-sky-200 hover:shadow-lg hover:shadow-sky-100/40 dark:hover:border-sky-500/50 dark:hover:shadow-sky-900/30 transition-all duration-300">
                     <div
-                        class="w-12 h-12 rounded-xl bg-sky-50 dark:bg-slate-700 text-sky-600 dark:text-sky-400 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform"
-                    >
+                        class="w-12 h-12 rounded-xl bg-sky-50 dark:bg-slate-700 text-sky-600 dark:text-sky-400 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
                         <i class="fa-solid fa-wallet text-lg"></i>
                     </div>
 
@@ -262,13 +234,10 @@
 
 
                 {{-- KEAMANAN --}}
-                <a
-                    href="#keamanan"
-                    class="group rounded-2xl border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800 p-6 hover:border-emerald-200 hover:shadow-lg hover:shadow-emerald-100/40 dark:hover:border-emerald-500/50 dark:hover:shadow-emerald-900/30 transition-all duration-300"
-                >
+                <a href="#keamanan"
+                    class="group rounded-2xl border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800 p-6 hover:border-emerald-200 hover:shadow-lg hover:shadow-emerald-100/40 dark:hover:border-emerald-500/50 dark:hover:shadow-emerald-900/30 transition-all duration-300">
                     <div
-                        class="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform"
-                    >
+                        class="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
                         <i class="fa-solid fa-shield-halved text-lg"></i>
                     </div>
 
@@ -302,8 +271,7 @@
             <div class="mb-7">
                 <div class="flex items-center gap-3 mb-3">
                     <div
-                        class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-slate-700 text-blue-600 dark:text-blue-400 flex items-center justify-center"
-                    >
+                        class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-slate-700 text-blue-600 dark:text-blue-400 flex items-center justify-center">
                         <i class="fa-solid fa-user"></i>
                     </div>
 
@@ -322,19 +290,17 @@
             <div class="space-y-4">
 
                 {{-- FAQ 1 --}}
-                <div class="faq-item rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm dark:border-slate-700 dark:bg-slate-800">
+                <div
+                    class="faq-item rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm dark:border-slate-700 dark:bg-slate-800">
 
-                    <button
-                        type="button"
-                        class="faq-button w-full flex items-center justify-between gap-5 text-left px-6 py-5 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
-                    >
+                    <button type="button"
+                        class="faq-button w-full flex items-center justify-between gap-5 text-left px-6 py-5 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
                         <span class="font-bold text-slate-900 dark:text-slate-100 leading-7">
                             Bagaimana cara membuat akun di ApexForge Labs?
                         </span>
 
                         <span
-                            class="faq-icon shrink-0 w-9 h-9 rounded-xl bg-blue-50 dark:bg-slate-700 text-blue-600 dark:text-blue-400 flex items-center justify-center"
-                        >
+                            class="faq-icon shrink-0 w-9 h-9 rounded-xl bg-blue-50 dark:bg-slate-700 text-blue-600 dark:text-blue-400 flex items-center justify-center">
                             <i class="fa-solid fa-chevron-down text-sm"></i>
                         </span>
                     </button>
@@ -358,17 +324,17 @@
 
 
                 {{-- FAQ 2 --}}
-                <div class="faq-item rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm dark:border-slate-700 dark:bg-slate-800">
+                <div
+                    class="faq-item rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm dark:border-slate-700 dark:bg-slate-800">
 
-                    <button
-                        type="button"
-                        class="faq-button w-full flex items-center justify-between gap-5 text-left px-6 py-5 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
-                    >
+                    <button type="button"
+                        class="faq-button w-full flex items-center justify-between gap-5 text-left px-6 py-5 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
                         <span class="font-bold text-slate-900 dark:text-slate-100 leading-7">
                             Apa yang harus dilakukan jika tidak bisa login?
                         </span>
 
-                        <span class="faq-icon shrink-0 w-9 h-9 rounded-xl bg-blue-50 dark:bg-slate-700 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                        <span
+                            class="faq-icon shrink-0 w-9 h-9 rounded-xl bg-blue-50 dark:bg-slate-700 text-blue-600 dark:text-blue-400 flex items-center justify-center">
                             <i class="fa-solid fa-chevron-down text-sm"></i>
                         </span>
                     </button>
@@ -392,17 +358,17 @@
 
 
                 {{-- FAQ 3 --}}
-                <div class="faq-item rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm dark:border-slate-700 dark:bg-slate-800">
+                <div
+                    class="faq-item rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm dark:border-slate-700 dark:bg-slate-800">
 
-                    <button
-                        type="button"
-                        class="faq-button w-full flex items-center justify-between gap-5 text-left px-6 py-5 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
-                    >
+                    <button type="button"
+                        class="faq-button w-full flex items-center justify-between gap-5 text-left px-6 py-5 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
                         <span class="font-bold text-slate-900 dark:text-slate-100 leading-7">
                             Apakah informasi profil dapat diubah setelah akun dibuat?
                         </span>
 
-                        <span class="faq-icon shrink-0 w-9 h-9 rounded-xl bg-blue-50 dark:bg-slate-700 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                        <span
+                            class="faq-icon shrink-0 w-9 h-9 rounded-xl bg-blue-50 dark:bg-slate-700 text-blue-600 dark:text-blue-400 flex items-center justify-center">
                             <i class="fa-solid fa-chevron-down text-sm"></i>
                         </span>
                     </button>
@@ -435,8 +401,7 @@
             <div class="mb-7">
                 <div class="flex items-center gap-3 mb-3">
                     <div
-                        class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 flex items-center justify-center"
-                    >
+                        class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
                         <i class="fa-solid fa-briefcase"></i>
                     </div>
 
@@ -455,17 +420,17 @@
             <div class="space-y-4">
 
                 {{-- FAQ 1 --}}
-                <div class="faq-item rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm dark:border-slate-700 dark:bg-slate-800">
+                <div
+                    class="faq-item rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm dark:border-slate-700 dark:bg-slate-800">
 
-                    <button
-                        type="button"
-                        class="faq-button w-full flex items-center justify-between gap-5 text-left px-6 py-5 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
-                    >
+                    <button type="button"
+                        class="faq-button w-full flex items-center justify-between gap-5 text-left px-6 py-5 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
                         <span class="font-bold text-slate-900 dark:text-slate-100 leading-7">
                             Bagaimana freelancer dapat menemukan proyek yang tersedia?
                         </span>
 
-                        <span class="faq-icon shrink-0 w-9 h-9 rounded-xl bg-indigo-50 dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+                        <span
+                            class="faq-icon shrink-0 w-9 h-9 rounded-xl bg-indigo-50 dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
                             <i class="fa-solid fa-chevron-down text-sm"></i>
                         </span>
                     </button>
@@ -488,17 +453,17 @@
 
 
                 {{-- FAQ 2 --}}
-                <div class="faq-item rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm dark:border-slate-700 dark:bg-slate-800">
+                <div
+                    class="faq-item rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm dark:border-slate-700 dark:bg-slate-800">
 
-                    <button
-                        type="button"
-                        class="faq-button w-full flex items-center justify-between gap-5 text-left px-6 py-5 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
-                    >
+                    <button type="button"
+                        class="faq-button w-full flex items-center justify-between gap-5 text-left px-6 py-5 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
                         <span class="font-bold text-slate-900 dark:text-slate-100 leading-7">
                             Bagaimana cara freelancer mengajukan penawaran pada sebuah proyek?
                         </span>
 
-                        <span class="faq-icon shrink-0 w-9 h-9 rounded-xl bg-indigo-50 dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+                        <span
+                            class="faq-icon shrink-0 w-9 h-9 rounded-xl bg-indigo-50 dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
                             <i class="fa-solid fa-chevron-down text-sm"></i>
                         </span>
                     </button>
@@ -521,17 +486,17 @@
 
 
                 {{-- FAQ 3 --}}
-                <div class="faq-item rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm dark:border-slate-700 dark:bg-slate-800">
+                <div
+                    class="faq-item rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm dark:border-slate-700 dark:bg-slate-800">
 
-                    <button
-                        type="button"
-                        class="faq-button w-full flex items-center justify-between gap-5 text-left px-6 py-5 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
-                    >
+                    <button type="button"
+                        class="faq-button w-full flex items-center justify-between gap-5 text-left px-6 py-5 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
                         <span class="font-bold text-slate-900 dark:text-slate-100 leading-7">
                             Mengapa proyek yang sudah dipilih perusahaan tidak muncul lagi di rekomendasi?
                         </span>
 
-                        <span class="faq-icon shrink-0 w-9 h-9 rounded-xl bg-indigo-50 dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+                        <span
+                            class="faq-icon shrink-0 w-9 h-9 rounded-xl bg-indigo-50 dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
                             <i class="fa-solid fa-chevron-down text-sm"></i>
                         </span>
                     </button>
@@ -554,17 +519,17 @@
 
 
                 {{-- FAQ 4 --}}
-                <div class="faq-item rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm dark:border-slate-700 dark:bg-slate-800">
+                <div
+                    class="faq-item rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm dark:border-slate-700 dark:bg-slate-800">
 
-                    <button
-                        type="button"
-                        class="faq-button w-full flex items-center justify-between gap-5 text-left px-6 py-5 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
-                    >
+                    <button type="button"
+                        class="faq-button w-full flex items-center justify-between gap-5 text-left px-6 py-5 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
                         <span class="font-bold text-slate-900 dark:text-slate-100 leading-7">
                             Apa yang terjadi setelah freelancer dipilih untuk mengerjakan proyek?
                         </span>
 
-                        <span class="faq-icon shrink-0 w-9 h-9 rounded-xl bg-indigo-50 dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+                        <span
+                            class="faq-icon shrink-0 w-9 h-9 rounded-xl bg-indigo-50 dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
                             <i class="fa-solid fa-chevron-down text-sm"></i>
                         </span>
                     </button>
@@ -598,8 +563,7 @@
             <div class="mb-7">
                 <div class="flex items-center gap-3 mb-3">
                     <div
-                        class="w-10 h-10 rounded-xl bg-sky-50 dark:bg-slate-700 text-sky-600 dark:text-sky-400 flex items-center justify-center"
-                    >
+                        class="w-10 h-10 rounded-xl bg-sky-50 dark:bg-slate-700 text-sky-600 dark:text-sky-400 flex items-center justify-center">
                         <i class="fa-solid fa-wallet"></i>
                     </div>
 
@@ -617,17 +581,17 @@
             <div class="space-y-4">
 
                 {{-- FAQ 1 --}}
-                <div class="faq-item rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm dark:border-slate-700 dark:bg-slate-800">
+                <div
+                    class="faq-item rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm dark:border-slate-700 dark:bg-slate-800">
 
-                    <button
-                        type="button"
-                        class="faq-button w-full flex items-center justify-between gap-5 text-left px-6 py-5 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
-                    >
+                    <button type="button"
+                        class="faq-button w-full flex items-center justify-between gap-5 text-left px-6 py-5 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
                         <span class="font-bold text-slate-900 dark:text-slate-100 leading-7">
                             Bagaimana proses pembayaran dalam sebuah proyek?
                         </span>
 
-                        <span class="faq-icon shrink-0 w-9 h-9 rounded-xl bg-sky-50 dark:bg-slate-700 text-sky-600 dark:text-sky-400 flex items-center justify-center">
+                        <span
+                            class="faq-icon shrink-0 w-9 h-9 rounded-xl bg-sky-50 dark:bg-slate-700 text-sky-600 dark:text-sky-400 flex items-center justify-center">
                             <i class="fa-solid fa-chevron-down text-sm"></i>
                         </span>
                     </button>
@@ -649,17 +613,17 @@
 
 
                 {{-- FAQ 2 --}}
-                <div class="faq-item rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm dark:border-slate-700 dark:bg-slate-800">
+                <div
+                    class="faq-item rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm dark:border-slate-700 dark:bg-slate-800">
 
-                    <button
-                        type="button"
-                        class="faq-button w-full flex items-center justify-between gap-5 text-left px-6 py-5 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
-                    >
+                    <button type="button"
+                        class="faq-button w-full flex items-center justify-between gap-5 text-left px-6 py-5 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
                         <span class="font-bold text-slate-900 dark:text-slate-100 leading-7">
                             Apa yang harus dilakukan jika terdapat masalah pada transaksi?
                         </span>
 
-                        <span class="faq-icon shrink-0 w-9 h-9 rounded-xl bg-sky-50 dark:bg-slate-700 text-sky-600 dark:text-sky-400 flex items-center justify-center">
+                        <span
+                            class="faq-icon shrink-0 w-9 h-9 rounded-xl bg-sky-50 dark:bg-slate-700 text-sky-600 dark:text-sky-400 flex items-center justify-center">
                             <i class="fa-solid fa-chevron-down text-sm"></i>
                         </span>
                     </button>
@@ -682,17 +646,17 @@
 
 
                 {{-- FAQ 3 --}}
-                <div class="faq-item rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm dark:border-slate-700 dark:bg-slate-800">
+                <div
+                    class="faq-item rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm dark:border-slate-700 dark:bg-slate-800">
 
-                    <button
-                        type="button"
-                        class="faq-button w-full flex items-center justify-between gap-5 text-left px-6 py-5 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
-                    >
+                    <button type="button"
+                        class="faq-button w-full flex items-center justify-between gap-5 text-left px-6 py-5 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
                         <span class="font-bold text-slate-900 dark:text-slate-100 leading-7">
                             Apakah informasi pembayaran perlu disimpan?
                         </span>
 
-                        <span class="faq-icon shrink-0 w-9 h-9 rounded-xl bg-sky-50 dark:bg-slate-700 text-sky-600 dark:text-sky-400 flex items-center justify-center">
+                        <span
+                            class="faq-icon shrink-0 w-9 h-9 rounded-xl bg-sky-50 dark:bg-slate-700 text-sky-600 dark:text-sky-400 flex items-center justify-center">
                             <i class="fa-solid fa-chevron-down text-sm"></i>
                         </span>
                     </button>
@@ -724,8 +688,7 @@
             <div class="mb-7">
                 <div class="flex items-center gap-3 mb-3">
                     <div
-                        class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 flex items-center justify-center"
-                    >
+                        class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
                         <i class="fa-solid fa-shield-halved"></i>
                     </div>
 
@@ -743,17 +706,17 @@
             <div class="space-y-4">
 
                 {{-- FAQ 1 --}}
-                <div class="faq-item rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm dark:border-slate-700 dark:bg-slate-800">
+                <div
+                    class="faq-item rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm dark:border-slate-700 dark:bg-slate-800">
 
-                    <button
-                        type="button"
-                        class="faq-button w-full flex items-center justify-between gap-5 text-left px-6 py-5 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
-                    >
+                    <button type="button"
+                        class="faq-button w-full flex items-center justify-between gap-5 text-left px-6 py-5 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
                         <span class="font-bold text-slate-900 dark:text-slate-100 leading-7">
                             Bagaimana cara menjaga keamanan akun?
                         </span>
 
-                        <span class="faq-icon shrink-0 w-9 h-9 rounded-xl bg-emerald-50 dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                        <span
+                            class="faq-icon shrink-0 w-9 h-9 rounded-xl bg-emerald-50 dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
                             <i class="fa-solid fa-chevron-down text-sm"></i>
                         </span>
                     </button>
@@ -776,17 +739,17 @@
 
 
                 {{-- FAQ 2 --}}
-                <div class="faq-item rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm dark:border-slate-700 dark:bg-slate-800">
+                <div
+                    class="faq-item rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm dark:border-slate-700 dark:bg-slate-800">
 
-                    <button
-                        type="button"
-                        class="faq-button w-full flex items-center justify-between gap-5 text-left px-6 py-5 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
-                    >
+                    <button type="button"
+                        class="faq-button w-full flex items-center justify-between gap-5 text-left px-6 py-5 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
                         <span class="font-bold text-slate-900 dark:text-slate-100 leading-7">
                             Apakah saya boleh memberikan password kepada tim bantuan?
                         </span>
 
-                        <span class="faq-icon shrink-0 w-9 h-9 rounded-xl bg-emerald-50 dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                        <span
+                            class="faq-icon shrink-0 w-9 h-9 rounded-xl bg-emerald-50 dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
                             <i class="fa-solid fa-chevron-down text-sm"></i>
                         </span>
                     </button>
@@ -808,17 +771,17 @@
 
 
                 {{-- FAQ 3 --}}
-                <div class="faq-item rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm dark:border-slate-700 dark:bg-slate-800">
+                <div
+                    class="faq-item rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm dark:border-slate-700 dark:bg-slate-800">
 
-                    <button
-                        type="button"
-                        class="faq-button w-full flex items-center justify-between gap-5 text-left px-6 py-5 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
-                    >
+                    <button type="button"
+                        class="faq-button w-full flex items-center justify-between gap-5 text-left px-6 py-5 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
                         <span class="font-bold text-slate-900 dark:text-slate-100 leading-7">
                             Apa yang harus dilakukan jika menemukan aktivitas akun yang mencurigakan?
                         </span>
 
-                        <span class="faq-icon shrink-0 w-9 h-9 rounded-xl bg-emerald-50 dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                        <span
+                            class="faq-icon shrink-0 w-9 h-9 rounded-xl bg-emerald-50 dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
                             <i class="fa-solid fa-chevron-down text-sm"></i>
                         </span>
                     </button>
@@ -849,17 +812,12 @@
         <section class="mb-20">
 
             <div
-                class="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-blue-600 via-blue-600 to-indigo-700 dark:from-blue-800 dark:via-blue-900 dark:to-indigo-950 px-7 py-10 sm:px-12 sm:py-12 text-white shadow-xl shadow-blue-200/40 dark:shadow-none"
-            >
+                class="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-blue-600 via-blue-600 to-indigo-700 dark:from-blue-800 dark:via-blue-900 dark:to-indigo-950 px-7 py-10 sm:px-12 sm:py-12 text-white shadow-xl shadow-blue-200/40 dark:shadow-none">
 
                 {{-- Decorative --}}
-                <div
-                    class="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-white/10 blur-3xl"
-                ></div>
+                <div class="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-white/10 blur-3xl"></div>
 
-                <div
-                    class="absolute -bottom-28 -left-20 w-72 h-72 rounded-full bg-indigo-400/20 blur-3xl"
-                ></div>
+                <div class="absolute -bottom-28 -left-20 w-72 h-72 rounded-full bg-indigo-400/20 blur-3xl"></div>
 
 
                 <div class="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
@@ -868,8 +826,7 @@
                     <div class="max-w-2xl">
 
                         <div
-                            class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/15 border border-white/20 text-sm font-semibold mb-5"
-                        >
+                            class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/15 border border-white/20 text-sm font-semibold mb-5">
                             <i class="fa-solid fa-headset"></i>
                             Bantuan Langsung
                         </div>
@@ -892,28 +849,24 @@
                     </div>
 
 
-                  {{-- WHATSAPP --}}
-<div class="shrink-0">
-    {{-- =================================================
-        GANTI NOMOR WHATSAPP DI SINI
-        Gunakan angka murni tanpa +, spasi, atau -
-        Contoh: 6285759396439
-    ================================================== --}}
-    <a
-        href="https://wa.me/0838279024778"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="w-full lg:w-auto inline-flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-white dark:bg-slate-800 dark:text-blue-300 font-extrabold shadow-lg hover:-translate-y-1 hover:shadow-xl transition-all duration-300"
-    >
-        <i class="fa-brands fa-whatsapp text-2xl"></i>
+                    {{-- HUBUNGI KAMI VIA EMAIL --}}
+                    <div class="shrink-0">
+                        <button type="button" id="toggleContactForm"
+                            class="w-full lg:w-auto inline-flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-white dark:bg-slate-800 dark:text-blue-300 font-extrabold shadow-lg hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+                            <i class="fa-solid fa-envelope text-2xl"></i>
 
-        <span>
-            Hubungi Kami via WhatsApp
-        </span>
-    </a>
-</div>
+                            <span>
+                                Hubungi Kami via Email
+                            </span>
+                        </button>
+                    </div>
 
                 </div>
+
+                {{-- =================================================
+                    FORM KONTAK EMAIL (EXPANDABLE)
+                ================================================== --}}
+                @include('help.partials.contact-form')
 
             </div>
 
@@ -938,8 +891,7 @@
                     <div class="flex items-center gap-3 mb-5">
 
                         <div
-                            class="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center"
-                        >
+                            class="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
                             <span class="font-black text-lg">
                                 A
                             </span>
@@ -976,38 +928,23 @@
 
                     <div class="space-y-3 text-sm">
 
-                        <a
-                            href="{{ url('/') }}"
-                            class="block text-slate-400 hover:text-white transition-colors"
-                        >
+                        <a href="{{ url('/') }}" class="block text-slate-400 hover:text-white transition-colors">
                             Beranda
                         </a>
 
-                        <a
-                            href="#akun"
-                            class="block text-slate-400 hover:text-white transition-colors"
-                        >
+                        <a href="#akun" class="block text-slate-400 hover:text-white transition-colors">
                             Akun
                         </a>
 
-                        <a
-                            href="#proyek"
-                            class="block text-slate-400 hover:text-white transition-colors"
-                        >
+                        <a href="#proyek" class="block text-slate-400 hover:text-white transition-colors">
                             Proyek
                         </a>
 
-                        <a
-                            href="#pembayaran"
-                            class="block text-slate-400 hover:text-white transition-colors"
-                        >
+                        <a href="#pembayaran" class="block text-slate-400 hover:text-white transition-colors">
                             Pembayaran
                         </a>
 
-                        <a
-                            href="#keamanan"
-                            class="block text-slate-400 hover:text-white transition-colors"
-                        >
+                        <a href="#keamanan" class="block text-slate-400 hover:text-white transition-colors">
                             Keamanan
                         </a>
 
@@ -1029,15 +966,11 @@
                     </p>
 
 
-                    {{-- GANTI NOMOR WHATSAPP --}}
-                    <a
-                        href="https://wa.me/628XXXXXXXXXX"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="inline-flex items-center gap-2 text-sm font-bold text-white hover:text-blue-400 dark:hover:text-blue-300 transition-colors"
-                    >
-                        <i class="fa-brands fa-whatsapp text-lg"></i>
-                        Hubungi via WhatsApp
+                    {{-- HUBUNGI VIA EMAIL --}}
+                    <a href="#hubungi-kami" id="footerContactLink"
+                        class="inline-flex items-center gap-2 text-sm font-bold text-white hover:text-blue-400 dark:hover:text-blue-300 transition-colors">
+                        <i class="fa-solid fa-envelope text-lg"></i>
+                        Hubungi via Email
                     </a>
 
                 </div>
@@ -1047,8 +980,7 @@
 
             {{-- COPYRIGHT --}}
             <div
-                class="mt-10 pt-7 border-t border-white/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
-            >
+                class="mt-10 pt-7 border-t border-white/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
 
                 <p class="text-xs text-slate-500 dark:text-slate-400">
                     © {{ date('Y') }} ApexForge Labs. All rights reserved.
@@ -1070,18 +1002,18 @@
         FAQ JAVASCRIPT
     ========================================================== --}}
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
 
             const faqButtons = document.querySelectorAll('.faq-button');
 
-            faqButtons.forEach(function (button) {
+            faqButtons.forEach(function(button) {
 
-                button.addEventListener('click', function () {
+                button.addEventListener('click', function() {
 
                     const currentItem = this.closest('.faq-item');
 
                     // Tutup FAQ lain
-                    document.querySelectorAll('.faq-item.active').forEach(function (item) {
+                    document.querySelectorAll('.faq-item.active').forEach(function(item) {
 
                         if (item !== currentItem) {
                             item.classList.remove('active');
@@ -1099,5 +1031,50 @@
         });
     </script>
 
+    {{-- =========================================================
+        FORM KONTAK JAVASCRIPT
+    ========================================================== --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const contactForm = document.getElementById('hubungi-kami');
+            const toggleContactForm = document.getElementById('toggleContactForm');
+            const closeContactForm = document.getElementById('closeContactForm');
+            const footerContactLink = document.getElementById('footerContactLink');
+
+            function openContactForm(scrollIntoView) {
+                if (!contactForm) return;
+                contactForm.classList.remove('hidden');
+                if (scrollIntoView) {
+                    setTimeout(function () {
+                        contactForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 100);
+                }
+            }
+
+            if (toggleContactForm) {
+                toggleContactForm.addEventListener('click', function () {
+                    const isHidden = contactForm.classList.contains('hidden');
+                    openContactForm(isHidden);
+                });
+            }
+
+            if (closeContactForm) {
+                closeContactForm.addEventListener('click', function () {
+                    contactForm.classList.add('hidden');
+                });
+            }
+
+            if (footerContactLink) {
+                footerContactLink.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    openContactForm(true);
+                });
+            }
+
+        });
+    </script>
+
 </body>
+
 </html>
