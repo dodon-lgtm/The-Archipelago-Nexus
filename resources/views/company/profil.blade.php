@@ -441,7 +441,6 @@
                 </div>
 
                 {{-- Footer --}}
-                @include('navbar.footer')
 
             </main>
         </div>

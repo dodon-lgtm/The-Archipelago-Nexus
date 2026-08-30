@@ -514,15 +514,7 @@
                         <div
                             class="flex flex-wrap items-center gap-3 shrink-0">
 
-                            {{-- TOMBOL TOGGLE DARK MODE --}}
-                            <button
-                                type="button"
-                                onclick="toggleDarkMode()"
-                                class="inline-flex items-center justify-center w-11 h-11 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-2xl text-white transition ring-1 ring-white/20 shadow-lg"
-                                title="Ganti Mode Tampilan">
-                                <i class="fa-solid fa-moon text-sm dark:hidden"></i>
-                                <i class="fa-solid fa-sun text-sm hidden dark:inline text-amber-300"></i>
-                            </button>
+                            
 
 
                             <a
@@ -1136,7 +1128,6 @@
              FOOTER
         ================================================== --}}
 
-        @include('navbar.footer')
 
 
     </div>

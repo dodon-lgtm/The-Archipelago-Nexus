@@ -1,18 +1,15 @@
 <!DOCTYPE html>
-<html lang="id" class="dark">
+<html lang="id">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @include('partials.theme-boot')
     <title>Buat Laporan - ApexForge Labs</title>
-    <script>
-        document.documentElement.classList.add('dark');
-    </script>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = tailwind.config || {};
-    tailwind.config.darkMode = 'class';
         tailwind.config.darkMode = 'class';
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -21,15 +18,18 @@
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #030712;
         }
 
-        /* High-Tech Scrollbar (Dark Blue Theme) */
+        /* High-Tech Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
         }
 
         ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.1);
+        }
+
+        .dark ::-webkit-scrollbar-track {
             background: rgba(15, 23, 42, 0.6);
         }
 
@@ -51,39 +51,46 @@
             box-shadow: 0 0 30px rgba(15, 23, 42, 0.8);
         }
 
-        /* Advanced Pristine Glassmorphism (Dark Variant) */
+        /* Advanced Pristine Glassmorphism */
         .glass-panel-pristine {
-            background: rgba(15, 23, 42, 0.75);
+            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(32px);
             -webkit-backdrop-filter: blur(32px);
             border: 1px solid rgba(59, 130, 246, 0.2);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.05);
+        }
+
+        .dark .glass-panel-pristine {
+            background: rgba(15, 23, 42, 0.75);
             box-shadow:
                 0 30px 60px -15px rgba(0, 0, 0, 0.5),
                 inset 0 1px 0 rgba(255, 255, 255, 0.1),
                 inset 0 0 20px rgba(59, 130, 246, 0.05);
         }
 
-        /* Cyber Grid Background (Dark Blue) */
+        /* Cyber Grid Background */
         .hologram-grid-blue {
+            background-image:
+                linear-gradient(to right, rgba(59, 130, 246, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(59, 130, 246, 0.05) 1px, transparent 1px);
+            background-size: 48px 48px;
+        }
+
+        .dark .hologram-grid-blue {
             background-color: #030712;
             background-image:
                 linear-gradient(to right, rgba(59, 130, 246, 0.08) 1px, transparent 1px),
                 linear-gradient(to bottom, rgba(59, 130, 246, 0.08) 1px, transparent 1px);
-            background-size: 48px 48px;
         }
 
         /* Floating Ambient Orbs */
         @keyframes drift {
-
-            0%,
-            100% {
+            0%, 100% {
                 transform: translate(0, 0) scale(1);
             }
-
             33% {
                 transform: translate(50px, -40px) scale(1.1);
             }
-
             66% {
                 transform: translate(-30px, 40px) scale(0.9);
             }
@@ -97,9 +104,15 @@
             animation: drift 22s ease-in-out infinite reverse;
         }
 
-        /* Custom Input Autofill styling for dark transparency */
+        /* Custom Input Autofill styling */
         input:-webkit-autofill,
         textarea:-webkit-autofill {
+            -webkit-box-shadow: 0 0 0 30px #ffffff inset !important;
+            -webkit-text-fill-color: #0f172a !important;
+        }
+
+        .dark input:-webkit-autofill,
+        .dark textarea:-webkit-autofill {
             -webkit-box-shadow: 0 0 0 30px #0f172a inset !important;
             -webkit-text-fill-color: #f8fafc !important;
         }
@@ -109,53 +122,22 @@
         :root {
             --af-primary: #2563eb;
             --af-primary-dark: #1d4ed8;
-            --af-primary-soft: rgba(30, 41, 59, 0.8);
             --af-sky: #38bdf8;
-            --af-ink: #f8fafc;
-            --af-muted: #94a3b8;
-            --af-border: #1e293b;
-            --af-surface: #0f172a;
-            --af-page: #030712;
         }
 
         html {
-            scroll-behavior: smooth
-        }
-
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background:
-                radial-gradient(circle at 10% -10%, rgba(56, 189, 248, .15), transparent 30%),
-                radial-gradient(circle at 100% 0%, rgba(37, 99, 235, .12), transparent 28%),
-                var(--af-page);
+            scroll-behavior: smooth;
         }
 
         ::selection {
             background: rgba(37, 99, 235, .35);
-            color: #ffffff
-        }
-
-        input,
-        select,
-        textarea {
-            border-color: var(--af-border) !important;
-            background: rgba(15, 23, 42, 0.8) !important;
-            color: #f8fafc !important;
-            transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
-        }
-
-        input:focus,
-        select:focus,
-        textarea:focus {
-            border-color: rgba(59, 130, 246, .6) !important;
-            box-shadow: 0 0 0 4px rgba(37, 99, 235, .2) !important;
-            outline: none !important;
+            color: #ffffff;
         }
 
         button,
         a,
         [role="button"] {
-            transition: all .2s ease
+            transition: all .2s ease;
         }
 
         button:focus-visible,
@@ -167,21 +149,16 @@
 
         table {
             border-collapse: separate;
-            border-spacing: 0
+            border-spacing: 0;
         }
 
         thead th {
-            background: rgba(15, 23, 42, .85) !important;
             color: #cbd5e1;
             font-weight: 700;
         }
 
         tbody tr {
-            transition: background .18s ease
-        }
-
-        tbody tr:hover {
-            background: rgba(30, 41, 59, .5)
+            transition: background .18s ease;
         }
 
         [class*="bg-blue-600"] {
@@ -196,73 +173,56 @@
         .glass-panel,
         .glass-card,
         .glass-surface {
-            background: rgba(15, 23, 42, .75);
-            border: 1px solid rgba(59, 130, 246, .2);
             backdrop-filter: blur(18px);
             -webkit-backdrop-filter: blur(18px);
-            box-shadow: 0 18px 50px -32px rgba(0, 0, 0, .5);
-        }
-
-        .apex-page-glow {
-            position: fixed;
-            inset: auto -10rem -12rem auto;
-            width: 28rem;
-            height: 28rem;
-            background: rgba(56, 189, 248, .12);
-            filter: blur(70px);
-            border-radius: 999px;
-            pointer-events: none;
-            z-index: -1;
         }
 
         @media (max-width:767px) {
             main {
                 padding-left: 1rem !important;
-                padding-right: 1rem !important
+                padding-right: 1rem !important;
             }
 
             table {
-                min-width: 680px
+                min-width: 680px;
             }
 
             .overflow-x-auto {
-                -webkit-overflow-scrolling: touch
+                -webkit-overflow-scrolling: touch;
             }
         }
 
         @media (prefers-reduced-motion:reduce) {
-
             *,
             *::before,
             *::after {
                 animation-duration: .01ms !important;
                 animation-iteration-count: 1 !important;
                 transition-duration: .01ms !important;
-                scroll-behavior: auto !important
+                scroll-behavior: auto !important;
             }
         }
     </style>
 </head>
 
-<body class="bg-slate-950 text-slate-100 antialiased min-h-screen flex transition-colors duration-300">
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 antialiased min-h-screen flex transition-colors duration-300">
 
     @include('navbar.navigasi')
 
-    <div class="flex-1 flex flex-col min-h-screen overflow-hidden bg-slate-950">
+    <div class="flex-1 flex flex-col min-h-screen overflow-hidden bg-slate-50 dark:bg-slate-950">
         @include('navbar.nav')
 
-        {{-- PURE DARK BLUE HOLOGRAPHIC MAIN CONTAINER --}}
-        <main class="flex-1 overflow-y-auto relative bg-slate-950">
+        <main class="flex-1 overflow-y-auto relative bg-slate-50 dark:bg-slate-950">
 
             {{-- Ambient Lighting & Hologram Background Layers --}}
             <div class="absolute inset-0 z-0 pointer-events-none hologram-grid-blue"></div>
 
             {{-- Glowing Shaders --}}
             <div
-                class="fixed top-[-10%] left-[-10%] w-[50rem] h-[50rem] bg-gradient-to-br from-blue-600/20 to-blue-900/10 rounded-full blur-[120px] animate-orb-1 pointer-events-none">
+                class="fixed top-[-10%] left-[-10%] w-[50rem] h-[50rem] bg-gradient-to-br from-blue-400/10 dark:from-blue-600/20 to-blue-600/5 dark:to-blue-900/10 rounded-full blur-[120px] animate-orb-1 pointer-events-none">
             </div>
             <div
-                class="fixed bottom-[-10%] right-[-5%] w-[45rem] h-[45rem] bg-gradient-to-tl from-blue-500/15 to-sky-500/10 rounded-full blur-[100px] animate-orb-2 pointer-events-none">
+                class="fixed bottom-[-10%] right-[-5%] w-[45rem] h-[45rem] bg-gradient-to-tl from-blue-400/10 dark:from-blue-500/15 to-sky-400/5 dark:to-sky-500/10 rounded-full blur-[100px] animate-orb-2 pointer-events-none">
             </div>
             <div
                 class="fixed top-1/3 left-1/3 w-[30rem] h-[30rem] bg-blue-500/10 rounded-full blur-[100px] pointer-events-none opacity-50 mix-blend-screen">
@@ -273,34 +233,34 @@
                 {{-- ALERTS: FUTURISTIC GLASS ALERTS --}}
                 @if (session('success'))
                     <div
-                        class="mb-8 overflow-hidden relative bg-slate-900/90 border border-blue-500/30 backdrop-blur-xl p-5 rounded-[1.5rem] shadow-[0_10px_30px_rgba(0,0,0,0.5)] flex items-start gap-4">
+                        class="mb-8 overflow-hidden relative bg-white/90 dark:bg-slate-900/90 border border-blue-500/30 backdrop-blur-xl p-5 rounded-[1.5rem] shadow-lg flex items-start gap-4">
                         <div
-                            class="w-10 h-10 rounded-full bg-blue-950 flex items-center justify-center shrink-0 border border-blue-800">
-                            <i class="fa-solid fa-check text-blue-400"></i>
+                            class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-950 flex items-center justify-center shrink-0 border border-blue-300 dark:border-blue-800">
+                            <i class="fa-solid fa-check text-blue-600 dark:text-blue-400"></i>
                         </div>
-                        <div class="pt-2 font-bold text-white">{{ session('success') }}</div>
+                        <div class="pt-2 font-bold text-slate-800 dark:text-white">{{ session('success') }}</div>
                     </div>
                 @endif
 
                 @if (session('error'))
                     <div
-                        class="mb-8 overflow-hidden relative bg-slate-900/90 border border-red-500/30 backdrop-blur-xl p-5 rounded-[1.5rem] shadow-[0_10px_30px_rgba(0,0,0,0.5)] flex items-start gap-4">
+                        class="mb-8 overflow-hidden relative bg-white/90 dark:bg-slate-900/90 border border-red-500/30 backdrop-blur-xl p-5 rounded-[1.5rem] shadow-lg flex items-start gap-4">
                         <div
-                            class="w-10 h-10 rounded-full bg-red-950/60 flex items-center justify-center shrink-0 border border-red-800">
-                            <i class="fa-solid fa-xmark text-red-400"></i>
+                            class="w-10 h-10 rounded-full bg-red-100 dark:bg-red-950/60 flex items-center justify-center shrink-0 border border-red-300 dark:border-red-800">
+                            <i class="fa-solid fa-xmark text-red-600 dark:text-red-400"></i>
                         </div>
-                        <div class="pt-2 font-bold text-red-300">{{ session('error') }}</div>
+                        <div class="pt-2 font-bold text-red-600 dark:text-red-300">{{ session('error') }}</div>
                     </div>
                 @endif
 
                 @if ($errors->any())
                     <div
-                        class="mb-8 overflow-hidden relative bg-slate-900/90 border border-red-500/30 backdrop-blur-xl p-5 rounded-[1.5rem] shadow-[0_10px_30px_rgba(0,0,0,0.5)] flex items-start gap-4">
+                        class="mb-8 overflow-hidden relative bg-white/90 dark:bg-slate-900/90 border border-red-500/30 backdrop-blur-xl p-5 rounded-[1.5rem] shadow-lg flex items-start gap-4">
                         <div
-                            class="w-10 h-10 rounded-full bg-red-950/60 flex items-center justify-center shrink-0 border border-red-800">
-                            <i class="fa-solid fa-triangle-exclamation text-red-400"></i>
+                            class="w-10 h-10 rounded-full bg-red-100 dark:bg-red-950/60 flex items-center justify-center shrink-0 border border-red-300 dark:border-red-800">
+                            <i class="fa-solid fa-triangle-exclamation text-red-600 dark:text-red-400"></i>
                         </div>
-                        <div class="pt-1.5 text-sm font-bold text-red-300 space-y-1">
+                        <div class="pt-1.5 text-sm font-bold text-red-600 dark:text-red-300 space-y-1">
                             @foreach ($errors->all() as $error)
                                 <p>{{ $error }}</p>
                             @endforeach
@@ -308,7 +268,7 @@
                     </div>
                 @endif
 
-                {{-- FORM CONTAINER: PRISTINE DARK GLASS --}}
+                {{-- FORM CONTAINER: PRISTINE GLASS --}}
                 <div class="glass-panel-pristine rounded-[2.5rem] relative overflow-hidden">
 
                     {{-- Decorative Top Accent Line --}}
@@ -327,8 +287,8 @@
                                 <i class="fa-solid fa-flag"></i>
                             </div>
                             <div>
-                                <h2 class="text-3xl font-black text-white tracking-tight mb-1">Buat Laporan</h2>
-                                <p class="text-sm font-semibold text-blue-400/80">Laporkan masalah, pengguna, atau
+                                <h2 class="text-3xl font-black text-slate-900 dark:text-white tracking-tight mb-1">Buat Laporan</h2>
+                                <p class="text-sm font-semibold text-blue-600 dark:text-blue-400/80">Laporkan masalah, pengguna, atau
                                     proyek yang melanggar protokol</p>
                             </div>
                         </div>
@@ -342,14 +302,14 @@
                                 {{-- Kategori --}}
                                 <div class="relative group">
                                     <label
-                                        class="text-[10px] font-extrabold text-blue-400 uppercase tracking-widest mb-2 block">Kategori
+                                        class="text-[10px] font-extrabold text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-2 block">Kategori
                                         Laporan <span class="text-blue-500">*</span></label>
                                     <div class="relative">
                                         <select name="category"
-                                            class="w-full appearance-none rounded-2xl border border-slate-800 bg-slate-900/90 px-5 py-4 text-sm font-bold text-white transition-all duration-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 outline-none shadow-sm group-hover:border-slate-700 @error('category') border-red-500 focus:border-red-500 focus:ring-red-500/20 @enderror">
-                                            <option value="" disabled selected class="bg-slate-900 text-slate-400">Pilih Kategori...</option>
+                                            class="w-full appearance-none rounded-2xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900/90 px-5 py-4 text-sm font-bold text-slate-900 dark:text-white transition-all duration-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 outline-none shadow-sm group-hover:border-slate-400 dark:group-hover:border-slate-700 @error('category') border-red-500 focus:border-red-500 focus:ring-red-500/20 @enderror">
+                                            <option value="" disabled selected class="bg-white text-slate-400 dark:bg-slate-900">Pilih Kategori...</option>
                                             @foreach (\App\Models\Report::categoriesForTarget(\App\Models\Report::TARGET_WEBSITE) as $cat)
-                                                <option value="{{ $cat }}" class="bg-slate-900 text-white" @selected(old('category') == $cat)>
+                                                <option value="{{ $cat }}" class="bg-white text-slate-900 dark:bg-slate-900 dark:text-white" @selected(old('category') == $cat)>
                                                     {{ \App\Models\Report::categoryLabel($cat) }}</option>
                                             @endforeach
                                         </select>
@@ -359,7 +319,7 @@
                                         </div>
                                     </div>
                                     @error('category')
-                                        <p class="text-xs font-bold text-red-400 mt-2 flex items-center gap-1"><i
+                                        <p class="text-xs font-bold text-red-500 dark:text-red-400 mt-2 flex items-center gap-1"><i
                                                 class="fa-solid fa-circle-exclamation"></i> {{ $message }}</p>
                                     @enderror
                                 </div>
@@ -367,13 +327,13 @@
                                 {{-- Subjek --}}
                                 <div class="relative group">
                                     <label
-                                        class="text-[10px] font-extrabold text-blue-400 uppercase tracking-widest mb-2 block">Subjek
+                                        class="text-[10px] font-extrabold text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-2 block">Subjek
                                         Laporan <span class="text-blue-500">*</span></label>
                                     <input type="text" name="subject" value="{{ old('subject') }}"
-                                        class="w-full rounded-2xl border border-slate-800 bg-slate-900/90 px-5 py-4 text-sm font-bold text-white transition-all duration-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 outline-none shadow-sm group-hover:border-slate-700 placeholder-slate-500 @error('subject') border-red-500 focus:border-red-500 focus:ring-red-500/20 @enderror"
+                                        class="w-full rounded-2xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900/90 px-5 py-4 text-sm font-bold text-slate-900 dark:text-white transition-all duration-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 outline-none shadow-sm group-hover:border-slate-400 dark:group-hover:border-slate-700 placeholder-slate-400 dark:placeholder-slate-500 @error('subject') border-red-500 focus:border-red-500 focus:ring-red-500/20 @enderror"
                                         placeholder="Contoh: Pengguna mencurigakan...">
                                     @error('subject')
-                                        <p class="text-xs font-bold text-red-400 mt-2 flex items-center gap-1"><i
+                                        <p class="text-xs font-bold text-red-500 dark:text-red-400 mt-2 flex items-center gap-1"><i
                                                 class="fa-solid fa-circle-exclamation"></i> {{ $message }}</p>
                                     @enderror
                                 </div>
@@ -382,13 +342,13 @@
                             {{-- Deskripsi --}}
                             <div class="relative group">
                                 <label
-                                    class="text-[10px] font-extrabold text-blue-400 uppercase tracking-widest mb-2 block">Deskripsi
+                                    class="text-[10px] font-extrabold text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-2 block">Deskripsi
                                     Detail <span class="text-blue-500">*</span></label>
                                 <textarea name="description" rows="5"
-                                    class="w-full rounded-2xl border border-slate-800 bg-slate-900/90 px-5 py-4 text-sm font-bold text-white transition-all duration-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 outline-none shadow-sm resize-none group-hover:border-slate-700 placeholder-slate-500 @error('description') border-red-500 focus:border-red-500 focus:ring-red-500/20 @enderror"
+                                    class="w-full rounded-2xl border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900/90 px-5 py-4 text-sm font-bold text-slate-900 dark:text-white transition-all duration-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 outline-none shadow-sm resize-none group-hover:border-slate-400 dark:group-hover:border-slate-700 placeholder-slate-400 dark:placeholder-slate-500 @error('description') border-red-500 focus:border-red-500 focus:ring-red-500/20 @enderror"
                                     placeholder="Jelaskan kronologi dan detail masalah yang Anda temui secara spesifik...">{{ old('description') }}</textarea>
                                 @error('description')
-                                    <p class="text-xs font-bold text-red-400 mt-2 flex items-center gap-1"><i
+                                    <p class="text-xs font-bold text-red-500 dark:text-red-400 mt-2 flex items-center gap-1"><i
                                             class="fa-solid fa-circle-exclamation"></i> {{ $message }}</p>
                                 @enderror
                             </div>
@@ -396,11 +356,11 @@
                             {{-- Lampiran / Bukti --}}
                             <div class="relative">
                                 <label
-                                    class="text-[10px] font-extrabold text-blue-400 uppercase tracking-widest mb-2 block">Lampiran
+                                    class="text-[10px] font-extrabold text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-2 block">Lampiran
                                     / Bukti (Opsional)</label>
 
                                 <div id="dropzone"
-                                    class="relative flex flex-col items-center border-2 border-dashed border-slate-800 rounded-2xl px-6 py-8 bg-slate-900/40 hover:bg-slate-800/60 hover:border-blue-500/50 transition-colors duration-300 group">
+                                    class="relative flex flex-col items-center border-2 border-dashed border-slate-300 dark:border-slate-800 rounded-2xl px-6 py-8 bg-slate-100/50 dark:bg-slate-900/40 hover:bg-slate-200/50 dark:hover:bg-slate-800/60 hover:border-blue-500/50 transition-colors duration-300 group">
 
                                     <input type="file" id="fileInput" name="attachments[]" multiple
                                         accept=".jpg,.jpeg,.png,.pdf"
@@ -408,14 +368,14 @@
 
                                     <div class="w-full text-center pointer-events-none">
                                         <div id="uploadIcon"
-                                            class="w-12 h-12 rounded-full bg-slate-800 shadow-sm border border-slate-700 flex items-center justify-center text-blue-400 mx-auto mb-3 group-hover:bg-blue-600 group-hover:text-white group-hover:scale-110 group-hover:shadow-[0_0_20px_rgba(59,130,246,0.4)] transition-all">
+                                            class="w-12 h-12 rounded-full bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 flex items-center justify-center text-blue-500 dark:text-blue-400 mx-auto mb-3 group-hover:bg-blue-600 group-hover:text-white group-hover:scale-110 group-hover:shadow-[0_0_20px_rgba(59,130,246,0.4)] transition-all">
                                             <i class="fa-solid fa-cloud-arrow-up text-xl"></i>
                                         </div>
-                                        <p id="uploadText" class="text-sm font-bold text-white mb-1">Tarik & Lepas
+                                        <p id="uploadText" class="text-sm font-bold text-slate-800 dark:text-white mb-1">Tarik & Lepas
                                             file ke sini, atau <span
-                                                class="text-blue-400 underline decoration-slate-600 underline-offset-2">Jelajahi</span>
+                                                class="text-blue-500 dark:text-blue-400 underline decoration-slate-400 dark:decoration-slate-600 underline-offset-2">Jelajahi</span>
                                         </p>
-                                        <p class="text-[11px] font-bold text-slate-400">Maksimal 5 file. Format: JPG,
+                                        <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400">Maksimal 5 file. Format: JPG,
                                             PNG, atau PDF (Maks 5 MB/file).</p>
                                     </div>
 
@@ -424,30 +384,30 @@
                                 </div>
 
                                 @error('attachments')
-                                    <p class="text-xs font-bold text-red-400 mt-2 flex items-center gap-1"><i
+                                    <p class="text-xs font-bold text-red-500 dark:text-red-400 mt-2 flex items-center gap-1"><i
                                             class="fa-solid fa-circle-exclamation"></i> {{ $message }}</p>
                                 @enderror
                                 @error('attachments.*')
-                                    <p class="text-xs font-bold text-red-400 mt-2 flex items-center gap-1"><i
+                                    <p class="text-xs font-bold text-red-500 dark:text-red-400 mt-2 flex items-center gap-1"><i
                                             class="fa-solid fa-circle-exclamation"></i> {{ $message }}</p>
                                 @enderror
                             </div>
 
                             {{-- Info Banner --}}
                             <div
-                                class="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 text-sm flex items-start gap-4">
+                                class="bg-slate-100/80 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 text-sm flex items-start gap-4">
                                 <div
-                                    class="w-8 h-8 rounded-full bg-slate-800 text-blue-400 flex items-center justify-center shrink-0 border border-slate-700">
+                                    class="w-8 h-8 rounded-full bg-white dark:bg-slate-800 text-blue-500 dark:text-blue-400 flex items-center justify-center shrink-0 border border-slate-200 dark:border-slate-700">
                                     <i class="fa-solid fa-shield-halved"></i>
                                 </div>
-                                <div class="pt-1 text-slate-300 font-bold leading-relaxed">
+                                <div class="pt-1 text-slate-600 dark:text-slate-300 font-bold leading-relaxed">
                                     Laporan Anda akan diamankan dan ditinjau secara mendalam oleh tim administrator
                                     ApexForge. Pastikan menyertakan bukti valid untuk mempercepat proses investigasi.
                                 </div>
                             </div>
 
                             {{-- Action Buttons --}}
-                            <div class="flex flex-col sm:flex-row items-center gap-4 pt-4 border-t border-slate-800">
+                            <div class="flex flex-col sm:flex-row items-center gap-4 pt-4 border-t border-slate-200 dark:border-slate-800">
                                 <button type="submit"
                                     class="w-full sm:w-auto px-8 py-3.5 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl text-sm font-bold transition-all duration-300 shadow-[0_8px_20px_-6px_rgba(37,99,235,0.5)] hover:shadow-[0_12px_25px_-6px_rgba(37,99,235,0.7)] hover:-translate-y-0.5 flex items-center justify-center gap-2.5 group">
                                     <i
@@ -456,7 +416,7 @@
                                 </button>
 
                                 <a href="{{ url()->previous() }}"
-                                    class="w-full sm:w-auto px-8 py-3.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded-2xl text-sm font-bold transition-all duration-300 text-center hover:-translate-y-0.5">
+                                    class="w-full sm:w-auto px-8 py-3.5 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-2xl text-sm font-bold transition-all duration-300 text-center hover:-translate-y-0.5">
                                     Batalkan
                                 </a>
                             </div>
@@ -474,15 +434,15 @@
 
             // Add visual cues when dragging files over the input
             fileInput.addEventListener('dragenter', () => {
-                dropzone.classList.add('bg-slate-800', 'border-blue-500');
+                dropzone.classList.add('bg-slate-200', 'dark:bg-slate-800', 'border-blue-500');
             });
 
             fileInput.addEventListener('dragleave', () => {
-                dropzone.classList.remove('bg-slate-800', 'border-blue-500');
+                dropzone.classList.remove('bg-slate-200', 'dark:bg-slate-800', 'border-blue-500');
             });
 
             fileInput.addEventListener('drop', () => {
-                dropzone.classList.remove('bg-slate-800', 'border-blue-500');
+                dropzone.classList.remove('bg-slate-200', 'dark:bg-slate-800', 'border-blue-500');
             });
 
             // Handle the file selection (both drag & drop and manual click)
@@ -497,17 +457,17 @@
                     for (let i = 0; i < fileCount; i++) {
                         const file = files[i];
 
-                        // Create dark themed file badge
+                        // Create file badge
                         const fileItem = document.createElement('div');
                         fileItem.className =
-                            'flex items-center justify-between p-3 bg-slate-800/90 border border-slate-700 rounded-xl shadow-sm';
+                            'flex items-center justify-between p-3 bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm';
 
                         fileItem.innerHTML = `
                         <div class="flex items-center gap-3 overflow-hidden">
-                            <div class="w-8 h-8 rounded-lg bg-slate-700 text-blue-400 flex items-center justify-center shrink-0">
+                            <div class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-700 text-blue-500 dark:text-blue-400 flex items-center justify-center shrink-0">
                                 <i class="fa-solid ${getFileIcon(file.type)}"></i>
                             </div>
-                            <span class="text-sm font-bold text-slate-200 truncate">${file.name}</span>
+                            <span class="text-sm font-bold text-slate-700 dark:text-slate-200 truncate">${file.name}</span>
                         </div>
                         <span class="text-xs font-semibold text-slate-400 shrink-0 ml-4">${formatBytes(file.size)}</span>
                     `;
@@ -517,7 +477,7 @@
 
                     if (files.length > 5) {
                         const warning = document.createElement('p');
-                        warning.className = 'text-xs font-bold text-red-400 text-center mt-2';
+                        warning.className = 'text-xs font-bold text-red-500 dark:text-red-400 text-center mt-2';
                         warning.innerText = `*Hanya 5 file pertama yang akan diproses.`;
                         fileList.appendChild(warning);
                     }

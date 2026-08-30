@@ -524,7 +524,7 @@
                 @endif
 
                 {{-- Footer --}}
-                @include('navbar.footer')
+           
 
             </main>
         </div>
