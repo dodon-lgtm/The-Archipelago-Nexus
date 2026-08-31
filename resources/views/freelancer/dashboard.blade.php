@@ -253,15 +253,21 @@
                 {{-- Card 4: Pesan Baru --}}
                 <div class="reveal reveal-5 stat-card bg-white dark:bg-slate-900 rounded-2xl border border-blue-50 dark:border-slate-800 p-5 shadow-sm transition-colors duration-300">
                     <div class="flex items-center gap-4 mb-4">
-                        <div class="stat-icon w-14 h-14 rounded-xl bg-gradient-to-br from-amber-100 to-amber-50 dark:from-slate-800 dark:to-slate-800 flex items-center justify-center shadow-inner">
+                        <div class="stat-icon relative w-14 h-14 rounded-xl bg-gradient-to-br from-amber-100 to-amber-50 dark:from-slate-800 dark:to-slate-800 flex items-center justify-center shadow-inner">
                             <i class="fa-solid fa-comment text-amber-600 dark:text-amber-400 text-xl"></i>
+                            @if (($unreadMessagesCount ?? 0) > 0)
+                                <span class="absolute -top-1 -right-1 flex h-4 w-4">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-4 w-4 bg-amber-500 border-2 border-white dark:border-slate-900"></span>
+                                </span>
+                            @endif
                         </div>
                         <div>
                             <p class="text-xs text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wide">Pesan Baru</p>
-                            <h3 class="text-2xl font-black text-slate-800 dark:text-white">0</h3>
+                            <h3 class="text-2xl font-black text-slate-800 dark:text-white">{{ $unreadMessagesCount ?? 0 }}</h3>
                         </div>
                     </div>
-                    <a href="/freelancer/workspaces" class="btn-shimmer block text-center text-xs font-bold text-amber-700 dark:text-amber-300 py-2.5 rounded-lg bg-amber-50 dark:bg-slate-800 hover:bg-amber-600 dark:hover:bg-slate-800 hover:text-white dark:hover:text-amber-400 transition-colors duration-300">
+                    <a href="{{ route('freelancer.workspaces.index') }}" class="btn-shimmer block text-center text-xs font-bold text-amber-700 dark:text-amber-300 py-2.5 rounded-lg bg-amber-50 dark:bg-slate-800 hover:bg-amber-600 dark:hover:bg-slate-800 hover:text-white dark:hover:text-amber-400 transition-colors duration-300">
                         Lihat Pesan
                     </a>
                 </div>

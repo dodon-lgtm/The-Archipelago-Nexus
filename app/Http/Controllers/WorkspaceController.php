@@ -176,6 +176,11 @@ class WorkspaceController extends Controller
                 'read_at' => now(),
             ]);
 
+        // Tandai semua pesan chat dalam room ini yang BUKAN dikirim oleh
+        // user yang sedang login sebagai terbaca, sehingga indikator
+        // "Pesan Baru" di dashboard freelancer ter-update secara akurat.
+        Message::markAsReadForUser((int) $workspace->id, (int) Auth::id());
+
         // Proses pengecekan deadline saat halaman dibuka/di-refresh, tanpa
         // bergantung pada scheduler / `php artisan schedule:work`. Diletakkan
         // SETELAH penandaan notifikasi read agar notifikasi overdue yang baru
