@@ -54,30 +54,40 @@
             <h3 class="text-xl font-bold text-slate-800">Rp {{ number_format(\App\Services\AdminWalletService::totalExpense(), 0, ',', '.') }}</h3>
         </div>
 
+        {{-- Card In (Bulan Ini / Filter Dynamic) --}}
         <div class="col-span-1 lg:col-span-1 bg-white border border-slate-100 rounded-[2rem] shadow-sm hover:shadow-md transition-shadow p-6 flex flex-col justify-center group">
             <div class="flex items-center justify-between mb-4">
                 <div class="w-10 h-10 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <i class="fa-solid fa-calendar-check"></i>
                 </div>
             </div>
-            <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-1">In ({{ now()->translatedFormat('M y') }})</p>
-            <h3 class="text-xl font-bold text-slate-800">Rp {{ number_format(\App\Services\AdminWalletService::monthlyIncome(), 0, ',', '.') }}</h3>
+            <p class="text-[11px] text-slate-500 font-bold uppercase tracking-wider mb-1">
+                In ({{ request('month') ? \Carbon\Carbon::parse(request('month'))->translatedFormat('M Y') : now()->translatedFormat('M Y') }})
+            </p>
+            <h3 class="text-xl font-bold text-slate-800">
+                Rp {{ number_format(\App\Services\AdminWalletService::monthlyIncome(request('month')), 0, ',', '.') }}
+            </h3>
         </div>
 
+        {{-- Card Out (Bulan Ini / Filter Dynamic) --}}
         <div class="col-span-1 lg:col-span-1 bg-white border border-slate-100 rounded-[2rem] shadow-sm hover:shadow-md transition-shadow p-6 flex flex-col justify-center group">
             <div class="flex items-center justify-between mb-4">
                 <div class="w-10 h-10 rounded-2xl bg-orange-50 text-orange-500 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <i class="fa-solid fa-calendar-minus"></i>
                 </div>
             </div>
-            <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-1">Out ({{ now()->translatedFormat('M y') }})</p>
-            <h3 class="text-xl font-bold text-slate-800">Rp {{ number_format(\App\Services\AdminWalletService::monthlyExpense(), 0, ',', '.') }}</h3>
+            <p class="text-[11px] text-slate-500 font-bold uppercase tracking-wider mb-1">
+                Out ({{ request('month') ? \Carbon\Carbon::parse(request('month'))->translatedFormat('M Y') : now()->translatedFormat('M Y') }})
+            </p>
+            <h3 class="text-xl font-bold text-slate-800">
+                Rp {{ number_format(\App\Services\AdminWalletService::monthlyExpense(request('month')), 0, ',', '.') }}
+            </h3>
         </div>
     </div>
 
     {{-- ===== Riwayat Wallet Platform ===== --}}
     <div class="bg-white border border-slate-200/60 rounded-3xl shadow-sm overflow-hidden">
-        {{-- Header & Toolbar --}}
+        {{-- Header & Toolbar Filter --}}
         <div class="px-7 py-6 border-b border-slate-100 flex flex-wrap lg:flex-nowrap items-center justify-between gap-5 bg-slate-50/50">
             <div class="flex items-center gap-4">
                 <div class="w-12 h-12 rounded-2xl bg-white shadow-sm border border-slate-100 text-blue-600 flex items-center justify-center">
@@ -85,51 +95,74 @@
                 </div>
                 <div>
                     <h2 class="font-extrabold text-slate-800 text-lg">Buku Kas Platform</h2>
-                    <p class="text-xs text-slate-500 font-medium">Monitoring arus kas pendapatan & pengeluaran</p>
+                    <p class="text-xs text-slate-500 font-medium">Monitoring arus kas pendapatan & pengeluaran real-time</p>
                 </div>
             </div>
             
-            <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
-                <div class="flex bg-slate-100 p-1 rounded-xl w-full sm:w-auto">
-                    <form method="GET" action="{{ route('admin.wallet.index') }}" class="flex">
-                        @if($search !== '') <input type="hidden" name="q" value="{{ $search }}"> @endif
-                        <select name="filter" onchange="this.form.submit()"
-                            class="appearance-none bg-transparent text-slate-600 text-xs font-bold px-4 py-2 pr-8 focus:outline-none cursor-pointer">
-                            <option value="all" {{ $filter === 'all' ? 'selected' : '' }}>Semua Kas</option>
-                            <option value="income" {{ $filter === 'income' ? 'selected' : '' }}>Pendapatan</option>
-                            <option value="expense" {{ $filter === 'expense' ? 'selected' : '' }}>Pengeluaran</option>
-                            <option value="withdrawal_fee" {{ $filter === 'withdrawal_fee' ? 'selected' : '' }}>Fee Withdrawal</option>
-                            <option value="quota_fee" {{ $filter === 'quota_fee' ? 'selected' : '' }}>Biaya Upload</option>
-                            <option value="platform_fee" {{ $filter === 'platform_fee' ? 'selected' : '' }}>Platform Fee</option>
-                        </select>
-                    </form>
+            {{-- Unified Filter Form --}}
+            <form id="walletFilterForm" method="GET" action="{{ route('admin.wallet.index') }}" class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+                
+                {{-- Filter Bulan (Dynamic) --}}
+                <div class="relative w-full sm:w-auto">
+                    <input type="month" name="month" value="{{ request('month') }}" onchange="this.form.submit()"
+                        class="w-full sm:w-auto bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer"
+                        title="Filter berdasarkan bulan">
                 </div>
 
-                <form method="GET" action="{{ route('admin.wallet.index') }}" class="relative w-full sm:w-auto flex-1 sm:flex-none">
-                    @if($filter !== 'all') <input type="hidden" name="filter" value="{{ $filter }}"> @endif
-                    <i class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                    <input type="text" name="q" value="{{ $search }}" placeholder="Cari ID / Ref..."
-                        class="w-full sm:w-56 bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-xl pl-9 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
-                </form>
+                {{-- Filter Kategori Kas --}}
+                <div class="flex bg-slate-100 p-1 rounded-xl w-full sm:w-auto">
+                    <select name="filter" onchange="this.form.submit()"
+                        class="appearance-none bg-transparent text-slate-600 text-xs font-bold px-3 py-1.5 pr-7 focus:outline-none cursor-pointer">
+                        <option value="all" {{ $filter === 'all' ? 'selected' : '' }}>Semua Kas</option>
+                        <option value="income" {{ $filter === 'income' ? 'selected' : '' }}>Pendapatan (+)</option>
+                        <option value="expense" {{ $filter === 'expense' ? 'selected' : '' }}>Pengeluaran (-)</option>
+                        <option value="withdrawal_fee" {{ $filter === 'withdrawal_fee' ? 'selected' : '' }}>Fee Withdrawal</option>
+                        <option value="quota_fee" {{ $filter === 'quota_fee' ? 'selected' : '' }}>Biaya Upload</option>
+                        <option value="platform_fee" {{ $filter === 'platform_fee' ? 'selected' : '' }}>Platform Fee</option>
+                    </select>
+                </div>
 
+                {{-- Realtime Search Input --}}
+                <div class="relative w-full sm:w-auto flex-1 sm:flex-none">
+                    <i class="fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                    <input type="text" name="q" id="realtimeSearch" value="{{ $search }}" placeholder="Cari Ref ID / Ket / Nominal..."
+                        autocomplete="off"
+                        class="w-full sm:w-56 bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-xl pl-9 pr-8 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
+                    @if($search !== '')
+                        <button type="button" onclick="clearSearch()" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs">
+                            <i class="fa-solid fa-circle-xmark"></i>
+                        </button>
+                    @endif
+                </div>
+
+                {{-- Reset Filter Button --}}
+                @if(request()->hasAny(['filter', 'q', 'month']) && (request('filter') !== 'all' || request('q') !== '' || request('month') !== ''))
+                    <a href="{{ route('admin.wallet.index') }}" 
+                       class="px-3 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-600 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"
+                       title="Reset Filter">
+                        <i class="fa-solid fa-rotate-left text-xs"></i> Reset
+                    </a>
+                @endif
+
+                {{-- Modal Action Buttons --}}
                 <div class="flex items-center gap-2 w-full sm:w-auto">
                     <button type="button" onclick="openWithdrawModal()" @if($balance <= 0) disabled @endif
-                        class="flex-1 sm:flex-none justify-center inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl text-xs font-bold hover:bg-slate-50 hover:text-blue-600 hover:border-blue-200 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                        class="flex-1 sm:flex-none justify-center inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl text-xs font-bold hover:bg-slate-50 hover:text-blue-600 hover:border-blue-200 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
                         <i class="fa-solid fa-arrow-down text-blue-500"></i> Tarik Saldo
                     </button>
 
                     <button type="button" onclick="openExpenseModal()"
-                        class="flex-1 sm:flex-none justify-center inline-flex items-center gap-2 px-5 py-2.5 bg-slate-800 text-white rounded-xl text-xs font-bold hover:bg-slate-900 transition-all shadow-sm shadow-slate-800/20">
+                        class="flex-1 sm:flex-none justify-center inline-flex items-center gap-2 px-4 py-2.5 bg-slate-800 text-white rounded-xl text-xs font-bold hover:bg-slate-900 transition-all shadow-sm shadow-slate-800/20">
                         <i class="fa-solid fa-plus text-slate-300"></i> Catat Beban
                     </button>
                 </div>
-            </div>
+            </form>
         </div>
 
         {{-- Table Ledger --}}
         <div class="overflow-x-auto">
             @if($ledgers->count())
-                <table class="w-full text-left min-w-[960px] border-collapse">
+                <table id="ledgerTable" class="w-full text-left min-w-[960px] border-collapse">
                     <thead class="bg-slate-50/80 border-b border-slate-100">
                         <tr>
                             <th class="px-7 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Waktu Transaksi</th>
@@ -142,7 +175,7 @@
                     </thead>
                     <tbody class="divide-y divide-slate-100/70">
                         @foreach($ledgers as $ledger)
-                            <tr class="hover:bg-slate-50/50 transition-colors group">
+                            <tr class="ledger-row hover:bg-slate-50/50 transition-colors group">
                                 <td class="px-7 py-4">
                                     <div class="text-xs font-semibold text-slate-700">{{ $ledger->created_at?->format('d M Y') ?? '-' }}</div>
                                     <div class="text-[11px] text-slate-400">{{ $ledger->created_at?->format('H:i') ?? '-' }}</div>
@@ -181,6 +214,11 @@
                         @endforeach
                     </tbody>
                 </table>
+                {{-- Pesan pencarian kosong realtime --}}
+                <div id="noRealtimeResults" class="py-12 flex-col items-center justify-center hidden">
+                    <i class="fa-solid fa-magnifying-glass text-2xl text-slate-300 mb-2"></i>
+                    <p class="text-xs font-bold text-slate-500">Tidak ada transaksi yang cocok pada halaman ini</p>
+                </div>
             @else
                 <div class="py-20 flex flex-col items-center justify-center opacity-70">
                     <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-4">
@@ -346,99 +384,139 @@
 </div>
 
 {{-- ===== Modal: Tarik Saldo Admin ===== --}}
-<div id="withdrawModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm hidden transition-all">
-    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md mx-4 overflow-hidden border border-slate-100">
-        <div class="px-7 py-5 border-b border-slate-100 bg-blue-50 flex justify-between items-center">
+<div id="withdrawModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm hidden transition-all p-4">
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-100 flex flex-col max-h-[90vh] transform transition-all">
+        
+        {{-- Header Modal (Fixed) --}}
+        <div class="px-6 py-4 border-b border-slate-100 bg-blue-50/80 flex justify-between items-center shrink-0">
             <div>
-                <h3 class="font-extrabold text-blue-900 text-lg">Tarik Saldo Admin</h3>
-                <p class="text-[11px] text-blue-600/70 mt-1 font-bold tracking-wide uppercase">0% Platform Fee</p>
+                <h3 class="font-extrabold text-blue-900 text-base sm:text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-building-columns text-blue-600"></i>
+                    Tarik Saldo Admin
+                </h3>
+                <p class="text-[10px] text-blue-600/80 font-bold tracking-wide uppercase">0% Platform Fee • Min. Rp 50.000</p>
             </div>
-            <button onclick="closeWithdrawModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-blue-200/50 text-blue-700 hover:bg-blue-300 transition-colors">
-                <i class="fa-solid fa-times"></i>
+            <button onclick="closeWithdrawModal()" type="button" class="w-8 h-8 flex items-center justify-center rounded-full bg-blue-200/50 text-blue-700 hover:bg-blue-300 transition-colors">
+                <i class="fa-solid fa-xmark text-sm"></i>
             </button>
         </div>
-        <form id="withdrawForm" method="POST" action="{{ route('admin.wallet.withdraw') }}">
+
+        {{-- Form Content (Scrollable) --}}
+        <form id="withdrawForm" method="POST" action="{{ route('admin.wallet.withdraw') }}" class="flex flex-col flex-1 overflow-hidden">
             @csrf
             <input type="hidden" name="_tx" value="{{ $txWithdraw }}">
             
-            <div class="p-7 space-y-5">
+            <div class="p-6 space-y-4 overflow-y-auto flex-1 custom-scrollbar">
+                
                 {{-- Info Saldo --}}
-                <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl px-5 py-4 flex items-center justify-between text-white shadow-lg shadow-blue-500/20">
-                    <span class="text-xs font-semibold text-blue-100 tracking-wider">SALDO BISA DITARIK</span>
-                    <span class="text-lg font-black tracking-tight">Rp {{ number_format($balance, 0, ',', '.') }}</span>
+                <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl px-4 py-3.5 flex items-center justify-between text-white shadow-md shadow-blue-500/15">
+                    <div>
+                        <span class="text-[10px] font-semibold text-blue-100 tracking-wider block uppercase">Saldo Siap Ditarik</span>
+                        <span class="text-xs text-blue-200 font-medium">Bisa ditarik kapan saja</span>
+                    </div>
+                    <span class="text-base sm:text-lg font-black tracking-tight">Rp {{ number_format($balance, 0, ',', '.') }}</span>
                 </div>
                 
+                {{-- Input Nominal --}}
                 <div>
-                    <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Nominal Tarik</label>
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider">Nominal Penarikan</label>
+                        <span class="text-[10px] text-slate-400 font-semibold">Min. Rp 50.000</span>
+                    </div>
                     <div class="relative">
-                        <span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400">Rp</span>
-                        <input type="text" name="amount" id="withdrawAmount" inputmode="numeric" placeholder="500.000"
-                            required data-max="{{ (int) $balance }}"
-                            class="w-full text-lg font-black border-2 border-slate-200 rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all text-slate-800">
+                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">Rp</span>
+                        <input type="text" name="amount" id="withdrawAmount" inputmode="numeric" placeholder="50.000"
+                            required data-min="50000" data-max="{{ (int) $balance }}"
+                            class="w-full text-base sm:text-lg font-black border-2 border-slate-200 rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all text-slate-800">
                     </div>
-                    <p id="withdrawAmountError" class="text-[11px] font-bold text-red-500 mt-1.5 hidden"></p>
-                </div>
+                    <p id="withdrawAmountError" class="text-[11px] font-bold text-red-500 mt-1 hidden"></p>
 
-                <div id="withdrawFeeBox" class="hidden bg-slate-50 border border-slate-100 rounded-2xl p-4 space-y-2">
-                    <div class="flex items-center justify-between text-xs font-medium">
-                        <span class="text-slate-500">Nominal request</span>
-                        <span id="feeNominal" class="text-slate-700">Rp 0</span>
-                    </div>
-                    <div class="flex items-center justify-between text-xs font-medium">
-                        <span class="text-slate-500">Biaya Transfer Bank/PG</span>
-                        <span id="feeProvider" class="text-red-500 bg-red-50 px-1.5 rounded font-bold">Rp 0</span>
-                    </div>
-                    <div class="flex items-center justify-between text-sm pt-2 border-t border-slate-200/60 mt-1">
-                        <span class="text-slate-800 font-extrabold">Total Bersih Diterima</span>
-                        <span id="feeReceived" class="font-black text-emerald-600 text-base">Rp 0</span>
+                    {{-- Quick Amount Buttons --}}
+                    <div class="flex flex-wrap gap-1.5 mt-2">
+                        <button type="button" onclick="setQuickAmount(50000)" class="px-2.5 py-1 bg-slate-100 hover:bg-blue-50 hover:text-blue-600 text-slate-600 text-[11px] font-bold rounded-lg transition-colors">50rb</button>
+                        <button type="button" onclick="setQuickAmount(100000)" class="px-2.5 py-1 bg-slate-100 hover:bg-blue-50 hover:text-blue-600 text-slate-600 text-[11px] font-bold rounded-lg transition-colors">100rb</button>
+                        <button type="button" onclick="setQuickAmount(250000)" class="px-2.5 py-1 bg-slate-100 hover:bg-blue-50 hover:text-blue-600 text-slate-600 text-[11px] font-bold rounded-lg transition-colors">250rb</button>
+                        <button type="button" onclick="setQuickAmount(500000)" class="px-2.5 py-1 bg-slate-100 hover:bg-blue-50 hover:text-blue-600 text-slate-600 text-[11px] font-bold rounded-lg transition-colors">500rb</button>
+                        <button type="button" onclick="setQuickAmount({{ (int)$balance }})" class="px-2.5 py-1 bg-blue-100 hover:bg-blue-200 text-blue-700 text-[11px] font-bold rounded-lg transition-colors ml-auto">Maksimal</button>
                     </div>
                 </div>
 
+                {{-- Fee Box Preview --}}
+                <div id="withdrawFeeBox" class="hidden bg-slate-50 border border-slate-200/60 rounded-xl p-3 space-y-1.5">
+                    <div class="flex items-center justify-between text-xs font-medium">
+                        <span class="text-slate-500">Nominal Penarikan</span>
+                        <span id="feeNominal" class="text-slate-700 font-semibold">Rp 0</span>
+                    </div>
+                    <div class="flex items-center justify-between text-xs font-medium">
+                        <span class="text-slate-500">Biaya Transfer Provider</span>
+                        <span id="feeProvider" class="text-red-500 bg-red-50 px-1.5 py-0.5 rounded font-bold">Rp 0</span>
+                    </div>
+                    <div class="flex items-center justify-between text-xs pt-1.5 border-t border-slate-200/80">
+                        <span class="text-slate-800 font-extrabold">Bersih Diterima</span>
+                        <span id="feeReceived" class="font-black text-emerald-600 text-sm">Rp 0</span>
+                    </div>
+                </div>
+
+                {{-- Radio Choice: Bank vs E-Wallet --}}
                 <div>
-                    <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Metode</label>
-                    <div class="grid grid-cols-2 gap-3">
+                    <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1.5">Tujuan Transfer</label>
+                    <div class="grid grid-cols-2 gap-2.5">
                         <label class="cursor-pointer group">
-                            <input type="radio" name="method" value="bank" class="peer sr-only" @checked(old('method', 'bank') === 'bank')>
-                            <div class="border-2 border-slate-200 rounded-xl px-4 py-3 text-center text-xs font-bold text-slate-500 peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 transition-all">
-                                <i class="fa-solid fa-building-columns block text-lg mb-1 group-hover:scale-110 transition-transform"></i> Bank
+                            <input type="radio" name="method" value="bank" class="peer sr-only" @checked(old('method', 'bank') === 'bank') onchange="toggleWithdrawMethod('bank')">
+                            <div class="border-2 border-slate-200 rounded-xl px-3 py-2 text-center text-xs font-bold text-slate-500 peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 transition-all flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-building-columns text-sm group-hover:scale-110 transition-transform"></i> Bank Transfer
                             </div>
                         </label>
                         <label class="cursor-pointer group">
-                            <input type="radio" name="method" value="ewallet" class="peer sr-only" @checked(old('method') === 'ewallet')>
-                            <div class="border-2 border-slate-200 rounded-xl px-4 py-3 text-center text-xs font-bold text-slate-500 peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 transition-all">
-                                <i class="fa-solid fa-mobile-screen block text-lg mb-1 group-hover:scale-110 transition-transform"></i> E-Wallet
+                            <input type="radio" name="method" value="ewallet" class="peer sr-only" @checked(old('method') === 'ewallet') onchange="toggleWithdrawMethod('ewallet')">
+                            <div class="border-2 border-slate-200 rounded-xl px-3 py-2 text-center text-xs font-bold text-slate-500 peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 transition-all flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-wallet text-sm group-hover:scale-110 transition-transform"></i> E-Wallet
                             </div>
                         </label>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="col-span-2">
-                        <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Nama Bank / E-Wallet</label>
-                        <input type="text" name="bank_name" placeholder="BCA / DANA / OVO..." required maxlength="100" value="{{ old('bank_name') }}"
-                            class="w-full text-sm font-bold border-2 border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-all">
+                {{-- Dynamic Inputs --}}
+                <div class="space-y-3">
+                    {{-- Nama Bank / E-Wallet Dropdown --}}
+                    <div>
+                        <label id="providerLabel" class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1">Pilih Bank</label>
+                        <div class="relative">
+                            <select name="bank_name" id="withdrawProviderSelect" required 
+                                class="w-full text-xs font-bold border-2 border-slate-200 rounded-xl px-3.5 py-2.5 focus:outline-none focus:border-blue-500 bg-slate-50 focus:bg-white transition-all appearance-none pr-8 text-slate-700">
+                                {{-- Options akan diisi oleh JavaScript --}}
+                            </select>
+                            <i class="fa-solid fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs"></i>
+                        </div>
                     </div>
-                    <div class="col-span-2 sm:col-span-1">
-                        <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Nomor Rekening</label>
-                        <input type="text" name="account_number" placeholder="1234567890" required maxlength="30" value="{{ old('account_number') }}"
-                            class="w-full text-sm font-bold border-2 border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-all">
-                    </div>
-                    <div class="col-span-2 sm:col-span-1">
-                        <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Nama Pemilik</label>
-                        <input type="text" name="account_name" placeholder="A/n rekening..." required maxlength="255" value="{{ old('account_name') }}"
-                            class="w-full text-sm font-bold border-2 border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition-all">
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {{-- Nomor Rekening / E-Wallet --}}
+                        <div>
+                            <label id="accountNumberLabel" class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1">Nomor Rekening</label>
+                            <input type="text" name="account_number" id="accountNumberInput" placeholder="Contoh: 1234567890" required maxlength="30" value="{{ old('account_number') }}"
+                                class="w-full text-xs font-bold border-2 border-slate-200 rounded-xl px-3.5 py-2.5 focus:outline-none focus:border-blue-500 transition-all text-slate-700">
+                        </div>
+                        
+                        {{-- Nama Pemilik --}}
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1">Nama Pemilik Rekening</label>
+                            <input type="text" name="account_name" id="accountNameInput" placeholder="A/N Pemilik" required maxlength="255" value="{{ old('account_name') }}"
+                                class="w-full text-xs font-bold border-2 border-slate-200 rounded-xl px-3.5 py-2.5 focus:outline-none focus:border-blue-500 transition-all text-slate-700">
+                        </div>
                     </div>
                 </div>
             </div>
             
-            <div class="p-5 border-t border-slate-100 flex items-center justify-end gap-3 bg-slate-50">
+            {{-- Footer Modal (Fixed) --}}
+            <div class="p-4 border-t border-slate-100 flex items-center justify-end gap-2.5 bg-slate-50 shrink-0">
                 <button type="button" onclick="closeWithdrawModal()"
-                        class="px-5 py-2.5 text-sm font-bold text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-100 transition-colors">
+                        class="px-4 py-2 text-xs font-bold text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-100 transition-colors">
                     Batal
                 </button>
-                <button type="submit" id="withdrawSubmitBtn" data-submit-label="Proses Penarikan"
-                        class="px-6 py-2.5 text-sm font-bold text-white bg-blue-600 rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-600/30 transition-all flex items-center gap-2">
-                    <i class="fa-solid fa-paper-plane text-blue-200"></i> Proses
+                <button type="submit" id="withdrawSubmitBtn"
+                        class="px-5 py-2 text-xs font-bold text-white bg-blue-600 rounded-xl hover:bg-blue-700 shadow-md shadow-blue-600/20 transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-paper-plane text-blue-200 text-xs"></i> Kirim Permintaan
                 </button>
             </div>
         </form>
@@ -446,26 +524,102 @@
 </div>
 
 <script>
-    // ── Modal helpers ────────────────────────────────────────────
-    function openExpenseModal()  { 
-        const el = document.getElementById('expenseModal');
-        el.classList.remove('hidden'); 
-        setTimeout(() => el.querySelector('div').classList.add('scale-100'), 10);
+    // ── Realtime Search & Auto-submit ──────────────────────────────
+    document.addEventListener('DOMContentLoaded', function () {
+        var searchInput = document.getElementById('realtimeSearch');
+        var ledgerRows = document.querySelectorAll('.ledger-row');
+        var noResults = document.getElementById('noRealtimeResults');
+        var filterForm = document.getElementById('walletFilterForm');
+        var searchTimeout = null;
+
+        if (searchInput) {
+            // 1. Live Client-side Filtering saat mengetik
+            searchInput.addEventListener('input', function () {
+                var query = this.value.toLowerCase().trim();
+                var visibleCount = 0;
+
+                ledgerRows.forEach(function (row) {
+                    var text = row.textContent.toLowerCase();
+                    if (text.includes(query)) {
+                        row.style.display = '';
+                        visibleCount++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+
+                if (noResults) {
+                    noResults.classList.toggle('hidden', visibleCount > 0 || ledgerRows.length === 0);
+                }
+
+                // 2. Auto Submit Server-side dengan Debounce (750ms)
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(function() {
+                    if (filterForm && (query.length >= 2 || query.length === 0)) {
+                        filterForm.submit();
+                    }
+                }, 750);
+            });
+
+            // Submit langsung saat ditekan Enter
+            searchInput.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    clearTimeout(searchTimeout);
+                    filterForm.submit();
+                }
+            });
+        }
+
+        // Inisialisasi awal pilihan metode penarikan (Bank vs E-Wallet)
+        var checkedMethod = document.querySelector('input[name="method"]:checked');
+        toggleWithdrawMethod(checkedMethod ? checkedMethod.value : 'bank');
+    });
+
+    function clearSearch() {
+        var input = document.getElementById('realtimeSearch');
+        if (input) {
+            input.value = '';
+            var form = document.getElementById('walletFilterForm');
+            if (form) form.submit();
+        }
     }
-    function closeExpenseModal() { document.getElementById('expenseModal').classList.add('hidden'); }
+
+    // ── Modal Helpers ────────────────────────────────────────────
+    function openExpenseModal() { 
+        var el = document.getElementById('expenseModal');
+        if (!el) return;
+        el.classList.remove('hidden'); 
+        setTimeout(function () {
+            var inner = el.querySelector('div');
+            if (inner) inner.classList.add('scale-100');
+        }, 10);
+    }
+
+    function closeExpenseModal() { 
+        var el = document.getElementById('expenseModal');
+        if (el) el.classList.add('hidden'); 
+    }
     
     function openWithdrawModal() {
         @if($balance <= 0) return; @endif
-        const el = document.getElementById('withdrawModal');
-        el.classList.remove('hidden');
+        var el = document.getElementById('withdrawModal');
+        if (el) el.classList.remove('hidden');
     }
-    function closeWithdrawModal(){ document.getElementById('withdrawModal').classList.add('hidden'); }
+
+    function closeWithdrawModal() { 
+        var el = document.getElementById('withdrawModal');
+        if (el) el.classList.add('hidden'); 
+    }
 
     ['expenseModal', 'withdrawModal'].forEach(function (id) {
         var el = document.getElementById(id);
         if (!el) return;
-        el.addEventListener('click', function (e) { if (e.target === this) this.classList.add('hidden'); });
+        el.addEventListener('click', function (e) { 
+            if (e.target === this) this.classList.add('hidden'); 
+        });
     });
+
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
             closeExpenseModal();
@@ -473,10 +627,73 @@
         }
     });
 
-    // ── Format Rupiah untuk nominal penarikan ────────────────────
+    // ── Data Opsi Provider Realistis (Bank vs E-Wallet) ──────────
+    var bankOptions = [
+        { value: 'Bank BCA', label: 'BCA (Bank Central Asia)' },
+        { value: 'Bank Mandiri', label: 'Bank Mandiri' },
+        { value: 'Bank BNI', label: 'BNI (Bank Negara Indonesia)' },
+        { value: 'Bank BRI', label: 'BRI (Bank Rakyat Indonesia)' },
+        { value: 'Bank CIMB Niaga', label: 'CIMB Niaga' },
+        { value: 'Bank Permata', label: 'Permata Bank' },
+        { value: 'Bank Syariah Indonesia', label: 'BSI (Bank Syariah Indonesia)' },
+        { value: 'Bank Lainnya', label: 'Bank Lainnya' }
+    ];
+
+    var ewalletOptions = [
+        { value: 'GoPay', label: 'GoPay' },
+        { value: 'DANA', label: 'DANA' },
+        { value: 'OVO', label: 'OVO' },
+        { value: 'ShopeePay', label: 'ShopeePay' },
+        { value: 'LinkAja', label: 'LinkAja' }
+    ];
+
     var amountInput = document.getElementById('withdrawAmount');
     var withdrawProviders = @json(collect(config('withdrawal.providers'))->map(fn ($p) => $p['fee'] ?? []));
 
+    // ── Switch Bank vs E-Wallet ──────────────────────────────────
+    function toggleWithdrawMethod(method) {
+        var select = document.getElementById('withdrawProviderSelect');
+        var providerLabel = document.getElementById('providerLabel');
+        var accountNumberLabel = document.getElementById('accountNumberLabel');
+        var accountNumberInput = document.getElementById('accountNumberInput');
+
+        if (!select) return;
+
+        select.innerHTML = '';
+        var options = (method === 'ewallet') ? ewalletOptions : bankOptions;
+
+        options.forEach(function (opt) {
+            var el = document.createElement('option');
+            el.value = opt.value;
+            el.textContent = opt.label;
+            select.appendChild(el);
+        });
+
+        if (method === 'ewallet') {
+            if (providerLabel) providerLabel.textContent = 'Pilih E-Wallet';
+            if (accountNumberLabel) accountNumberLabel.textContent = 'Nomor HP / ID E-Wallet';
+            if (accountNumberInput) accountNumberInput.placeholder = 'Contoh: 081234567890';
+        } else {
+            if (providerLabel) providerLabel.textContent = 'Pilih Bank Tujuan';
+            if (accountNumberLabel) accountNumberLabel.textContent = 'Nomor Rekening';
+            if (accountNumberInput) accountNumberInput.placeholder = 'Contoh: 1234567890';
+        }
+
+        updateFeePreview();
+    }
+
+    // ── Quick Chips Nominal ──────────────────────────────────────
+    function setQuickAmount(val) {
+        if (!amountInput) return;
+        var max = parseInt(amountInput.getAttribute('data-max') || '0', 10);
+        var target = max > 0 ? Math.min(val, max) : val;
+
+        amountInput.value = target > 0 ? target.toLocaleString('id-ID') : '';
+        hideAmountError();
+        updateFeePreview();
+    }
+
+    // ── Hitung Fee & Format Ribuan Realtime ──────────────────────
     function calcProviderFee(method, nominal) {
         var fee = withdrawProviders[method];
         if (!fee || !nominal || nominal <= 0) return 0;
@@ -496,10 +713,14 @@
         var received = Math.max(0, nominal - fee);
         
         box.classList.toggle('hidden', !(nominal > 0));
-        if(nominal > 0) {
-            document.getElementById('feeNominal').textContent = 'Rp ' + nominal.toLocaleString('id-ID');
-            document.getElementById('feeProvider').textContent = 'Rp ' + fee.toLocaleString('id-ID');
-            document.getElementById('feeReceived').textContent = 'Rp ' + received.toLocaleString('id-ID');
+        if (nominal > 0) {
+            var feeNominalEl = document.getElementById('feeNominal');
+            var feeProviderEl = document.getElementById('feeProvider');
+            var feeReceivedEl = document.getElementById('feeReceived');
+
+            if (feeNominalEl) feeNominalEl.textContent = 'Rp ' + nominal.toLocaleString('id-ID');
+            if (feeProviderEl) feeProviderEl.textContent = 'Rp ' + fee.toLocaleString('id-ID');
+            if (feeReceivedEl) feeReceivedEl.textContent = 'Rp ' + received.toLocaleString('id-ID');
         }
     }
 
@@ -511,21 +732,26 @@
             updateFeePreview();
         });
     }
-    
+
     document.querySelectorAll('input[name="method"]').forEach(function (radio) {
-        radio.addEventListener('change', updateFeePreview);
+        radio.addEventListener('change', function () {
+            toggleWithdrawMethod(this.value);
+        });
     });
 
     function showAmountError(msg) {
         var el = document.getElementById('withdrawAmountError');
+        if (!el) return;
         el.textContent = msg;
         el.classList.remove('hidden');
     }
+
     function hideAmountError() {
-        document.getElementById('withdrawAmountError').classList.add('hidden');
+        var el = document.getElementById('withdrawAmountError');
+        if (el) el.classList.add('hidden');
     }
 
-    // ── Submit Handling ──────────────────────────────────────────
+    // ── Submit & Validasi Handling ──────────────────────────────
     ['expenseForm', 'withdrawForm'].forEach(function (fid) {
         var form = document.getElementById(fid);
         if (!form) return;
@@ -544,14 +770,21 @@
     });
 
     function validateWithdraw() {
+        if (!amountInput) return true;
         var digits = amountInput.value.replace(/[^\d]/g, '');
+        var nominal = parseInt(digits || '0', 10);
+        var min = parseInt(amountInput.getAttribute('data-min') || '50000', 10);
         var max = parseInt(amountInput.getAttribute('data-max') || '0', 10);
 
-        if (!digits || parseInt(digits, 10) <= 0) {
-            showAmountError('Nominal penarikan wajib diisi minimal Rp 1.');
+        if (!digits || nominal <= 0) {
+            showAmountError('Nominal penarikan wajib diisi.');
             return false;
         }
-        if (max > 0 && parseInt(digits, 10) > max) {
+        if (nominal < min) {
+            showAmountError('Minimal penarikan saldo adalah Rp ' + min.toLocaleString('id-ID'));
+            return false;
+        }
+        if (max > 0 && nominal > max) {
             showAmountError('Gagal: Saldo maksimal yang dapat ditarik adalah Rp ' + max.toLocaleString('id-ID'));
             return false;
         }

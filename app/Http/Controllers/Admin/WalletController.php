@@ -66,6 +66,9 @@ class WalletController extends Controller
 
         $search = trim((string) $request->query('q', ''));
 
+        // Parameter filter bulan (format YYYY-MM, contoh: "2026-09").
+        $month = $request->get('month');
+
         $query = WalletLedger::whereNull('user_id')
             ->with(['payment:id,invoice_number', 'withdrawal:id,withdrawal_code'])
             ->latest();
@@ -77,6 +80,13 @@ class WalletController extends Controller
             $query->where('direction', WalletLedger::DIRECTION_DEBIT);
         } elseif (isset(self::FILTER_TYPE_MAP[$filter])) {
             $query->where('type', self::FILTER_TYPE_MAP[$filter]);
+        }
+
+        // ── Filter bulan (data Tabel Kas menyesuaikan bulan yang dipilih) ──
+        if ($month !== null && is_string($month) && preg_match('/^\d{4}-(0[1-9]|1[0-2])$/', $month) === 1) {
+            $query
+                ->whereYear('created_at', (int) substr($month, 0, 4))
+                ->whereMonth('created_at', (int) substr($month, 5, 2));
         }
 
         // ── Pencarian (deskripsi / kode payment / kode withdrawal) ──
@@ -108,6 +118,7 @@ class WalletController extends Controller
             'ledgers'           => $ledgers,
             'filter'            => $filter,
             'search'            => $search,
+            'month'             => $month,
             'categories'        => self::EXPENSE_CATEGORIES,
             'filters'           => self::HISTORY_FILTERS,
             'adminWithdrawals'  => $adminWithdrawals,

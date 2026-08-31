@@ -174,9 +174,7 @@
             @method('PUT')
 
 
-            {{-- =========================================================
-                FEE PLATFORM PROYEK
-            ========================================================== --}}
+            {{-- FEE PLATFORM PROYEK --}}
             <div class="bg-white dark:bg-slate-900 rounded-2xl border border-blue-100 dark:border-slate-800 shadow-sm p-5 mb-5">
 
                 <h3 class="text-sm font-black text-slate-800 dark:text-white mb-1 flex items-center gap-2">
@@ -269,9 +267,7 @@
 
 
 
-            {{-- =========================================================
-                FEE WITHDRAWAL FREELANCER
-            ========================================================== --}}
+            {{-- FEE WITHDRAWAL FREELANCER --}}
             <div class="bg-white dark:bg-slate-900 rounded-2xl border border-blue-100 dark:border-slate-800 shadow-sm p-5 mb-5">
 
                 <h3 class="text-sm font-black text-slate-800 dark:text-white mb-1 flex items-center gap-2">
@@ -341,9 +337,7 @@
 
 
 
-            {{-- =========================================================
-                GRATIS UPLOAD PROYEK
-            ========================================================== --}}
+            {{-- GRATIS UPLOAD PROYEK --}}
             <div class="bg-white dark:bg-slate-900 rounded-2xl border border-blue-100 dark:border-slate-800 shadow-sm p-5 mb-5">
 
                 <h3 class="text-sm font-black text-slate-800 dark:text-white mb-1 flex items-center gap-2">
@@ -411,9 +405,7 @@
 
 
 
-            {{-- =========================================================
-                HARGA UPLOAD BERIKUTNYA
-            ========================================================== --}}
+            {{-- HARGA UPLOAD BERIKUTNYA --}}
             <div class="bg-white dark:bg-slate-900 rounded-2xl border border-blue-100 dark:border-slate-800 shadow-sm p-5 mb-5">
 
                 <h3 class="text-sm font-black text-slate-800 dark:text-white mb-1 flex items-center gap-2">
@@ -455,14 +447,7 @@
                         </span>
 
 
-                        {{-- =================================================
-                            VISIBLE INPUT
-
-                            Hanya untuk tampilan.
-                            Contoh:
-                            Database 100000
-                            Tampilan 100.000
-                        ================================================== --}}
+                        {{-- VISIBLE INPUT --}}
                         <input
                             type="text"
 
@@ -474,7 +459,7 @@
 
                             spellcheck="false"
 
-                            value="{{ old('paid_project_upload_price', $setting->paid_project_upload_price) }}"
+                            value="{{ old('paid_project_upload_price', (int) $setting->paid_project_upload_price) }}"
 
                             class="w-full rounded-xl border-blue-100 dark:border-slate-700 bg-[#f6f9ff] dark:bg-slate-800 px-10 py-2.5 text-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none"
 
@@ -482,17 +467,7 @@
                         >
 
 
-                        {{-- =================================================
-                            HIDDEN RAW INPUT
-
-                            Inilah yang dikirim ke backend.
-
-                            Tampilan:
-                            100.000
-
-                            Backend:
-                            100000
-                        ================================================== --}}
+                        {{-- HIDDEN RAW INPUT --}}
                         <input
                             type="hidden"
 
@@ -500,7 +475,7 @@
 
                             id="paid_project_upload_price"
 
-                            value="{{ old('paid_project_upload_price', $setting->paid_project_upload_price) }}"
+                            value="{{ old('paid_project_upload_price', (int) $setting->paid_project_upload_price) }}"
                         >
 
                     </div>
@@ -520,9 +495,7 @@
 
 
 
-            {{-- =========================================================
-                BUTTON
-            ========================================================== --}}
+            {{-- BUTTON --}}
             <div class="flex items-center justify-end gap-3">
 
                 <a
@@ -557,577 +530,140 @@
 
 
 @push('scripts')
-
 <script>
 (function () {
-
     'use strict';
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | ELEMENT
-    |--------------------------------------------------------------------------
-    */
-
-    const form =
-        document.getElementById('financial-settings-form');
-
-    const displayInput =
-        document.getElementById('paid_project_upload_price_display');
-
-    const rawInput =
-        document.getElementById('paid_project_upload_price');
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | SAFETY CHECK
-    |--------------------------------------------------------------------------
-    */
+    const form = document.getElementById('financial-settings-form');
+    const displayInput = document.getElementById('paid_project_upload_price_display');
+    const rawInput = document.getElementById('paid_project_upload_price');
 
     if (!displayInput || !rawInput) {
         return;
     }
 
-
     /*
     |--------------------------------------------------------------------------
-    | AMBIL DIGIT SAJA
+    | AMBIL DIGIT SAJA (MURNI TANPA PEMOTONGAN STRING)
     |--------------------------------------------------------------------------
-    |
-    | Semua huruf, simbol, spasi, titik, koma, dll dibuang.
-    |
-    | "100000"      -> "100000"
-    | "100.000"     -> "100000"
-    | "Rp 100.000"  -> "100000"
-    | "abc100000"   -> "100000"
-    |
     */
-
     function onlyDigits(value) {
-
-        return String(value || '')
-            .replace(/[^0-9]/g, '');
-
+        return String(value || '').replace(/[^0-9]/g, '');
     }
-
 
     /*
     |--------------------------------------------------------------------------
     | FORMAT RIBUAN INDONESIA
     |--------------------------------------------------------------------------
-    |
-    | 1       -> 1
-    | 10      -> 10
-    | 100     -> 100
-    | 1000    -> 1.000
-    | 10000   -> 10.000
-    | 100000  -> 100.000
-    | 1000000 -> 1.000.000
-    |
     */
-
     function formatThousands(value) {
-
-        const digits =
-            onlyDigits(value);
-
-        if (digits === '') {
-            return '';
-        }
-
-        return digits.replace(
-            /\B(?=(\d{3})+(?!\d))/g,
-            '.'
-        );
-
+        const digits = onlyDigits(value);
+        if (digits === '') return '';
+        return digits.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | HITUNG DIGIT SEBELUM CURSOR
-    |--------------------------------------------------------------------------
-    |
-    | Supaya cursor tidak lompat ketika titik otomatis
-    | ditambahkan.
-    |
-    */
-
-    function getDigitsBeforeCursor(
-        value,
-        cursorPosition
-    ) {
-
-        return onlyDigits(
-            value.substring(
-                0,
-                cursorPosition
-            )
-        ).length;
-
+    function getDigitsBeforeCursor(value, cursorPosition) {
+        return onlyDigits(value.substring(0, cursorPosition)).length;
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | HITUNG POSISI CURSOR BARU
-    |--------------------------------------------------------------------------
-    */
-
-    function getCursorPosition(
-        formattedValue,
-        digitCount
-    ) {
-
-        if (digitCount <= 0) {
-            return 0;
-        }
-
+    function getCursorPosition(formattedValue, digitCount) {
+        if (digitCount <= 0) return 0;
         let count = 0;
-
-        for (
-            let i = 0;
-            i < formattedValue.length;
-            i++
-        ) {
-
-            if (/[0-9]/.test(formattedValue[i])) {
-
-                count++;
-
-            }
-
-            if (count === digitCount) {
-
-                return i + 1;
-
-            }
-
+        for (let i = 0; i < formattedValue.length; i++) {
+            if (/[0-9]/.test(formattedValue[i])) count++;
+            if (count === digitCount) return i + 1;
         }
-
         return formattedValue.length;
-
     }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | UPDATE RAW VALUE
-    |--------------------------------------------------------------------------
-    */
-
-    function updateRawValue() {
-
-        const rawValue =
-            onlyDigits(displayInput.value);
-
-        rawInput.value =
-            rawValue;
-
-    }
-
 
     /*
     |--------------------------------------------------------------------------
     | FORMAT NILAI AWAL DARI DATABASE
     |--------------------------------------------------------------------------
-    |
-    | Misalnya database:
-    |
-    | 100000
-    |
-    | Maka ketika halaman dibuka:
-    |
-    | 100.000
-    |
     */
-
-    const initialValue =
-        onlyDigits(displayInput.value);
-
-    displayInput.value =
-        formatThousands(initialValue);
-
-    rawInput.value =
-        initialValue;
-
+    const initialValue = onlyDigits(displayInput.value);
+    displayInput.value = formatThousands(initialValue);
+    rawInput.value = initialValue;
 
     /*
     |--------------------------------------------------------------------------
-    | REAL-TIME FORMAT SAAT MENGETIK
+    | EVENT LISTENERS
     |--------------------------------------------------------------------------
     */
+    displayInput.addEventListener('input', function () {
+        const oldValue = this.value;
+        const oldCursor = this.selectionStart || 0;
+        const digitsBeforeCursor = getDigitsBeforeCursor(oldValue, oldCursor);
 
-    displayInput.addEventListener(
-        'input',
-        function () {
+        const rawValue = onlyDigits(oldValue);
+        const formattedValue = formatThousands(rawValue);
 
-            const oldValue =
-                this.value;
+        this.value = formattedValue;
+        rawInput.value = rawValue;
 
-            const oldCursor =
-                this.selectionStart || 0;
+        const newCursor = getCursorPosition(formattedValue, digitsBeforeCursor);
 
+        try {
+            this.setSelectionRange(newCursor, newCursor);
+        } catch (error) {}
+    });
 
-            /*
-             * Hitung jumlah digit sebelum cursor.
-             */
-            const digitsBeforeCursor =
-                getDigitsBeforeCursor(
-                    oldValue,
-                    oldCursor
-                );
+    displayInput.addEventListener('keydown', function (event) {
+        const allowedKeys = [
+            'Backspace', 'Delete', 'Tab',
+            'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
+            'Home', 'End'
+        ];
 
+        if (allowedKeys.includes(event.key)) return;
 
-            /*
-             * Ambil angka saja.
-             */
-            const rawValue =
-                onlyDigits(oldValue);
-
-
-            /*
-             * Format menjadi ribuan.
-             */
-            const formattedValue =
-                formatThousands(rawValue);
-
-
-            /*
-             * Tampilkan kembali.
-             */
-            this.value =
-                formattedValue;
-
-
-            /*
-             * Simpan angka mentah.
-             */
-            rawInput.value =
-                rawValue;
-
-
-            /*
-             * Kembalikan cursor.
-             */
-            const newCursor =
-                getCursorPosition(
-                    formattedValue,
-                    digitsBeforeCursor
-                );
-
-
-            try {
-
-                this.setSelectionRange(
-                    newCursor,
-                    newCursor
-                );
-
-            } catch (error) {
-
-                // Ignore cursor errors on unsupported browsers.
-
-            }
-
+        if (event.ctrlKey || event.metaKey) {
+            const shortcuts = ['a', 'c', 'v', 'x'];
+            if (shortcuts.includes(event.key.toLowerCase())) return;
         }
-    );
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | KEYBOARD FILTER
-    |--------------------------------------------------------------------------
-    |
-    | Hanya angka yang boleh diketik.
-    |
-    | Ditolak:
-    | - a-z
-    | - e
-    | - +
-    | - -
-    | - ,
-    | | .
-    | - simbol lainnya
-    |
-    */
-
-    displayInput.addEventListener(
-        'keydown',
-        function (event) {
-
-            /*
-             * Tombol kontrol yang tetap diizinkan.
-             */
-            const allowedKeys = [
-
-                'Backspace',
-                'Delete',
-                'Tab',
-
-                'ArrowLeft',
-                'ArrowRight',
-                'ArrowUp',
-                'ArrowDown',
-
-                'Home',
-                'End'
-
-            ];
-
-
-            if (allowedKeys.includes(event.key)) {
-
-                return;
-
-            }
-
-
-            /*
-             * Shortcut Ctrl / Cmd.
-             */
-            if (
-                event.ctrlKey ||
-                event.metaKey
-            ) {
-
-                const shortcuts = [
-
-                    'a',
-                    'c',
-                    'v',
-                    'x'
-
-                ];
-
-
-                if (
-                    shortcuts.includes(
-                        event.key.toLowerCase()
-                    )
-                ) {
-
-                    return;
-
-                }
-
-            }
-
-
-            /*
-             * Hanya angka 0-9.
-             */
-            if (!/^[0-9]$/.test(event.key)) {
-
-                event.preventDefault();
-
-            }
-
-        }
-    );
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | PASTE FILTER
-    |--------------------------------------------------------------------------
-    |
-    | User bisa paste:
-    |
-    | 100000
-    | Rp 100.000
-    | 100.000
-    | abc100000xyz
-    |
-    | Semuanya akan menjadi:
-    |
-    | 100.000
-    |
-    */
-
-    displayInput.addEventListener(
-        'paste',
-        function (event) {
-
+        if (!/^[0-9]$/.test(event.key)) {
             event.preventDefault();
-
-
-            const clipboard =
-                event.clipboardData ||
-                window.clipboardData;
-
-
-            const pastedText =
-                clipboard
-                    ? clipboard.getData('text')
-                    : '';
-
-
-            const pastedDigits =
-                onlyDigits(pastedText);
-
-
-            const currentValue =
-                this.value;
-
-
-            const start =
-                this.selectionStart || 0;
-
-
-            const end =
-                this.selectionEnd || 0;
-
-
-            /*
-             * Ambil bagian kiri.
-             */
-            const leftDigits =
-                onlyDigits(
-                    currentValue.substring(
-                        0,
-                        start
-                    )
-                );
-
-
-            /*
-             * Ambil bagian kanan.
-             */
-            const rightDigits =
-                onlyDigits(
-                    currentValue.substring(
-                        end
-                    )
-                );
-
-
-            /*
-             * Gabungkan.
-             */
-            const combinedDigits =
-                leftDigits +
-                pastedDigits +
-                rightDigits;
-
-
-            /*
-             * Format.
-             */
-            const formattedValue =
-                formatThousands(
-                    combinedDigits
-                );
-
-
-            /*
-             * Tampilkan.
-             */
-            this.value =
-                formattedValue;
-
-
-            /*
-             * Simpan raw.
-             */
-            rawInput.value =
-                combinedDigits;
-
-
-            /*
-             * Cursor setelah hasil paste.
-             */
-            const newCursor =
-                getCursorPosition(
-                    formattedValue,
-                    leftDigits.length +
-                    pastedDigits.length
-                );
-
-
-            try {
-
-                this.setSelectionRange(
-                    newCursor,
-                    newCursor
-                );
-
-            } catch (error) {
-
-                // Ignore cursor errors.
-
-            }
-
         }
-    );
+    });
 
+    displayInput.addEventListener('paste', function (event) {
+        event.preventDefault();
+        const clipboard = event.clipboardData || window.clipboardData;
+        const pastedText = clipboard ? clipboard.getData('text') : '';
+        const pastedDigits = onlyDigits(pastedText);
 
-    /*
-    |--------------------------------------------------------------------------
-    | BLUR
-    |--------------------------------------------------------------------------
-    |
-    | Ketika keluar dari input, pastikan format tetap benar.
-    |
-    */
+        const currentValue = this.value;
+        const start = this.selectionStart || 0;
+        const end = this.selectionEnd || 0;
 
-    displayInput.addEventListener(
-        'blur',
-        function () {
+        const leftDigits = onlyDigits(currentValue.substring(0, start));
+        const rightDigits = onlyDigits(currentValue.substring(end));
 
-            const rawValue =
-                onlyDigits(this.value);
+        const combinedDigits = leftDigits + pastedDigits + rightDigits;
+        const formattedValue = formatThousands(combinedDigits);
 
+        this.value = formattedValue;
+        rawInput.value = combinedDigits;
 
-            this.value =
-                formatThousands(rawValue);
+        const newCursor = getCursorPosition(formattedValue, leftDigits.length + pastedDigits.length);
 
+        try {
+            this.setSelectionRange(newCursor, newCursor);
+        } catch (error) {}
+    });
 
-            rawInput.value =
-                rawValue;
-
-        }
-    );
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | SUBMIT
-    |--------------------------------------------------------------------------
-    |
-    | Yang dikirim ke backend adalah:
-    |
-    | 100000
-    |
-    | BUKAN:
-    |
-    | 100.000
-    |
-    */
+    displayInput.addEventListener('blur', function () {
+        const rawValue = onlyDigits(this.value);
+        this.value = formatThousands(rawValue);
+        rawInput.value = rawValue;
+    });
 
     if (form) {
-
-        form.addEventListener(
-            'submit',
-            function () {
-
-                const rawValue =
-                    onlyDigits(
-                        displayInput.value
-                    );
-
-
-                rawInput.value =
-                    rawValue;
-
-            }
-        );
-
+        form.addEventListener('submit', function () {
+            rawInput.value = onlyDigits(displayInput.value);
+        });
     }
-
-
 })();
 </script>
 @endpush

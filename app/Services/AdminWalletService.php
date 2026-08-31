@@ -286,29 +286,62 @@ class AdminWalletService
             ->sum('amount');
     }
 
-    /** Pendapatan platform bulan berjalan. */
-    public static function monthlyIncome(): float
+    /**
+     * Pendapatan (In) platform per bulan.
+     *
+     * @param string|null $month Bulan target format "YYYY-MM" (contoh: "2026-09").
+     *                           Jika null/kosong → bulan & tahun berjalan (now()).
+     *                           Jika tidak ada transaksi pada bulan tsb → 0.
+     */
+    public static function monthlyIncome(?string $month = null): float
     {
+        [$year, $mon] = static::monthParts($month);
+
         return (float) WalletLedger::whereNull('user_id')
             ->where('direction', WalletLedger::DIRECTION_CREDIT)
-            ->where('created_at', '>=', now()->startOfMonth())
-            ->where('created_at', '<', now()->startOfMonth()->addMonth())
+            ->whereYear('created_at', $year)
+            ->whereMonth('created_at', $mon)
             ->sum('amount');
     }
 
-    /** Pengeluaran platform bulan berjalan. */
-    public static function monthlyExpense(): float
+    /**
+     * Pengeluaran (Out) platform per bulan.
+     *
+     * @param string|null $month Bulan target format "YYYY-MM" (contoh: "2026-09").
+     *                           Jika null/kosong → bulan & tahun berjalan (now()).
+     *                           Jika tidak ada transaksi pada bulan tsb → 0.
+     */
+    public static function monthlyExpense(?string $month = null): float
     {
+        [$year, $mon] = static::monthParts($month);
+
         return (float) WalletLedger::whereNull('user_id')
             ->where('direction', WalletLedger::DIRECTION_DEBIT)
-            ->where('created_at', '>=', now()->startOfMonth())
-            ->where('created_at', '<', now()->startOfMonth()->addMonth())
+            ->whereYear('created_at', $year)
+            ->whereMonth('created_at', $mon)
             ->sum('amount');
     }
 
     // ──────────────────────────────────────────────────────────────────
     // INTERNAL
     // ──────────────────────────────────────────────────────────────────
+
+    /**
+     * Pecah nilai "YYYY-MM" menjadi pasangan [tahun, bulan] (int).
+     *
+     * Fallback aman: bila $month null, kosong, atau format tidak valid
+     * → gunakan bulan & tahun berjalan (now()).
+     *
+     * @return array{0:int,1:int}
+     */
+    protected static function monthParts(?string $month): array
+    {
+        if ($month !== null && preg_match('/^\d{4}-(0[1-9]|1[0-2])$/', $month) === 1) {
+            return [(int) substr($month, 0, 4), (int) substr($month, 5, 2)];
+        }
+
+        return [(int) now()->format('Y'), (int) now()->format('m')];
+    }
 
     protected static function record(
         string $type,
