@@ -53,7 +53,7 @@
 @endauth
 
 <header id="mainHeader"
-    class="h-16 bg-white/90 dark:bg-slate-900/90 backdrop-blur-3xl border-b border-blue-100 dark:border-slate-800 px-6 items-center justify-between sticky top-0 z-40 shadow-[0_10px_30px_-15px_rgba(59,130,246,0.1)] transition-colors duration-300 @auth @if(Auth::user()->role === 'company') hidden md:flex @else flex @endif @else flex @endauth">
+    class="h-16 bg-white/90 dark:bg-slate-900/90 backdrop-blur-3xl border-b border-blue-100 dark:border-slate-800 pl-16 pr-4 lg:px-6 items-center justify-between sticky top-0 z-40 shadow-[0_10px_30px_-15px_rgba(59,130,246,0.1)] transition-colors duration-300 @auth @if(Auth::user()->role === 'company') hidden md:flex @else flex @endif @else flex @endauth">
 
     <!-- LEFT -->
     <div class="flex items-center gap-8">
