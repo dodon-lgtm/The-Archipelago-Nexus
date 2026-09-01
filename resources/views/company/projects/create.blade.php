@@ -487,7 +487,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                 <select name="status"
                                     class="px-5 py-2.5 bg-white border border-blue-200 rounded-xl text-sm font-bold text-blue-950 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all cursor-pointer shadow-sm dark:bg-slate-800 dark:border-slate-700 dark:text-white">
                                     <option value="open" {{ old('status', 'open') == 'open' ? 'selected' : '' }}>Open</option>
-                                    <option value="closed" {{ old('status') == 'closed' ? 'selected' : '' }}>Tutup</option>
+                                    {{-- <option value="closed" {{ old('status') == 'closed' ? 'selected' : '' }}>Tutup</option> --}}
                                     <option value="archived" {{ old('status') == 'archived' ? 'selected' : '' }}>Arsip</option>
                                 </select>
                             </div>

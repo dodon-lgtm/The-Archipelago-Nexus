@@ -64,6 +64,7 @@
                 radial-gradient(circle at 10% -10%, rgba(56,189,248,.10), transparent 30%),
                 radial-gradient(circle at 100% 0%, rgba(37,99,235,.08), transparent 28%),
                 var(--af-page);
+<<<<<<< HEAD
         }
 
         /* ApexForge Labs — Unified UI System */
@@ -141,6 +142,8 @@
         }
         @media (prefers-reduced-motion:reduce){
             *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+=======
+>>>>>>> f83ecba (upgrade pembayaran manual)
         }
     </style>
 </head>
