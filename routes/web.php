@@ -175,6 +175,7 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])->prefix('company')->nam
     Route::get('/quota-payment/{payment}/status', [CompanyPaymentController::class, 'quotaPaymentStatus'])->name('quota.payment.status');
     Route::post('/quota-payment/{payment}/midtrans', [CompanyPaymentController::class, 'createQuotaTransaction'])->name('quota.payment.midtrans');
     Route::post('/quota-payment/{payment}/confirm', [CompanyPaymentController::class, 'confirmQuotaPayment'])->name('quota.payment.confirm');
+    Route::post('/quota-payment/{payment}/manual', [CompanyPaymentController::class, 'uploadQuotaProof'])->name('quota.payment.manual');
 
     Route::get('/client/project/{project}/review', [ReviewController::class, 'create'])->name('client.review.create');
     Route::post('/client/project/{project}/review', [ReviewController::class, 'store'])->name('client.review.store');

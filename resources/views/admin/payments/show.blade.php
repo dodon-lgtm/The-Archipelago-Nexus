@@ -121,7 +121,65 @@
             </div>
         @endif
 
-        {{-- Card: Catatan --}}
+        {{-- Card: Informasi Pembayaran Manual --}}
+        @if($payment->sender_name || $payment->sender_bank || $payment->sender_account_number || $payment->payment_date || $payment->paid_amount || $payment->destination_info)
+            <div class="bg-white border border-blue-100 rounded-2xl shadow-sm overflow-hidden">
+                <div class="px-6 py-5 border-b border-blue-50">
+                    <h2 class="font-bold text-slate-800">Informasi Pembayaran Manual</h2>
+                </div>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                        <div>
+                            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Nama Pengirim</p>
+                            <p class="font-semibold text-slate-700 mt-0.5">{{ $payment->sender_name ?? '-' }}</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Bank/Wallet Pengirim</p>
+                            <p class="font-semibold text-slate-700 mt-0.5">{{ $payment->sender_bank ?? '-' }}</p>
+                        </div>
+                        @if($payment->sender_account_number)
+                            <div>
+                                <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Nomor Rekening/Wallet Pengirim</p>
+                                <p class="font-semibold text-slate-700 mt-0.5">{{ $payment->sender_account_number }}</p>
+                            </div>
+                        @endif
+                        <div>
+                            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Tanggal Pembayaran</p>
+                            <p class="font-semibold text-slate-700 mt-0.5">{{ $payment->payment_date ? $payment->payment_date->format('d M Y') : '-' }}</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Nominal Dibayar</p>
+                            <p class="font-bold text-emerald-600 mt-0.5">Rp {{ number_format($payment->paid_amount, 0, ',', '.') }}</p>
+                        </div>
+                        @if($payment->company_note)
+                            <div class="md:col-span-2">
+                                <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Catatan</p>
+                                <p class="text-xs text-slate-600 mt-0.5">{{ $payment->company_note }}</p>
+                            </div>
+                        @endif
+                        @if(!empty($payment->destination_info))
+                            @php $destInfo = $payment->destination_info; @endphp
+                            <div class="md:col-span-2">
+                                <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Rekening/Wallet Tujuan yang Dipakai</p>
+                                <div class="mt-2 bg-[#f6f9ff] rounded-xl p-4 border border-blue-100 space-y-2">
+                                    <p class="text-xs font-bold text-slate-800 mb-1">
+                                        <i class="fa-solid fa-building-columns mr-1.5 text-brand"></i>{{ $destInfo['title'] ?? 'ApexForge Labs' }} — {{ $destInfo['label'] ?? '' }}
+                                    </p>
+                                    @foreach(($destInfo['rows'] ?? []) as $label => $value)
+                                        <div class="flex items-center justify-between gap-4">
+                                            <p class="text-xs text-slate-400">{{ $label }}</p>
+                                            <p class="text-xs font-bold text-slate-700 text-right break-words">{{ $value }}</p>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        @endif
+
+{{-- Card: Catatan --}}
         @if($payment->company_note)
             <div class="bg-white border border-blue-100 rounded-2xl shadow-sm overflow-hidden">
                 <div class="px-6 py-5 border-b border-blue-50">

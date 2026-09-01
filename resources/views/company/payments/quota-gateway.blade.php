@@ -22,6 +22,11 @@
         .stepper-line{height:2px;flex:1}
         .spinner{width:38px;height:38px;border:4px solid rgba(37,99,235,.15);border-top-color:#2563EB;border-radius:50%;animation:spin .8s linear infinite}
         @keyframes spin{to{transform:rotate(360deg)}}
+        .dest-card{cursor:pointer;transition:all .2s ease}
+        .dest-card:hover{border-color:rgba(37,99,235,.45)!important;box-shadow:0 8px 22px -12px rgba(37,99,235,.35)}
+        .dest-card.active{border-color:#2563eb!important;box-shadow:0 0 0 4px rgba(37,99,235,.12)}
+        html.dark input,html.dark select,html.dark textarea{background:rgba(30,41,59,.6);color:#e2e8f0;border-color:rgba(100,116,139,.35)!important}
+        html.dark .dest-card{background:rgba(30,41,59,.55)}
     </style>
 </head>
 
@@ -158,6 +163,132 @@
                                                 </button>
                                             </div>
                                         @endif
+                                    </div>
+
+                                    {{-- BAYAR MANUAL (KUOTA) — detail pembayaran manual,
+                                         konsisten dengan pembayaran proyek sebelum Workspace. --}}
+                                    <div class="rounded-2xl p-5 bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800">
+                                        <div class="flex items-center justify-between mb-4">
+                                            <div class="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600">
+                                                <i class="fa-solid fa-money-bill-transfer text-lg"></i>
+                                            </div>
+                                            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Manual</span>
+                                        </div>
+                                        <h3 class="font-bold text-slate-800 dark:text-slate-100 text-sm">Bayar Manual</h3>
+                                        <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">
+                                            Transfer ke rekening/wallet ApexForge Labs, lalu kirim bukti pembayaran untuk diverifikasi Admin.
+                                        </p>
+
+                                        <form method="POST" action="{{ route('company.quota.payment.manual', $payment) }}" enctype="multipart/form-data" id="quotaManualForm" class="mt-4 space-y-4">
+                                            @csrf
+
+                                            <p class="text-xs font-semibold text-slate-600 dark:text-slate-300">Rekening / Wallet Tujuan Pembayaran</p>
+                                            @foreach($destinations as $key => $destination)
+                                                @php
+                                                    $rows = $destination['rows'] ?? [];
+                                                    $copyField = $destination['copy_field'] ?? null;
+                                                    $copyValue = ($copyField && isset($rows[$copyField])) ? $rows[$copyField] : '';
+                                                @endphp
+                                                <div class="dest-card rounded-xl border border-blue-100 dark:border-slate-800 bg-[#f6f9ff] dark:bg-slate-800/80 p-4 {{ $loop->first ? 'active' : '' }}" data-dest="{{ $key }}">
+                                                    <div class="flex items-center justify-between gap-3">
+                                                        <div class="flex items-center gap-2.5">
+                                                            <div class="w-9 h-9 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-brand flex items-center justify-center">
+                                                                <i class="fa-solid {{ $destination['icon'] ?? 'fa-money-bill-transfer' }}"></i>
+                                                            </div>
+                                                            <div>
+                                                                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{{ $destination['title'] ?? 'ApexForge Labs' }}</p>
+                                                                <h4 class="font-bold text-slate-800 dark:text-white text-xs">{{ $destination['label'] ?? 'Manual' }}</h4>
+                                                            </div>
+                                                        </div>
+                                                        <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                                                            <input type="radio" name="destination_source" value="{{ $key }}" class="w-4 h-4 accent-brand" @checked(old('destination_source') === $key || ($loop->first && !old('destination_source')))>
+                                                            <span class="text-[10px] font-semibold text-slate-500 dark:text-slate-400">Pakai ini</span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                                        @foreach($rows as $label => $value)
+                                                            <div class="bg-white dark:bg-slate-900 border border-blue-50 dark:border-slate-700 rounded-lg p-2.5 relative">
+                                                                <p class="text-[9px] font-semibold text-slate-400 uppercase tracking-wider">{{ $label }}</p>
+                                                                <p class="text-xs font-bold text-slate-800 dark:text-slate-100 mt-0.5 break-words pr-6">{{ $value }}</p>
+                                                                @if($label === $copyField && $copyValue !== '')
+                                                                    <button type="button" class="copy-btn absolute top-1.5 right-1.5 w-6 h-6 rounded-md bg-brand/10 text-brand hover:bg-brand hover:text-white transition flex items-center justify-center" data-copy="{{ $copyValue }}" title="Salin {{ $label }}">
+                                                                        <i class="fa-regular fa-copy text-[10px]"></i>
+                                                                    </button>
+                                                                @endif
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                    @if(!empty($destination['instruction']))
+                                                        <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-2 flex items-start gap-1.5">
+                                                            <i class="fa-solid fa-circle-info mt-0.5"></i> {{ $destination['instruction'] }}
+                                                        </p>
+                                                    @endif
+                                                </div>
+                                            @endforeach
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                                <div>
+                                                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Metode Pembayaran</label>
+                                                    <select name="payment_method" required class="w-full px-4 py-2.5 bg-[#f6f9ff] border border-blue-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/30">
+                                                        <option value="">Pilih Metode</option>
+                                                        <option value="Transfer Bank" @selected(old('payment_method') === 'Transfer Bank')>Transfer Bank</option>
+                                                        <option value="QRIS" @selected(old('payment_method') === 'QRIS')>QRIS</option>
+                                                        <option value="E-Wallet" @selected(old('payment_method') === 'E-Wallet')>E-Wallet</option>
+                                                    </select>
+                                                    @error('payment_method')<p class="text-[10px] text-red-500 mt-1">{{ $message }}</p>@enderror
+                                                </div>
+                                                <div>
+                                                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Nama Pengirim</label>
+                                                    <input type="text" name="sender_name" value="{{ old('sender_name') }}" maxlength="191" required placeholder="Nama sesuai rekening/wallet pengirim" class="w-full px-4 py-2.5 bg-[#f6f9ff] border border-blue-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/30">
+                                                    @error('sender_name')<p class="text-[10px] text-red-500 mt-1">{{ $message }}</p>@enderror
+                                                </div>
+                                                <div>
+                                                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Bank/Wallet Pengirim</label>
+                                                    <input type="text" name="sender_bank" value="{{ old('sender_bank') }}" maxlength="191" required placeholder="cth: BCA / DANA / OVO" class="w-full px-4 py-2.5 bg-[#f6f9ff] border border-blue-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/30">
+                                                    @error('sender_bank')<p class="text-[10px] text-red-500 mt-1">{{ $message }}</p>@enderror
+                                                </div>
+                                                <div>
+                                                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Nomor Rekening/Wallet Pengirim (opsional)</label>
+                                                    <input type="text" name="sender_account_number" value="{{ old('sender_account_number') }}" maxlength="191" placeholder="Nomor rekening/wallet Anda" class="w-full px-4 py-2.5 bg-[#f6f9ff] border border-blue-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/30">
+                                                    @error('sender_account_number')<p class="text-[10px] text-red-500 mt-1">{{ $message }}</p>@enderror
+                                                </div>
+                                                <div>
+                                                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Tanggal Pembayaran</label>
+                                                    <input type="date" name="payment_date" value="{{ old('payment_date', now()->toDateString()) }}" max="{{ now()->toDateString() }}" required class="w-full px-4 py-2.5 bg-[#f6f9ff] border border-blue-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/30">
+                                                    @error('payment_date')<p class="text-[10px] text-red-500 mt-1">{{ $message }}</p>@enderror
+                                                </div>
+                                                <div>
+                                                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Jumlah yang Dibayar</label>
+                                                    <div class="relative">
+                                                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">Rp</span>
+                                                        <input type="number" name="paid_amount" value="{{ old('paid_amount', number_format((float) $payment->amount, 2, '.', '')) }}" step="0.01" min="0" required class="w-full pl-8 pr-4 py-2.5 bg-[#f6f9ff] border border-blue-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/30">
+                                                    </div>
+                                                    <p class="text-[10px] text-slate-400 mt-1">Harus sesuai total tagihan (Rp {{ number_format($payment->amount, 0, ',', '.') }}). Nominal ditetapkan sistem dan tidak dapat diubah.</p>
+                                                    @error('paid_amount')<p class="text-[10px] text-red-500 mt-1">{{ $message }}</p>@enderror
+                                                </div>
+                                            </div>
+<div>
+                                                <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Catatan Pembayaran (opsional)</label>
+                                                <textarea name="company_note" rows="2" maxlength="2000" placeholder="cth: sudah transfer via m-banking BCA atas nama ..." class="w-full px-4 py-2.5 bg-[#f6f9ff] border border-blue-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/30 resize-none">{{ old('company_note') }}</textarea>
+                                                @error('company_note')<p class="text-[10px] text-red-500 mt-1">{{ $message }}</p>@enderror
+                                            </div>
+
+                                            <div>
+                                                <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Upload Bukti Pembayaran</label>
+                                                <input type="file" name="payment_proof" required accept=".jpg,.jpeg,.png,.pdf" class="w-full px-4 py-2.5 bg-[#f6f9ff] border border-blue-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/30 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-brand file:text-white hover:file:bg-blue-700 transition">
+                                                <p class="text-[10px] text-slate-400 mt-1">Format: jpg, jpeg, png, pdf. Maksimal 10 MB. Bukti pembayaran wajib diupload.</p>
+                                                @error('payment_proof')<p class="text-[10px] text-red-500 mt-1">{{ $message }}</p>@enderror
+                                            </div>
+
+                                            <div class="flex items-start gap-3 px-4 py-3 bg-blue-50 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-800/60 rounded-xl text-xs text-slate-600 dark:text-slate-300">
+                                                <i class="fa-solid fa-shield-halved mt-0.5 text-brand"></i>
+                                                <span>Setelah dikirim, pembayaran berstatus <strong>Menunggu Verifikasi</strong>. Admin ApexForge Labs akan memverifikasi, lalu slot kuota tambahan aktif otomatis.</span>
+                                            </div>
+
+                                            <button type="submit"
+                                                    class="w-full flex items-center justify-center gap-2 px-4 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl text-sm font-bold hover:from-blue-700 hover:to-indigo-700 transition shadow-lg shadow-brand/25 disabled:opacity-60 disabled:cursor-not-allowed">
+                                                <i class="fa-solid fa-circle-check"></i> Saya Sudah Membayar — Kirim Bukti Pembayaran
+                                            </button>
+                                        </form>
                                     </div>
 
                                     <a href="{{ route('company.projects.create') }}"
@@ -312,6 +443,62 @@
                     }).catch(function () {
                         alert('Gagal menghubungi server.');
                         btn.disabled = false;
+                    });
+                });
+            })();
+        </script>
+    @endif
+    @if(in_array($payment->status, ['pending','rejected'], true))
+        {{-- Salin nomor tujuan + highlight kartu tujuan yang dipilih --}}
+        <script>
+            (function () {
+                var radios = document.querySelectorAll('input[name="destination_source"]');
+                var cards = document.querySelectorAll('.dest-card');
+
+                function highlight() {
+                    var checked = document.querySelector('input[name="destination_source"]:checked');
+                    cards.forEach(function (card) {
+                        card.classList.toggle('active', !!checked && card.dataset.dest === checked.value);
+                    });
+                }
+
+                radios.forEach(function (radio) {
+                    radio.addEventListener('change', highlight);
+                });
+                highlight();
+
+                function showCopied(btn) {
+                    var icon = btn.querySelector('i');
+                    var oldClass = icon.className;
+                    icon.className = 'fa-solid fa-check text-[10px]';
+                    btn.classList.add('bg-emerald-500', 'text-white');
+                    setTimeout(function () {
+                        icon.className = oldClass;
+                        btn.classList.remove('bg-emerald-500', 'text-white');
+                    }, 1500);
+                }
+
+                document.querySelectorAll('.copy-btn').forEach(function (btn) {
+                    btn.addEventListener('click', function () {
+                        var value = btn.getAttribute('data-copy');
+                        function fallback() {
+                            var ta = document.createElement('textarea');
+                            ta.value = value;
+                            ta.style.position = 'fixed';
+                            ta.style.opacity = '0';
+                            document.body.appendChild(ta);
+                            ta.select();
+                            try { document.execCommand('copy'); } catch (e) {}
+                            document.body.removeChild(ta);
+                        }
+                        if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+                            navigator.clipboard.writeText(value).then(function () {
+                                showCopied(btn);
+                            }).catch(fallback);
+                        } else {
+                            fallback();
+                            showCopied(btn);
+                        }
                     });
                 });
             })();

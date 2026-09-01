@@ -221,66 +221,89 @@ message: 'Pembayaran untuk proyek "' . ($workspace->project->project_name ?? '')
         ]);
 
         // Update workspace status kembali ke Menunggu Pembayaran
-        $workspace->update([
-            'status' => 'Menunggu Pembayaran',
-        ]);
+        // (HANYA untuk payment proyek ber-workspace — payment kuota tidak
+        //  memiliki workspace, sehingga bagian ini dilewati secara aman).
+        if ($workspace) {
+            $workspace->update([
+                'status' => 'Menunggu Pembayaran',
+            ]);
 
-        // System message
-        $messageText = 'Pembayaran ditolak Admin.';
+            // System message
+            $messageText = 'Pembayaran ditolak Admin.';
 
-        if ($request->filled('admin_note')) {
-            $messageText .=
-                "\n\nAlasan:\n" .
-                $request->admin_note;
+            if ($request->filled('admin_note')) {
+                $messageText .=
+                    "\n\nAlasan:\n" .
+                    $request->admin_note;
+            }
+
+            Message::create([
+                'workspace_id' => $workspace->id,
+                'sender_id' => Auth::id(),
+                'message' => $messageText,
+                'type' => 'system',
+            ]);
         }
 
-        Message::create([
-            'workspace_id' => $workspace->id,
-            'sender_id' => Auth::id(),
-            'message' => $messageText,
-            'type' => 'system',
-        ]);
-
-        // Notification for company
-        NotificationService::sendTo(
-            user: $payment->company_id,
-            type: 'payment.rejected',
-            title: 'Pembayaran Ditolak',
-            message:
-                'Pembayaran untuk proyek "' .
-                ($workspace->project->project_name ?? '') .
-                '" ditolak oleh Admin. Silakan upload ulang bukti pembayaran.' .
-                (
-                    $request->filled('admin_note')
-                        ? "\n\nAlasan: " . $request->admin_note
-                        : ''
+        if ($workspace) {
+            // Notification for company (payment proyek ber-workspace)
+            NotificationService::sendTo(
+                user: $payment->company_id,
+                type: 'payment.rejected',
+                title: 'Pembayaran Ditolak',
+                message:
+                    'Pembayaran untuk proyek "' .
+                    ($workspace->project->project_name ?? '') .
+                    '" ditolak oleh Admin. Silakan upload ulang bukti pembayaran.' .
+                    (
+                        $request->filled('admin_note')
+                            ? "\n\nAlasan: " . $request->admin_note
+                            : ''
+                    ),
+                redirect: route(
+                    'company.workspaces.show',
+                    $workspace
                 ),
-            redirect: route(
-                'company.workspaces.show',
-                $workspace
-            ),
-            senderId: Auth::id(),
-            paymentId: $payment->id,
-            workspaceId: $workspace->id,
-        );
+                senderId: Auth::id(),
+                paymentId: $payment->id,
+                workspaceId: $workspace->id,
+            );
 
-        // Notification for freelancer
-        NotificationService::sendTo(
-            user: $payment->freelancer_id,
-            type: 'payment.rejected',
-            title: 'Pembayaran Ditolak',
-            message:
-                'Pembayaran untuk proyek "' .
-                ($workspace->project->project_name ?? '') .
-                '" ditolak oleh Admin. Menunggu perusahaan mengupload ulang bukti pembayaran.',
-            redirect: route(
-                'freelancer.workspaces.show',
-                $workspace
-            ),
-            senderId: Auth::id(),
-            paymentId: $payment->id,
-            workspaceId: $workspace->id,
-        );
+            // Notification for freelancer
+            NotificationService::sendTo(
+                user: $payment->freelancer_id,
+                type: 'payment.rejected',
+                title: 'Pembayaran Ditolak',
+                message:
+                    'Pembayaran untuk proyek "' .
+                    ($workspace->project->project_name ?? '') .
+                    '" ditolak oleh Admin. Menunggu perusahaan mengupload ulang bukti pembayaran.',
+                redirect: route(
+                    'freelancer.workspaces.show',
+                    $workspace
+                ),
+                senderId: Auth::id(),
+                paymentId: $payment->id,
+                workspaceId: $workspace->id,
+            );
+        } else {
+            // Payment kuota (tanpa workspace) — notifikasi hanya ke company.
+            NotificationService::sendTo(
+                user: $payment->company_id,
+                type: 'payment.rejected',
+                title: 'Pembayaran Kuota Ditolak',
+                message:
+                    'Pembayaran kuota proyek (invoice ' . $payment->invoice_number . ') ditolak oleh Admin. Silakan kirim ulang bukti pembayaran.' .
+                    (
+                        $request->filled('admin_note')
+                            ? "\n\nAlasan: " . $request->admin_note
+                            : ''
+                    ),
+                redirect: route('company.quota.payment.show', $payment),
+                senderId: Auth::id(),
+                paymentId: $payment->id,
+            );
+        }
 
         return redirect()
             ->route('admin.payments.show', $payment)
