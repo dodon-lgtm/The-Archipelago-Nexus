@@ -74,7 +74,9 @@ class PaymentController extends Controller
                 ->with('error', 'Data pembayaran tidak ditemukan.');
         }
 
-        return view('company.payments.upload', compact('workspace', 'payment'));
+        $destinations = $this->manualPaymentDestinations();
+
+        return view('company.payments.upload', compact('workspace', 'payment', 'destinations'));
     }
 
     /**
@@ -119,6 +121,12 @@ class PaymentController extends Controller
 
         $request->validate([
             'payment_method' => ['required', 'string', 'in:Transfer Bank,QRIS,E-Wallet'],
+            'destination_source' => ['required', 'string', 'in:' . implode(',', array_keys($this->manualPaymentDestinations()))],
+            'sender_name' => ['required', 'string', 'max:191'],
+            'sender_bank' => ['required', 'string', 'max:191'],
+            'sender_account_number' => ['nullable', 'string', 'max:191'],
+            'payment_date' => ['required', 'date', 'before_or_equal:today'],
+            'paid_amount' => ['required', 'numeric', 'min:0'],
             'payment_proof' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:10240'], // 10 MB
             'company_note' => ['nullable', 'string', 'max:2000'],
         ], [
@@ -126,7 +134,45 @@ class PaymentController extends Controller
             'payment_proof.required' => 'Bukti pembayaran wajib diupload.',
             'payment_proof.mimes' => 'Bukti pembayaran harus berupa file: jpg, jpeg, png, atau pdf.',
             'payment_proof.max' => 'Ukuran file maksimal 10 MB.',
+            'destination_source.required' => 'Rekening/wallet tujuan pembayaran wajib dipilih.',
+            'destination_source.in' => 'Rekening/wallet tujuan pembayaran tidak valid.',
+            'sender_name.required' => 'Nama pengirim wajib diisi.',
+            'sender_bank.required' => 'Bank/Wallet pengirim wajib diisi.',
+            'payment_date.required' => 'Tanggal pembayaran wajib diisi.',
+            'payment_date.date' => 'Format tanggal pembayaran tidak valid.',
+            'payment_date.before_or_equal' => 'Tanggal pembayaran tidak boleh melebihi hari ini.',
+            'paid_amount.required' => 'Jumlah yang dibayar wajib diisi.',
+            'paid_amount.numeric' => 'Jumlah yang dibayar harus berupa angka.',
+            'paid_amount.min' => 'Jumlah yang dibayar tidak boleh kurang dari 0.',
         ]);
+
+        // Nominal pembayaran TIDAK dapat diubah: harus sama persis dengan
+        // total tagihan yang ditetapkan sistem (dibaca dari database.bukan input browser).
+        $expectedAmount = (float) $payment->amount;
+
+        if (round((float) $request->paid_amount, 2) !== round($expectedAmount, 2)) {
+            return redirect()
+                ->back()
+                ->withErrors(['paid_amount' => 'Jumlah yang dibayar harus sesuai dengan total tagihan: Rp ' . number_format($expectedAmount, 0, ',', '.') . '.'])
+                ->withInput($request->except(['payment_proof']));
+        }
+
+        // Snapshot rekening/wallet tujuan yang dipakai Company (milik platform).
+        $destinations = $this->manualPaymentDestinations();
+        $destination = $destinations[$request->destination_source] ?? null;
+
+        if ($destination === null) {
+            return redirect()
+                ->back()
+                ->withErrors(['destination_source' => 'Rekening/wallet tujuan pembayaran tidak valid.'])
+                ->withInput($request->except(['payment_proof']));
+        }
+
+        $destinationInfo = [
+            'title' => $destination['title'] ?? 'ApexForge Labs',
+            'label' => $destination['label'] ?? '',
+            'rows'  => $destination['rows'] ?? [],
+        ];
 
         // Hapus file bukti pembayaran lama jika ada (untuk re-upload)
         if ($payment->payment_proof) {
@@ -137,9 +183,16 @@ class PaymentController extends Controller
         $filePath = $request->file('payment_proof')
             ->store('payment-proofs', 'public');
 
-        // Update payment
+        // Update payment — data konfirmasi pembayaran manual disimpan agar
+        // dapat dilihat Admin saat verifikasi (workflow verifikasi tetap sama).
         $payment->update([
             'payment_method' => $request->payment_method,
+            'sender_name' => $request->sender_name,
+            'sender_bank' => $request->sender_bank,
+            'sender_account_number' => $request->filled('sender_account_number') ? $request->sender_account_number : null,
+            'payment_date' => $request->payment_date,
+            'paid_amount' => $request->paid_amount,
+            'destination_info' => $destinationInfo,
             'payment_proof' => $filePath,
             'company_note' => $request->company_note,
             'status' => 'waiting_verification',
@@ -474,7 +527,146 @@ class PaymentController extends Controller
                 'can_create'      => $quotaService->canCreateProject(Auth::id()),
             ],
             'price'   => (int) round($payment->amount), // server-side truth
+            // Rekening/wallet tujuan pembayaran manual milik platform (server-side).
+            'destinations' => $this->manualPaymentDestinations(),
         ]);
+    }
+
+    /**
+     * Company mengirim DETAIL PEMBAYARAN MANUAL untuk transaksi kuota proyek:
+     * nama/bank/nomor pengirim, tanggal, nominal, catatan, dan bukti transfer.
+     *
+     * Konsisten dengan uploadProof milik pembayaran proyek:
+     *   - Ownership: hanya company pemilik payment kuota (company_id = user login).
+     *   - Hanya payment pending/rejected yang dapat mengirim (idempotent).
+     *   - Nominal dibandingkan dengan amount di DATABASE — input browser diabaikan.
+     *   - Tujuan pembayaran di-snapshot dari config server (bukan input client).
+     *   - Bukti pembayaran wajib (jpg/jpeg/png/pdf, maks 10MB).
+     *   - Setelah dikirim: status waiting_verification → diverifikasi Admin
+     *     melalui workflow verifikasi kuota yang sudah ada (Admin satu-satunya
+     *     pihak yang dapat mengubah status menjadi paid).
+     */
+    public function uploadQuotaProof(Request $request, Payment $payment): RedirectResponse
+    {
+        // 1. Ownership: hanya company pemilik payment kuota.
+        abort_unless(
+            (int) $payment->company_id === (int) Auth::id()
+                && $payment->payment_type === Payment::PAYMENT_TYPE_QUOTA,
+            403
+        );
+
+        // 2. Hanya payment pending/rejected yang boleh mengirim detail pembayaran.
+        if (!in_array($payment->status, ['pending', 'rejected'], true)) {
+            return redirect()
+                ->route('company.quota.payment.show', $payment)
+                ->with('error', 'Pembayaran ini tidak dapat dikirim ulang.');
+        }
+
+        // 3. Kelengkapan profil company (konsisten dengan pembayaran proyek).
+        $completionService = app(ProfileCompletionService::class);
+        if (!$completionService->isComplete(Auth::user())) {
+            return redirect()
+                ->route('company.profile')
+                ->with('error', 'Profil Anda belum lengkap. Silakan lengkapi minimal 80% profil terlebih dahulu agar dapat mengirim bukti pembayaran.');
+        }
+
+        $destinations = $this->manualPaymentDestinations();
+
+        $request->validate([
+            'payment_method' => ['required', 'string', 'in:Transfer Bank,QRIS,E-Wallet'],
+            'destination_source' => ['required', 'string', 'in:' . implode(',', array_keys($destinations))],
+            'sender_name' => ['required', 'string', 'max:191'],
+            'sender_bank' => ['required', 'string', 'max:191'],
+            'sender_account_number' => ['nullable', 'string', 'max:191'],
+            'payment_date' => ['required', 'date', 'before_or_equal:today'],
+            'paid_amount' => ['required', 'numeric', 'min:0'],
+            'payment_proof' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:10240'], // 10 MB
+            'company_note' => ['nullable', 'string', 'max:2000'],
+        ], [
+            'payment_method.required' => 'Metode pembayaran wajib dipilih.',
+            'payment_proof.required' => 'Bukti pembayaran wajib diupload.',
+            'payment_proof.mimes' => 'Bukti pembayaran harus berupa file: jpg, jpeg, png, atau pdf.',
+            'payment_proof.max' => 'Ukuran file maksimal 10 MB.',
+            'destination_source.required' => 'Rekening/wallet tujuan pembayaran wajib dipilih.',
+            'destination_source.in' => 'Rekening/wallet tujuan pembayaran tidak valid.',
+            'sender_name.required' => 'Nama pengirim wajib diisi.',
+            'sender_bank.required' => 'Bank/Wallet pengirim wajib diisi.',
+            'payment_date.required' => 'Tanggal pembayaran wajib diisi.',
+            'payment_date.date' => 'Format tanggal pembayaran tidak valid.',
+            'payment_date.before_or_equal' => 'Tanggal pembayaran tidak boleh melebihi hari ini.',
+            'paid_amount.required' => 'Jumlah yang dibayar wajib diisi.',
+            'paid_amount.numeric' => 'Jumlah yang dibayar harus berupa angka.',
+            'paid_amount.min' => 'Jumlah yang dibayar tidak boleh kurang dari 0.',
+        ]);
+
+        // 4. Nominal pembayaran TIDAK dapat diubah — harus sama dengan
+        //    total tagihan kuota yang ditetapkan sistem (dari database).
+        $expectedAmount = (float) $payment->amount;
+
+        if (round((float) $request->paid_amount, 2) !== round($expectedAmount, 2)) {
+            return redirect()
+                ->back()
+                ->withErrors(['paid_amount' => 'Jumlah yang dibayar harus sesuai dengan total tagihan: Rp ' . number_format($expectedAmount, 0, ',', '.') . '.'])
+                ->withInput($request->except(['payment_proof']));
+        }
+
+        // 5. Snapshot rekening/wallet tujuan yang dipakai (milik platform).
+        $destination = $destinations[$request->destination_source] ?? null;
+
+        if ($destination === null) {
+            return redirect()
+                ->back()
+                ->withErrors(['destination_source' => 'Rekening/wallet tujuan pembayaran tidak valid.'])
+                ->withInput($request->except(['payment_proof']));
+        }
+
+        $destinationInfo = [
+            'title' => $destination['title'] ?? 'ApexForge Labs',
+            'label' => $destination['label'] ?? '',
+            'rows'  => $destination['rows'] ?? [],
+        ];
+
+        // 6. Hapus bukti lama (re-upload setelah ditolak), simpan bukti baru.
+        if ($payment->payment_proof) {
+            Storage::disk('public')->delete($payment->payment_proof);
+        }
+
+        $filePath = $request->file('payment_proof')
+            ->store('payment-proofs', 'public');
+
+        // 7. Simpan detail pembayaran manual — status menunggu verifikasi Admin
+        //    (workflow verifikasi kuota yang sudah ada tidak diubah).
+        $payment->update([
+            'payment_method' => $request->payment_method,
+            'sender_name' => $request->sender_name,
+            'sender_bank' => $request->sender_bank,
+            'sender_account_number' => $request->filled('sender_account_number') ? $request->sender_account_number : null,
+            'payment_date' => $request->payment_date,
+            'paid_amount' => $request->paid_amount,
+            'destination_info' => $destinationInfo,
+            'payment_proof' => $filePath,
+            'company_note' => $request->company_note,
+            'status' => 'waiting_verification',
+        ]);
+
+        // 8. Notifikasi Admin — pembayaran kuota menunggu verifikasi
+        //    (pola yang sama dengan pembayaran proyek).
+        $admins = User::where('role', 'admin')->get();
+        foreach ($admins as $admin) {
+            NotificationService::sendTo(
+                user: $admin->id,
+                type: 'payment.waiting',
+                title: 'Pembayaran Kuota Perlu Diverifikasi',
+                message: 'Perusahaan "' . (Auth::user()->companyProfile->company_name ?? Auth::user()->name) . '" telah mengirim bukti pembayaran kuota proyek (invoice ' . $payment->invoice_number . '). Silakan lakukan verifikasi.',
+                redirect: route('admin.payments.show', $payment),
+                senderId: Auth::id(),
+                paymentId: $payment->id,
+            );
+        }
+
+        return redirect()
+            ->route('company.quota.payment.show', $payment)
+            ->with('success', 'Bukti pembayaran kuota berhasil dikirim. Menunggu verifikasi admin.');
     }
 
     /**
@@ -739,5 +931,16 @@ class PaymentController extends Controller
             'status'  => 'paid',
             'message' => 'Pembayaran berhasil dikonfirmasi. Slot proyek Anda telah ditambah.',
         ]);
+    }
+
+    /**
+     * Daftar rekening/wallet tujuan pembayaran manual milik platform ApexForge Labs.
+     * Data bersumber dari config/apexforge.php dan TIDAK berasal dari freelancer.
+
+     * @return array<string, array<string, mixed>>
+     */
+    private function manualPaymentDestinations(): array
+    {
+        return (array) config('apexforge.manual_payment_destinations', []);
     }
 }
