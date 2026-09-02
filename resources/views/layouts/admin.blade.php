@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
  <html lang="id">
 
  <head>
@@ -206,6 +206,16 @@
 
  <body class="bg-[#f6f9ff] text-slate-800 antialiased">
 
+     {{-- TOMBOL HAMBURGER MOBILE — ditaruh DI LUAR #sidebar supaya tetap
+          terlihat/terjangkau walau #sidebar digeser translateX(-100%) di
+          layar mobile. Sebelumnya tombol ini hanya ada di dalam #sidebar
+          (#mobileSidebarToggle), sehingga ikut hilang bersama sidebar. --}}
+     <button type="button" id="mobileSidebarToggleBtn"
+         class="lg:hidden fixed top-3.5 left-4 z-[60] w-10 h-10 rounded-xl bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 text-blue-600 dark:text-blue-400 flex items-center justify-center shadow-lg hover:bg-blue-50 dark:hover:bg-slate-800 active:scale-95 transition-transform"
+         aria-label="Buka Navigasi Mobile">
+         <i class="fa-solid fa-bars text-lg"></i>
+     </button>
+
      <div class="min-h-screen bg-[#f6f9ff] dark:bg-slate-950 flex transition-colors duration-300">
 
          {{-- =============== SIDEBAR =============== --}}
@@ -216,7 +226,7 @@
              <div
                  class="sidebar-logo-wrapper p-6 flex items-center gap-3 border-b border-blue-50 shrink-0 transition-all duration-300">
 
-                 {{-- Mobile hamburger --}}
+                 {{-- Mobile hamburger (di dalam sidebar, dipakai saat sidebar sudah terbuka) --}}
                  <button id="mobileSidebarToggle"
                      class="sidebar-hamburger-mobile w-10 h-10 rounded-xl hover:bg-blue-50 flex items-center justify-center shrink-0 transition mr-1">
                      <i class="fa-solid fa-bars text-slate-600 text-lg"></i>
@@ -417,7 +427,7 @@
 
              {{-- Top Navbar --}}
              <header
-                 class="h-16 bg-white dark:bg-slate-900 border-b border-blue-100 dark:border-slate-800 px-3 sm:px-6 flex items-center justify-between gap-2 sm:gap-4 sticky top-0 z-20 transition-colors duration-300">
+                 class="h-16 bg-white dark:bg-slate-900 border-b border-blue-100 dark:border-slate-800 pl-16 pr-3 lg:px-6 flex items-center justify-between gap-2 sm:gap-4 sticky top-0 z-20 transition-colors duration-300">
                  {{-- Left: Title + Breadcrumb --}}
                  <div class="min-w-0 flex-1">
                      <h1 class="text-base sm:text-lg font-extrabold text-slate-800 dark:text-white truncate">@yield('title', 'Admin Panel')</h1>
@@ -1035,7 +1045,8 @@
          }
 
          @media (min-width: 1024px) {
-             .sidebar-hamburger-mobile {
+             .sidebar-hamburger-mobile,
+             #mobileSidebarToggleBtn {
                  display: none !important;
              }
 
@@ -1050,6 +1061,7 @@
              const sidebar = document.getElementById('sidebar');
              const toggleDesktop = document.getElementById('sidebarToggle');
              const toggleMobile = document.getElementById('mobileSidebarToggle');
+             const toggleMobileOutside = document.getElementById('mobileSidebarToggleBtn');
              const overlay = document.getElementById('sidebarOverlay');
 
              function updateTooltipPositions() {
@@ -1079,13 +1091,22 @@
                  });
              }
 
+             function toggleMobileSidebar(e) {
+                 if (e) e.stopPropagation();
+                 sidebar.classList.toggle('mobile-open');
+                 if (overlay) overlay.classList.toggle('hidden');
+                 document.body.classList.toggle('overflow-hidden');
+             }
+
+             // Tombol di dalam sidebar (dipakai saat sidebar sudah terbuka, untuk menutup lagi)
              if (toggleMobile) {
-                 toggleMobile.addEventListener('click', function(e) {
-                     e.stopPropagation();
-                     sidebar.classList.toggle('mobile-open');
-                     if (overlay) overlay.classList.toggle('hidden');
-                     document.body.classList.toggle('overflow-hidden');
-                 });
+                 toggleMobile.addEventListener('click', toggleMobileSidebar);
+             }
+
+             // Tombol fixed di luar sidebar (satu-satunya cara MEMBUKA sidebar di mobile,
+             // karena #sidebar sendiri translateX(-100%) sampai class 'mobile-open' ditambahkan)
+             if (toggleMobileOutside) {
+                 toggleMobileOutside.addEventListener('click', toggleMobileSidebar);
              }
 
              if (overlay) {
