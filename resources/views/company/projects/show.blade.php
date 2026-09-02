@@ -952,92 +952,8 @@
                             </div>
                         </div>
 
-                        {{-- DESKRIPSI --}}
-                        <div x-data="{ expanded: false }">
-                            <p class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                                <i class="fa-solid fa-align-left text-blue-500"></i> Deskripsi Proyek
-                            </p>
-                            <div class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/30 p-4 rounded-xl border border-slate-100 dark:border-slate-800 leading-relaxed">
-                                <div :class="expanded ? '' : 'line-clamp-3'">
-                                    {!! nl2br(e($project->project_description ?? 'Tidak ada deskripsi proyek.')) !!}
-                                </div>
-                                @if(strlen($project->project_description ?? '') > 200)
-                                    <button @click="expanded = !expanded" class="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline mt-2 inline-block">
-                                        <span x-text="expanded ? 'Sembunyikan' : 'Baca Selengkapnya...'"></span>
-                                    </button>
-                                @endif
-                            </div>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-3">
-                                Kategori: <span class="font-medium text-slate-700 dark:text-slate-300">{{ $project->category->name ?? 'Umum' }}</span>
-                            </p>
-                        </div>
-
-                        {{-- ACTION BUTTON --}}
-                        <div class="flex flex-wrap gap-3 pt-5 border-t border-slate-100 dark:border-slate-800">
-                            <a href="{{ route('company.projects.edit', $project) }}"
-                               class="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors">
-                                <i class="fa-solid fa-pen-to-square"></i>
-                                Edit Proyek
-                            </a>
-
-                            <form method="POST" action="{{ route('company.projects.destroy', $project) }}" id="deleteProjectForm">
-                                @csrf
-                                @method('DELETE')
-                                <button type="button"
-                                        onclick="openDeleteModal()"
-                                        class="inline-flex items-center gap-2 px-4 py-2.5 bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-900/50 rounded-lg text-sm font-semibold hover:bg-red-100 dark:hover:bg-red-900/60 transition-colors">
-                                    <i class="fa-solid fa-trash"></i>
-                                    Hapus Proyek
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- =========================================================
-                    SECTION PENAWARAN FREELANCER
-                ========================================================== --}}
-                @php
-                    $hasAccepted = $project->penawarans->contains(fn($p) => $p->status === 'Diterima');
-                    
-                    // Siapkan array JSON untuk Alpine.js
-                    $penawaranData = $project->penawarans->map(function($p) {
-                        $foto = optional($p->freelancer->freelanceProfile)->photo;
-                        $photoUrl = $foto ? (Str::startsWith($foto, ['http://', 'https://']) ? $foto : asset('storage/' . $foto)) : null;
-
-                        return [
-                            'id' => $p->id,
-                            'freelancer_id' => $p->freelancer_id,
-                            'nama' => optional($p->freelancer)->name,
-                            'foto' => $photoUrl,
-                            'harga' => $p->harga_penawaran,
-                            'pesan' => $p->pesan ?? '',
-                            'status' => $p->status,
-                        ];
-                    });
-                @endphp
-
-                <div
-                    x-data="{
-                        search: '',
-                        statusFilter: 'all',
-                        items: @js($penawaranData),
-                        get filteredItems() {
-                            return this.items.filter(item => {
-                                const q = this.search.toLowerCase();
-                                const matchSearch = q === '' || (item.nama || '').toLowerCase().includes(q);
-                                const matchStatus = this.statusFilter === 'all' || item.status === this.statusFilter;
-                                return matchSearch && matchStatus;
-                            });
-                        }
-                    }"
-                    class="bg-white border border-slate-200 dark:border-slate-800 dark:bg-slate-900 rounded-2xl overflow-hidden shadow-sm animate-slide delay-2"
-                >
-
-                    {{-- HEADER --}}
-                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 px-6 py-5 border-b border-slate-100 dark:border-slate-800">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center text-lg">
+                        <div class="p-3.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-xl flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-lg bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center text-sm shrink-0">
                                 <i class="fa-solid fa-users"></i>
                             </div>
 
@@ -1773,15 +1689,9 @@
 
         </div>
 
-
     </main>
 
-    {{-- =================================================
-        FOOTER
-    ================================================== --}}
-
-  
-
+   
 </div>
 
 {{-- ==========================================================
@@ -2300,150 +2210,24 @@
 
         selectedDeleteProjectForm.submit();
 
-        /* ==========================================================
-           MODAL KONFIRMASI HAPUS PROYEK
-        ========================================================== */
-
-        function openDeleteModal() {
-
-            const modal =
-                document.getElementById(
-                    'confirmDeleteProjectModal'
-                );
-
-            modal.classList.add(
-                'active'
-            );
-
-            modal.setAttribute(
-                'aria-hidden',
-                'false'
-            );
-
-            document.body.style.overflow =
-                'hidden';
-
-        }
-
-        function closeDeleteModal() {
-
-            const modal =
-                document.getElementById(
-                    'confirmDeleteProjectModal'
-                );
-
-            modal.classList.remove(
-                'active'
-            );
-
-            modal.setAttribute(
-                'aria-hidden',
-                'true'
-            );
-
-            document.body.style.overflow =
-                '';
-
-        }
-
-        function confirmDeleteProject() {
-
-            const form =
-                document.getElementById(
-                    'deleteProjectForm'
-                );
-
-            if (!form) {
-                return;
-            }
-
-            const confirmButton =
-                document.querySelector(
-                    '#confirmDeleteProjectModal .modal-confirm'
-                );
-
-            confirmButton.innerHTML = `
-                <i class="fa-solid fa-spinner fa-spin mr-1"></i>
-                Menghapus...
-            `;
-
-            confirmButton.disabled =
-                true;
-
-            form.submit();
-
-        }
+    }
 
 
-        /* ==========================================================
-           KLIK BACKDROP
-        ========================================================== */
-
-        document
-            .getElementById(
-                'selectFreelancerModal'
-            )
-            .addEventListener(
-                'click',
-                function (e) {
-                    if (
-                        e.target === this
-                    ) {
-                        closeSelectModal();
-                    }
-                }
-            );
-
-
-        /* ==========================================================
-           KLIK BACKDROP (HAPUS PROYEK)
-        ========================================================== */
-
-        document
-            .getElementById(
-                'confirmDeleteProjectModal'
-            )
-            .addEventListener(
-                'click',
-                function (e) {
-                    if (
-                        e.target === this
-                    ) {
-                        closeDeleteModal();
-                    }
-                }
-            );
-
-
-        /* ==========================================================
-           ESC KEY
-        ========================================================== */
+    /* ==========================================================
+       KLIK BACKDROP DELETE
+    ========================================================== */
 
     document.addEventListener(
         'click',
         function (e) {
 
-                    if (
-                        modal.classList.contains(
-                            'active'
-                        )
-                    ) {
-                        closeSelectModal();
-                    }
+            const modal =
+                document.getElementById(
+                    'deleteProjectModal'
+                );
 
-                    const deleteModal =
-                        document.getElementById(
-                            'confirmDeleteProjectModal'
-                        );
-
-                    if (
-                        deleteModal.classList.contains(
-                            'active'
-                        )
-                    ) {
-                        closeDeleteModal();
-                    }
-                }
+            if (!modal) {
+                return;
             }
 
             if (e.target === modal) {
