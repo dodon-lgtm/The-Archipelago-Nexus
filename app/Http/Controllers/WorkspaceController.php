@@ -471,7 +471,7 @@ class WorkspaceController extends Controller
 
                 return $this->backWithSuccess('Catatan tahap \\"' . $stage . '\\" berhasil diperbarui.');
 
-            case 'select':
+                        case 'select':
             default:
                 // Freelancer memilih salah satu stage yang sudah ada.
                 // Aksi = TOGGLE ceklis: HANYA status tahap yang dipilih yang
@@ -485,6 +485,10 @@ class WorkspaceController extends Controller
                 $selectedOrder = $order + 1; // 1-based
                 $currentlyCompleted = !empty($stageItems[$order]['is_completed']);
                 $stageItems[$order]['is_completed'] = !$currentlyCompleted;
+                // Simpan deskripsi pengerjaan bersamaan dengan perubahan status
+                if ($description !== null && $description !== '') {
+                    $stageItems[$order]['description'] = $description;
+                }
                 $workspace->update(['stages' => $stageItems]);
                 $this->syncProgressColumn($workspace);
 

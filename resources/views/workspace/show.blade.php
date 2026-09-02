@@ -657,15 +657,11 @@
                                                                         </form>
                                                                     </div>
                                                                 @else
-                                                                    <form method="POST" action="{{ route('freelancer.workspaces.progress', $workspace) }}" class="w-full">
-                                                                        @csrf
-                                                                        <input type="hidden" name="action" value="select">
-                                                                        <input type="hidden" name="stage" value="{{ $detailStage }}">
-                                                                        <button type="submit"
-                                                                            class="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white rounded-xl text-[11px] font-bold transition shadow-sm">
-                                                                            <i class="fa-solid fa-check text-[11px]"></i> Selesaikan Tahap Ini
-                                                                        </button>
-                                                                    </form>
+                                                                    <button type="button"
+                                                                        onclick="openUpdateProgressModal({{ $detailOrder }}, '{{ $detailStage }}')"
+                                                                        class="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white rounded-xl text-[11px] font-bold transition shadow-sm">
+                                                                        <i class="fa-solid fa-check text-[11px]"></i> Selesaikan Tahap Ini
+                                                                    </button>
                                                                 @endif
                                                                 <div id="updateForm-{{ $detailOrder }}" class="w-full {{ $reopenNoteForm ? '' : 'hidden' }}">
                                                                     <form method="POST" action="{{ route('freelancer.workspaces.progress', $workspace) }}" class="space-y-2 pt-3 border-t border-blue-100/60 dark:border-slate-800">
@@ -1442,7 +1438,169 @@
         .stage-circle-selected {
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25), 0 0 0 7px rgba(37, 99, 235, 0.12);
         }
+        </style>
+
+    {{-- MODAL: Update Progress Workspace --}}
+    <div id="updateProgressModal" class="fixed inset-0 z-[250] flex items-center justify-center bg-black/60 hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm">
+        <div class="modal-panel transform scale-95 transition-transform duration-300 bg-white dark:bg-slate-900 rounded-3xl shadow w-full max-w-lg mx-4 border border-blue-100 dark:border-slate-800 overflow-hidden">
+            <div class="relative px-6 py-5 bg-gradient-to-br from-blue-700 via-blue-600 to-blue-500 overflow-hidden">
+                <div class="absolute inset-0 modal-header-pattern opacity-50"></div>
+                <div class="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
+                <div class="absolute -bottom-12 -left-8 w-28 h-28 bg-white/10 rounded-full blur-xl"></div>
+                <div class="relative flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-inner">
+                            <i class="fa-solid fa-rocket text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-black text-white text-base">Update Progress Tahap</h3>
+                            <p class="text-[10px] uppercase text-blue-200" id="updateProgressStageName"></p>
+                        </div>
+                    </div>
+                    <button type="button" onclick="closeUpdateProgressModal()"
+                        class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center">
+                        <i class="fa-solid fa-xmark text-white"></i>
+                    </button>
+                </div>
+            </div>
+
+            <form id="updateProgressForm" method="POST" action="" class="p-6 space-y-5">
+                @csrf
+                <input type="hidden" name="action" value="select">
+                <input type="hidden" name="stage" id="updateProgressStageInput" value="">
+
+                <div class="flex items-center justify-between p-4 bg-blue-50/50 rounded-xl border border-blue-100">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600">
+                            <i class="fa-solid fa-flag text-xs"></i>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-blue-900">Tandai sebagai Selesai</label>
+                            <p class="text-[9px] text-slate-500">Centang bila sudah selesai dikerjakan.</p>
+                        </div>
+                    </div>
+                    <div class="relative inline-block w-12 h-6">
+                        <input type="checkbox" id="stageCompleteToggle" class="peer opacity-0 w-0 h-0">
+                        <label for="stageCompleteToggle"
+                            class="absolute cursor-pointer top-0 left-0 right-0 bottom-0 rounded-full transition-colors duration-300 peer-checked:bg-blue-600 bg-slate-300">
+                            <span class="absolute inset-y-0 left-0 w-5 h-5 bg-white rounded-full shadow transform transition-transform duration-300 peer-checked:translate-x-6"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-black uppercase text-blue-500 mb-2">Catatan / Deskripsi Pengerjaan</label>
+                    <textarea id="stageDescriptionInput" name="description" rows="3" maxlength="500"
+                        placeholder="Jelaskan detail pengerjaan tahap ini..."
+                        class="w-full px-4 py-3 bg-blue-50/50 border border-blue-100 rounded-xl text-xs font-medium text-blue-900 placeholder:text-slate-400 resize-none"></textarea>
+                    <p class="text-[9px] text-blue-300 mt-1.5"><span id="descCounter">0</span>/500 karakter</p>
+                </div>
+
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="closeUpdateProgressModal()"
+                        class="flex-1 px-4 py-2.5 bg-white border border-blue-200 text-slate-500 rounded-xl text-[11px] font-bold hover:bg-slate-50">
+                        Batal
+                    </button>
+                    <button type="button" id="saveProgressBtn"
+                        class="flex-1 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-[11px] font-bold flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-floppy-disk"></i> Simpan Update
+                    </button>
+                </div>
+            </form>
+        </div>
+        </div>
+
+    <style>
+        @keyframes modalPop {
+            from { opacity: 0; transform: scale(.92) translateY(12px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .modal-panel { animation: modalPop .35s cubic-bezier(.34, 1.56, .64, 1) forwards; }
     </style>
+
+    <script>
+        let currentStageName = null;
+
+        function openUpdateProgressModal(order, stageName) {
+            currentStageName = stageName;
+            document.getElementById('updateProgressStageName').textContent = stageName;
+            document.getElementById('updateProgressStageInput').value = stageName;
+            document.getElementById('stageDescriptionInput').value = '';
+            document.getElementById('stageCompleteToggle').checked = false;
+            document.getElementById('descCounter').textContent = '0';
+
+            // Set form action ke route progres freelancer
+            document.getElementById('updateProgressForm').action = '{{ route('freelancer.workspaces.progress', $workspace) }}';
+
+            const modal = document.getElementById('updateProgressModal');
+            const modalInner = modal.querySelector('div.modal-panel');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modalInner.classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeUpdateProgressModal() {
+            const modal = document.getElementById('updateProgressModal');
+            const modalInner = modal.querySelector('div.modal-panel');
+            modal.classList.add('opacity-0');
+            modalInner.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                currentStageName = null;
+            }, 300);
+        }
+
+        window.openUpdateProgressModal = openUpdateProgressModal;
+        window.closeUpdateProgressModal = closeUpdateProgressModal;
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Counter karakter deskripsi modal
+            const descTextarea = document.getElementById('stageDescriptionInput');
+            if (descTextarea) {
+                descTextarea.addEventListener('input', function() {
+                    document.getElementById('descCounter').textContent = this.value.length;
+                });
+            }
+
+            // Simpan progress modal
+            const saveBtn = document.getElementById('saveProgressBtn');
+            if (saveBtn) {
+                saveBtn.onclick = function() {
+                    const description = descTextarea.value.trim();
+                    if (!description) {
+                        descTextarea.focus();
+                        descTextarea.classList.add('border-2', 'border-red-400');
+                        setTimeout(() => descTextarea.classList.remove('border-2', 'border-red-400'), 1000);
+                        return;
+                    }
+                    const form = document.getElementById('updateProgressForm');
+                    const actionInput = form.querySelector('input[name="action"]');
+                    actionInput.value = document.getElementById('stageCompleteToggle').checked ? 'select' : 'note';
+                    form.submit();
+                };
+            }
+
+            // Tutup modal via backdrop
+            const modal = document.getElementById('updateProgressModal');
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) closeUpdateProgressModal();
+                });
+            }
+
+            // Tutup modal via ESC
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    if (modal && !modal.classList.contains('hidden')) closeUpdateProgressModal();
+                }
+            });
+        });
+        </script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const circles = document.querySelectorAll('.stage-circle');
