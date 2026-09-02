@@ -1076,14 +1076,14 @@
                             </div>
                             <div class="p-6">
                                 @if ($workspace->progressHistories->isNotEmpty())
-                                    <div class="space-y-6">
+                                    <div class="space-y-3 max-h-[340px] overflow-y-auto pr-2 custom-scrollbar">
                                         @foreach ($workspace->progressHistories as $history)
                                             <div class="relative pl-8 border-l border-blue-100/70 dark:border-slate-800 ml-2">
                                                 <div class="absolute -left-[13px] top-0 w-6 h-6 rounded-full bg-white dark:bg-slate-900 border border-blue-200 dark:border-slate-700 shadow-[0_0_10px_rgba(59,130,246,0.2)] flex items-center justify-center z-10">
                                                     <span class="text-[8px] text-blue-600 dark:text-blue-400 font-black">{{ $history->progress }}%</span>
                                                 </div>
-                                                <div class="bg-blue-50/40 dark:bg-slate-800/40 rounded-2xl p-4 border border-blue-50 dark:border-slate-800 ml-1 hover:bg-blue-50 dark:hover:bg-slate-800 hover:border-blue-100 dark:hover:border-slate-700 transition-colors">
-                                                    <div class="flex flex-wrap items-center justify-between gap-2 mb-2 border-b border-blue-100/50 dark:border-slate-800 pb-2">
+                                                <div class="bg-blue-50/40 dark:bg-slate-800/40 rounded-2xl p-3 border border-blue-50 dark:border-slate-800 ml-1 hover:bg-blue-50 dark:hover:bg-slate-800 hover:border-blue-100 dark:hover:border-slate-700 transition-colors">
+                                                    <div class="flex flex-wrap items-center justify-between gap-2 mb-1.5 border-b border-blue-100/50 dark:border-slate-800 pb-1.5">
                                                         <span class="text-xs font-black text-blue-900 dark:text-white">{{ $history->stage }}</span>
                                                         <span class="text-[9px] font-bold tracking-widest uppercase text-blue-400 dark:text-slate-400 bg-white dark:bg-slate-800 px-2 py-0.5 rounded shadow-sm border border-blue-50 dark:border-slate-800">{{ $history->created_at->format('d M Y') }}</span>
                                                     </div>
