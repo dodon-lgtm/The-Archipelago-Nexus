@@ -16,6 +16,7 @@ class Workspace extends Model
         'freelancer_id',
         'status',
         'overdue_previous_status',
+        'progress',
         'stages',
     ];
 
@@ -67,13 +68,15 @@ class Workspace extends Model
      * dinormalisasi menjadi item bertipe object:
      *
      *     [
-     *       'name'        => string,
-     *       'description' => ?string,
-     *       'created_by'  => ?int (users.id pembuat tahap),
+     *       'name'         => string,
+     *       'description'  => ?string,
+     *       'created_by'   => ?int (users.id pembuat tahap),
+     *       'is_completed' => bool (status ceklis; count-based progress),
      *     ]
      *
      * Entry lama yang masih berbentuk string polos otomatis dianggap
-     * dibuat oleh freelancer workspace ini (backward-compatible, data aman).
+     * dibuat oleh freelancer workspace ini (backward-compatible, data aman),
+     * dan `is_completed` di-default ke false bila flag belum pernah disimpan.
      */
     public function stageItems(): array
     {
@@ -84,6 +87,7 @@ class Workspace extends Model
                 'name' => 'Analisis Kebutuhan',
                 'description' => null,
                 'created_by' => $this->freelancer_id ? (int) $this->freelancer_id : null,
+                'is_completed' => false,
             ]];
         }
 
@@ -104,6 +108,7 @@ class Workspace extends Model
                     'created_by' => isset($entry['created_by']) && $entry['created_by'] !== null
                         ? (int) $entry['created_by']
                         : $defaultCreator,
+                    'is_completed' => !empty($entry['is_completed']),
                 ];
                 continue;
             }
@@ -116,6 +121,7 @@ class Workspace extends Model
                 'name' => $name,
                 'description' => null,
                 'created_by' => $defaultCreator,
+                'is_completed' => false,
             ];
         }
 
@@ -124,6 +130,7 @@ class Workspace extends Model
                 'name' => 'Analisis Kebutuhan',
                 'description' => null,
                 'created_by' => $defaultCreator,
+                'is_completed' => false,
             ]];
         }
 
@@ -148,38 +155,61 @@ class Workspace extends Model
     }
 
     /**
-     * Hitung persentase progres dari urutan stage (1-based) secara server-side.
-     * Formula: round(current_order / total_stages * 100). Stage terakhir = 100%.
+     * Jumlah tahap yang sudah ditandai selesai (is_completed = true).
+     * Ini adalah dasar perhitungan progress COUNTS-BASED (bukan nomor urut).
      */
-    public function calculateProgressForStage(int $stageOrder): int
+    public function completedStageCount(): int
     {
-        $total = $this->totalStages();
-        if ($total <= 0 || $stageOrder <= 0) {
-            // stage_order <= 0 artinya pekerjaan belum dimulai → 0% (bukan 100%).
-            return 0;
+        $completed = 0;
+        foreach ($this->stageItems() as $item) {
+            if (!empty($item['is_completed'])) {
+                $completed++;
+            }
         }
 
-        $clampedOrder = min($stageOrder, $total);
-
-        // Stage terakhir selalu 100%
-        if ($clampedOrder >= $total) {
-            return 100;
-        }
-
-        return (int) round(($clampedOrder / $total) * 100);
+        return $completed;
     }
 
     /**
-     * Persentase progres saat ini berdasarkan stage aktif terakhir (server-side).
+     * Hitung persentase progres murni dari JUMLAH CEKLIS yang selesai.
+     *
+     * Formula: round(COUNT(tahap_selesai) / COUNT(semua_tahap) * 100)
+     *
+     * Contoh: 7 tahap total, freelance mencentang tahap 1, 2, 3, dan 7
+     * (4 tahap selesai) → (4 / 7) * 100 = 57%.
+     *
+     * Tahap lain yang belum dicentang TIDAK ikut dianggap selesai dan
+     * TIDAK memengaruhi nilai ini — progres HANYA memperhitungkan jumlah
+     * item yang berstatus selesai.
+     */
+    public function calculateProgressCountBased(): int
+    {
+        $total = $this->totalStages();
+        if ($total <= 0) {
+            return 0;
+        }
+
+        return (int) round(($this->completedStageCount() / $total) * 100);
+    }
+
+    /**
+     * Hitung persentase progres.
+     *
+     * @deprecated Pakai `currentProgress()` / `calculateProgressCountBased()`.
+     *             Param `$stageOrder` TIDAK dipakai lagi — progres murni
+     *             dihitung dari jumlah tahap selesai, bukan nomor urut.
+     */
+    public function calculateProgressForStage(int $stageOrder): int
+    {
+        return $this->calculateProgressCountBased();
+    }
+
+    /**
+     * Persentase progres saat ini (server-side, murni count-based).
      */
     public function currentProgress(): int
     {
-        $latest = $this->latestProgress;
-        $order = $latest?->stage_order ? (int) $latest->stage_order : 0;
-        if ($order <= 0) {
-            return 0;
-        }
-        return $this->calculateProgressForStage($order);
+        return $this->calculateProgressCountBased();
     }
 
     /**
@@ -188,6 +218,15 @@ class Workspace extends Model
     public function currentStage(): ?string
     {
         return $this->latestProgress?->stage;
+    }
+
+    /**
+     * Accessor untuk active_stage_name - digunakan di view untuk menampilkan
+     * nama tahap yang sedang aktif/terakhir dikerjakan.
+     */
+    public function getActiveStageNameAttribute()
+    {
+        return $this->currentStage();
     }
 
     public function payment()

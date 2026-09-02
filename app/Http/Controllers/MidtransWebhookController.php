@@ -170,7 +170,13 @@ class MidtransWebhookController extends Controller
                         // Idempotent: jika sudah held/disputed/resolved, hold() menjadi no-op.
                         app(EscrowService::class)->hold($payment);
 
-                        $payment->workspace->update(['status' => 'Sedang Dikerjakan']);
+                        // Jangan timpa status 'Selesai': bila hasil pekerjaan sudah diterima
+                        // perusahaan sebelum pembayaran masuk, status workspace tidak boleh
+                        // dikembalikan ke 'Sedang Dikerjakan' (mencegah dana terjebak held
+                        // tanpa jalur UI untuk melepasnya).
+                        if ((string) $payment->workspace->status !== 'Selesai') {
+                            $payment->workspace->update(['status' => 'Sedang Dikerjakan']);
+                        }
                     }
                 }
             });
