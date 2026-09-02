@@ -36,6 +36,7 @@
                     <option value="menunggu" @selected(request('status') == 'menunggu')>Menunggu</option>
                     <option value="ditinjau" @selected(request('status') == 'ditinjau')>Sedang Ditinjau</option>
                     <option value="menunggu-bukti" @selected(request('status') == 'menunggu-bukti')>Menunggu Bukti</option>
+                    <option value="ditangani" @selected(request('status') == 'ditangani')>Ditangani</option>
                     <option value="selesai" @selected(request('status') == 'selesai')>Selesai</option>
                     <option value="ditolak" @selected(request('status') == 'ditolak')>Ditolak</option>
                 </select>
@@ -100,6 +101,7 @@
                                     @if($report->status == 'menunggu') bg-amber-50 text-amber-600 border-amber-100
                                     @elseif($report->status == 'ditinjau') bg-blue-50 text-blue-600 border-blue-100
                                     @elseif($report->status == 'menunggu-bukti') bg-violet-50 text-violet-600 border-violet-100
+                                    @elseif($report->status == 'ditangani') bg-teal-50 text-teal-600 border-teal-100
                                     @elseif($report->status == 'selesai') bg-emerald-50 text-emerald-600 border-emerald-100
                                     @else bg-red-50 text-red-600 border-red-100 @endif">{{ \App\Models\Report::statusLabel($report->status) }}</span>
                                 <span class="block text-[10px] mt-1 text-slate-400 font-medium">{{ \App\Models\Report::targetLabel($report->target) }}</span>

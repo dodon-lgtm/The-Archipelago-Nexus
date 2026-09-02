@@ -11,10 +11,11 @@ class Report extends Model
 {
     use HasFactory;
 
-    // ─── STATUS REPORT V3 (5 status) ────────────────────────────
+    // ─── STATUS REPORT V3 (5 status + 'ditangani') ──────────────
     public const STATUS_MENUNGGU      = 'menunggu';
     public const STATUS_DITINJAU      = 'ditinjau';
     public const STATUS_MENUNGGU_BUKTI = 'menunggu-bukti';
+    public const STATUS_DITANGANI     = 'ditangani';
     public const STATUS_SELESAI       = 'selesai';
     public const STATUS_DITOLAK       = 'ditolak';
 
@@ -25,15 +26,19 @@ class Report extends Model
         self::STATUS_MENUNGGU,
         self::STATUS_DITINJAU,
         self::STATUS_MENUNGGU_BUKTI,
+        self::STATUS_DITANGANI,
         self::STATUS_SELESAI,
         self::STATUS_DITOLAK,
     ];
 
     // Status yang masih "aktif" (memblokir laporan duplikat).
+    // 'ditangani' tetap aktif: laporan sudah diterima Admin namun masih
+    // terbuka untuk tindakan lanjutan (perpanjangan deadline / pembatalan).
     public const ACTIVE_STATUSES = [
         self::STATUS_MENUNGGU,
         self::STATUS_DITINJAU,
         self::STATUS_MENUNGGU_BUKTI,
+        self::STATUS_DITANGANI,
     ];
 
     // Status yang dianggap "selesai" (mengizinkan laporan baru untuk kasus sama).
@@ -231,6 +236,7 @@ class Report extends Model
             self::STATUS_MENUNGGU       => 'Menunggu',
             self::STATUS_DITINJAU       => 'Sedang Ditinjau',
             self::STATUS_MENUNGGU_BUKTI => 'Menunggu Bukti Tambahan',
+            self::STATUS_DITANGANI      => 'Ditangani',
             self::STATUS_SELESAI        => 'Selesai',
             self::STATUS_DITOLAK        => 'Ditolak',
             self::STATUS_DIPROSES       => 'Diproses',

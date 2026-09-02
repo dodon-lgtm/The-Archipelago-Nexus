@@ -13,6 +13,7 @@ use App\Services\EscrowService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use RuntimeException;
 
 /**
  * ReportService - Memusatkan logika pembuatan & pemrosesan laporan (V3).
@@ -431,6 +432,110 @@ case Report::TARGET_WEBSITE:
         });
 
         return $report->fresh();
+    }
+
+    /**
+     * Terima Laporan Keterlambatan (aksi Admin, khusus kategori 'keterlambatan').
+     *
+     * Arti "diterima":
+     *   - Laporan dinyatakan VALID oleh Admin.
+     *   - Status laporan menjadi 'ditangani' (Ditangani) — masih terbuka
+     *     untuk tindakan lanjutan (perpanjangan deadline / pembatalan project).
+     *   - Freelancer yang dilaporkan menerima PERINGATAN RESMI.
+     *   - Company (pelapor) menerima notifikasi bahwa laporannya diterima.
+     *
+     * Yang TIDAK dilakukan (sesuai kebijakan alur keterlambatan):
+     *   - TIDAK mengubah/memindahkan dana escrow (no release/refund/split).
+     *   - TIDAK mengubah status workspace/project (proyek tetap berjalan).
+     *   - TIDAK menghapus project/penawaran.
+     *
+     * @throws RuntimeException bila bukan laporan keterlambatan / sudah ditutup.
+     */
+    public function acceptKeterlambatan(Report $report, ?string $adminNote = null, ?int $handledBy = null): Report
+    {
+        if ($report->category !== Report::CATEGORY_KETERLAMBATAN) {
+            throw new RuntimeException('Tindakan "Terima Laporan" hanya berlaku untuk laporan kategori Keterlambatan.');
+        }
+
+        if (in_array($report->status, Report::RESOLVED_STATUSES, true)) {
+            throw new RuntimeException('Laporan ini sudah ditutup, tidak dapat diterima lagi.');
+        }
+
+        if ($report->status === Report::STATUS_DITANGANI) {
+            throw new RuntimeException('Laporan ini sudah diterima dan sedang ditangani.');
+        }
+
+        DB::transaction(function () use ($report, $adminNote, $handledBy) {
+            $data = [
+                'status'      => Report::STATUS_DITANGANI,
+                'admin_note'  => $adminNote ?? $report->admin_note,
+                // Laporan tetap TERBUKA (resolved_at null) untuk menunggu
+                // tindakan lanjutan dari Admin.
+                'resolved_at' => null,
+            ];
+
+            if ($handledBy && !$report->handled_by) {
+                $data['handled_by'] = $handledBy;
+            }
+
+            $report->update($data);
+
+            $this->notifyKeterlambatanAccepted($report, $data['admin_note']);
+        });
+
+        return $report->fresh();
+    }
+
+    /**
+     * Notifikasi setelah laporan keterlambatan diterima Admin:
+     *   1. Freelancer yang dilaporkan -> peringatan resmi.
+     *   2. Company (pelapor) -> konfirmasi laporan diterima.
+     *
+     * Tidak ada perubahan dana / workspace — hanya notifikasi.
+     */
+    protected function notifyKeterlambatanAccepted(Report $report, ?string $adminNote): void
+    {
+        $workspace = $report->workspace_id ? Workspace::with('project')->find($report->workspace_id) : null;
+        $projectName = $report->project?->project_name
+            ?? ($workspace?->project->project_name ?? '');
+
+        $noteSuffix = $adminNote ? "\n\nCatatan Admin:\n" . $adminNote : '';
+
+        // 1) Freelancer yang dilaporkan: peringatan resmi keterlambatan.
+        if ($report->reported_user_id) {
+            NotificationService::sendTo(
+                user: (int) $report->reported_user_id,
+                type: 'report.delay_accepted',
+                title: 'Peringatan Resmi: Keterlambatan Dikonfirmasi',
+                message: 'Admin mengonfirmasi bahwa laporan keterlambatan pada proyek "'
+                    . $projectName . '" adalah VALID dan kini berstatus "Ditangani". '
+                    . 'Proyek tetap berjalan dan wajib Anda selesaikan. '
+                    . 'Segera selesaikan pekerjaan Anda.' . $noteSuffix,
+                redirect: $workspace ? route('freelancer.workspaces.show', $workspace) : null,
+                senderId: Auth::id(),
+                workspaceId: $report->workspace_id,
+                projectId: $report->project_id,
+                metadata: ['report_id' => $report->id],
+            );
+        }
+
+        // 2) Company (pelapor): laporan keterlambatan diterima.
+        NotificationService::sendTo(
+            user: (int) $report->reporter_id,
+            type: 'report.delay_accepted',
+            title: 'Laporan Keterlambatan Diterima',
+            message: 'Laporan keterlambatan "' . ($report->subject ?? '') . '" pada proyek "'
+                . $projectName . '" telah diterima Admin dan kini berstatus "Ditangani". '
+                . 'Proyek tetap berjalan; tindakan lanjutan (perpanjangan deadline / '
+                . 'pembatalan project) akan diputuskan kemudian.' . $noteSuffix,
+            redirect: $workspace
+                ? route('company.workspaces.show', $workspace)
+                : ($report->reporter?->role === 'company' ? route('company.reports.show', $report) : null),
+            senderId: Auth::id(),
+            workspaceId: $report->workspace_id,
+            projectId: $report->project_id,
+            metadata: ['report_id' => $report->id],
+        );
     }
 
     /**

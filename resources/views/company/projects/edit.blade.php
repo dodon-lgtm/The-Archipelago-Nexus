@@ -9,9 +9,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         tailwind.config = tailwind.config || {};
-    tailwind.config.darkMode = 'class';
         tailwind.config.darkMode = 'class';
     </script>
 
@@ -416,11 +416,10 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                                 ? 'bg-blue-600 border-blue-600 text-white shadow-[0_5px_15px_rgba(37,99,235,0.3)]'
                                                 : 'bg-white border-blue-200 text-blue-950 dark:bg-slate-800 dark:border-slate-700 dark:text-white hover:border-blue-400' }}
                                             {{ $isLocked('status') ? 'opacity-60 cursor-not-allowed' : '' }}">
-                                            <input type="radio" name="status" value="{{ $value }}"
+                                            <input type="radio" name="status" value="{{ $value }}" data-label="{{ $label }}"
                                                 {{ $isSelected ? 'checked' : '' }}
                                                 {{ $isLocked('status') ? 'disabled' : '' }}
-                                                onclick="return confirm('Apakah Anda yakin ingin mengubah status menjadi {{ $label }}? Proyek akan dipindahkan ke halaman yang sesuai.')"
-                                                class="w-4 h-4 accent-blue-600">
+                                                class="status-radio w-4 h-4 accent-blue-600">
                                             <span class="text-sm font-bold">{{ $label }}</span>
                                         </label>
                                     @endforeach
@@ -451,8 +450,6 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
             </div>
         </main>
 
-       
-
     </div>
 
     <script>
@@ -481,6 +478,44 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                     }
                 });
             }
+
+            // SweetAlert2 Confirmation for Status Radio Selection
+            const statusRadios = document.querySelectorAll('.status-radio');
+            let currentStatusInput = document.querySelector('.status-radio:checked');
+            let currentStatusValue = currentStatusInput ? currentStatusInput.value : null;
+
+            statusRadios.forEach(radio => {
+                radio.addEventListener('click', function(e) {
+                    if (this.value === currentStatusValue) return;
+
+                    // Tahan perubahan otomatis sebelum dikonfirmasi
+                    e.preventDefault();
+
+                    const targetRadio = this;
+                    const statusLabel = targetRadio.getAttribute('data-label') || targetRadio.value;
+
+                    Swal.fire({
+                        title: 'Ubah Status Proyek?',
+                        text: `Proyek akan dipindahkan ke status "${statusLabel}". Apakah Anda yakin?`,
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#2563eb',
+                        cancelButtonColor: '#64748b',
+                        confirmButtonText: 'Ya, Ubah',
+                        cancelButtonText: 'Batal',
+                        customClass: {
+                            popup: 'rounded-2xl dark:bg-slate-900 dark:text-white',
+                            confirmButton: 'rounded-xl px-5 py-2.5 font-bold',
+                            cancelButton: 'rounded-xl px-5 py-2.5 font-bold'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            targetRadio.checked = true;
+                            currentStatusValue = targetRadio.value;
+                        }
+                    });
+                });
+            });
         });
     </script>
 </body>

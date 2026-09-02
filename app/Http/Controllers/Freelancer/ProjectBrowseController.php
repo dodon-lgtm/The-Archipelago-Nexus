@@ -298,9 +298,13 @@ class ProjectBrowseController extends Controller
 
         $request->validate([
             'harga_penawaran' => 'required|numeric',
-            'estimasi_hari'   => 'required|numeric',
+            'estimasi_hari'   => 'required|integer|min:1',
             'pesan'           => 'required',
             'proposal'        => 'required|mimes:pdf|max:5120',
+        ], [
+            'estimasi_hari.required' => 'Estimasi pengerjaan wajib diisi.',
+            'estimasi_hari.integer'  => 'Estimasi pengerjaan harus berupa bilangan bulat positif.',
+            'estimasi_hari.min'        => 'Estimasi pengerjaan minimal 1 hari.',
         ]);
 
         $proposal = $request

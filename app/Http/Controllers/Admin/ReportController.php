@@ -143,6 +143,43 @@ public function show(Report $report): View
             ->with('success', 'Penawaran berhasil dihapus.');
     }
 
+    /**
+     * Terima Laporan Keterlambatan: laporan dinyatakan VALID oleh Admin.
+     *
+     * - Status laporan menjadi 'ditangani' (Ditangani).
+     * - Freelancer menerima peringatan resmi; company menerima notifikasi.
+     * - Project/workspace TETAP berjalan (tidak dibatalkan/dihapus).
+     * - Dana escrow TIDAK disentuh (no release/refund/split).
+     */
+    public function acceptReport(Request $request, Report $report): RedirectResponse
+    {
+        $validated = $request->validate([
+            'admin_note' => ['nullable', 'string', 'max:2000'],
+        ]);
+
+        try {
+            $this->reportService->acceptKeterlambatan(
+                $report,
+                $validated['admin_note'] ?? null,
+                Auth::id()
+            );
+        } catch (\RuntimeException $e) {
+            return redirect()
+                ->route('admin.reports.show', $report)
+                ->with('error', $e->getMessage());
+        } catch (\Exception $e) {
+            Log::error('Gagal menerima laporan keterlambatan #' . $report->id . ': ' . $e->getMessage());
+
+            return redirect()
+                ->route('admin.reports.show', $report)
+                ->with('error', 'Terjadi kesalahan saat menerima laporan keterlambatan.');
+        }
+
+        return redirect()
+            ->route('admin.reports.show', $report)
+            ->with('success', 'Laporan keterlambatan diterima. Freelancer menerima peringatan resmi dan company telah diberi notifikasi. Proyek tetap berjalan.');
+    }
+
     // ─────────────────────────────────────────────────────────────
     // DISPUTE RESOLUTION — hanya Admin, backend wajib authorisasi
     // (rute berada dalam grup middleware ensureAdmin).
