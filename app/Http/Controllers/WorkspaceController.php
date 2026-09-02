@@ -327,11 +327,12 @@ class WorkspaceController extends Controller
 
         $request->validate([
             'action' => 'required|in:select,note,add,rename,delete,move_next',
-            // Untuk "select": pilih stage yang ada (disimpan sebagai nama stage + order).
-            // "progress" TIDAK divalidasi sebagai input otoritatif dan TIDAK dipakai.
-            'stage' => 'nullable|string|max:255',
-            'new_stage' => 'nullable|string|max:255',
-            'old_stage' => 'nullable|string|max:255',
+            // Untuk "select"/"note": stage wajib diisi (nama stage yang dipilih)
+            // Untuk "add"/"rename": new_stage/old_stage wajib diisi
+            // Untuk "move_next": stage tidak dibutuhkan (dihitung otomatis)
+            'stage' => $request->action === 'move_next' ? 'nullable' : ($request->action === 'add' ? 'nullable' : 'required|string|max:255'),
+            'new_stage' => $request->action === 'rename' ? 'required|string|max:255' : ($request->action === 'add' ? 'required|string|max:255' : 'nullable|string|max:255'),
+            'old_stage' => $request->action === 'delete' ? 'required|string|max:255' : 'nullable|string|max:255',
             'description' => 'nullable|string|max:2000',
         ]);
 
@@ -384,7 +385,11 @@ class WorkspaceController extends Controller
                     return $this->backWithError('Tahap "' . $newStage . '" sudah ada.');
                 }
                 // Ganti nama + deskripsi (dari form Edit tahap), pertahankan urutan (posisi) + pembuat.
-                $stageItems[$pos]['name'] = $newStage;
+                // Gunakan fallback: jika newStage kosong/tidak valid,pertahankan nama lama
+                $finalNewStage = $request->filled('new_stage') && trim($request->input('new_stage')) !== ''
+                    ? $newStage
+                    : $oldStage;
+                $stageItems[$pos]['name'] = $finalNewStage;
                 $stageItems[$pos]['description'] = $description !== null && $description !== ''
                     ? (string) $description
                     : null;

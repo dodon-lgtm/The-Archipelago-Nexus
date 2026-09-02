@@ -753,7 +753,7 @@
                                                     <div class="border rounded-xl transition-all {{ $bg }}">
                                                         <div class="flex items-center gap-1.5">
                                                             <div onclick="selectStage({{ $order }})" class="flex-1 min-w-0 flex items-center gap-2 cursor-pointer px-2.5 py-2">
-                                                                <p class="flex-1 min-w-0 text-[12px] font-bold truncate {{ $isActive ? 'text-white' : 'text-blue-950 dark:text-white' }}">{{ $stage }}</p>
+                                                                <p class="flex-1 min-w-0 text-[12px] font-bold truncate {{ $isActive ? 'text-white' : 'text-blue-950 dark:text-white' }}">{{ $stage ?? 'Tanpa Nama' }}</p>
                                                                 <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-md {{ $labelColor }} shrink-0 leading-none">{{ $label }}</span>
                                                             </div>
                                                             @if ($canManageStage)
@@ -765,8 +765,8 @@
                                                                     <form method="POST" action="{{ route($stageActionRoute, $workspace) }}" class="inline delete-stage-form shrink-0">
                                                                         @csrf
                                                                         <input type="hidden" name="action" value="delete">
-                                                                        <input type="hidden" name="old_stage" value="{{ $stage }}">
-                                                                        <button type="button" onclick="openDeleteStageModal(this.closest('form'), '{{ addslashes($stage) }}')"
+<input type="hidden" name="old_stage" value="{{ $stage ?? 'Tanpa Nama' }}">
+                                                                        <button type="button" onclick="openDeleteStageModal(this.closest('form'), '{{ addslashes($stage ?? 'Tanpa Nama') }}')"
                                                                             class="inline-flex items-center justify-center w-6 h-6 rounded-md text-[10px] font-bold transition {{ $isActive ? 'bg-red-600 text-white border border-red-600 hover:bg-red-700' : 'text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/40 hover:bg-red-100' }}">
                                                                             <i class="fa-solid fa-trash text-[9px]"></i>
                                                                         </button>
@@ -779,8 +779,8 @@
                                                                 <form method="POST" action="{{ route($stageActionRoute, $workspace) }}" class="bg-white dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-lg p-2.5 space-y-2">
                                                                     @csrf
                                                                     <input type="hidden" name="action" value="rename">
-                                                                    <input type="hidden" name="old_stage" value="{{ $stage }}">
-                                                                    <input type="text" name="new_stage" value="{{ $stage }}" maxlength="255" placeholder="Nama tahap"
+                                                                    <input type="hidden" name="old_stage" value="{{ $stage ?? 'Tanpa Nama' }}">
+                                                                    <input type="text" name="new_stage" value="{{ $stage ?? 'Tanpa Nama' }}" maxlength="255" placeholder="Nama tahap"
                                                                         class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-700 rounded-md text-xs font-semibold dark:text-white focus:outline-none focus:border-blue-400">
                                                                     <textarea name="description" rows="2" maxlength="2000" placeholder="Deskripsi (opsional)"
                                                                         class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-700 rounded-md text-xs font-medium dark:text-white resize-none focus:outline-none">{{ $stageItem['description'] ?? '' }}</textarea>
@@ -842,7 +842,7 @@
                                     <form method="POST" action="{{ route('freelancer.workspaces.progress', $workspace) }}" class="flex gap-2">
                                         @csrf
                                         <input type="hidden" name="action" value="add">
-                                        <input type="text" name="new_stage" maxlength="255" placeholder="Nama tahap baru..."
+                                        <input type="text" name="new_stage" maxlength="255" required placeholder="Nama tahap baru..."
                                             class="flex-1 px-3 py-2 bg-white dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-lg text-xs font-semibold dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-blue-400">
                                         <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-[11px] font-bold transition">Tambah</button>
                                     </form>
@@ -1576,6 +1576,11 @@
                         return;
                     }
                     const form = document.getElementById('updateProgressForm');
+                    // Pastikan nilai stage ikut terkirim saat submit
+                    const stageInput = form.querySelector('input[name="stage"]');
+                    if (stageInput) {
+                        stageInput.value = document.getElementById('updateProgressStageInput').value;
+                    }
                     const actionInput = form.querySelector('input[name="action"]');
                     actionInput.value = document.getElementById('stageCompleteToggle').checked ? 'select' : 'note';
                     form.submit();
