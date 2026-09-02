@@ -220,6 +220,15 @@ class Workspace extends Model
         return $this->latestProgress?->stage;
     }
 
+    /**
+     * Accessor untuk active_stage_name - digunakan di view untuk menampilkan
+     * nama tahap yang sedang aktif/terakhir dikerjakan.
+     */
+    public function getActiveStageNameAttribute()
+    {
+        return $this->currentStage();
+    }
+
     public function payment()
     {
         return $this->hasOne(Payment::class, 'workspace_id');

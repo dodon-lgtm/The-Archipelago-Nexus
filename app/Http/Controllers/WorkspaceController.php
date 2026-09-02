@@ -469,9 +469,9 @@ class WorkspaceController extends Controller
                     'updated_by' => $userId,
                 ]);
 
-                return $this->backWithSuccess('Catatan tahap \\"' . $stage . '\\" berhasil diperbarui.');
+                return $this->backWithSuccess('Catatan tahap "' . $stage . '" berhasil diperbarui.');
 
-                        case 'select':
+            case 'select':
             default:
                 // Freelancer memilih salah satu stage yang sudah ada.
                 // Aksi = TOGGLE ceklis: HANYA status tahap yang dipilih yang

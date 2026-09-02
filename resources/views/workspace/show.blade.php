@@ -554,9 +554,9 @@
                                             <div class="w-full bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-full h-2 overflow-hidden">
                                                 <div class="h-full rounded-full bg-gradient-to-r from-blue-600 to-blue-400 transition-all duration-700" style="width: {{ $progressValue }}%"></div>
                                             </div>
-                                            @if ($activeStage)
+                                                                                        @if ($activeStage ?? $workspace->active_stage_name)
                                                 <p class="mt-2 flex items-center gap-1.5 text-[11px] font-bold text-blue-600 dark:text-blue-300 truncate">
-                                                    <i class="fa-solid fa-play text-[8px]"></i> {{ $activeStage }}
+                                                    <i class="fa-solid fa-play text-[8px]"></i> {{ $activeStage ?? $workspace->active_stage_name }}
                                                 </p>
                                             @else
                                                 <p class="mt-2 text-[11px] font-bold text-blue-300 dark:text-slate-500 truncate">Belum ada tahap aktif</p>
@@ -1440,7 +1440,7 @@
         }
         </style>
 
-    {{-- MODAL: Update Progress Workspace --}}
+        {{-- MODAL: Update Progress Workspace --}}
     <div id="updateProgressModal" class="fixed inset-0 z-[250] flex items-center justify-center bg-black/60 hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm">
         <div class="modal-panel transform scale-95 transition-transform duration-300 bg-white dark:bg-slate-900 rounded-3xl shadow w-full max-w-lg mx-4 border border-blue-100 dark:border-slate-800 overflow-hidden">
             <div class="relative px-6 py-5 bg-gradient-to-br from-blue-700 via-blue-600 to-blue-500 overflow-hidden">
@@ -1479,13 +1479,11 @@
                             <p class="text-[9px] text-slate-500">Centang bila sudah selesai dikerjakan.</p>
                         </div>
                     </div>
-                    <div class="relative inline-block w-12 h-6">
-                        <input type="checkbox" id="stageCompleteToggle" class="peer opacity-0 w-0 h-0">
-                        <label for="stageCompleteToggle"
-                            class="absolute cursor-pointer top-0 left-0 right-0 bottom-0 rounded-full transition-colors duration-300 peer-checked:bg-blue-600 bg-slate-300">
-                            <span class="absolute inset-y-0 left-0 w-5 h-5 bg-white rounded-full shadow transform transition-transform duration-300 peer-checked:translate-x-6"></span>
-                        </label>
-                    </div>
+                    <label class="relative inline-block w-12 h-6">
+                        <input type="checkbox" id="stageCompleteToggle" name="is_completed" value="1" class="sr-only peer">
+                        <span class="absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-gray-200 rounded-full transition-colors duration-300 peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full">
+                        </span>
+                    </label>
                 </div>
 
                 <div>
@@ -1508,7 +1506,7 @@
                 </div>
             </form>
         </div>
-        </div>
+    </div>
 
     <style>
         @keyframes modalPop {
