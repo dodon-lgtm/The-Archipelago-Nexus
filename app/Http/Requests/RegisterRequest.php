@@ -30,6 +30,24 @@ class RegisterRequest extends FormRequest
             'company_phone' => [$isCompany ? 'required' : 'nullable','string','max:255'],
             'company_address' => [$isCompany ? 'required' : 'nullable','string'],
             'company_description' => ['nullable','string'],
+
+            // Consent fields
+            'terms_accepted' => ['required', 'accepted'],
+            'privacy_accepted' => ['required', 'accepted'],
+            'usage_accepted' => ['required', 'accepted'],
+            'marketing_accepted' => ['nullable', 'boolean'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'terms_accepted.required' => 'Anda harus menyetujui Syarat & Ketentuan untuk mendaftar.',
+            'terms_accepted.accepted' => 'Anda harus menyetujui Syarat & Ketentuan untuk mendaftar.',
+            'privacy_accepted.required' => 'Anda harus menyetujui Kebijakan Privasi untuk mendaftar.',
+            'privacy_accepted.accepted' => 'Anda harus menyetujui Kebijakan Privasi untuk mendaftar.',
+            'usage_accepted.required' => 'Anda harus menyetujui Kebijakan Penggunaan Platform untuk mendaftar.',
+            'usage_accepted.accepted' => 'Anda harus menyetujui Kebijakan Penggunaan Platform untuk mendaftar.',
         ];
     }
 }

@@ -76,8 +76,17 @@ Route::post('/reset-password', [\App\Http\Controllers\Auth\ForgotPasswordControl
 // ──────────────────────────────────────────────
 Route::get('/kebijakan-privasi', [LegalPageController::class, 'privacyPolicy'])->name('kebijakan-privasi');
 Route::get('/syarat-ketentuan', [LegalPageController::class, 'termsConditions'])->name('syarat-ketentuan');
+Route::get('/kebijakan-penggunaan', [LegalPageController::class, 'usagePolicy'])->name('kebijakan-penggunaan');
 Route::get('/pusat-bantuan', [\App\Http\Controllers\HelpCenterController::class, 'index'])->name('help.index');
 Route::post('/pusat-bantuan/kontak', [\App\Http\Controllers\HelpCenterController::class, 'storeContact'])->name('help.contact');
+
+// ──────────────────────────────────────────────
+// CONSENT (RE-CONSENT WHEN POLICY VERSION CHANGES)
+// ──────────────────────────────────────────────
+Route::middleware(['auth'])->group(function () {
+    Route::get('/consent/required', [\App\Http\Controllers\ConsentController::class, 'showRequiredConsent'])->name('consent.required');
+    Route::post('/consent/required', [\App\Http\Controllers\ConsentController::class, 'storeRequiredConsent'])->name('consent.required.store');
+});
 
 // ──────────────────────────────────────────────
 // LANDING PAGE

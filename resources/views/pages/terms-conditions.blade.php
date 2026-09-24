@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @include('partials.theme-boot')
-    <title>Syarat &amp; Ketentuan - ApexForge Labs</title>
+    <title>Syarat & Ketentuan - ApexForge Labs</title>
 
     {{-- Tailwind CSS --}}
     <script src="https://cdn.tailwindcss.com"></script>
@@ -62,9 +62,23 @@
             <div class="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white text-xl mb-4 shadow-[0_10px_25px_-5px_rgba(16,185,129,0.4)]">
                 <i class="fa-solid fa-file-contract"></i>
             </div>
-            <h1 class="text-3xl sm:text-4xl font-black text-blue-950 dark:text-white tracking-tight">Syarat &amp; Ketentuan</h1>
-            <p class="mt-3 text-sm text-blue-900/50 dark:text-slate-400 font-medium">Terakhir diperbarui:
-                {{ $setting->updated_at ? $setting->updated_at->translatedFormat('d M Y') : '-' }}</p>
+            <h1 class="text-3xl sm:text-4xl font-black text-blue-950 dark:text-white tracking-tight">Syarat & Ketentuan</h1>
+            <div class="mt-3 flex flex-col sm:flex-row items-center justify-center gap-3 text-sm">
+                @if($policy)
+                    <span class="font-medium text-blue-900/50 dark:text-slate-400">
+                        Versi: <strong class="text-blue-700 dark:text-blue-300">v{{ $policy->version }}</strong>
+                    </span>
+                    <span class="font-medium text-blue-900/50 dark:text-slate-400">
+                        Berlaku sejak: <strong class="text-blue-700 dark:text-blue-300">{{ $policy->updated_at ? $policy->updated_at->translatedFormat('d M Y') : '-' }}</strong>
+                    </span>
+                    <span class="font-medium text-blue-900/50 dark:text-slate-400">
+                        Diperbarui: <strong class="text-blue-700 dark:text-blue-300">{{ $policy->updated_at ? $policy->updated_at->translatedFormat('d M Y') : '-' }}</strong>
+                    </span>
+                @else
+                    <p class="text-sm text-blue-900/50 dark:text-slate-400 font-medium">Terakhir diperbarui:
+                        {{ $setting->updated_at ? $setting->updated_at->translatedFormat('d M Y') : '-' }}</p>
+                @endif
+            </div>
         </div>
     </section>
 
@@ -72,7 +86,16 @@
     <section class="py-12 pb-24">
         <div class="max-w-3xl mx-auto px-6">
             <article class="bg-white dark:bg-slate-900 rounded-2xl border border-blue-100 dark:border-slate-800 shadow-sm p-6 sm:p-10">
-                @if (trim((string) $setting->terms_conditions_content) !== '')
+                @if ($policy && trim((string) $policy->content) !== '')
+                    <div class="space-y-4 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                        @foreach (preg_split('/\r\n|\r|\n/', $policy->content) as $paragraph)
+                            @php($text = trim($paragraph))
+                            @if ($text !== '')
+                                <p>{!! nl2br(e($text)) !!}</p>
+                            @endif
+                        @endforeach
+                    </div>
+                @elseif (trim((string) $setting->terms_conditions_content) !== '')
                     <div class="space-y-4 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
                         @foreach (preg_split('/\r\n|\r|\n/', $setting->terms_conditions_content) as $paragraph)
                             @php($text = trim($paragraph))
@@ -82,7 +105,7 @@
                         @endforeach
                     </div>
                 @else
-                    <p class="text-sm text-slate-400">Konten Syarat &amp; Ketentuan belum tersedia.</p>
+                    <p class="text-sm text-slate-400">Konten Syarat & Ketentuan belum tersedia.</p>
                 @endif
             </article>
         </div>

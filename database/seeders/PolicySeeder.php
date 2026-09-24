@@ -16,7 +16,9 @@ class PolicySeeder extends Seeder
         $policies = [
             [
                 'key'       => Policy::KEY_PRIVACY,
+                'slug'      => 'privacy-policy',
                 'title'     => 'Kebijakan Privasi',
+                'version'   => '1.0',
                 'is_active' => true,
                 'content'   => implode("\n\n", [
                     'ApexForge Labs menghargai dan melindungi privasi Anda. Data pribadi seperti nama, email, nomor telepon, dan informasi profil hanya digunakan untuk keperluan identifikasi, komunikasi terkait proyek, verifikasi akun, serta peningkatan kualitas layanan.',
@@ -25,8 +27,24 @@ class PolicySeeder extends Seeder
                 ]),
             ],
             [
+                'key'       => Policy::KEY_TERMS,
+                'slug'      => 'terms-conditions',
+                'title'     => 'Syarat & Ketentuan',
+                'version'   => '1.0',
+                'is_active' => true,
+                'content'   => implode("\n\n", [
+                    'Dengan mendaftar dan menggunakan layanan ApexForge Labs, Anda menyatakan telah membaca, memahami, dan menyetujui Syarat & Ketentuan ini.',
+                    'Pengguna wajib memberikan informasi yang benar, akurat, dan tidak menyesatkan saat mendaftar. Setiap akun bersifat pribadi dan tidak boleh digunakan oleh pihak lain tanpa izin.',
+                    'Dilarang menggunakan platform untuk aktivitas ilegal, penipuan, spam, penyebaran konten melanggar hukum, serta tindakan yang merugikan pengguna lain atau platform.',
+                    'ApexForge Labs berhak meninjau, menunda, atau menolak layanan apabila ditemukan indikasi pelanggaran atas ketentuan ini.',
+                    'Ketentuan ini dapat diperbarui dari waktu ke waktu. Versi terbaru akan diberlakukan sejak tanggal efektif yang tercantum di dokumen ini.',
+                ]),
+            ],
+            [
                 'key'       => Policy::KEY_USAGE,
-                'title'     => 'Kebijakan Penggunaan',
+                'slug'      => 'usage-policy',
+                'title'     => 'Kebijakan Penggunaan Platform',
+                'version'   => '1.0',
                 'is_active' => true,
                 'content'   => implode("\n\n", [
                     'Pengguna wajib memberikan informasi yang benar, akurat, dan tidak menyesatkan saat mendaftar atau menggunakan layanan. Setiap akun bersifat pribadi dan tidak boleh digunakan oleh pihak lain tanpa izin.',

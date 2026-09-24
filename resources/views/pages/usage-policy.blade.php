@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @include('partials.theme-boot')
-    <title>Kebijakan Privasi - ApexForge Labs</title>
+    <title>Kebijakan Penggunaan Platform - ApexForge Labs</title>
 
     {{-- Tailwind CSS --}}
     <script src="https://cdn.tailwindcss.com"></script>
@@ -59,10 +59,10 @@
     {{-- Hero --}}
     <section class="bg-gradient-to-b from-blue-50/60 dark:from-slate-800/40 to-transparent py-14">
         <div class="max-w-3xl mx-auto px-6 text-center">
-            <div class="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-br from-blue-600 to-blue-500 flex items-center justify-center text-white text-xl mb-4 shadow-[0_10px_25px_-5px_rgba(59,130,246,0.4)]">
-                <i class="fa-solid fa-shield-halved"></i>
+            <div class="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-600 flex items-center justify-center text-white text-xl mb-4 shadow-[0_10px_25px_-5px_rgba(16,185,129,0.4)]">
+                <i class="fa-solid fa-list-check"></i>
             </div>
-            <h1 class="text-3xl sm:text-4xl font-black text-blue-950 dark:text-white tracking-tight">Kebijakan Privasi</h1>
+            <h1 class="text-3xl sm:text-4xl font-black text-blue-950 dark:text-white tracking-tight">Kebijakan Penggunaan Platform</h1>
             <div class="mt-3 flex flex-col sm:flex-row items-center justify-center gap-3 text-sm">
                 @if($policy)
                     <span class="font-medium text-blue-900/50 dark:text-slate-400">
@@ -95,17 +95,8 @@
                             @endif
                         @endforeach
                     </div>
-                @elseif (trim((string) $setting->privacy_policy_content) !== '')
-                    <div class="space-y-4 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                        @foreach (preg_split('/\r\n|\r|\n/', $setting->privacy_policy_content) as $paragraph)
-                            @php($text = trim($paragraph))
-                            @if ($text !== '')
-                                <p>{!! nl2br(e($text)) !!}</p>
-                            @endif
-                        @endforeach
-                    </div>
                 @else
-                    <p class="text-sm text-slate-400">Konten Kebijakan Privasi belum tersedia.</p>
+                    <p class="text-sm text-slate-400">Konten Kebijakan Penggunaan Platform belum tersedia.</p>
                 @endif
             </article>
         </div>
