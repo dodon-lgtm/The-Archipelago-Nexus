@@ -86,14 +86,12 @@ $profile->company_name = $request->company_name;
         $profile->description  = $request->description;
         $profile->website      = $request->website;
         $profile->location     = $request->location;
-        $profile->phone        = $request->phone;
+        $profile->phone        = $request->phone ?: null;
 
         $profile->save();
 
         // Sync phone to User model so ProfileCompletionService can read it
-        if ($request->phone) {
-            Auth::user()->update(['phone' => $request->phone]);
-        }
+        Auth::user()->update(['phone' => $request->phone ?: null]);
 
         return redirect()
                 ->route('company.profile')

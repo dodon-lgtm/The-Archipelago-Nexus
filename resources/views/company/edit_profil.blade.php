@@ -400,7 +400,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label class="form-label">Nomor Telepon</label>
-                            <input type="text" name="phone" class="form-control" value="{{ old('phone', $profile->phone) }}" placeholder="08123456789">
+                            <input type="tel" name="phone" class="form-control" maxlength="20" value="{{ old('phone', $profile->phone) }}" placeholder="08123456789">
                         </div>
                     </div>
                 </div>
