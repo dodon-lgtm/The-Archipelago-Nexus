@@ -16,8 +16,8 @@ class Workspace extends Model
         'freelancer_id',
         'status',
         'overdue_previous_status',
-        'stages',
         'progress',
+        'stages',
     ];
 
     protected $casts = [
@@ -67,15 +67,15 @@ class Workspace extends Model
      * Daftar stage custom terurut untuk workspace ini (source of truth),
      * dinormalisasi menjadi item bertipe object (NON-LINEAR / FLEKSIBEL):
      *
-     *     [
-     *       'name'        => string,
-     *       'description' => ?string,
-     *       'created_by'  => ?int,
-     *       'is_completed'=> bool,
-     *       'note'        => ?string  // catatan pengerjaan tahap ini (dari modal)
-     *       'completed_at'=> ?string  // ISO datetime
-     *       'completed_by'=> ?int
-     *     ]
+     *    [
+     *      'name'        => string,
+     *      'description' => ?string,
+     *      'created_by'  => ?int,
+     *      'is_completed'=> bool,
+     *      'note'        => ?string  // catatan pengerjaan tahap ini (dari modal)
+     *      'completed_at'=> ?string  // ISO datetime
+     *      'completed_by'=> ?int
+     *    ]
      *
      * Entry lama yang masih berbentuk string polos atau tanpa flag
      * is_completed otomatis dianggap belum selesai (backward-compatible).
@@ -169,29 +169,6 @@ class Workspace extends Model
     }
 
     /**
-     * Hitung persentase progres dari urutan stage (1-based) secara server-side.
-     * Formula LEGACY: round(current_order / total_stages * 100). Stage terakhir = 100%.
-     * Tetap dipertahankan untuk backward-compat data lama & fallback.
-     */
-    public function calculateProgressForStage(int $stageOrder): int
-    {
-        $total = $this->totalStages();
-        if ($total <= 0 || $stageOrder <= 0) {
-            // stage_order <= 0 artinya pekerjaan belum dimulai → 0% (bukan 100%).
-            return 0;
-        }
-
-        $clampedOrder = min($stageOrder, $total);
-
-        // Stage terakhir selalu 100%
-        if ($clampedOrder >= $total) {
-            return 100;
-        }
-
-        return (int) round(($clampedOrder / $total) * 100);
-    }
-
-    /**
      * Jumlah tahap yang sudah berstatus Selesai (non-linear).
      */
     public function completedStagesCount(): int
@@ -216,8 +193,7 @@ class Workspace extends Model
     /**
      * Persentase progres saat ini (NON-LINEAR).
      * Jika ada tahap yang sudah ditandai selesai, gunakan rumus fleksibel.
-     * Jika belum ada yang selesai tetapi ada riwayat linear lama (stage_order>0), fallback ke legacy agar data lama tidak tiba-tiba 0%.
-     * Kolom `progress` di DB (jika ada) diabaikan — sumber kebenaran adalah stages JSON.
+     * Jika belum ada yang selesai tetapi ada riwayat linear lama, fallback ke legacy.
      */
     public function currentProgress(): int
     {
@@ -234,7 +210,7 @@ class Workspace extends Model
         $latest = $this->relationLoaded('latestProgress') ? $this->latestProgress : $this->latestProgress()->first();
         $order = $latest?->stage_order ? (int) $latest->stage_order : 0;
         if ($order > 0) {
-            return $this->calculateProgressForStage($order);
+            return (int) round(($order / $total) * 100);
         }
 
         // Belum ada progress sama sekali
@@ -247,6 +223,15 @@ class Workspace extends Model
     public function currentStage(): ?string
     {
         return $this->latestProgress?->stage;
+    }
+
+    /**
+     * Accessor untuk active_stage_name - digunakan di view untuk menampilkan
+     * nama tahap yang sedang aktif/terakhir dikerjakan.
+     */
+    public function getActiveStageNameAttribute()
+    {
+        return $this->currentStage();
     }
 
     public function payment()

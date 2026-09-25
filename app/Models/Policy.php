@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Policy extends Model
 {
@@ -15,6 +16,7 @@ class Policy extends Model
         'key',
         'title',
         'content',
+        'version',
         'is_active',
     ];
 
@@ -27,6 +29,7 @@ class Policy extends Model
     /** Kunci standar dokumen. */
     public const KEY_PRIVACY = 'privacy';
     public const KEY_USAGE   = 'usage';
+    public const KEY_TERMS   = 'terms';
 
     /** Scope: hanya dokumen yang sedang ditampilkan. */
     public function scopeActive($query)
@@ -34,9 +37,19 @@ class Policy extends Model
         return $query->where('is_active', true);
     }
 
+    public function scopeRequired($query)
+    {
+        return $query->whereIn('key', [self::KEY_PRIVACY, self::KEY_TERMS]);
+    }
+
     public function isActive(): bool
     {
         return (bool) $this->is_active;
+    }
+
+    public function isRequired(): bool
+    {
+        return in_array($this->key, [self::KEY_PRIVACY, self::KEY_TERMS]);
     }
 
     /** Ringkasan isi untuk preview daftar (tanpa tag / multi-spasi). */
@@ -49,5 +62,20 @@ class Policy extends Model
         }
 
         return mb_substr($text, 0, $length) . '...';
+    }
+
+    /** Relasi ke consent history. */
+    public function consents(): HasMany
+    {
+        return $this->hasMany(UserConsent::class);
+    }
+
+    /** Cek apakah user sudah menyetujui versi terbaru. */
+    public function isAcceptedByUser(int $userId): bool
+    {
+        return $this->consents()
+            ->where('user_id', $userId)
+            ->where('policy_version', $this->version)
+            ->exists();
     }
 }

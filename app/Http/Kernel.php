@@ -25,6 +25,7 @@ class Kernel extends HttpKernel
 
         // Custom middleware
         'ensureCompanyAdminOrAbort' => \App\Http\Middleware\EnsureCompanyAdminOrAbort::class,
+        'policy.consent' => \App\Http\Middleware\CheckPolicyConsent::class,
     ];
 }
 

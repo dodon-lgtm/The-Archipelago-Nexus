@@ -18,6 +18,7 @@
     --af-surface:#ffffff;
     --af-page:#f6f9ff;
 }
+/* bb */
 html{scroll-behavior:smooth}
 body{
     font-family:'Plus Jakarta Sans',sans-serif;

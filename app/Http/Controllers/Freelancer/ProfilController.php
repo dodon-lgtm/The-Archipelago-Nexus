@@ -96,6 +96,7 @@ class ProfilController extends Controller
             // DATA AKUN
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+            'phone' => 'nullable|string|max:20',
 
             // DATA PROFIL
             'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
@@ -119,8 +120,10 @@ class ProfilController extends Controller
         // UPDATE DATA AKUN USER
         // ==========================================
 
+        // Phone disimpan di tabel users (dipakai profil & ProfileCompletionService).
         $user->name = $request->name;
         $user->email = $request->email;
+        $user->phone = $request->phone ?: null;
         $user->save();
 
         // ==========================================

@@ -8,7 +8,7 @@
 </button>
 
 <aside id="sidebar"
-    class="w-64 bg-white/95 dark:bg-slate-900/95 backdrop-blur-3xl border-r border-blue-100 dark:border-slate-800 flex flex-col h-screen sticky top-0 shrink-0 z-50 shadow-[10px_0_40px_-10px_rgba(59,130,246,0.08)] transition-colors duration-300">
+    class="w-64 shrink-0 flex-shrink-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-3xl border-r border-blue-100 dark:border-slate-800 flex flex-col h-screen sticky top-0 z-50 shadow-[10px_0_40px_-10px_rgba(59,130,246,0.08)] transition-colors duration-300">
 
     {{-- DECORATIVE RIGHT EDGE GLOW --}}
     <div class="absolute top-0 right-0 w-[1px] h-full bg-gradient-to-b from-transparent via-blue-400/30 to-transparent">
@@ -385,10 +385,10 @@
                 <h3 class="font-black text-sm whitespace-nowrap tracking-wide">
                     ApexForge Labs
                 </h3>
-                <p class="text-[11px] mt-1 text-blue-100 font-medium whitespace-nowrap">
+                <p class="text-[11px] mt-1 text-blue-100 font-medium">
                     Marketplace Freelance Indonesia
                 </p>
-                <div class="mt-4 text-[10px] text-blue-200/80 font-bold whitespace-nowrap uppercase tracking-widest">
+                <div class="mt-4 text-[10px] text-blue-200/80 font-bold uppercase tracking-widest">
                     © 2026 ApexForge Labs
                 </div>
             </div>

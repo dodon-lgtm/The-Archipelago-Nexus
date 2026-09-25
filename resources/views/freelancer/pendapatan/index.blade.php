@@ -9,7 +9,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = tailwind.config || {};
-    tailwind.config.darkMode = 'class';
         tailwind.config.darkMode = 'class';
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -147,14 +146,18 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
 
                     {{-- Kartu 1: Saldo Tersedia --}}
-                    <div class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl shadow-sm p-5 transition-colors duration-300">
-                        <div class="flex items-center gap-4">
-                            <div class="w-14 h-14 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center shrink-0">
-                                <i class="fa-solid fa-wallet text-emerald-600 dark:text-emerald-300 text-xl"></i>
+                    <div class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl shadow-sm p-4 sm:p-5 transition-colors duration-300">
+                        <div class="flex items-center gap-3">
+                            <div class="w-11 h-11 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-wallet text-emerald-600 dark:text-emerald-300 text-lg"></i>
                             </div>
-                            <div class="min-w-0">
+                            <div class="min-w-0 flex-1">
                                 <p class="text-xs text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider">Saldo Tersedia</p>
+<<<<<<< Updated upstream
                                 <h3 class="text-2xl font-black text-emerald-600 dark:text-emerald-300" title="Rp {{ number_format($availableBalance ?? 0, 0, ',', '.') }}">
+=======
+                                <h3 class="text-lg sm:text-xl font-black text-emerald-600 dark:text-emerald-300 tracking-tight leading-tight" title="Rp {{ number_format($availableBalance ?? 0, 0, ',', '.') }}">
+>>>>>>> Stashed changes
                                     {{ formatRupiahShort($availableBalance ?? 0) }}
                                 </h3>
                             </div>
@@ -162,14 +165,18 @@
                     </div>
 
                     {{-- Kartu 2: Saldo Tertahan (Escrow) --}}
-                    <div class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl shadow-sm p-5 transition-colors duration-300">
-                        <div class="flex items-center gap-4">
-                            <div class="w-14 h-14 rounded-xl bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center shrink-0">
-                                <i class="fa-solid fa-clock text-amber-600 dark:text-amber-300 text-xl"></i>
+                    <div class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl shadow-sm p-4 sm:p-5 transition-colors duration-300">
+                        <div class="flex items-center gap-3">
+                            <div class="w-11 h-11 rounded-xl bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-clock text-amber-600 dark:text-amber-300 text-lg"></i>
                             </div>
-                            <div class="min-w-0">
+                            <div class="min-w-0 flex-1">
                                 <p class="text-xs text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider">Saldo Tertahan (Escrow)</p>
+<<<<<<< Updated upstream
                                 <h3 class="text-2xl font-black text-amber-600 dark:text-amber-300" title="Rp {{ number_format($totalHeld ?? 0, 0, ',', '.') }}">
+=======
+                                <h3 class="text-lg sm:text-xl font-black text-amber-600 dark:text-amber-300 tracking-tight leading-tight" title="Rp {{ number_format($totalHeld ?? 0, 0, ',', '.') }}">
+>>>>>>> Stashed changes
                                     {{ formatRupiahShort($totalHeld ?? 0) }}
                                 </h3>
                                 @if((float) ($totalPending ?? 0) > 0)
@@ -182,14 +189,18 @@
                     </div>
 
                     {{-- Kartu 3: Total Pendapatan --}}
-                    <div class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl shadow-sm p-5 transition-colors duration-300">
-                        <div class="flex items-center gap-4">
-                            <div class="w-14 h-14 rounded-xl bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center shrink-0">
-                                <i class="fa-solid fa-sack-dollar text-blue-600 dark:text-blue-300 text-xl"></i>
+                    <div class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl shadow-sm p-4 sm:p-5 transition-colors duration-300">
+                        <div class="flex items-center gap-3">
+                            <div class="w-11 h-11 rounded-xl bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-sack-dollar text-blue-600 dark:text-blue-300 text-lg"></i>
                             </div>
-                            <div class="min-w-0">
+                            <div class="min-w-0 flex-1">
                                 <p class="text-xs text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider">Total Pendapatan</p>
+<<<<<<< Updated upstream
                                 <h3 class="text-2xl font-black text-blue-600 dark:text-blue-300" title="Rp {{ number_format($totalEarned ?? 0, 0, ',', '.') }}">
+=======
+                                <h3 class="text-lg sm:text-xl font-black text-blue-600 dark:text-blue-300 tracking-tight leading-tight" title="Rp {{ number_format($totalEarned ?? 0, 0, ',', '.') }}">
+>>>>>>> Stashed changes
                                     {{ formatRupiahShort($totalEarned ?? 0) }}
                                 </h3>
                             </div>
@@ -197,14 +208,18 @@
                     </div>
 
                     {{-- Kartu 4: Direfund ke Company --}}
-                    <div class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl shadow-sm p-5 transition-colors duration-300">
-                        <div class="flex items-center gap-4">
-                            <div class="w-14 h-14 rounded-xl bg-red-100 dark:bg-red-900/40 flex items-center justify-center shrink-0">
-                                <i class="fa-solid fa-rotate-left text-red-600 dark:text-red-300 text-xl"></i>
+                    <div class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl shadow-sm p-4 sm:p-5 transition-colors duration-300">
+                        <div class="flex items-center gap-3">
+                            <div class="w-11 h-11 rounded-xl bg-red-100 dark:bg-red-900/40 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-rotate-left text-red-600 dark:text-red-300 text-lg"></i>
                             </div>
-                            <div class="min-w-0">
+                            <div class="min-w-0 flex-1">
                                 <p class="text-xs text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider">Direfund ke Company</p>
+<<<<<<< Updated upstream
                                 <h3 class="text-2xl font-black text-red-600 dark:text-red-300" title="Rp {{ number_format($totalRefunded ?? 0, 0, ',', '.') }}">
+=======
+                                <h3 class="text-lg sm:text-xl font-black text-red-600 dark:text-red-300 tracking-tight leading-tight" title="Rp {{ number_format($totalRefunded ?? 0, 0, ',', '.') }}">
+>>>>>>> Stashed changes
                                     {{ formatRupiahShort($totalRefunded ?? 0) }}
                                 </h3>
                             </div>

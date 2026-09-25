@@ -402,7 +402,121 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                     </div>
                 </div>
 
-                <!-- Bagian Form Perusahaan -->
+                {{-- Persetujuan & Kebijakan --}}
+                <div class="bg-slate-800/40 border border-slate-700/60 rounded-xl p-4 space-y-3">
+                    <div class="flex items-center gap-1.5 text-[10px] font-bold tracking-widest text-blue-400 uppercase">
+                        <i class="fa-solid fa-file-contract"></i>
+                        Persetujuan & Kebijakan
+                    </div>
+
+                    <p class="text-[10px] text-slate-400">
+                        Centang kotak di bawah ini untuk melanjutkan registrasi. Kebijakan wajib harus disetujui.
+                    </p>
+
+                    {{-- Syarat & Ketentuan (Wajib) --}}
+                    <div class="space-y-1.5">
+                        <div class="flex items-start gap-2.5">
+                            <input
+                                type="checkbox"
+                                name="terms_accepted"
+                                id="terms_accepted"
+                                value="1"
+                                required
+                                class="mt-0.5 w-4 h-4 rounded border-slate-600 bg-slate-800 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                                {{ old('terms_accepted') ? 'checked' : '' }}
+                            >
+                            <label for="terms_accepted" class="text-xs text-slate-200 cursor-pointer leading-relaxed">
+                                Saya telah membaca dan menyetujui
+                                <a href="{{ route('syarat-ketentuan') }}" target="_blank" class="text-blue-400 hover:text-blue-300 underline font-medium">
+                                    Syarat & Ketentuan ApexForge Labs
+                                </a>
+                                {{-- @if($termsPolicy) v{{ $termsPolicy->version }} (berlaku sejak {{ $termsPolicy->updated_at?->translatedFormat('d M Y') }}) @endif --}}
+                                <span class="text-slate-500">*</span>
+                            </label>
+                        </div>
+                        @error('terms_accepted')
+                            <p class="text-[10px] text-red-400 ml-6.5">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- Kebijakan Privasi (Wajib) --}}
+                    <div class="space-y-1.5">
+                        <div class="flex items-start gap-2.5">
+                            <input
+                                type="checkbox"
+                                name="privacy_accepted"
+                                id="privacy_accepted"
+                                value="1"
+                                required
+                                class="mt-0.5 w-4 h-4 rounded border-slate-600 bg-slate-800 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                                {{ old('privacy_accepted') ? 'checked' : '' }}
+                            >
+                            <label for="privacy_accepted" class="text-xs text-slate-200 cursor-pointer leading-relaxed">
+                                Saya telah membaca dan memahami
+                                <a href="{{ route('kebijakan-privasi') }}" target="_blank" class="text-blue-400 hover:text-blue-300 underline font-medium">
+                                    Kebijakan Privasi ApexForge Labs
+                                </a>
+                                {{-- @if($privacyPolicy) v{{ $privacyPolicy->version }} (berlaku sejak {{ $privacyPolicy->updated_at?->translatedFormat('d M Y') }}) @endif --}}
+                                <span class="text-slate-500">*</span>
+                            </label>
+                        </div>
+                        @error('privacy_accepted')
+                            <p class="text-[10px] text-red-400 ml-6.5">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- Kebijakan Penggunaan Platform (Wajib jika tersedia) --}}
+                    @if($usagePolicy)
+                    <div class="space-y-1.5">
+                        <div class="flex items-start gap-2.5">
+                            <input
+                                type="checkbox"
+                                name="usage_accepted"
+                                id="usage_accepted"
+                                value="1"
+                                required
+                                class="mt-0.5 w-4 h-4 rounded border-slate-600 bg-slate-800 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                                {{ old('usage_accepted') ? 'checked' : '' }}
+                            >
+                            <label for="usage_accepted" class="text-xs text-slate-200 cursor-pointer leading-relaxed">
+                                Saya telah membaca dan menyetujui
+                                <a href="{{ route('kebijakan-penggunaan') }}" target="_blank" class="text-blue-400 hover:text-blue-300 underline font-medium">
+                                    Kebijakan Penggunaan Platform ApexForge Labs
+                                </a>
+                                {{-- v{{ $usagePolicy->version }} (berlaku sejak {{ $usagePolicy->updated_at?->translatedFormat('d M Y') }}) --}}
+                                <span class="text-slate-500">*</span>
+                            </label>
+                        </div>
+                        @error('usage_accepted')
+                            <p class="text-[10px] text-red-400 ml-6.5">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    @endif
+
+                    {{-- Marketing (Opsional) --}}
+                    <div class="border-t border-slate-700/50 pt-3 space-y-1.5">
+                        <div class="flex items-center gap-1.5 text-[10px] font-bold tracking-widest text-amber-400 uppercase">
+                            <i class="fa-solid fa-bullhorn"></i>
+                            Opsional
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <input
+                                type="checkbox"
+                                name="marketing_accepted"
+                                id="marketing_accepted"
+                                value="1"
+                                class="mt-0.5 w-4 h-4 rounded border-slate-600 bg-slate-800 text-amber-500 focus:ring-amber-500 cursor-pointer"
+                                {{ old('marketing_accepted') ? 'checked' : '' }}
+                            >
+                            <label for="marketing_accepted" class="text-xs text-slate-300 cursor-pointer leading-relaxed">
+                                Saya ingin menerima informasi, pembaruan, dan penawaran dari ApexForge Labs.
+                                <span class="text-slate-500">(Opsional)</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Bagian Form Perusahaan --}}
                 <div id="companyFields" class="bg-slate-800/40 border border-slate-700/60 rounded-xl p-4 space-y-3" style="display: {{ old('is_company', request()->query('is_company', 0)) ? 'block' : 'none' }};">
                     <div class="flex items-center gap-1.5 text-[10px] font-bold tracking-widest text-blue-400 uppercase">
                         <i class="fa-solid fa-building-circle-check"></i>

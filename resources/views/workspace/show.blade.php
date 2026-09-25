@@ -421,22 +421,16 @@
                 <div class="space-y-4">
 
 {{-- ROW 1: INFO PROJECT + PROGRESS + TAHAP PENGERJAAN --}}
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 items-stretch mb-8">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 items-stretch mb-6">
 
                         @php
                             $stageActionRoute = auth()->user()->role === 'company'
                                 ? 'company.workspaces.progress'
                                 : 'freelancer.workspaces.progress';
-                            // NON-LINEAR: default detail = tahap pertama yang belum selesai, atau tahap pertama jika semua selesai
-                            $firstIncompleteOrder = null;
-                            foreach ($stageItems as $idx => $si) {
-                                if (empty($si['is_completed'])) { $firstIncompleteOrder = $idx + 1; break; }
-                            }
-                            $displayActiveOrder = $firstIncompleteOrder ?? max(1, (int) $totalStages);
-                            if ((int) $totalStages === 0) $displayActiveOrder = 1;
-                            $completedCountVal = $completedCount ?? 0;
-                            $isAllCompleted = $totalStages > 0 && $completedCountVal >= $totalStages;
-                            $isAtLastStage = $isAllCompleted;
+                            // Tahap aktif yang ditampilkan, dijaga aman dalam rentang daftar tahap.
+                            $displayActiveOrder = max(1, min((int) $activeStageOrder, (int) $totalStages));
+                            // Flag level-workspace (dipakai footer & detail, aman walau daftar tahap kosong).
+                            $isAtLastStage = (int) $activeStageOrder >= (int) $totalStages;
                             $progressLocked = in_array($workspace->status, ['Menunggu Pembayaran', 'Menunggu Verifikasi Admin', 'Selesai']);
                         @endphp
 
@@ -547,7 +541,9 @@
                                         <h2 class="font-bold text-[13px] text-blue-950 dark:text-white tracking-tight flex items-center gap-2">
                                             <span class="w-6 h-6 rounded-lg bg-blue-600 text-white flex items-center justify-center text-[10px] leading-none"><i class="fa-solid fa-arrow-trend-up"></i></span> Progress Pengerjaan
                                         </h2>
-                                        <span class="text-[9px] font-extrabold uppercase tracking-widest text-blue-500 dark:text-slate-400 bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 px-2 py-1 rounded-md shrink-0">{{ $completedCountVal }}/{{ $totalStages }} Selesai</span>
+                                        @if ($totalStages > 0 && $activeStageOrder > 0)
+                                            <span class="text-[9px] font-extrabold uppercase tracking-widest text-blue-500 dark:text-slate-400 bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 px-2 py-1 rounded-md shrink-0">Tahap {{ $activeStageOrder }}/{{ $totalStages }}</span>
+                                        @endif
                                     </div>
                                     <div class="flex items-center gap-4">
                                         <div class="shrink-0 text-center min-w-[64px]">
@@ -558,12 +554,12 @@
                                             <div class="w-full bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-full h-2 overflow-hidden">
                                                 <div class="h-full rounded-full bg-gradient-to-r from-blue-600 to-blue-400 transition-all duration-700" style="width: {{ $progressValue }}%"></div>
                                             </div>
-                                            @if ($completedCountVal > 0)
-                                                <p class="mt-2 flex items-center gap-1.5 text-[11px] font-bold text-emerald-600 dark:text-emerald-400 truncate">
-                                                    <i class="fa-solid fa-check-circle text-[10px]"></i> {{ $completedCountVal }} dari {{ $totalStages }} tahap selesai
+                                                                                        @if ($activeStage ?? $workspace->active_stage_name)
+                                                <p class="mt-2 flex items-center gap-1.5 text-[11px] font-bold text-blue-600 dark:text-blue-300 truncate">
+                                                    <i class="fa-solid fa-play text-[8px]"></i> {{ $activeStage ?? $workspace->active_stage_name }}
                                                 </p>
                                             @else
-                                                <p class="mt-2 text-[11px] font-bold text-blue-300 dark:text-slate-500 truncate">Belum ada tahap selesai • Fleksibel, pilih mana saja</p>
+                                                <p class="mt-2 text-[11px] font-bold text-blue-300 dark:text-slate-500 truncate">Belum ada tahap aktif</p>
                                             @endif
                                         </div>
                                     </div>
@@ -595,22 +591,22 @@
                                                 @php
                                                     $detailStage = $detailItem['name'];
                                                     $detailOrder = $detailIndex + 1;
-                                                    $detailIsCompleted = !empty($detailItem['is_completed']);
+                                                    $detailIsCompleted = !empty($detailItem['is_completed'] ?? false);
                                                     $detailIsActive = $detailOrder === (int) $displayActiveOrder;
                                                     if ($detailIsCompleted) {
                                                         $detailLabel = 'Selesai';
                                                         $detailLabelColor = 'text-emerald-600 bg-emerald-50 border border-emerald-200 dark:text-emerald-400 dark:bg-emerald-900/20 dark:border-emerald-800/40';
                                                     } else {
                                                         $detailLabel = 'Belum Selesai';
-                                                        $detailLabelColor = 'text-slate-500 bg-slate-100 border border-slate-200 dark:text-slate-400 dark:bg-slate-800 dark:border-slate-700';
+                                                        $detailLabelColor = 'text-slate-400 dark:text-slate-500 bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800';
                                                     }
                                                 @endphp
                                                 <div id="stageDetail-{{ $detailOrder }}" class="stage-detail w-full flex flex-col items-center justify-center {{ $detailOrder === (int) $displayActiveOrder ? '' : 'hidden' }}">
                                                     <div class="w-full rounded-xl border border-blue-100 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 flex flex-col items-center justify-center text-center space-y-4">
                                                         <div class="flex items-center justify-center gap-2">
-                                                        <span class="shrink-0 w-6 h-6 rounded-full bg-blue-600 text-white text-[10px] font-black flex items-center justify-center">{{ $detailOrder }}</span>
-                                                        <h4 class="text-[13px] font-bold text-blue-950 dark:text-white">{{ $detailStage }}</h4>
-                                                    </div>
+                                                            <span class="shrink-0 w-6 h-6 rounded-full bg-blue-600 text-white text-[10px] font-black flex items-center justify-center">{{ $detailOrder }}</span>
+                                                            <h4 class="text-[13px] font-bold text-blue-950 dark:text-white">{{ $detailStage }}</h4>
+                                                        </div>
                                                     @if ($detailLabel)
                                                         <div class="flex items-center justify-center">
                                                             <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-md {{ $detailLabelColor }} shrink-0">{{ $detailLabel }}</span>
@@ -621,16 +617,7 @@
                                                         @else
                                                             <p class="w-full text-[11px] italic text-slate-400 dark:text-slate-500">Tidak ada deskripsi untuk tahap ini.</p>
                                                         @endif
-                                                        {{-- Catatan pengerjaan fleksibel: prioritas note di stages JSON, fallback ke history terakhir --}}
-                                                        @php $flexNote = $detailItem['note'] ?? null; @endphp
-                                                        @if ($flexNote)
-                                                            <div class="w-full rounded-lg bg-emerald-50/60 dark:bg-emerald-900/10 border border-emerald-200 dark:border-emerald-800/30 p-2.5">
-                                                                <p class="text-[8px] font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400 mb-1 flex items-center justify-center gap-1">
-                                                                    <i class="fa-solid fa-note-sticky text-[10px]"></i> Catatan pengerjaan terakhir
-                                                                </p>
-                                                                <p class="text-[11px] font-medium text-slate-700 dark:text-slate-300 leading-relaxed">{{ $flexNote }}</p>
-                                                            </div>
-                                                        @elseif ($latestNoteByStage[$detailStage] ?? null)
+                                                        @if ($latestNoteByStage[$detailStage] ?? null)
                                                             <div class="w-full rounded-lg bg-blue-50/70 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 p-2.5">
                                                                 <p class="text-[8px] font-black uppercase tracking-widest text-blue-400 dark:text-slate-400 mb-1 flex items-center justify-center gap-1">
                                                                     <i class="fa-solid fa-note-sticky text-[10px]"></i> Catatan pengerjaan terakhir
@@ -643,22 +630,66 @@
                                                                 <i class="fa-regular fa-user"></i> Dibuat oleh: {{ $detailItem['creator']->name }} <span class="uppercase">({{ ucfirst($detailItem['creator']->role) }})</span>
                                                             </p>
                                                         @endif
-                                                    </div>
-                                                    @if (auth()->user()->role === 'freelancer')
-                                                        <div class="w-full pt-2">
+                                                        @if (auth()->user()->role === 'freelancer')
                                                             @if ($progressLocked)
                                                                 <button type="button" disabled
                                                                     class="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-gray-100 dark:bg-slate-800 text-gray-400 dark:text-slate-500 rounded-lg text-[11px] font-bold cursor-not-allowed border border-gray-200 dark:border-slate-700">
                                                                     <i class="fa-solid fa-lock text-[11px]"></i> Update Progress Dikunci
                                                                 </button>
                                                             @else
-                                                                <button type="button" onclick="openStageProgressModal('{{ addslashes($detailStage) }}', {{ $detailOrder }}, {{ $detailIsCompleted ? 'true' : 'false' }}, '{{ addslashes($flexNote ?? '') }}')"
-                                                                    class="w-full flex items-center justify-center gap-2 px-3 py-2.5 {{ $detailIsCompleted ? 'bg-white dark:bg-slate-800 border border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50' : 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white' }} rounded-xl text-[11px] font-bold transition shadow-sm">
-                                                                    <i class="fa-solid {{ $detailIsCompleted ? 'fa-pen-to-square' : 'fa-check' }} text-[11px]"></i> {{ $detailIsCompleted ? 'Edit Progress Tahap Ini' : 'Selesaikan Tahap Ini' }}
-                                                                </button>
+                                                                @php $reopenNoteForm = (bool) session('errors') && old('stage') === $detailStage; @endphp
+
+                                                                @if ($detailIsCompleted)
+                                                                    <div class="w-full space-y-2">
+                                                                        <button type="button" id="updateToggle-{{ $detailOrder }}" {{ $reopenNoteForm ? 'hidden' : '' }}
+                                                                            onclick="document.getElementById('updateToggle-{{ $detailOrder }}').classList.add('hidden'); document.getElementById('updateForm-{{ $detailOrder }}').classList.remove('hidden')"
+                                                                            class="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-white dark:bg-slate-800 border border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-slate-900 rounded-xl text-[11px] font-bold transition shadow-sm">
+                                                                            <i class="fa-solid fa-pen-to-square text-[11px]"></i> Edit Progress Tahap Ini
+                                                                        </button>
+                                                                        <form method="POST" action="{{ route('freelancer.workspaces.progress', $workspace) }}" class="w-full">
+                                                                            @csrf
+                                                                            <input type="hidden" name="action" value="select">
+                                                                            <input type="hidden" name="stage" value="{{ $detailStage }}">
+                                                                            <button type="submit"
+                                                                                class="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/40 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-xl text-[11px] font-bold transition shadow-sm">
+                                                                                <i class="fa-solid fa-rotate-left text-[11px]"></i> Tandai Belum Selesai
+                                                                            </button>
+                                                                        </form>
+                                                                    </div>
+                                                                @else
+                                                                    <button type="button"
+                                                                        onclick="openUpdateProgressModal({{ $detailOrder }}, '{{ $detailStage }}')"
+                                                                        class="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white rounded-xl text-[11px] font-bold transition shadow-sm">
+                                                                        <i class="fa-solid fa-check text-[11px]"></i> Selesaikan Tahap Ini
+                                                                    </button>
+                                                                @endif
+                                                                <div id="updateForm-{{ $detailOrder }}" class="w-full {{ $reopenNoteForm ? '' : 'hidden' }}">
+                                                                    <form method="POST" action="{{ route('freelancer.workspaces.progress', $workspace) }}" class="space-y-2 pt-3 border-t border-blue-100/60 dark:border-slate-800">
+                                                                        @csrf
+                                                                        <input type="hidden" name="action" value="note">
+                                                                        <input type="hidden" name="stage" value="{{ $detailStage }}">
+                                                                        <div>
+                                                                            <label class="block text-[8px] font-black uppercase tracking-widest text-blue-500 dark:text-blue-400 mb-1" for="stageNote-{{ $detailOrder }}">Catatan / Deskripsi Pengerjaan</label>
+                                                                            <textarea id="stageNote-{{ $detailOrder }}" name="description" rows="2" maxlength="500"
+                                                                                placeholder="Catatan untuk &quot;{{ $detailStage }}&quot;..."
+                                                                                class="w-full px-3 py-2 bg-blue-50/50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-lg text-xs font-medium text-slate-700 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-blue-400 resize-none">{{ old('description') }}</textarea>
+                                                                        </div>
+                                                                        <div class="flex items-center gap-2">
+                                                                            <button type="button"
+                                                                                onclick="document.getElementById('updateToggle-{{ $detailOrder }}').classList.remove('hidden'); document.getElementById('updateForm-{{ $detailOrder }}').classList.add('hidden')"
+                                                                                class="shrink-0 px-3 py-2 bg-white dark:bg-slate-800 border border-blue-200 dark:border-slate-700 text-slate-500 dark:text-slate-300 rounded-lg text-[11px] font-bold transition hover:bg-slate-50 dark:hover:bg-slate-700">
+                                                                                Batal
+                                                                            </button>
+                                                                            <button type="submit"
+                                                                                class="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white rounded-lg text-[11px] font-bold transition shadow-sm">
+                                                                                <i class="fa-solid fa-floppy-disk text-[11px]"></i> Simpan Catatan
+                                                                            </button>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
                                                             @endif
-                                                        </div>
-                                                    @endif
+                                                        @endif
+                                                    </div>
                                                 </div>
                                             @endforeach
                                         </div>
@@ -689,8 +720,8 @@
                                                 @php
                                                     $stage = $stageItem['name'];
                                                     $order = $index + 1;
-                                                    $isCompleted = !empty($stageItem['is_completed']);
-                                                    $isSelected = $order === (int) $displayActiveOrder;
+                                                    $isCompleted = !empty($stageItem['is_completed'] ?? false);
+                                                    $isActive = $order === $displayActiveOrder;
                                                     $isOwner = (int) ($stageItem['created_by'] ?? 0) === (int) auth()->id();
                                                     $isCompanyWorkspaceOwner = auth()->user() && (int) $workspace->company_id === (int) auth()->id();
                                                     $canManageStage = $isCompanyWorkspaceOwner || $isOwner;
@@ -699,35 +730,31 @@
                                                         $bg = 'bg-white dark:bg-slate-900 border-emerald-200 dark:border-emerald-800/30';
                                                         $label = 'Selesai';
                                                         $labelColor = 'text-emerald-600 bg-emerald-50 border-emerald-200 dark:text-emerald-400 dark:bg-emerald-900/20 dark:border-emerald-800/40';
+                                                    } elseif ($isActive) {
+                                                        $bg = 'bg-blue-600 border-blue-600 shadow-[0_6px_16px_rgba(37,99,235,0.22)]';
+                                                        $label = 'Aktif';
+                                                        $labelColor = 'text-blue-600 bg-white dark:text-blue-400 dark:bg-slate-900';
                                                     } else {
-                                                        $bg = 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 opacity-95';
+                                                        $bg = 'bg-white dark:bg-slate-900 border-blue-100 dark:border-slate-800 opacity-90';
                                                         $label = 'Belum Selesai';
-                                                        $labelColor = 'text-slate-500 bg-slate-100 border-slate-200 dark:text-slate-400 dark:bg-slate-800 dark:border-slate-700';
+                                                        $labelColor = 'text-slate-400 dark:text-slate-500 bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800';
                                                     }
-                                                    $isActive = $isSelected; // untuk styling edit/delete konteks
                                                 @endphp
                                                 <div class="relative pl-8">
                                                     <button type="button" data-stage-target="stageDetail-{{ $order }}" data-stage-order="{{ $order }}"
-                                                        class="stage-circle absolute left-0 top-1 w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-black border-2 transition-all focus:outline-none focus:ring-2 focus:ring-blue-400/40 {{ $order === (int) $displayActiveOrder ? 'stage-circle-selected' : '' }} {{ $isCompleted ? 'bg-emerald-500 border-emerald-500 text-white shadow-sm' : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-500 dark:text-slate-400 hover:border-blue-300' }}">
+                                                        class="stage-circle absolute left-0 top-1 w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-black border-2 transition-all focus:outline-none focus:ring-2 focus:ring-blue-400/40 {{ $order === (int) $displayActiveOrder ? 'stage-circle-selected' : '' }} {{ $isCompleted ? 'bg-emerald-500 border-emerald-500 text-white shadow-sm' : ($isActive ? 'bg-white border-white text-blue-600' : 'bg-white dark:bg-slate-800 border-blue-200 dark:border-slate-600 text-slate-500 dark:text-slate-400 hover:border-blue-300') }}">
                                                         @if ($isCompleted)
                                                             <i class="fa-solid fa-check text-[10px]"></i>
                                                         @else
-                                                            <i class="fa-regular fa-clock text-[10px]"></i>
+                                                            {{ $order }}
                                                         @endif
                                                     </button>
 
                                                     <div class="border rounded-xl transition-all {{ $bg }}">
                                                         <div class="flex items-center gap-1.5">
                                                             <div onclick="selectStage({{ $order }})" class="flex-1 min-w-0 flex items-center gap-2 cursor-pointer px-2.5 py-2">
-                                                                <p class="flex-1 min-w-0 text-[12px] font-bold truncate text-blue-950 dark:text-white">{{ $stage }}</p>
-                                                                <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-md {{ $labelColor }} shrink-0 leading-none flex items-center gap-1">
-                                                                    @if($isCompleted)
-                                                                        <i class="fa-solid fa-check text-[9px]"></i>
-                                                                    @else
-                                                                        <i class="fa-regular fa-clock text-[9px]"></i>
-                                                                    @endif
-                                                                    {{ $label }}
-                                                                </span>
+                                                                <p class="flex-1 min-w-0 text-[12px] font-bold truncate {{ $isActive ? 'text-white' : 'text-blue-950 dark:text-white' }}">{{ $stage ?? 'Tanpa Nama' }}</p>
+                                                                <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-md {{ $labelColor }} shrink-0 leading-none">{{ $label }}</span>
                                                             </div>
                                                             @if ($canManageStage)
                                                                 <div class="flex items-center gap-1 shrink-0 pr-1.5">
@@ -738,8 +765,8 @@
                                                                     <form method="POST" action="{{ route($stageActionRoute, $workspace) }}" class="inline delete-stage-form shrink-0">
                                                                         @csrf
                                                                         <input type="hidden" name="action" value="delete">
-                                                                        <input type="hidden" name="old_stage" value="{{ $stage }}">
-                                                                        <button type="button" onclick="openDeleteStageModal(this.closest('form'), '{{ addslashes($stage) }}')"
+<input type="hidden" name="old_stage" value="{{ $stage ?? 'Tanpa Nama' }}">
+                                                                        <button type="button" onclick="openDeleteStageModal(this.closest('form'), '{{ addslashes($stage ?? 'Tanpa Nama') }}')"
                                                                             class="inline-flex items-center justify-center w-6 h-6 rounded-md text-[10px] font-bold transition {{ $isActive ? 'bg-red-600 text-white border border-red-600 hover:bg-red-700' : 'text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/40 hover:bg-red-100' }}">
                                                                             <i class="fa-solid fa-trash text-[9px]"></i>
                                                                         </button>
@@ -747,14 +774,13 @@
                                                                 </div>
                                                             @endif
                                                         </div>
-
                                                         @if ($canManageStage)
                                                             <div id="editItem-{{ $order }}" class="hidden mx-2.5 mb-2.5">
                                                                 <form method="POST" action="{{ route($stageActionRoute, $workspace) }}" class="bg-white dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-lg p-2.5 space-y-2">
                                                                     @csrf
                                                                     <input type="hidden" name="action" value="rename">
-                                                                    <input type="hidden" name="old_stage" value="{{ $stage }}">
-                                                                    <input type="text" name="new_stage" value="{{ $stage }}" maxlength="255" placeholder="Nama tahap"
+                                                                    <input type="hidden" name="old_stage" value="{{ $stage ?? 'Tanpa Nama' }}">
+                                                                    <input type="text" name="new_stage" value="{{ $stage ?? 'Tanpa Nama' }}" maxlength="255" placeholder="Nama tahap"
                                                                         class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-700 rounded-md text-xs font-semibold dark:text-white focus:outline-none focus:border-blue-400">
                                                                     <textarea name="description" rows="2" maxlength="2000" placeholder="Deskripsi (opsional)"
                                                                         class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-700 rounded-md text-xs font-medium dark:text-white resize-none focus:outline-none">{{ $stageItem['description'] ?? '' }}</textarea>
@@ -772,7 +798,7 @@
                                         </div>
                                     </div>
                                 @else
-                                    <div class="py-10 text-center">
+                                    <div class="flex-1 flex flex-col items-center justify-center py-10 text-center px-4">
                                         <div class="w-10 h-10 mx-auto mb-2 rounded-xl bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 flex items-center justify-center text-blue-300 dark:text-slate-500">
                                             <i class="fa-solid fa-layer-group text-sm"></i>
                                         </div>
@@ -816,22 +842,23 @@
                                     <form method="POST" action="{{ route('freelancer.workspaces.progress', $workspace) }}" class="flex gap-2">
                                         @csrf
                                         <input type="hidden" name="action" value="add">
-                                        <input type="text" name="new_stage" maxlength="255" placeholder="Nama tahap baru..."
+                                        <input type="text" name="new_stage" maxlength="255" required placeholder="Nama tahap baru..."
                                             class="flex-1 px-3 py-2 bg-white dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-lg text-xs font-semibold dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-blue-400">
                                         <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-[11px] font-bold transition">Tambah</button>
                                     </form>
-                                    @if ($progressLocked)
-                                        <div class="w-full px-3 py-2 mt-2 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-500 dark:text-slate-400 rounded-lg text-[11px] font-bold text-center">
-                                            <i class="fa-solid fa-lock mr-1"></i> Progress dikunci
-                                        </div>
-                                    @elseif ($isAllCompleted)
+                                    @if (!$isAtLastStage && !$progressLocked)
+                                        <form method="POST" action="{{ route('freelancer.workspaces.progress', $workspace) }}" class="mt-2">
+                                            @csrf
+                                            <input type="hidden" name="action" value="move_next">
+                                            <button type="submit"
+                                                class="w-full flex items-center justify-center gap-2 px-3 py-2 bg-white dark:bg-slate-800 border border-blue-200 dark:border-slate-700 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-slate-700 rounded-lg text-[11px] font-bold transition">
+                                                Lanjut ke Tahap Berikutnya <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                                            </button>
+                                        </form>
+                                    @elseif ($isAtLastStage)
                                         <div class="w-full px-3 py-2 mt-2 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800/30 text-emerald-600 dark:text-emerald-400 rounded-lg text-[11px] font-bold text-center">
-                                            <i class="fa-solid fa-check-circle mr-1"></i> Semua tahap selesai ({{ $progressValue }}%)
+                                            <i class="fa-solid fa-check-circle mr-1"></i> Tahap terakhir
                                         </div>
-                                    @else
-                                        <p class="mt-2 text-[10px] font-semibold text-blue-400 dark:text-slate-400 text-center leading-relaxed">
-                                            <i class="fa-solid fa-circle-info mr-1"></i> Fleksibel: pilih tahap mana saja untuk melihat detail & memperbarui progres
-                                        </p>
                                     @endif
                                 @endif
                             </div>
@@ -1320,63 +1347,6 @@
 @endif
 
     {{-- Delete Stage Confirmation Modal --}}
-    {{-- Modal Popup Form Deskripsi Pengerjaan (NON-LINEAR) --}}
-    <div id="stageProgressModal" class="fixed inset-0 z-[260] flex items-center justify-center bg-black/60 hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm p-4">
-        <div class="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-md overflow-hidden border border-blue-100 dark:border-slate-800 shadow-2xl transform scale-95 transition-transform duration-300 max-h-[90vh] overflow-y-auto">
-            <div class="relative px-6 py-5 bg-gradient-to-br from-blue-600 to-blue-500 overflow-hidden">
-                <div class="absolute inset-0 modal-header-pattern opacity-20"></div>
-                <div class="relative flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center border border-white/20">
-                            <i class="fa-solid fa-list-check text-white"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-black text-white text-sm">Progress Tahap</h3>
-                            <p id="stageModalStageName" class="text-[11px] font-bold text-blue-100 truncate max-w-[180px]">Nama Tahap</p>
-                        </div>
-                    </div>
-                    <button type="button" onclick="closeStageProgressModal()" class="w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center transition">
-                        <i class="fa-solid fa-xmark text-white text-sm"></i>
-                    </button>
-                </div>
-            </div>
-            <form id="stageProgressForm" method="POST" action="{{ auth()->user()->role === 'freelancer' ? route('freelancer.workspaces.progress', $workspace) : route('company.workspaces.progress', $workspace) }}" class="p-6 space-y-4">
-                @csrf
-                <input type="hidden" name="action" value="update_stage">
-                <input type="hidden" name="stage" id="stageModalStageInput" value="">
-                <div class="flex items-center justify-between p-3 bg-blue-50/70 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-xl">
-                    <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-lg bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-700 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                            <i class="fa-solid fa-check"></i>
-                        </div>
-                        <div>
-                            <p class="text-xs font-black text-blue-950 dark:text-white">Status Tahap</p>
-                            <p class="text-[10px] font-semibold text-slate-500 dark:text-slate-400">Tandai selesai / belum</p>
-                        </div>
-                    </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="stageModalCompleted" name="is_completed" value="1" class="sr-only peer">
-                        <div class="w-11 h-6 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
-                        <span id="stageModalStatusLabel" class="ml-2 text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Belum</span>
-                    </label>
-                </div>
-                <div>
-                    <label for="stageModalDescription" class="block text-[10px] font-black uppercase tracking-widest text-blue-500 dark:text-blue-400 mb-2">Deskripsi / Catatan Pengerjaan Tahap Ini <span class="text-red-500">*</span></label>
-                    <textarea id="stageModalDescription" name="description" rows="4" maxlength="2000" required placeholder="Jelaskan progres / hasil pengerjaan tahap ini..."
-                        class="w-full px-4 py-3 bg-blue-50/50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-700 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-500/10 resize-none"></textarea>
-                    <p class="text-[9px] font-semibold text-slate-400 mt-1.5"><span id="stageModalCharCount">0</span>/2000 • wajib diisi saat menandai selesai</p>
-                    <p id="stageModalError" class="hidden mt-2 text-xs font-bold text-red-500 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/40 rounded-lg px-3 py-2"></p>
-                </div>
-                <div class="flex items-center gap-3 pt-1">
-                    <button type="button" onclick="closeStageProgressModal()" class="flex-1 px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-xl text-xs font-black hover:bg-slate-50 dark:hover:bg-slate-700 transition">Batal</button>
-                    <button type="submit" id="stageModalSubmit" class="flex-1 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-black transition shadow-md flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-floppy-disk"></i> Simpan Progress Tahap
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <div id="deleteStageModal" class="fixed inset-0 z-[250] flex items-center justify-center bg-black/60 hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm">
         <div class="glass-card rounded-3xl w-full max-w-sm mx-4 transform scale-95 transition-transform duration-300 bg-white/95 dark:bg-slate-900/95 border border-blue-100 dark:border-slate-800 overflow-hidden shadow-2xl">
             <div class="p-6">
@@ -1403,59 +1373,6 @@
     </div>
 
     <script>
-        // ── Modal Progress Tahap (NON-LINEAR) ──
-        function openStageProgressModal(stageName, order, isCompleted, currentNote) {
-            const modal = document.getElementById('stageProgressModal');
-            const inner = modal.querySelector('div.transform');
-            document.getElementById('stageModalStageName').textContent = stageName;
-            document.getElementById('stageModalStageInput').value = stageName;
-            const chk = document.getElementById('stageModalCompleted');
-            chk.checked = !!isCompleted;
-            updateStageModalLabel();
-            const ta = document.getElementById('stageModalDescription');
-            ta.value = currentNote || '';
-            document.getElementById('stageModalCharCount').textContent = ta.value.length;
-            document.getElementById('stageModalError').classList.add('hidden');
-            modal.classList.remove('hidden');
-            setTimeout(() => { modal.classList.remove('opacity-0'); if(inner) inner.classList.remove('scale-95'); }, 10);
-            // fokus ke textarea
-            setTimeout(() => ta.focus(), 120);
-        }
-        function closeStageProgressModal() {
-            const modal = document.getElementById('stageProgressModal');
-            const inner = modal.querySelector('div.transform');
-            modal.classList.add('opacity-0');
-            if(inner) inner.classList.add('scale-95');
-            setTimeout(() => modal.classList.add('hidden'), 300);
-        }
-        function updateStageModalLabel() {
-            const chk = document.getElementById('stageModalCompleted');
-            const lbl = document.getElementById('stageModalStatusLabel');
-            if (!chk || !lbl) return;
-            if (chk.checked) { lbl.textContent = 'Selesai'; lbl.className = 'ml-2 text-[11px] font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400'; }
-            else { lbl.textContent = 'Belum'; lbl.className = 'ml-2 text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400'; }
-        }
-        document.getElementById('stageModalCompleted')?.addEventListener('change', updateStageModalLabel);
-        document.getElementById('stageModalDescription')?.addEventListener('input', function() {
-            document.getElementById('stageModalCharCount').textContent = this.value.length;
-        });
-        document.getElementById('stageProgressForm')?.addEventListener('submit', function(e) {
-            const chk = document.getElementById('stageModalCompleted');
-            const ta = document.getElementById('stageModalDescription');
-            const err = document.getElementById('stageModalError');
-            if (chk.checked && ta.value.trim() === '') {
-                e.preventDefault();
-                err.textContent = 'Deskripsi / catatan pengerjaan wajib diisi saat menandai tahap selesai.';
-                err.classList.remove('hidden');
-                ta.focus();
-                return false;
-            }
-        });
-        // klik backdrop
-        document.getElementById('stageProgressModal')?.addEventListener('click', function(e) {
-            if (e.target === this) closeStageProgressModal();
-        });
-
         // Logika Modal Konfirmasi Hapus Tahap
         let formToSubmit = null;
 
@@ -1505,10 +1422,6 @@
                 if (deleteModal && !deleteModal.classList.contains('hidden')) {
                     closeDeleteStageModal();
                 }
-                const stageModal = document.getElementById('stageProgressModal');
-                if (stageModal && !stageModal.classList.contains('hidden')) {
-                    closeStageProgressModal();
-                }
             }
         });
 
@@ -1525,7 +1438,172 @@
         .stage-circle-selected {
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25), 0 0 0 7px rgba(37, 99, 235, 0.12);
         }
+        </style>
+
+        {{-- MODAL: Update Progress Workspace --}}
+    <div id="updateProgressModal" class="fixed inset-0 z-[250] flex items-center justify-center bg-black/60 hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm">
+        <div class="modal-panel transform scale-95 transition-transform duration-300 bg-white dark:bg-slate-900 rounded-3xl shadow w-full max-w-lg mx-4 border border-blue-100 dark:border-slate-800 overflow-hidden">
+            <div class="relative px-6 py-5 bg-gradient-to-br from-blue-700 via-blue-600 to-blue-500 overflow-hidden">
+                <div class="absolute inset-0 modal-header-pattern opacity-50"></div>
+                <div class="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
+                <div class="absolute -bottom-12 -left-8 w-28 h-28 bg-white/10 rounded-full blur-xl"></div>
+                <div class="relative flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-inner">
+                            <i class="fa-solid fa-rocket text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-black text-white text-base">Update Progress Tahap</h3>
+                            <p class="text-[10px] uppercase text-blue-200" id="updateProgressStageName"></p>
+                        </div>
+                    </div>
+                    <button type="button" onclick="closeUpdateProgressModal()"
+                        class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center">
+                        <i class="fa-solid fa-xmark text-white"></i>
+                    </button>
+                </div>
+            </div>
+
+            <form id="updateProgressForm" method="POST" action="" class="p-6 space-y-5">
+                @csrf
+                <input type="hidden" name="action" value="select">
+                <input type="hidden" name="stage" id="updateProgressStageInput" value="">
+
+                <div class="flex items-center justify-between p-4 bg-blue-50/50 rounded-xl border border-blue-100">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600">
+                            <i class="fa-solid fa-flag text-xs"></i>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-blue-900">Tandai sebagai Selesai</label>
+                            <p class="text-[9px] text-slate-500">Centang bila sudah selesai dikerjakan.</p>
+                        </div>
+                    </div>
+                    <label class="relative inline-block w-12 h-6">
+                        <input type="checkbox" id="stageCompleteToggle" name="is_completed" value="1" class="sr-only peer">
+                        <span class="absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-gray-200 rounded-full transition-colors duration-300 peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full">
+                        </span>
+                    </label>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-black uppercase text-blue-500 mb-2">Catatan / Deskripsi Pengerjaan</label>
+                    <textarea id="stageDescriptionInput" name="description" rows="3" maxlength="500"
+                        placeholder="Jelaskan detail pengerjaan tahap ini..."
+                        class="w-full px-4 py-3 bg-blue-50/50 border border-blue-100 rounded-xl text-xs font-medium text-blue-900 placeholder:text-slate-400 resize-none"></textarea>
+                    <p class="text-[9px] text-blue-300 mt-1.5"><span id="descCounter">0</span>/500 karakter</p>
+                </div>
+
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="closeUpdateProgressModal()"
+                        class="flex-1 px-4 py-2.5 bg-white border border-blue-200 text-slate-500 rounded-xl text-[11px] font-bold hover:bg-slate-50">
+                        Batal
+                    </button>
+                    <button type="button" id="saveProgressBtn"
+                        class="flex-1 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-[11px] font-bold flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-floppy-disk"></i> Simpan Update
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <style>
+        @keyframes modalPop {
+            from { opacity: 0; transform: scale(.92) translateY(12px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .modal-panel { animation: modalPop .35s cubic-bezier(.34, 1.56, .64, 1) forwards; }
     </style>
+
+    <script>
+        let currentStageName = null;
+
+        function openUpdateProgressModal(order, stageName) {
+            currentStageName = stageName;
+            document.getElementById('updateProgressStageName').textContent = stageName;
+            document.getElementById('updateProgressStageInput').value = stageName;
+            document.getElementById('stageDescriptionInput').value = '';
+            document.getElementById('stageCompleteToggle').checked = false;
+            document.getElementById('descCounter').textContent = '0';
+
+            // Set form action ke route progres freelancer
+            document.getElementById('updateProgressForm').action = '{{ route('freelancer.workspaces.progress', $workspace) }}';
+
+            const modal = document.getElementById('updateProgressModal');
+            const modalInner = modal.querySelector('div.modal-panel');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modalInner.classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeUpdateProgressModal() {
+            const modal = document.getElementById('updateProgressModal');
+            const modalInner = modal.querySelector('div.modal-panel');
+            modal.classList.add('opacity-0');
+            modalInner.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                currentStageName = null;
+            }, 300);
+        }
+
+        window.openUpdateProgressModal = openUpdateProgressModal;
+        window.closeUpdateProgressModal = closeUpdateProgressModal;
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Counter karakter deskripsi modal
+            const descTextarea = document.getElementById('stageDescriptionInput');
+            if (descTextarea) {
+                descTextarea.addEventListener('input', function() {
+                    document.getElementById('descCounter').textContent = this.value.length;
+                });
+            }
+
+            // Simpan progress modal
+            const saveBtn = document.getElementById('saveProgressBtn');
+            if (saveBtn) {
+                saveBtn.onclick = function() {
+                    const description = descTextarea.value.trim();
+                    if (!description) {
+                        descTextarea.focus();
+                        descTextarea.classList.add('border-2', 'border-red-400');
+                        setTimeout(() => descTextarea.classList.remove('border-2', 'border-red-400'), 1000);
+                        return;
+                    }
+                    const form = document.getElementById('updateProgressForm');
+                    // Pastikan nilai stage ikut terkirim saat submit
+                    const stageInput = form.querySelector('input[name="stage"]');
+                    if (stageInput) {
+                        stageInput.value = document.getElementById('updateProgressStageInput').value;
+                    }
+                    const actionInput = form.querySelector('input[name="action"]');
+                    actionInput.value = document.getElementById('stageCompleteToggle').checked ? 'select' : 'note';
+                    form.submit();
+                };
+            }
+
+            // Tutup modal via backdrop
+            const modal = document.getElementById('updateProgressModal');
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) closeUpdateProgressModal();
+                });
+            }
+
+            // Tutup modal via ESC
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    if (modal && !modal.classList.contains('hidden')) closeUpdateProgressModal();
+                }
+            });
+        });
+        </script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const circles = document.querySelectorAll('.stage-circle');

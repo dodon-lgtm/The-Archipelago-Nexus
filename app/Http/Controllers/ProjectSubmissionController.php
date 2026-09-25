@@ -201,6 +201,17 @@ class ProjectSubmissionController extends Controller
             'company_note' => ['nullable', 'string', 'max:2000'],
         ]);
 
+        // GUARD: Pembayaran workspace harus lunas sebelum hasil pekerjaan dapat diterima.
+        // Mencegah kasus: accept dilakukan saat payment masih 'pending' -> escrow release
+        // terlewat, lalu setelah dana masuk via Midtrans status workspace tertimpa dan
+        // dana terjebak 'held' tanpa jalur UI apa pun untuk melepasnya.
+        $workspacePayment = $workspace->payment;
+        if ($workspacePayment && $workspacePayment->status !== 'paid') {
+            return redirect()
+                ->route('company.workspaces.show', $workspace)
+                ->with('error', 'Pembayaran untuk workspace ini belum lunas. Selesaikan pembayaran terlebih dahulu sebelum menerima hasil pekerjaan.');
+        }
+
         DB::beginTransaction();
 
         try {

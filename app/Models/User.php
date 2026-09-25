@@ -136,4 +136,32 @@ class User extends Authenticatable
     {
         return $this->hasOne(CompanyAccountRequest::class, 'company_email', 'email');
     }
+
+    /** Consents history. */
+    public function consents(): HasMany
+    {
+        return $this->hasMany(UserConsent::class);
+    }
+
+    /** Cek apakah user sudah menyetujui policy wajib versi terbaru. */
+    public function hasAcceptedRequiredPolicies(): bool
+    {
+        $requiredPolicies = Policy::required()->active()->get();
+
+        foreach ($requiredPolicies as $policy) {
+            if (!$policy->isAcceptedByUser($this->id)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /** Ambil policy wajib yang belum disetujui user. */
+    public function getPendingRequiredPolicies(): \Illuminate\Support\Collection
+    {
+        $requiredPolicies = Policy::required()->active()->get();
+
+        return $requiredPolicies->filter(fn($policy) => !$policy->isAcceptedByUser($this->id));
+    }
 }
