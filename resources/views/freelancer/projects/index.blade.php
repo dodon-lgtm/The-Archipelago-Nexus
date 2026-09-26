@@ -87,7 +87,7 @@
 
                 <!-- Search & Filter Card -->
                 <div class="bg-white dark:bg-slate-900 rounded-3xl border border-blue-100/80 dark:border-slate-800 shadow-xs p-5 sm:p-6 mb-8 transition-colors duration-300">
-                    <form method="GET" action="{{ route('freelancer.projects.index') }}" class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+                    <form method="GET" action="{{ route('freelancer.projects.index') }}" data-live-filter class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
                         
                         <!-- Search Input -->
                         <div class="md:col-span-6">
@@ -119,16 +119,12 @@
                             </select>
                         </div>
 
-                        <!-- Submit Buttons -->
+                        <!-- Reset (filter berjalan otomatis/live — tanpa tombol submit) -->
                         <div class="md:col-span-2 flex gap-2">
-                            <button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold text-xs rounded-2xl shadow-xs shadow-blue-500/20 transition flex items-center justify-center gap-2 cursor-pointer">
-                                <i class="fa-solid fa-filter"></i> Filter
-                            </button>
-                            @if(request('search') || request('category_id'))
-                                <a href="{{ route('freelancer.projects.index') }}" class="px-3 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold text-xs rounded-2xl transition flex items-center justify-center" title="Reset Filter">
-                                    <i class="fa-solid fa-rotate-left"></i>
-                                </a>
-                            @endif
+                            <a href="{{ route('freelancer.projects.index') }}" data-live-filter-reset
+                               class="w-full px-3 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold text-xs rounded-2xl transition flex items-center justify-center gap-2{{ request('search') || request('category_id') ? '' : ' hidden' }}" title="Reset Filter">
+                                <i class="fa-solid fa-rotate-left"></i> Reset
+                            </a>
                         </div>
 
                     </form>
@@ -138,7 +134,7 @@
                 <div class="grid lg:grid-cols-3 gap-8">
 
                     <!-- Left: Projects List (2 Cols) -->
-                    <div class="lg:col-span-2 space-y-4">
+                    <div id="project-results" class="lg:col-span-2 space-y-4">
                         @forelse ($projects as $project)
                             <div class="bg-white dark:bg-slate-900 rounded-3xl border border-blue-100/80 dark:border-slate-800 p-5 shadow-xs hover:shadow-md hover:border-blue-200 dark:hover:border-slate-700 transition-all duration-300 flex flex-col sm:flex-row justify-between gap-4">
                                 
@@ -257,5 +253,6 @@
         </main>
     </div>
 
+<script src="{{ asset('js/freelancer-live-filter.js') }}" defer></script>
 </body>
 </html>

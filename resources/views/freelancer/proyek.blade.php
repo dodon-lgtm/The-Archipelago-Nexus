@@ -189,7 +189,7 @@
                 @endphp
                 
                 <div class="filter-card bg-white dark:bg-slate-900 rounded-2xl border border-blue-100/80 dark:border-slate-800 shadow-sm p-5 sm:p-6 mb-8 overflow-visible w-full max-w-full box-border">
-                    <form method="GET" action="{{ route('freelancer.proyek') }}" class="filter-form flex flex-wrap gap-4 items-end w-full max-w-full overflow-visible box-border">
+                    <form method="GET" action="{{ route('freelancer.proyek') }}" data-live-filter class="filter-form flex flex-wrap gap-4 items-end w-full max-w-full overflow-visible box-border">
                         
                         {{-- Search Input --}}
                         <div class="flex-[1_1_260px] min-w-[220px] max-w-full flex flex-col">
@@ -334,23 +334,20 @@
                             </select>
                         </div>
 
-                        {{-- Filter & Reset Buttons --}}
+                        {{-- Live Filter: hasil diperbarui otomatis; hanya tersedia tombol Reset --}}
                         <div class="flex flex-wrap items-end gap-2 shrink-0 flex-none min-w-0 max-w-full">
-                            <button type="submit"
-                                    class="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-sm font-semibold rounded-xl shadow-sm shadow-blue-500/20 transition-all duration-200 cursor-pointer shrink-0">
-                                <i class="fa-solid fa-filter text-xs"></i> Filter
-                            </button>
+                            {{-- Tombol "Filter" dihapus — filter berjalan otomatis (live) --}}
                             
-                            @if($hasFilter)
-                                <a href="{{ route('freelancer.proyek') }}"
-                                   class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-sm font-semibold rounded-xl transition-all duration-200 shrink-0">
-                                    <i class="fa-solid fa-rotate-left text-xs"></i> Reset
-                                </a>
-                            @endif
+                            <a href="{{ route('freelancer.proyek') }}"
+                               data-live-filter-reset
+                               class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-sm font-semibold rounded-xl transition-all duration-200 shrink-0{{ $hasFilter ? '' : ' hidden' }}">
+                                <i class="fa-solid fa-rotate-left text-xs"></i> Reset
+                            </a>
                         </div>
                     </form>
                 </div>
 
+                <div id="project-results">
                 {{-- Project Grid --}}
                 @if($projects->count() > 0)
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
@@ -474,6 +471,7 @@
                         <div class="flex items-center justify-center gap-3 flex-wrap">
                             @if($hasFilter)
                                 <a href="{{ route('freelancer.proyek') }}"
+                                   data-live-filter-reset
                                    class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-all duration-200 shadow-sm">
                                     <i class="fa-solid fa-rotate-left text-xs"></i> Reset Filter
                                 </a>
@@ -486,6 +484,7 @@
                     </div>
                 @endif
 
+                </div>
             </div>
         </main>
 </div>
@@ -589,6 +588,7 @@
         }
     }
     function selectCategory(val, name){
+        const prev = hiddenVal.value;
         hiddenVal.value = val;
         labelEl.textContent = name || 'Semua Kategori';
         labelEl.classList.toggle('text-slate-400', !val);
@@ -614,7 +614,11 @@
         });
         closePanel();
         btn.focus();
+        if(prev !== val){
+            document.dispatchEvent(new CustomEvent('live-filter:updated'));
+        }
     }
+    document.addEventListener('live-filter:reset', function(){ selectCategory('', 'Semua Kategori'); });
 
     btn.addEventListener('click', (e)=>{
         e.stopPropagation();
@@ -755,6 +759,7 @@
         if(showCustom) list.classList.remove('hidden');
     }
     function selectBudget(val, name){
+        const prev = hiddenVal.value;
         hiddenVal.value = val;
         // name may be custom formatted
         let display = name;
@@ -782,7 +787,11 @@
         });
         closePanel();
         btn.focus();
+        if(prev !== val){
+            document.dispatchEvent(new CustomEvent('live-filter:updated'));
+        }
     }
+    document.addEventListener('live-filter:reset', function(){ selectBudget('', 'Semua Budget'); });
 
     btn.addEventListener('click', (e)=>{ e.stopPropagation(); if(isOpen()) closePanel(); else openPanel(); });
     searchInput.addEventListener('input', ()=> filterList(searchInput.value));
@@ -838,5 +847,6 @@
 })();
 </script>
 
+<script src="{{ asset('js/freelancer-live-filter.js') }}" defer></script>
  </body>
 </html>
