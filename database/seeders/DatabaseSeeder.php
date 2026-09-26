@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
         $this->call(\Database\Seeders\PolicySeeder::class);
         $this->call(\Database\Seeders\FooterSettingSeeder::class);
         $this->call(\Database\Seeders\UserRoleSeeder::class);
+        $this->call(\Database\Seeders\CompanyProjectSeeder::class);
 
 
         // User::factory()->create([
