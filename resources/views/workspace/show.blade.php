@@ -400,7 +400,8 @@
 
                 {{-- Pure Blue System Alerts --}}
                 @if (session('success'))
-                    <div class="mb-8 overflow-hidden relative bg-blue-50 dark:bg-slate-800 border border-blue-200 dark:border-slate-700 p-4 rounded-2xl flex items-start gap-4">
+                    <div class="mb-8 overflow-hidden relative bg-blue-50 dark:bg-slate-800 border border-blue-200 dark:border-slate-700 p-4 rounded-2xl flex items-start gap-4"
+                        data-draft-clear="fl:ws-submission:{{ $workspace->id }}">
                         <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(59,130,246,0.4)]">
                             <i class="fa-solid fa-check text-white text-sm"></i>
                         </div>
@@ -664,10 +665,12 @@
                                                                     </button>
                                                                 @endif
                                                                 <div id="updateForm-{{ $detailOrder }}" class="w-full {{ $reopenNoteForm ? '' : 'hidden' }}">
-                                                                    <form method="POST" action="{{ route('freelancer.workspaces.progress', $workspace) }}" class="space-y-2 pt-3 border-t border-blue-100/60 dark:border-slate-800">
+                                                                    <form method="POST" action="{{ route('freelancer.workspaces.progress', $workspace) }}" class="space-y-2 pt-3 border-t border-blue-100/60 dark:border-slate-800"
+                                                                        data-draft-form
+                                                                        data-draft-key="fl:ws-note:{{ $workspace->id }}">
                                                                         @csrf
                                                                         <input type="hidden" name="action" value="note">
-                                                                        <input type="hidden" name="stage" value="{{ $detailStage }}">
+                                                                        <input type="hidden" name="stage" value="{{ $detailStage }}" data-draft-variant>
                                                                         <div>
                                                                             <label class="block text-[8px] font-black uppercase tracking-widest text-blue-500 dark:text-blue-400 mb-1" for="stageNote-{{ $detailOrder }}">Catatan / Deskripsi Pengerjaan</label>
                                                                             <textarea id="stageNote-{{ $detailOrder }}" name="description" rows="2" maxlength="500"
@@ -839,7 +842,9 @@
                                         </form>
                                     </div>
                                 @elseif ((int) $workspace->freelancer_id === (int) auth()->id() && auth()->user()->role === 'freelancer')
-                                    <form method="POST" action="{{ route('freelancer.workspaces.progress', $workspace) }}" class="flex gap-2">
+                                    <form method="POST" action="{{ route('freelancer.workspaces.progress', $workspace) }}" class="flex gap-2"
+                                        data-draft-form
+                                        data-draft-key="fl:ws-addstage:{{ $workspace->id }}">
                                         @csrf
                                         <input type="hidden" name="action" value="add">
                                         <input type="text" name="new_stage" maxlength="255" required placeholder="Nama tahap baru..."
@@ -1464,10 +1469,11 @@
                 </div>
             </div>
 
-            <form id="updateProgressForm" method="POST" action="" class="p-6 space-y-5">
+            <form id="updateProgressForm" method="POST" action="" class="p-6 space-y-5"
+                @if (auth()->user()->role === 'freelancer') data-draft-form data-draft-key="fl:ws-modal:{{ $workspace->id }}" @endif>
                 @csrf
                 <input type="hidden" name="action" value="select">
-                <input type="hidden" name="stage" id="updateProgressStageInput" value="">
+                <input type="hidden" name="stage" id="updateProgressStageInput" value="" data-draft-variant>
 
                 <div class="flex items-center justify-between p-4 bg-blue-50/50 rounded-xl border border-blue-100">
                     <div class="flex items-center gap-3">
@@ -1499,7 +1505,7 @@
                         class="flex-1 px-4 py-2.5 bg-white border border-blue-200 text-slate-500 rounded-xl text-[11px] font-bold hover:bg-slate-50">
                         Batal
                     </button>
-                    <button type="button" id="saveProgressBtn"
+                    <button type="button" id="saveProgressBtn" data-draft-submit-trigger
                         class="flex-1 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-[11px] font-bold flex items-center justify-center gap-2">
                         <i class="fa-solid fa-floppy-disk"></i> Simpan Update
                     </button>
@@ -1529,6 +1535,11 @@
 
             // Set form action ke route progres freelancer
             document.getElementById('updateProgressForm').action = '{{ route('freelancer.workspaces.progress', $workspace) }}';
+
+            // Pulihkan draft catatan tahap ini (auto-save draft Freelancer).
+            if (window.FormDraftAutosave) {
+                window.FormDraftAutosave.restoreForm(document.getElementById('updateProgressForm'));
+            }
 
             const modal = document.getElementById('updateProgressModal');
             const modalInner = modal.querySelector('div.modal-panel');
@@ -1634,6 +1645,8 @@
             });
         });
     </script>
+@include('partials.form-draft-autosave')
+
 </body>
 
 </html>

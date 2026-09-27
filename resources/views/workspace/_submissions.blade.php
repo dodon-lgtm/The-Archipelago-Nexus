@@ -221,7 +221,9 @@
         
         {{-- Form Content --}}
         <form method="POST" action="{{ route('freelancer.workspaces.submissions.store', $workspace) }}"
-            enctype="multipart/form-data" class="p-6 space-y-5">
+            enctype="multipart/form-data" class="p-6 space-y-5"
+            data-draft-form
+            data-draft-key="fl:ws-submission-upload:{{ $workspace->id }}">
             @csrf
 
             {{-- Input Judul --}}

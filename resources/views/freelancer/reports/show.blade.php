@@ -113,7 +113,8 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
                 {{-- Flash Messages --}}
                 @if(session('success'))
-                    <div class="flex items-center gap-3 px-5 py-4 bg-emerald-50 dark:bg-emerald-900/40 border border-emerald-200 dark:border-emerald-900 text-emerald-800 dark:text-emerald-300 text-sm font-medium rounded-2xl shadow-sm">
+                    <div class="flex items-center gap-3 px-5 py-4 bg-emerald-50 dark:bg-emerald-900/40 border border-emerald-200 dark:border-emerald-900 text-emerald-800 dark:text-emerald-300 text-sm font-medium rounded-2xl shadow-sm"
+                         data-draft-clear="fl:report-evidence:{{ $report->id }}">
                         <i class="fa-solid fa-circle-check text-emerald-500 dark:text-emerald-400 text-lg"></i> 
                         <span>{{ session('success') }}</span>
                     </div>
@@ -239,7 +240,9 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                             <i class="fa-solid fa-upload"></i> Unggah Bukti Tambahan
                                         </h2>
                                         <p class="text-xs text-violet-700 dark:text-violet-300">Admin meminta bukti tambahan untuk laporan ini. Silakan unggah screenshot/bukti pendukung.</p>
-                                        <form method="POST" action="{{ route('freelancer.reports.evidence', $report) }}" enctype="multipart/form-data" class="space-y-3 mt-2">
+                                        <form method="POST" action="{{ route('freelancer.reports.evidence', $report) }}" enctype="multipart/form-data" class="space-y-3 mt-2"
+                                            data-draft-form
+                                            data-draft-key="fl:report-evidence:{{ $report->id }}">
                                             @csrf
                                             <input type="file" name="attachments[]" multiple accept=".jpg,.jpeg,.png,.pdf"
                                                    class="w-full text-xs text-slate-500 dark:text-slate-400 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-violet-100 dark:file:bg-violet-900/40 file:text-violet-700 dark:file:text-violet-300 hover:file:bg-violet-200 dark:hover:file:bg-violet-900/60">
@@ -353,6 +356,8 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
             </div>
         </main>
     </div>
+
+    @include('partials.form-draft-autosave')
 
 </body>
 </html>

@@ -181,7 +181,9 @@
                         </h2>
 
                         <form action="{{ route('freelancer.penawaran.store', $project) }}" method="POST"
-                            enctype="multipart/form-data">
+                            enctype="multipart/form-data"
+                            data-draft-form
+                            data-draft-key="fl:penawaran:{{ $project->id }}">
                             @csrf
 
                             <!-- Harga Penawaran -->
@@ -191,7 +193,7 @@
                                     Harga Penawaran
                                 </label>
 
-                                <input type="hidden" name="harga_penawaran" id="real_harga_penawaran">
+                                <input type="hidden" name="harga_penawaran" id="real_harga_penawaran" data-draft-include>
 
                                 <div class="relative">
                                     <div class="absolute inset-y-0 left-0 flex items-center pl-5 pointer-events-none">
@@ -380,6 +382,7 @@
             }
         });
     </script>
+    @include('partials.form-draft-autosave')
 </body>
 
 </html>

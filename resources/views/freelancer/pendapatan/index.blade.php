@@ -230,7 +230,8 @@
 
                 {{-- Flash Messages --}}
                 @if(session('success'))
-                    <div class="flex items-center gap-3 px-4 py-3 bg-emerald-50 dark:bg-emerald-900/40 border border-emerald-200 dark:border-emerald-900 text-emerald-700 dark:text-emerald-300 rounded-xl text-sm font-medium">
+                    <div class="flex items-center gap-3 px-4 py-3 bg-emerald-50 dark:bg-emerald-900/40 border border-emerald-200 dark:border-emerald-900 text-emerald-700 dark:text-emerald-300 rounded-xl text-sm font-medium"
+                         data-draft-clear="fl:withdraw:{{ Auth::id() }}">
                         <i class="fa-solid fa-check-circle"></i> {{ session('success') }}
                     </div>
                 @endif
@@ -502,7 +503,9 @@
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('freelancer.withdrawals.store') }}" id="withdrawForm" class="space-y-5">
+            <form method="POST" action="{{ route('freelancer.withdrawals.store') }}" id="withdrawForm" class="space-y-5"
+                data-draft-form
+                data-draft-key="fl:withdraw:{{ Auth::id() }}">
                 @csrf
 
                 {{-- Step 1: Metode pencairan --}}
@@ -892,5 +895,6 @@
     });
 </script>
 
+@include('partials.form-draft-autosave')
 </body>
 </html>

@@ -150,7 +150,9 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                         </div>
                     </div>
 
-<form method="POST" action="{{ route('freelancer.reports.store') }}" enctype="multipart/form-data" class="space-y-5">
+<form method="POST" action="{{ route('freelancer.reports.store') }}" enctype="multipart/form-data" class="space-y-5"
+    data-draft-form
+    data-draft-key="fl:report-create:{{ $workspace?->id ?? 0 }}-{{ $project?->id ?? 0 }}-{{ $reportedUser?->id ?? 0 }}">
                         @csrf
 
 {{-- Hidden inputs for contextual reporting --}}
@@ -297,5 +299,6 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
         </main>
     </div>
 
+    @include('partials.form-draft-autosave')
 </body>
 </html>
