@@ -1,0 +1,80 @@
+﻿index.blade.php|27|<button type="submit" class="w-full px-4 py-2.5 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white rounded-xl text-sm font-semibold
+index.blade.php|37|<form method="GET" action="{{ route('admin.categories.index') }}" class="flex flex-col sm:flex-row gap-3 sm:items-end">
+index.blade.php|42|<input type="text" name="search" value="{{ request('search') }}"
+index.blade.php|47|<button type="submit" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-5 py-2.5 bg-blue-500 hover:bg-blue-600 a
+index.blade.php|96|<button type="submit" class="px-3 py-1.5 text-xs font-semibold bg-red-50 text-red-600 hover:bg-red-100 active:bg-red-200 rounded-lg transiti
+index.blade.php|148|<button type="submit" class="flex-1 px-4 py-2.5 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white rounded-xl text-sm font-semibold
+index.blade.php|13|<form method="GET" action="{{ url()->current() }}" class="flex flex-wrap gap-3 items-end">
+index.blade.php|18|<input type="text" name="search" value="{{ request('search') }}"
+index.blade.php|24|<select class="w-full rounded-xl border-blue-100 dark:border-slate-700 bg-[#f6f9ff] dark:bg-slate-800 dark:text-white px-4 py-2.5 text-sm fo
+index.blade.php|31|<button class="inline-flex items-center gap-1.5 px-5 py-2.5 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white rounded-xl text-sm f
+index.blade.php|97|<button class="px-3 py-1.5 text-xs font-semibold bg-emerald-50 text-emerald-600 hover:bg-emerald-100 rounded-lg transition" type="submit">Se
+index.blade.php|104|<button class="px-3 py-1.5 text-xs font-semibold bg-red-50 text-red-600 hover:bg-red-100 rounded-lg transition" type="submit">Tolak</button>
+show.blade.php|87|<button class="w-full px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-sm font-semibold transition" type="submit">
+show.blade.php|100|<button class="w-full px-4 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-xl text-sm font-semibold transition" type="submit">Konfirma
+edit.blade.php|512|type="submit"
+edit.blade.php|103|<button type="submit"
+index.blade.php|10|<form method="GET" action="{{ route('admin.hasil-pekerjaan.index') }}" class="flex flex-wrap gap-3 items-end">
+index.blade.php|15|<input type="text" name="search" value="{{ request('search') }}"
+index.blade.php|23|<select name="status" class="w-full rounded-xl border-blue-100 bg-[#f6f9ff] px-4 py-2.5 text-sm outline-none transition cursor-pointer focus
+index.blade.php|31|<button type="submit" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-5 py-2.5 bg-blue-500 hover:bg-blue-600 a
+index.blade.php|47|method="GET"
+index.blade.php|52|name="status"
+index.blade.php|232|method="GET"
+index.blade.php|252|name="status"
+index.blade.php|262|type="submit"
+show.blade.php|217|<button type="submit"
+show.blade.php|260|<button type="submit"
+index.blade.php|11|<form method="GET" action="{{ route('admin.penawarans.index') }}" class="flex flex-wrap gap-3 items-end">
+index.blade.php|16|<input type="text" name="search" value="{{ request('search') }}"
+index.blade.php|24|<select name="status" class="w-full rounded-xl border-blue-100 bg-[#f6f9ff] px-4 py-2.5 text-sm outline-none transition cursor-pointer focus
+index.blade.php|32|<button type="submit" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-5 py-2.5 bg-blue-500 hover:bg-blue-600 a
+edit.blade.php|92|<button type="submit"
+index.blade.php|12|<form method="GET" action="{{ route('admin.projects.index') }}" class="flex flex-wrap gap-3 items-end">
+index.blade.php|17|<input type="text" name="search" value="{{ request('search') }}"
+index.blade.php|25|<select name="status" class="w-full rounded-xl border-blue-100 bg-[#f6f9ff] px-4 py-2.5 text-sm outline-none transition focus:border-blue-40
+index.blade.php|44|<button type="submit" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-5 py-2.5 bg-blue-500 hover:bg-blue-600 a
+index.blade.php|122|<button type="submit" class="px-3 py-1.5 text-xs font-semibold bg-red-50 text-red-600 hover:bg-red-100 active:bg-red-200 rounded-lg transiti
+show.blade.php|213|<button type="submit" class="w-full px-4 py-2.5 bg-red-500 hover:bg-red-600 active:bg-red-700 text-white rounded-xl text-sm font-semibold sh
+index.blade.php|10|<form method="GET" action="{{ route('admin.reports.index') }}" class="flex flex-wrap gap-3 items-end">
+index.blade.php|15|<input type="text" name="search" value="{{ request('search') }}"
+index.blade.php|23|<select name="category" class="w-full rounded-xl border-blue-100 bg-[#f6f9ff] px-4 py-2.5 text-sm outline-none transition cursor-pointer foc
+index.blade.php|34|<select name="status" class="w-full rounded-xl border-blue-100 bg-[#f6f9ff] px-4 py-2.5 text-sm outline-none transition cursor-pointer focus
+index.blade.php|56|<button type="submit" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-5 py-2.5 bg-blue-500 hover:bg-blue-600 a
+show.blade.php|77|<select name="status" class="w-full rounded-xl border-blue-100 dark:border-slate-700 bg-[#f6f9ff] dark:bg-slate-900 px-4 py-2.5 text-sm text
+show.blade.php|89|<button type="submit" class="px-6 py-2.5 bg-blue-500 hover:bg-blue-600 text-white rounded-xl text-sm font-semibold transition">
+show.blade.php|248|<button type="submit" class="mt-2 w-full px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-sm font-semibold transit
+show.blade.php|259|<button type="submit" class="mt-2 w-full px-4 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-xl text-sm font-semibold transition">
+show.blade.php|277|<button type="submit" class="mt-2 w-full px-4 py-2.5 bg-blue-500 hover:bg-blue-600 text-white rounded-xl text-sm font-semibold transition">
+show.blade.php|334|<button type="submit" class="mt-2 w-full px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-sm font-semibold transit
+show.blade.php|342|<button type="submit" class="w-full px-4 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-xl text-sm font-semibold transition flex item
+show.blade.php|350|<button type="submit" class="w-full px-4 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-xl text-sm font-semibold transition flex item
+show.blade.php|32|<button type="submit"
+show.blade.php|50|<button type="submit"
+show.blade.php|114|<button type="submit"
+show.blade.php|134|<button type="submit"
+show.blade.php|397|<button type="submit"
+show.blade.php|415|<button type="submit"
+show.blade.php|427|<button type="submit"
+index.blade.php|11|<form method="GET" action="{{ route('admin.users.index') }}" class="flex flex-wrap gap-3 items-end">
+index.blade.php|16|<input type="text" name="search" value="{{ request('search') }}"
+index.blade.php|24|<select name="role" class="w-full rounded-xl border-blue-100 bg-[#f6f9ff] px-4 py-2.5 text-sm outline-none transition focus:border-blue-400 
+index.blade.php|32|<button type="submit" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-5 py-2.5 bg-blue-500 hover:bg-blue-600 a
+index.blade.php|84|<select name="role" onchange="this.form.submit()"
+index.blade.php|96|<button type="submit"
+show.blade.php|55|<select name="role" class="w-full rounded-xl border-blue-100 dark:border-slate-700 bg-[#f6f9ff] dark:bg-slate-800 dark:text-white px-4 py-2.
+show.blade.php|60|<button type="submit" class="w-full px-4 py-2.5 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white rounded-xl text-sm font-semibold
+show.blade.php|145|<button type="submit" class="px-4 py-2.5 bg-red-500 hover:bg-red-600 active:bg-red-700 text-white rounded-xl text-sm font-semibold shadow-sm
+index.blade.php|103|<form id="walletFilterForm" method="GET" action="{{ route('admin.wallet.index') }}" class="flex flex-wrap items-center gap-3 w-full lg:w-aut
+index.blade.php|346|<select name="category" required class="w-full text-sm border-2 border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-slate-
+index.blade.php|377|<button type="submit" data-submit-label="Simpan Pengeluaran"
+index.blade.php|517|<button type="submit" id="withdrawSubmitBtn"
+index.blade.php|759|var btn = form.querySelector('button[type="submit"]');
+index.blade.php|12|<form method="GET" action="{{ url()->current() }}" class="flex flex-wrap gap-3 items-end">
+index.blade.php|17|<select class="w-full rounded-xl border-blue-100 dark:border-slate-700 bg-[#f6f9ff] dark:bg-slate-800 dark:text-white px-4 py-2.5 text-sm ou
+index.blade.php|25|<button class="inline-flex items-center gap-1.5 px-5 py-2.5 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white rounded-xl text-sm f
+index.blade.php|26|<i class="fa-solid fa-filter text-xs"></i> Terapkan
+show.blade.php|106|<button type="submit"
+show.blade.php|116|<button type="submit"
+show.blade.php|158|<button type="submit"
+dashboard.blade.php|599|<button type="submit" id="withdrawSubmitBtn"

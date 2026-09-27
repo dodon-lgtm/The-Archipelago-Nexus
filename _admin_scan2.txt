@@ -1,0 +1,31 @@
+﻿admin\categories\index.blade.php | 37 | <form method="GET" action="{{ route('admin.categories.index') }}" class="flex flex-col sm:flex-row gap-3 sm:items-end">
+admin\categories\index.blade.php | 42 | <input type="text" name="search" value="{{ request('search') }}"
+admin\company-account-requests\index.blade.php | 13 | <form method="GET" action="{{ url()->current() }}" class="flex flex-wrap gap-3 items-end">
+admin\company-account-requests\index.blade.php | 18 | <input type="text" name="search" value="{{ request('search') }}"
+admin\company-account-requests\index.blade.php | 24 | <select class="w-full rounded-xl border-blue-100 dark:border-slate-700 bg-[#f6f9ff] dark:bg-slate-800 dark:text-white px
+admin\hasil-pekerjaan\index.blade.php | 10 | <form method="GET" action="{{ route('admin.hasil-pekerjaan.index') }}" class="flex flex-wrap gap-3 items-end">
+admin\hasil-pekerjaan\index.blade.php | 15 | <input type="text" name="search" value="{{ request('search') }}"
+admin\hasil-pekerjaan\index.blade.php | 23 | <select name="status" class="w-full rounded-xl border-blue-100 bg-[#f6f9ff] px-4 py-2.5 text-sm outline-none transition 
+admin\hasil-pekerjaan\index.blade.php | 31 | <button type="submit" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-5 py-2.5 bg-blue-500
+admin\payments\index.blade.php | 52 | name="status"
+admin\payments\index.blade.php | 252 | name="status"
+admin\penawarans\index.blade.php | 11 | <form method="GET" action="{{ route('admin.penawarans.index') }}" class="flex flex-wrap gap-3 items-end">
+admin\penawarans\index.blade.php | 16 | <input type="text" name="search" value="{{ request('search') }}"
+admin\penawarans\index.blade.php | 24 | <select name="status" class="w-full rounded-xl border-blue-100 bg-[#f6f9ff] px-4 py-2.5 text-sm outline-none transition 
+admin\penawarans\index.blade.php | 32 | <button type="submit" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-5 py-2.5 bg-blue-500
+admin\projects\index.blade.php | 12 | <form method="GET" action="{{ route('admin.projects.index') }}" class="flex flex-wrap gap-3 items-end">
+admin\projects\index.blade.php | 17 | <input type="text" name="search" value="{{ request('search') }}"
+admin\projects\index.blade.php | 25 | <select name="status" class="w-full rounded-xl border-blue-100 bg-[#f6f9ff] px-4 py-2.5 text-sm outline-none transition 
+admin\reports\index.blade.php | 10 | <form method="GET" action="{{ route('admin.reports.index') }}" class="flex flex-wrap gap-3 items-end">
+admin\reports\index.blade.php | 15 | <input type="text" name="search" value="{{ request('search') }}"
+admin\reports\index.blade.php | 23 | <select name="category" class="w-full rounded-xl border-blue-100 bg-[#f6f9ff] px-4 py-2.5 text-sm outline-none transitio
+admin\reports\index.blade.php | 34 | <select name="status" class="w-full rounded-xl border-blue-100 bg-[#f6f9ff] px-4 py-2.5 text-sm outline-none transition 
+admin\reports\index.blade.php | 56 | <button type="submit" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-5 py-2.5 bg-blue-500
+admin\users\index.blade.php | 11 | <form method="GET" action="{{ route('admin.users.index') }}" class="flex flex-wrap gap-3 items-end">
+admin\users\index.blade.php | 16 | <input type="text" name="search" value="{{ request('search') }}"
+admin\users\index.blade.php | 24 | <select name="role" class="w-full rounded-xl border-blue-100 bg-[#f6f9ff] px-4 py-2.5 text-sm outline-none transition fo
+admin\users\index.blade.php | 84 | <select name="role" onchange="this.form.submit()"
+admin\wallet\index.blade.php | 346 | <select name="category" required class="w-full text-sm border-2 border-slate-200 rounded-xl px-4 py-3 focus:outline-none
+admin\withdrawals\index.blade.php | 12 | <form method="GET" action="{{ url()->current() }}" class="flex flex-wrap gap-3 items-end">
+admin\withdrawals\index.blade.php | 17 | <select class="w-full rounded-xl border-blue-100 dark:border-slate-700 bg-[#f6f9ff] dark:bg-slate-800 dark:text-white px
+admin\withdrawals\index.blade.php | 26 | <i class="fa-solid fa-filter text-xs"></i> Terapkan

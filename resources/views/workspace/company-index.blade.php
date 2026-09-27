@@ -246,6 +246,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                 </div>
 
                 {{-- Daftar Workspace --}}
+                <div id="workspace-results">
                 @if($workspaces->count() > 0)
                     <div id="workspaceGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" data-total="{{ $workspaces->total() }}" data-per-page="{{ $workspaces->perPage() }}">
                         @foreach($workspaces as $ws)
@@ -324,6 +325,18 @@ $stageColors = [
                     @if(method_exists($workspaces, 'links'))
                         <div id="workspacePagination" class="mt-8">{{ $workspaces->links() }}</div>
                     @endif
+                @elseif(trim((string) $searchValue) !== '' || ($activeProject !== 'all' && $activeProject !== '') || ($activeStatus !== 'all' && $activeStatus !== ''))
+                    {{-- EMPTY STATE — filter aktif, tidak ada hasil yang cocok --}}
+                    <div id="workspaceEmptyFiltered" class="bg-white dark:bg-slate-900 border border-dashed border-blue-200 dark:border-slate-700 rounded-2xl p-10 text-center">
+                        <div class="w-16 h-16 mx-auto mb-4 bg-amber-50 dark:bg-amber-900/30 rounded-2xl flex items-center justify-center">
+                            <i class="fa-solid fa-filter-circle-xmark text-2xl text-amber-500"></i>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-700 dark:text-white">Tidak ada workspace yang sesuai filter</h3>
+                        <p class="text-xs text-slate-400 mt-1">Coba ubah kata kunci pencarian atau pilih project / status lainnya.</p>
+                        <button type="button" id="workspaceClearFilter" class="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-brand text-white rounded-xl text-xs font-semibold hover:bg-blue-700 transition">
+                            <i class="fa-solid fa-rotate-left text-[11px]"></i> Tampilkan Semua
+                        </button>
+                    </div>
                 @else
                     <div class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl p-16 text-center transition-colors duration-300">
                         <div class="w-20 h-20 mx-auto mb-5 bg-blue-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center">
@@ -337,6 +350,7 @@ $stageColors = [
                         </a>
                     </div>
                 @endif
+                </div>
 
             </div>
         </main>
@@ -346,10 +360,10 @@ $stageColors = [
 
 <script>
 (function(){
-    const grid = document.getElementById('workspaceGrid');
-    const emptyFiltered = document.getElementById('workspaceEmptyFiltered');
-    const pagination = document.getElementById('workspacePagination');
-    const clearBtn = document.getElementById('workspaceClearFilter');
+    const resultsWrap = document.getElementById('workspace-results');
+    let grid = document.getElementById('workspaceGrid');
+    let emptyFiltered = document.getElementById('workspaceEmptyFiltered');
+    let pagination = document.getElementById('workspacePagination');
     // Search
     const searchRoot = document.getElementById('workspaceSearchRoot');
     const searchInput = document.getElementById('workspaceSearchInput');
@@ -377,17 +391,131 @@ $stageColors = [
     const filterProjectValue = document.getElementById('filterProjectValue');
     const filterStatusValue = document.getElementById('filterStatusValue');
 
-    if(!grid) return;
-    const cards = grid.querySelectorAll('.ws-card');
-    const total = parseInt(grid.dataset.total || '0', 10);
-    const perPage = parseInt(grid.dataset.perPage || '10', 10);
-    const isSinglePage = total <= perPage;
+    let cards = [];
+    let total = 0;
+    let perPage = 10;
+    let isSinglePage = true;
+
+    // Referensi elemen hasil — dipanggil ulang setiap kali konten diganti via fetch.
+    function refreshRefs(){
+        grid = document.getElementById('workspaceGrid');
+        emptyFiltered = document.getElementById('workspaceEmptyFiltered');
+        pagination = document.getElementById('workspacePagination');
+        cards = grid ? Array.from(grid.querySelectorAll('.ws-card')) : [];
+        total = grid ? (parseInt(grid.dataset.total || '0', 10) || 0) : 0;
+        perPage = grid ? (parseInt(grid.dataset.perPage || '10', 10) || 10) : 10;
+        isSinglePage = total <= perPage;
+    }
+    refreshRefs();
 
     // Data project untuk search — otomatis dari workspace company (tidak buat manual)
     const allProjects = @json($filterProjects->map(fn($p) => ['id' => (string)$p->id, 'name' => $p->project_name])->values());
     let activeProject = '{{ $activeProject ?? "all" }}';
     let activeStatus = '{{ $activeStatus ?? "all" }}';
     let searchQuery = @json($search ?? '');
+
+    // ==== LIVE FETCH (backend) =============================================
+    // Semua perubahan filter diambil lewat fetch — tanpa tombol "Terapkan".
+    const liveStyle = document.createElement('style');
+    liveStyle.textContent =
+        '#workspace-results{transition:opacity .18s ease}' +
+        '#workspace-results.ws-busy{opacity:.55;pointer-events:none}' +
+        '.ws-live-pill{position:fixed;top:5.5rem;left:50%;transform:translateX(-50%);z-index:70;display:none;align-items:center;gap:.5rem;padding:.45rem .9rem;border-radius:9999px;background:rgba(15,23,42,.92);color:#fff;font-size:.72rem;font-weight:700;box-shadow:0 10px 30px -10px rgba(15,23,42,.5);pointer-events:none}' +
+        '.ws-live-pill.show{display:inline-flex}' +
+        '.ws-live-pill .ws-spin{width:.72rem;height:.72rem;border-radius:50%;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;animation:wsLiveSpin .7s linear infinite}' +
+        '@keyframes wsLiveSpin{to{transform:rotate(360deg)}}';
+    document.head.appendChild(liveStyle);
+    const livePill = document.createElement('div');
+    livePill.className = 'ws-live-pill';
+    livePill.setAttribute('aria-hidden', 'true');
+    livePill.innerHTML = '<span class="ws-spin"></span><span>Memuat...</span>';
+    document.body.appendChild(livePill);
+
+    let fetchTimer = null;
+    let fetchSeq = 0;
+    let fetchController = null;
+
+    function buildResultsUrl(){
+        const params = new URLSearchParams();
+        const s = String(searchQuery || '').trim();
+        if(s) params.set('search', s);
+        if(activeProject && activeProject !== 'all') params.set('project', activeProject);
+        if(activeStatus && activeStatus !== 'all') params.set('status', activeStatus);
+        const qs = params.toString();
+        return window.location.pathname + (qs ? '?' + qs : '');
+    }
+
+    function setLiveLoading(on){
+        if(!resultsWrap) return;
+        resultsWrap.classList.toggle('ws-busy', on);
+        resultsWrap.setAttribute('aria-busy', on ? 'true' : 'false');
+        livePill.classList.toggle('show', on);
+    }
+
+    // Ganti isi #workspace-results dengan hasil terbaru dari backend.
+    // `url` opsional (mis. link pagination yang sudah memuat filter + page).
+    function fetchResults(url){
+        if(fetchTimer){ clearTimeout(fetchTimer); fetchTimer = null; }
+        const target = url || buildResultsUrl();
+        if(!resultsWrap){
+            if(filterForm) filterForm.submit();
+            return;
+        }
+        const seq = ++fetchSeq;
+        if(fetchController){ fetchController.abort(); fetchController = null; }
+        if(typeof AbortController !== 'undefined') fetchController = new AbortController();
+        setLiveLoading(true);
+        fetch(target, {
+            method: 'GET',
+            credentials: 'same-origin',
+            headers: { 'X-Requested-With': 'XMLHttpRequest', Accept: 'text/html' },
+            signal: fetchController ? fetchController.signal : undefined
+        })
+            .then(res => { if(!res.ok) throw new Error('HTTP ' + res.status); return res.text(); })
+            .then(html => {
+                if(seq !== fetchSeq) return; // request lama — abaikan
+                const doc = new DOMParser().parseFromString(html, 'text/html');
+                const fresh = doc.getElementById('workspace-results');
+                if(!fresh){ window.location.href = target; return; }
+                resultsWrap.innerHTML = fresh.innerHTML;
+                try{ window.history.replaceState(null, '', target); }catch(err){}
+                refreshRefs();
+                applyFilters(false);
+            })
+            .catch(err => {
+                if(err && err.name === 'AbortError') return;
+                if(seq !== fetchSeq) return;
+                // Fetch gagal — fallback submit form (hidden inputs sudah tersinkron).
+                if(filterForm){ filterForm.submit(); return; }
+                window.location.href = target;
+            })
+            .finally(() => { if(seq === fetchSeq) setLiveLoading(false); });
+    }
+
+    // Debounce pencarian teks (400ms) agar tidak request tiap karakter.
+    function scheduleFetch(){
+        if(fetchTimer) clearTimeout(fetchTimer);
+        fetchTimer = setTimeout(() => { fetchTimer = null; fetchResults(); }, 400);
+    }
+
+    // Pagination di dalam kontainer hasil → fetch (filter tetap via query string).
+    if(resultsWrap){
+        resultsWrap.addEventListener('click', (e)=>{
+            if(e.defaultPrevented || e.button!==0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+            const t = e.target;
+            if(!t || !t.closest) return;
+            const a = t.closest('a[href]');
+            if(!a || !resultsWrap.contains(a)) return;
+            if(a.target && a.target !== '_self') return;
+            let url;
+            try{ url = new URL(a.href, window.location.href); }catch(err){ return; }
+            if(url.origin !== window.location.origin) return;
+            if(url.pathname !== window.location.pathname) return;
+            if(!url.searchParams.has('page')) return; // link lain dalam halaman → biarkan
+            e.preventDefault();
+            fetchResults(url.pathname + url.search);
+        });
+    }
 
     function setProjectLabel(val){
         activeProject = String(val);
@@ -516,11 +644,8 @@ $stageColors = [
                 setProjectLabel(p.id);
                 searchDropdown.classList.add('hidden');
                 applyFilters(true);
-                // jika multi-page, reload backend untuk hasil lengkap lintas halaman
-                if(!isSinglePage){
-                    // submit backend
-                    if(filterForm) filterForm.submit();
-                }
+                // hasil lengkap lintas halaman diambil dari backend
+                fetchResults();
             });
             searchList.appendChild(btn);
         });
@@ -534,7 +659,7 @@ $stageColors = [
             searchQuery = searchInput.value.trim();
             searchDropdown.classList.add('hidden');
             applyFilters(true);
-            if(!isSinglePage && filterForm) filterForm.submit();
+            fetchResults();
         });
         searchList.appendChild(allBtn);
         searchDropdown.classList.remove('hidden');
@@ -579,7 +704,8 @@ $stageColors = [
             searchQuery = searchInput.value;
             renderSearchDropdown();
             applyFilters(true);
-            // live filter, if multi-page we still do frontend but backend will handle on next reload
+            // live filter: frontend instan + backend (fetch) setelah debounce 400ms
+            scheduleFetch();
         });
         searchInput.addEventListener('focus', ()=>{
             if(searchInput.value.trim()) renderSearchDropdown();
@@ -593,7 +719,7 @@ $stageColors = [
                 e.preventDefault();
                 searchDropdown.classList.add('hidden');
                 applyFilters(true);
-                if(!isSinglePage && filterForm) filterForm.submit();
+                fetchResults();
             }
         });
     }
@@ -604,6 +730,7 @@ $stageColors = [
             searchQuery='';
             searchDropdown.classList.add('hidden');
             applyFilters(true);
+            fetchResults();
             searchInput.focus();
         });
     }
@@ -630,7 +757,7 @@ $stageColors = [
             }
             closeProjectPanel();
             applyFilters(true);
-            if(!isSinglePage && filterForm) filterForm.submit();
+            fetchResults();
         });
     });
 
@@ -651,7 +778,7 @@ $stageColors = [
             setStatusLabel(val);
             closeStatusPanel();
             applyFilters(true);
-            if(!isSinglePage && filterForm) filterForm.submit();
+            fetchResults();
         });
     });
 
@@ -665,10 +792,15 @@ $stageColors = [
         closeProjectPanel();
         closeStatusPanel();
         applyFilters(true);
-        if(!isSinglePage && filterForm) filterForm.submit();
+        fetchResults();
     }
     if(resetBtn) resetBtn.addEventListener('click', doReset);
-    if(clearBtn) clearBtn.addEventListener('click', doReset);
+    // Tombol "Tampilkan Semua" berada di dalam kontainer hasil — pakai delegasi
+    // event agar tetap hidup setelah konten diganti lewat fetch.
+    document.addEventListener('click', (e)=>{
+        const t = e.target;
+        if(t && t.closest && t.closest('#workspaceClearFilter')) doReset();
+    });
 
     // Click outside & Escape
     document.addEventListener('click', (e)=>{
@@ -705,8 +837,8 @@ $stageColors = [
         searchQuery=s;
         setProjectLabel(p);
         setStatusLabel(st);
-        if(isSinglePage) applyFilters(false);
-        else window.location.reload();
+        applyFilters(false);
+        fetchResults();
     });
 })();
 </script>
