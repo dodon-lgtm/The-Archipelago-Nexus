@@ -220,6 +220,23 @@ class CompanyFormDraftAutosaveTest extends TestCase
     {
         \App\Models\FinancialSetting::getSettings();
 
+        // store() memverifikasi kelengkapan profil (≥80%) sebelum mengecek kuota.
+        // Tanpa companyProfile yang lengkap, request berhenti di halaman profil
+        // dan tidak pernah mencapai cabang kuota.
+        \App\Models\CompanyProfile::updateOrCreate(
+            ['user_id' => $this->company->id],
+            ['company_name' => 'PT Uji Draft', 'location' => 'Jakarta']
+        );
+        $this->company->forceFill(['phone' => '081234567890'])->save();
+
+        // Habiskan kuota gratis bulan ini supaya cabang "kuota penuh" di
+        // store() benar-benar dieksekusi (bukan lolos membuat proyek).
+        $quota = (new \App\Services\ProjectQuotaService())->freeQuota();
+        Project::factory()->count($quota)->create([
+            'user_id' => $this->company->id,
+            'status'  => Project::STATUS_OPEN,
+        ]);
+
         $response = $this->actingAs($this->company)
             ->from(route('company.projects.create'))
             ->post(route('company.projects.store'), [

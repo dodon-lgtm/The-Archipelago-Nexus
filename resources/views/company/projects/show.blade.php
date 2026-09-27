@@ -1090,9 +1090,14 @@
                     applySort() {
                         const container = document.getElementById('penawaran-list');
                         if (!container) return;
+                        const cards = container.querySelectorAll('[data-penawaran-card]');
                         this.sortedItems().forEach(item => {
-                            const card = container.querySelector('[data-penawaran-card="' + item.id + '"]');
-                            if (card) container.appendChild(card);
+                            for (let i = 0; i < cards.length; i++) {
+                                if (Number(cards[i].getAttribute('data-penawaran-card')) === Number(item.id)) {
+                                    container.appendChild(cards[i]);
+                                    break;
+                                }
+                            }
                         });
                     },
 
