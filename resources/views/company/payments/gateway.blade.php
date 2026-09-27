@@ -371,21 +371,21 @@
 
                                 <div class="border-t border-blue-50 dark:border-slate-800 pt-4 space-y-2">
                                     <div class="flex items-center justify-between">
-                                        <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Biaya Proyek</p>
-                                        <span class="text-xs font-semibold text-slate-600 dark:text-slate-400">Rp {{ number_format($payment->amount, 0, ',', '.') }}</span>
+                                        <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Nilai Pekerjaan</p>
+                                        <span class="text-xs font-semibold text-slate-600 dark:text-slate-400">Rp {{ number_format($payment->freelancer_receive, 0, ',', '.') }}</span>
                                     </div>
                                     <div class="flex items-center justify-between">
                                         <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Fee Platform{{ ($payment->platform_fee_rate !== null && $payment->platform_fee_rate !== '') ? ' (' . rtrim(rtrim(number_format((float) $payment->platform_fee_rate, 2, '.', ''), '0'), '.') . '%)' : '' }}</p>
                                         <span class="text-xs font-semibold text-slate-600 dark:text-slate-400">Rp {{ number_format($payment->platform_fee, 0, ',', '.') }}</span>
                                     </div>
-                                    <div class="flex items-center justify-between">
-                                        <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Freelancer Menerima</p>
-                                        <span class="text-xs font-semibold text-slate-600 dark:text-slate-400">Rp {{ number_format($payment->freelancer_receive, 0, ',', '.') }}</span>
-                                    </div>
                                     <div class="flex items-center justify-between pt-2 border-t border-blue-100 dark:border-slate-800">
                                         <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Total Dibayar Company</p>
                                         <span class="text-lg font-extrabold text-emerald-600">Rp {{ number_format($payment->amount, 0, ',', '.') }}</span>
                                     </div>
+                                    <p class="text-[10px] text-slate-400 leading-relaxed">
+                                        Fee platform ditambahkan di atas nilai pekerjaan. Freelancer menerima nilai pekerjaan penuh
+                                        Rp {{ number_format($payment->freelancer_receive, 0, ',', '.') }} setelah Anda menerima hasil pekerjaannya.
+                                    </p>
                                 </div>
 
                                 <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-800/50 rounded-xl px-4 py-3">

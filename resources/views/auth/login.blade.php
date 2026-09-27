@@ -234,6 +234,83 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                     >
                 @endif
 
+                {{-- =====================================================
+                    KARTU INFORMASI: PENDAFTARAN AKUN PERUSAHAAN PENDING
+                    Hanya dirender bila session memuat identifier company
+                    DAN CompanyAccountRequest masih berstatus "menunggu"
+                    (status diverifikasi ke database oleh AuthController).
+                ====================================================== --}}
+                @if (!empty($pendingCompanyRequest))
+                    @php
+                        // Format bantuan memakai sumber yang sama dengan Pusat Bantuan:
+                        // alamat email dari config('mail.help_to') dan label kategori
+                        // dari HelpContactRequest (single source of truth).
+                        $helpSupportEmail  = config('mail.help_to');
+                        $helpCategoryLabel = \App\Http\Requests\HelpContactRequest::categoryLabel(
+                            \App\Http\Requests\HelpContactRequest::CATEGORY_AKUN
+                        );
+
+                        $helpSubject = '[Pusat Bantuan ApexForge Labs][' . $helpCategoryLabel . '] Verifikasi Pendaftaran Akun Perusahaan';
+
+                        $helpMessage = implode("\n", [
+                            'Halo Tim ApexForge Labs,',
+                            '',
+                            'Saya telah melakukan pendaftaran sebagai akun perusahaan dan ingin menanyakan status verifikasi akun saya.',
+                            '',
+                            'Nama PIC / Nama Perusahaan:',
+                            ($pendingCompanyRequest->contact_person ?: '-') . ' / ' . ($pendingCompanyRequest->company_name ?: '-'),
+                            '',
+                            'Email perusahaan:',
+                            $pendingCompanyRequest->company_email ?: '-',
+                            '',
+                            'Role:',
+                            'Company',
+                            '',
+                            'Kategori:',
+                            $helpCategoryLabel,
+                            '',
+                            'Subjek:',
+                            'Verifikasi Pendaftaran Akun Perusahaan',
+                            '',
+                            'Pesan:',
+                            'Saya mendaftar sebagai akun perusahaan dan ingin menanyakan status verifikasi pendaftaran saya.',
+                            '',
+                            'Terima kasih.',
+                        ]);
+
+                        $helpMailtoUrl = 'mailto:' . $helpSupportEmail
+                            . '?subject=' . rawurlencode($helpSubject)
+                            . '&body=' . rawurlencode($helpMessage);
+                    @endphp
+
+                    <div class="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/25 space-y-3">
+                        <div class="flex items-start gap-2.5">
+                            <div class="w-7 h-7 shrink-0 rounded-lg bg-amber-500/15 border border-amber-500/30 text-amber-300 flex items-center justify-center text-xs">
+                                <i class="fa-solid fa-hourglass-half"></i>
+                            </div>
+                            <div class="space-y-1">
+                                <h3 class="text-xs font-bold text-amber-200 leading-snug">
+                                    Pendaftaran Akun Perusahaan Sedang Diproses
+                                </h3>
+                                <p class="text-[10px] leading-relaxed text-amber-100/80">
+                                    Pendaftaran akun perusahaan Anda telah berhasil dikirim dan saat ini
+                                    sedang menunggu proses verifikasi oleh administrator.
+                                </p>
+                                <p class="text-[10px] leading-relaxed text-amber-100/80">
+                                    Setelah permintaan disetujui, Anda dapat masuk menggunakan akun
+                                    perusahaan tersebut.
+                                </p>
+                            </div>
+                        </div>
+
+                        <a href="{{ $helpMailtoUrl }}"
+                            class="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/30 text-amber-100 text-[11px] font-bold transition-colors">
+                            <i class="fa-solid fa-envelope"></i>
+                            Hubungi Admin
+                        </a>
+                    </div>
+                @endif
+
                 <!-- Pesan Success -->
                 @if (session('success'))
                     <div class="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs flex items-center gap-2">

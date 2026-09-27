@@ -67,9 +67,11 @@ class ManualPaymentViewsRenderTest extends TestCase
             'company_id'         => $company->id,
             'freelancer_id'      => $freelancer->id,
             'invoice_number'     => 'INV-TEST-' . uniqid(),
-            'amount'             => 1000000.00,
+            // Model fee REVISI #5: 1.000.000 (nilai pekerjaan) + 50.000 (fee 5%) = total 1.050.000.
+            'amount'             => 1050000.00,
             'platform_fee'       => 50000.00,
-            'freelancer_receive' => 950000.00,
+            'platform_fee_rate'  => 5.00,
+            'freelancer_receive' => 1000000.00,
             'status'             => 'pending',
         ]);
 
@@ -100,6 +102,28 @@ class ManualPaymentViewsRenderTest extends TestCase
         );
     }
 
+    /**
+     * REVISI #5 (R-2) — breakdown aturan #6 pada halaman bayar company:
+     * nilai pekerjaan + fee (%) + nominal fee + total (pekerjaan + fee).
+     */
+    public function test_company_payment_gateway_shows_fee_breakdown(): void
+    {
+        [$payment, $workspace] = $this->createPendingWorkspacePayment();
+
+        $response = $this->actingAs(\App\Models\User::find($payment->company_id))
+            ->get(route('company.payments.gateway', $workspace));
+
+        $response->assertOk();
+        $response->assertSee('Nilai Pekerjaan');
+        $response->assertSee('Fee Platform (5%)');
+        $response->assertSee('Total Dibayar Company');
+
+        // Rp 1.000.000 (nilai pekerjaan) + Rp 50.000 (fee 5%) = Rp 1.050.000 (total).
+        $response->assertSee('Rp ' . number_format(1000000, 0, ',', '.'));
+        $response->assertSee('Rp ' . number_format(50000, 0, ',', '.'));
+        $response->assertSee('Rp ' . number_format(1050000, 0, ',', '.'));
+    }
+
     public function test_admin_show_payment_view_renders(): void
     {
         [$payment, $workspace] = $this->createPendingWorkspacePayment();
@@ -110,7 +134,7 @@ class ManualPaymentViewsRenderTest extends TestCase
             'sender_bank'          => 'BCA',
             'sender_account_number' => '1234567890',
             'payment_date'         => now()->toDateString(),
-            'paid_amount'          => 1000000.00,
+            'paid_amount'          => 1050000.00,
             'destination_info'     => [
                 'title' => 'BANK',
                 'label' => 'Transfer Bank',
@@ -426,5 +450,232 @@ class ManualPaymentViewsRenderTest extends TestCase
 
         $payment->refresh();
         $this->assertSame('waiting_verification', $payment->status);
+    }
+
+    // ────────────────────────────────────────────────────────────────
+    // M-1 (Opsi B) — SCOPE VERIFIKASI/REJECT ADMIN PER JENIS PAYMENT
+    //   • WORKSPACE : HANYA `waiting_verification` (company wajib sudah kirim bukti)
+    //   • KUOTA     : `pending` & `waiting_verification` (perilaku existing)
+    // ────────────────────────────────────────────────────────────────
+
+    /** Upload bukti pembayaran workspace agar payment menjadi `waiting_verification`. */
+    private function submitWorkspacePaymentProof(Payment $payment, Workspace $workspace): void
+    {
+        $this->actingAs(User::find($payment->company_id))
+            ->post(route('company.payments.upload', $workspace), [
+                'payment_method'     => 'Transfer Bank',
+                'destination_source' => 'bank',
+                'sender_name'        => 'PT Pengirim Workspace',
+                'sender_bank'        => 'BCA',
+                'payment_date'       => now()->toDateString(),
+                'paid_amount'        => (float) $payment->amount,
+                'payment_proof'      => UploadedFile::fake()->image('bukti-workspace.jpg'),
+            ])
+            ->assertSessionHas('success');
+
+        $payment->refresh();
+        $this->assertSame('waiting_verification', $payment->status);
+    }
+
+    public function test_admin_cannot_verify_workspace_payment_with_pending_status(): void
+    {
+        [$payment, $workspace] = $this->createPendingWorkspacePayment();
+        $this->assertSame('pending', $payment->status);
+
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $this->actingAs($admin)
+            ->post(route('admin.payments.verify', $payment))
+            ->assertRedirect(route('admin.payments.show', $payment))
+            ->assertSessionHas('error');
+
+        // Tidak ada perubahan: tidak paid, tidak hold escrow, workspace tetap.
+        $payment->refresh();
+        $this->assertSame('pending', $payment->status);
+        $this->assertNull($payment->verified_at);
+        $this->assertSame(Payment::FUNDS_NOT_APPLICABLE, $payment->funds_status);
+        $this->assertSame('Menunggu Pembayaran', $workspace->fresh()->status);
+        $this->assertSame(0, WalletLedger::count());
+    }
+
+    public function test_admin_cannot_reject_workspace_payment_with_pending_status(): void
+    {
+        [$payment, $workspace] = $this->createPendingWorkspacePayment();
+        $this->assertSame('pending', $payment->status);
+
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $this->actingAs($admin)
+            ->post(route('admin.payments.reject', $payment->id), [
+                'admin_note' => 'Mencoba menolak tanpa bukti.',
+            ])
+            ->assertRedirect(route('admin.payments.show', $payment))
+            ->assertSessionHas('error');
+
+        $payment->refresh();
+        $this->assertSame('pending', $payment->status);
+        $this->assertNull($payment->admin_note);
+        $this->assertNull($payment->verified_at);
+        $this->assertSame('Menunggu Pembayaran', $workspace->fresh()->status);
+        $this->assertSame(0, WalletLedger::count());
+    }
+
+    public function test_admin_can_verify_workspace_payment_after_proof_submitted(): void
+    {
+        Storage::fake('public');
+
+        [$payment, $workspace] = $this->createPendingWorkspacePayment();
+        $this->submitWorkspacePaymentProof($payment, $workspace);
+
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $this->actingAs($admin)
+            ->post(route('admin.payments.verify', $payment))
+            ->assertRedirect(route('admin.payments.show', $payment))
+            ->assertSessionHas('success');
+
+        $payment->refresh();
+        $this->assertSame('paid', $payment->status);
+        $this->assertNotNull($payment->verified_at);
+        $this->assertSame(Payment::FUNDS_HELD, $payment->funds_status);
+        $this->assertSame('Sedang Dikerjakan', $workspace->fresh()->status);
+
+        // Escrow ditahan tepat sekali sebesar total yang dibayar company.
+        $held = WalletLedger::query()
+            ->where('payment_id', $payment->id)
+            ->where('type', WalletLedger::TYPE_ESCROW_HELD)
+            ->first();
+        $this->assertNotNull($held);
+        $this->assertEquals((float) $payment->amount, (float) $held->amount);
+        $this->assertEquals($payment->company_id, $held->user_id);
+    }
+
+    public function test_admin_can_reject_workspace_payment_after_proof_submitted(): void
+    {
+        Storage::fake('public');
+
+        [$payment, $workspace] = $this->createPendingWorkspacePayment();
+        $this->submitWorkspacePaymentProof($payment, $workspace);
+
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $this->actingAs($admin)
+            ->post(route('admin.payments.reject', $payment->id), [
+                'admin_note' => 'Nominal transfer tidak sesuai.',
+            ])
+            ->assertRedirect(route('admin.payments.show', $payment))
+            ->assertSessionHas('success');
+
+        $payment->refresh();
+        $this->assertSame('rejected', $payment->status);
+        $this->assertSame('Nominal transfer tidak sesuai.', $payment->admin_note);
+        $this->assertSame(Payment::FUNDS_NOT_APPLICABLE, $payment->funds_status);
+
+        // Perilaku existing: workspace kembali ke Menunggu Pembayaran, tanpa ledger.
+        $this->assertSame('Menunggu Pembayaran', $workspace->fresh()->status);
+        $this->assertSame(0, WalletLedger::count());
+    }
+
+    public function test_quota_pending_payment_can_still_be_verified_by_admin(): void
+    {
+        $company = $this->completeCompany();
+        $payment = $this->createQuotaPayment($company);
+
+        $this->assertSame('pending', $payment->status);
+        $this->assertTrue($payment->isQuotaPayment());
+
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $this->actingAs($admin)
+            ->post(route('admin.payments.verify', $payment))
+            ->assertRedirect(route('admin.payments.show', $payment))
+            ->assertSessionHas('success');
+
+        $payment->refresh();
+        $this->assertSame('paid', $payment->status);
+        $this->assertNotNull($payment->verified_at);
+
+        // Income platform tercatat; tidak menyentuh escrow/workspace.
+        $this->assertSame(1, WalletLedger::where('type', WalletLedger::TYPE_PROJECT_QUOTA_FEE)->count());
+        $this->assertEquals((float) $payment->amount, AdminWalletService::balance());
+        $this->assertSame(Payment::FUNDS_NOT_APPLICABLE, $payment->funds_status);
+        $this->assertNull($payment->workspace_id);
+        $this->assertSame(1, (new ProjectQuotaService())->paidSlotsThisMonth($company->id));
+    }
+
+    public function test_quota_pending_payment_can_still_be_rejected_by_admin(): void
+    {
+        $company = $this->completeCompany();
+        $payment = $this->createQuotaPayment($company);
+
+        $this->assertSame('pending', $payment->status);
+
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $this->actingAs($admin)
+            ->post(route('admin.payments.reject', $payment->id), [
+                'admin_note' => 'Belum ada transfer masuk.',
+            ])
+            ->assertRedirect(route('admin.payments.show', $payment))
+            ->assertSessionHas('success');
+
+        $payment->refresh();
+        $this->assertSame('rejected', $payment->status);
+        $this->assertSame('Belum ada transfer masuk.', $payment->admin_note);
+
+        // Tidak ada income platform, tidak ada efek escrow, slot kuota tidak bertambah.
+        $this->assertSame(0, WalletLedger::count());
+        $this->assertNull($payment->workspace_id);
+        $this->assertSame(0, (new ProjectQuotaService())->paidSlotsThisMonth($company->id));
+    }
+
+    public function test_admin_verify_actions_are_hidden_for_workspace_pending_payment(): void
+    {
+        [$payment, $workspace] = $this->createPendingWorkspacePayment();
+
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $response = $this->actingAs($admin)->get(route('admin.payments.show', $payment));
+
+        $response->assertOk();
+
+        // Panel aksi disembunyikan karena bukti transfer belum ada.
+        $response->assertDontSee('Verifikasi Pembayaran', false);
+        $response->assertDontSee('Ya, Tolak Pembayaran', false);
+
+        // Sebabnya tetap dijelaskan kepada Admin.
+        $response->assertSee('baru tersedia setelah', false);
+    }
+
+    public function test_admin_verify_actions_are_visible_for_workspace_waiting_verification(): void
+    {
+        Storage::fake('public');
+
+        [$payment, $workspace] = $this->createPendingWorkspacePayment();
+        $this->submitWorkspacePaymentProof($payment, $workspace);
+
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $this->actingAs($admin)
+            ->get(route('admin.payments.show', $payment))
+            ->assertOk()
+            ->assertSee('Verifikasi Pembayaran', false)
+            ->assertSee('Ya, Tolak Pembayaran', false)
+            ->assertDontSee('baru tersedia setelah', false);
+    }
+
+    public function test_admin_verify_actions_remain_visible_for_pending_quota_payment(): void
+    {
+        $company = $this->completeCompany();
+        $payment = $this->createQuotaPayment($company);
+        $this->assertSame('pending', $payment->status);
+
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $this->actingAs($admin)
+            ->get(route('admin.payments.show', $payment))
+            ->assertOk()
+            ->assertSee('Verifikasi Pembayaran', false)
+            ->assertSee('Ya, Tolak Pembayaran', false);
     }
 }

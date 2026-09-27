@@ -178,6 +178,16 @@
                                 <span class="inline-flex items-center gap-1.5 mt-1 px-2.5 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-brand border border-blue-100 dark:border-blue-800/60 text-[10px] font-bold">
                                     <i class="fa-solid fa-hand-holding-dollar text-[9px]"></i> Manual</span>
                             </div>
+                            <div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-blue-100 dark:border-slate-800">
+                                <div>
+                                    <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Nilai Pekerjaan</p>
+                                    <p class="font-semibold text-slate-700 dark:text-slate-200 mt-0.5">Rp {{ number_format($payment->freelancer_receive, 0, ',', '.') }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Fee Platform{{ ($payment->platform_fee_rate !== null && $payment->platform_fee_rate !== '') ? ' (' . rtrim(rtrim(number_format((float) $payment->platform_fee_rate, 2, '.', ''), '0'), '.') . '%)' : '' }}</p>
+                                    <p class="font-semibold text-slate-700 dark:text-slate-200 mt-0.5">Rp {{ number_format($payment->platform_fee, 0, ',', '.') }}</p>
+                                </div>
+                            </div>
                             <div class="md:col-span-2 flex items-center justify-between pt-4 border-t border-blue-100 dark:border-slate-800">
                                 <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Total Pembayaran</p>
                                 <span class="text-xl font-extrabold text-emerald-600">Rp {{ number_format($payment->amount, 0, ',', '.') }}</span>

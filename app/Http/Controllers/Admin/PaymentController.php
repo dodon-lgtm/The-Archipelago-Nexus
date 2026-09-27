@@ -82,16 +82,16 @@ class PaymentController extends Controller
         Request $request,
         Payment $payment
     ): RedirectResponse {
-        // Pastikan status payment adalah waiting_verification
-       
-        if (!in_array($payment->status, ['waiting_verification', 'pending'])) {
-    return redirect()
-        ->route('admin.payments.show', $payment)
-        ->with('error', 'Status pembayaran tidak dalam status menunggu verifikasi.');
-}
-
-                // Quota payment (Rp10.000/project slot) — tidak ada escrow / workspace
+        // ── KUOTA ──────────────────────────────────────────────────────────────
+        // M-1 (Opsi B): perilaku kuota DIPERTAHANKAN — payment kuota tidak memiliki
+        // escrow/workspace, sehingga `pending` & `waiting_verification` tetap boleh
+        // diproses Admin (verify/reject) sesuai flow existing.
         if ($payment->isQuotaPayment()) {
+            if (!in_array($payment->status, ['waiting_verification', 'pending'], true)) {
+                return redirect()
+                    ->route('admin.payments.show', $payment)
+                    ->with('error', 'Status pembayaran tidak dalam status menunggu verifikasi.');
+            }
             try {
                 DB::transaction(function () use ($payment) {
                     $payment->update([
@@ -123,6 +123,16 @@ class PaymentController extends Controller
             return redirect()
                 ->route('admin.payments.show', $payment)
                 ->with('success', 'Pembayaran kuota proyek berhasil diverifikasi. Pendapatan Rp ' . number_format($payment->amount, 0, ',', '.') . ' telah masuk Admin Wallet.');
+        }
+
+        // ── WORKSPACE ─────────────────────────────────────────────────────────
+        // M-1 (Opsi B): payment proyek (ber-escrow & membuka workspace) HANYA boleh
+        // diverifikasi setelah company mengirim bukti pembayaran (`waiting_verification`).
+        // Status `pending` = belum ada bukti transfer → tolak, tanpa hold/unlock workspace.
+        if ($payment->status !== 'waiting_verification') {
+            return redirect()
+                ->route('admin.payments.show', $payment)
+                ->with('error', 'Pembayaran proyek hanya dapat diverifikasi setelah perusahaan mengirim bukti pembayaran (status Menunggu Verifikasi).');
         }
 
         $workspace = $payment->workspace;
@@ -195,12 +205,22 @@ message: 'Pembayaran untuk proyek "' . ($workspace->project->project_name ?? '')
         Request $request,
         Payment $payment
     ): RedirectResponse {
-        // Pastikan status payment adalah waiting_verification
-      if (!in_array($payment->status, ['waiting_verification', 'pending'])) {
-    return redirect()
-        ->route('admin.payments.show', $payment)
-        ->with('error', 'Status pembayaran tidak dalam status menunggu verifikasi.');
-}
+        // M-1 (Opsi B) — aturan status DIPISAH per jenis payment:
+        //   • KUOTA     : `pending` & `waiting_verification` (perilaku existing dipertahankan).
+        //   • WORKSPACE : HANYA `waiting_verification` (company wajib sudah kirim bukti).
+        $isQuotaPayment = $payment->isQuotaPayment();
+
+        if ($isQuotaPayment) {
+            if (!in_array($payment->status, ['waiting_verification', 'pending'], true)) {
+                return redirect()
+                    ->route('admin.payments.show', $payment)
+                    ->with('error', 'Status pembayaran tidak dalam status menunggu verifikasi.');
+            }
+        } elseif ($payment->status !== 'waiting_verification') {
+            return redirect()
+                ->route('admin.payments.show', $payment)
+                ->with('error', 'Pembayaran proyek hanya dapat ditolak setelah perusahaan mengirim bukti pembayaran (status Menunggu Verifikasi).');
+        }
 
         $request->validate([
             'admin_note' => [

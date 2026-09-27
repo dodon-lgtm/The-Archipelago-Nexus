@@ -96,7 +96,9 @@ class FinancialSnapshotTest extends TestCase
 
         $this->assertEquals(5.00, (float) $payment->platform_fee_rate);
         $this->assertEquals(100000.00, (float) $payment->platform_fee);
-        $this->assertEquals(1900000.00, (float) $payment->freelancer_receive);
+        // Freelancer menerima nilai pekerjaan penuh; fee ditambahkan di atas.
+        $this->assertEquals(2000000.00, (float) $payment->freelancer_receive);
+        $this->assertEquals(2100000.00, (float) $payment->amount);
     }
 
     public function test_project_fee_change_does_not_rewrite_existing_payment(): void
@@ -111,7 +113,8 @@ class FinancialSnapshotTest extends TestCase
         $old->refresh();
         $this->assertEquals(5.00, (float) $old->platform_fee_rate);
         $this->assertEquals(100000.00, (float) $old->platform_fee);
-        $this->assertEquals(1900000.00, (float) $old->freelancer_receive);
+        $this->assertEquals(2000000.00, (float) $old->freelancer_receive);
+        $this->assertEquals(2100000.00, (float) $old->amount);
     }
 
     public function test_new_project_payment_uses_updated_fee_rate(): void
@@ -122,7 +125,8 @@ class FinancialSnapshotTest extends TestCase
 
         $this->assertEquals(12.50, (float) $payment->platform_fee_rate);
         $this->assertEquals(250000.00, (float) $payment->platform_fee);
-        $this->assertEquals(1750000.00, (float) $payment->freelancer_receive);
+        $this->assertEquals(2000000.00, (float) $payment->freelancer_receive);
+        $this->assertEquals(2250000.00, (float) $payment->amount);
     }
 
     // ─── WITHDRAWAL FEE SNAPSHOT ───────────────────────────────────

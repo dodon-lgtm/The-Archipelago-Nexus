@@ -327,10 +327,20 @@ class WorkspaceController extends Controller
 
         $request->validate([
             'action' => 'required|in:select,note,add,rename,delete,move_next',
-            // Untuk "select"/"note": stage wajib diisi (nama stage yang dipilih)
-            // Untuk "add"/"rename": new_stage/old_stage wajib diisi
-            // Untuk "move_next": stage tidak dibutuhkan (dihitung otomatis)
-            'stage' => $request->action === 'move_next' ? 'nullable' : ($request->action === 'add' ? 'nullable' : 'required|string|max:255'),
+            // `stage` hanya dibutuhkan oleh aksi yang memilih / mencatat tahap
+            // (select & note). Aksi lain memakai field-nya masing-masing:
+            // - move_next : dihitung otomatis dari daftar tahap
+            // - add       : new_stage
+            // - rename    : old_stage + new_stage
+            // - delete    : old_stage
+            //
+            // Perbaikan bug: sebelumnya rule ini ikut mewajibkan `stage` untuk
+            // rename/delete, padahal form UI (workspace/show.blade.php) hanya
+            // mengirim old_stage/new_stage sehingga request selalu gagal
+            // validasi SEBELUM diproses controller (rename/delete tidak jalan).
+            'stage' => in_array($request->action, ['select', 'note'], true)
+                ? 'required|string|max:255'
+                : 'nullable|string|max:255',
             'new_stage' => $request->action === 'rename' ? 'required|string|max:255' : ($request->action === 'add' ? 'required|string|max:255' : 'nullable|string|max:255'),
             'old_stage' => $request->action === 'delete' ? 'required|string|max:255' : 'nullable|string|max:255',
             'description' => 'nullable|string|max:2000',
