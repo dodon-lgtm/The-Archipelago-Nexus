@@ -57,37 +57,14 @@
         :root {
             --af-primary: #2563eb;
             --af-page: #f6f9ff;
+            /* Dipakai oleh input/select/textarea di bawah ini. */
+            --af-border: #dbeafe;
         }
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background:
                 radial-gradient(circle at 10% -10%, rgba(56,189,248,.10), transparent 30%),
                 radial-gradient(circle at 100% 0%, rgba(37,99,235,.08), transparent 28%),
-                var(--af-page);
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> dd8dd7bfa150757dfa190c887c2e9209b57371eb
-        }
-
-        /* ApexForge Labs — Unified UI System */
-        :root{
-            --af-primary:#2563eb;
-            --af-primary-dark:#1d4ed8;
-            --af-primary-soft:#eff6ff;
-            --af-sky:#38bdf8;
-            --af-ink:#0f172a;
-            --af-muted:#64748b;
-            --af-border:#dbeafe;
-            --af-surface:#ffffff;
-            --af-page:#f6f9ff;
-        }
-        html{scroll-behavior:smooth}
-        body{
-            font-family:'Plus Jakarta Sans',sans-serif;
-            background:
-                radial-gradient(circle at 10% -10%,rgba(56,189,248,.10),transparent 30%),
-                radial-gradient(circle at 100% 0%,rgba(37,99,235,.08),transparent 28%),
                 var(--af-page);
         }
         ::selection{background:rgba(37,99,235,.18);color:#0f172a}
@@ -145,8 +122,6 @@
         }
         @media (prefers-reduced-motion:reduce){
             *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
-=======
->>>>>>> f83ecba (upgrade pembayaran manual)
         }
     </style>
 </head>
