@@ -46,11 +46,11 @@
             <form
                 method="GET"
                 action="{{ route('admin.payments.index') }}"
+                data-live-filter
             >
 
                 <select
                     name="status"
-                    onchange="this.form.submit()"
                     class="appearance-none bg-[#f6f9ff] border border-blue-100 text-slate-700 text-xs font-semibold rounded-xl px-4 py-2 pr-9 outline-none transition focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400 cursor-pointer"
                 >
 
@@ -279,6 +279,7 @@
         {{-- TOTAL --}}
         {{-- ===================================================== --}}
         <span
+            data-live-filter-results
             class="inline-flex items-center gap-1.5 text-xs px-3 py-2 rounded-full
                    bg-blue-50 border border-blue-100 text-blue-600 font-semibold"
         >
@@ -294,7 +295,7 @@
 {{-- ============================================================= --}}
 {{-- TABEL PEMBAYARAN --}}
 {{-- ============================================================= --}}
-<div class="p-6">
+<div class="p-6" data-live-filter-results>
 
     @if($payments->count() > 0)
 

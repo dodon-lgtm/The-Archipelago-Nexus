@@ -934,6 +934,8 @@
 
     @stack('scripts')
     <script src="{{ asset('js/toast.js') }}" defer></script>
+    {{-- Live Filter Admin: search/filter/sorting otomatis tanpa reload penuh --}}
+    <script src="{{ asset('js/admin-live-filter.js') }}" defer></script>
     @include('partials.flash-toast')
     @include('partials.notification-toasts')
     @yield('script')

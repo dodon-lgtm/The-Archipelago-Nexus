@@ -34,7 +34,7 @@
         <div class="lg:col-span-2">
             {{-- Search --}}
             <div class="bg-white rounded-2xl border border-blue-100 p-4 mb-4 shadow-sm">
-                <form method="GET" action="{{ route('admin.categories.index') }}" class="flex flex-col sm:flex-row gap-3 sm:items-end">
+                <form method="GET" action="{{ route('admin.categories.index') }}" data-live-filter class="flex flex-col sm:flex-row gap-3 sm:items-end">
                     <div class="flex-1">
                         <label class="text-[11px] font-bold uppercase tracking-wide text-slate-500 mb-1.5 block">
                             <i class="fa-solid fa-magnifying-glass mr-1 text-blue-400"></i> Cari Kategori
@@ -44,9 +44,6 @@
                                placeholder="Ketik nama kategori...">
                     </div>
                     <div class="flex items-center gap-2">
-                        <button type="submit" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-5 py-2.5 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white rounded-xl text-sm font-semibold shadow-sm transition">
-                            <i class="fa-solid fa-search"></i> Cari
-                        </button>
                         <a href="{{ route('admin.categories.index') }}" class="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-sm font-semibold transition">
                             <i class="fa-solid fa-rotate-left text-xs"></i> Reset
                         </a>
@@ -55,7 +52,7 @@
             </div>
 
             {{-- Table --}}
-            <div class="bg-white rounded-2xl border border-blue-100 shadow-sm overflow-hidden">
+            <div class="bg-white rounded-2xl border border-blue-100 shadow-sm overflow-hidden" data-live-filter-results>
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm min-w-[520px]">
                         <thead class="bg-[#f6f9ff] border-b border-blue-100">
@@ -121,7 +118,9 @@
                 </div>
             </div>
 
-            <x-admin.pagination :paginator="$categories" />
+            <div data-live-filter-results>
+                <x-admin.pagination :paginator="$categories" />
+            </div>
         </div>
     </div>
 

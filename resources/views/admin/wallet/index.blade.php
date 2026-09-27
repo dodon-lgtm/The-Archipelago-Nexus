@@ -100,18 +100,18 @@
             </div>
             
             {{-- Unified Filter Form --}}
-            <form id="walletFilterForm" method="GET" action="{{ route('admin.wallet.index') }}" class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+            <form id="walletFilterForm" method="GET" action="{{ route('admin.wallet.index') }}" data-live-filter class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
                 
                 {{-- Filter Bulan (Dynamic) --}}
                 <div class="relative w-full sm:w-auto">
-                    <input type="month" name="month" value="{{ request('month') }}" onchange="this.form.submit()"
+                    <input type="month" name="month" value="{{ request('month') }}"
                         class="w-full sm:w-auto bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer"
                         title="Filter berdasarkan bulan">
                 </div>
 
                 {{-- Filter Kategori Kas --}}
                 <div class="flex bg-slate-100 p-1 rounded-xl w-full sm:w-auto">
-                    <select name="filter" onchange="this.form.submit()"
+                    <select name="filter"
                         class="appearance-none bg-transparent text-slate-600 text-xs font-bold px-3 py-1.5 pr-7 focus:outline-none cursor-pointer">
                         <option value="all" {{ $filter === 'all' ? 'selected' : '' }}>Semua Kas</option>
                         <option value="income" {{ $filter === 'income' ? 'selected' : '' }}>Pendapatan (+)</option>
@@ -139,6 +139,7 @@
                 @if(request()->hasAny(['filter', 'q', 'month']) && (request('filter') !== 'all' || request('q') !== '' || request('month') !== ''))
                     <a href="{{ route('admin.wallet.index') }}" 
                        class="px-3 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-600 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"
+                       data-live-filter-reset
                        title="Reset Filter">
                         <i class="fa-solid fa-rotate-left text-xs"></i> Reset
                     </a>
@@ -160,7 +161,7 @@
         </div>
 
         {{-- Table Ledger --}}
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto" data-live-filter-results>
             @if($ledgers->count())
                 <table id="ledgerTable" class="w-full text-left min-w-[960px] border-collapse">
                     <thead class="bg-slate-50/80 border-b border-slate-100">
@@ -230,11 +231,13 @@
             @endif
         </div>
 
+        <div data-live-filter-results>
         @if($ledgers->count())
             <div class="px-7 py-5 border-t border-slate-100 bg-slate-50/30">
                 <x-admin.pagination :paginator="$ledgers" />
             </div>
         @endif
+        </div>
     </div>
 
     {{-- ===== Riwayat Penarikan Saldo Admin ===== --}}
@@ -552,21 +555,16 @@
                     noResults.classList.toggle('hidden', visibleCount > 0 || ledgerRows.length === 0);
                 }
 
-                // 2. Auto Submit Server-side dengan Debounce (750ms)
+                // 2. Request server dilakukan oleh admin-live-filter.js
+                //    (debounce 400ms) — tanpa reload halaman penuh.
                 clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(function() {
-                    if (filterForm && (query.length >= 2 || query.length === 0)) {
-                        filterForm.submit();
-                    }
-                }, 750);
             });
 
-            // Submit langsung saat ditekan Enter
+            // Enter ditangani admin-live-filter.js → langsung fetch live.
             searchInput.addEventListener('keydown', function (e) {
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     clearTimeout(searchTimeout);
-                    filterForm.submit();
                 }
             });
         }
@@ -580,8 +578,8 @@
         var input = document.getElementById('realtimeSearch');
         if (input) {
             input.value = '';
-            var form = document.getElementById('walletFilterForm');
-            if (form) form.submit();
+            // Picu live filter (admin-live-filter.js) tanpa reload penuh.
+            input.dispatchEvent(new Event('input', { bubbles: true }));
         }
     }
 
