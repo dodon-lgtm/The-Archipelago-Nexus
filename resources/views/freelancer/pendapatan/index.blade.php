@@ -288,7 +288,7 @@
                                             </p>
 
                                             <p class="text-[10px] text-slate-400 dark:text-slate-400 mt-1">
-                                                <i class="fa-regular fa-clock mr-1"></i>{{ $payment->created_at->format('d M Y H:i') }}
+                                                <i class="fa-regular fa-clock mr-1"></i>{{ \App\Support\Cast::wib($payment->created_at) }}
                                             </p>
                                         </div>
 
@@ -378,7 +378,7 @@
 
                                             <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5">
                                                 <p class="text-[10px] text-slate-400 dark:text-slate-400">
-                                                    <i class="fa-regular fa-clock mr-1"></i>{{ $wd->paid_at?->format('d M Y H:i') ?? $wd->created_at->format('d M Y H:i') }}
+                                                    <i class="fa-regular fa-clock mr-1"></i>{{ \App\Support\Cast::wib($wd->paid_at ?? $wd->created_at) }}
                                                 </p>
                                                 <p class="text-[10px] text-slate-400 dark:text-slate-400">
                                                     <i class="fa-solid fa-tag mr-1"></i>{{ $wd->withdrawal_code }}

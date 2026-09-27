@@ -63,9 +63,24 @@ return [
     | will be used by the PHP date and date-time functions. The timezone
     | is set to "UTC" by default as it is suitable for most use cases.
     |
+    | PENTING — TIMESTAMP DI PROJECT INI
+    |
+    | `timezone` = timezone PENYIMPANAN. Semua timestamp (created_at, updated_at,
+    | paid_at, ...) ditulis oleh Carbon dalam timezone ini. Nilainya sengaja
+    | ditahan di UTC supaya konsisten dengan data lama yang sudah terlanjur
+    | ditulis dalam UTC — JANGAN diubah ke WIB tanpa konversi data, karena
+    | itu akan membuat seluruh timestamp lama meleset 7 jam.
+    |
+    | `display_timezone` = timezone yang dipakai saat menampilkannya ke user
+    | (WIB / Asia/Jakarta). Semua kolom waktu di UI konversi dari nilai
+    | penyimpanan (UTC) ke timezone ini lewat Cast::wib() — BUKAN adds
+    | manual "+7 jam", sehingga otomatis ikut benar untuk data lama maupun baru.
+    |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => env('APP_TIMEZONE', 'UTC'),
+
+    'display_timezone' => env('APP_DISPLAY_TIMEZONE', 'Asia/Jakarta'),
 
     /*
     |--------------------------------------------------------------------------
