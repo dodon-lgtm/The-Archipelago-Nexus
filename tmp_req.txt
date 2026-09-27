@@ -1,0 +1,2 @@
+C:\xampp\htdocs\The-Archipelago-Nexus\app\Http\Requests\Company\ProjectStoreRequest.php
+C:\xampp\htdocs\The-Archipelago-Nexus\app\Http\Requests\Company\ProjectUpdateRequest.php

@@ -263,7 +263,11 @@
                         </div>
                     </div>
                     <div class="p-6">
-                        <form method="POST" action="{{ route('company.payments.upload', $workspace) }}" enctype="multipart/form-data" id="manualPaymentForm" class="space-y-5">
+                        {{-- Draft otomatis (localStorage, key co:payment-upload:<payment id>):
+                             radio `destination_source` di luar form ini tidak ikut disimpan. --}}
+                        <form method="POST" action="{{ route('company.payments.upload', $workspace) }}" enctype="multipart/form-data" id="manualPaymentForm" class="space-y-5"
+                            data-draft-form
+                            data-draft-key="co:payment-upload:{{ $payment->id }}">
                             @csrf
 
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -412,6 +416,8 @@
             });
         })();
     </script>
+@include('partials.form-draft-autosave')
+
 </body>
 
 </html>

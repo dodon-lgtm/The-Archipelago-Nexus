@@ -63,7 +63,10 @@ public function create($projectId)
             'review'        => $request->review,
         ]);
 
-        return back()->with('success', 'Ulasan dan rating berhasil dikirim.');
+        return back()
+            ->with('success', 'Ulasan dan rating berhasil dikirim.')
+            // Form ulasan Company (halaman ini juga) sudah terkirim → hapus draft.
+            ->with('draft_clear', 'co:review-create:' . $project->id);
     }
 
     /**
@@ -108,6 +111,8 @@ public function create($projectId)
 
         return redirect()
             ->route('company.workspaces.show', $workspace)
-            ->with('success', 'Ulasan dan rating berhasil dikirim.');
+            ->with('success', 'Ulasan dan rating berhasil dikirim.')
+            // Modal rating (Company) ada di halaman ini → hapus draft-nya.
+            ->with('draft_clear', 'co:ws-review:' . $workspace->id);
     }
 }

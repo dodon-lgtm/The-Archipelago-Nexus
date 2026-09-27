@@ -153,12 +153,14 @@
                                 <div class="flex items-center gap-2 pt-1">
                                     <button type="button" onclick="openAcceptModal(this)"
                                         data-action="{{ route('company.workspaces.submissions.accept', ['workspace' => $workspace->id, 'submission' => $submission->id]) }}"
+                                        data-submission-id="{{ $submission->id }}"
                                         class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500 text-white rounded-lg text-[10px] font-semibold hover:bg-emerald-600 transition cursor-pointer">
                                         <i class="fa-solid fa-check-circle"></i> Terima
                                     </button>
 
                                     <button type="button" onclick="openRevisionModal(this)"
                                         data-action="{{ route('company.workspaces.submissions.revision', ['workspace' => $workspace->id, 'submission' => $submission->id]) }}"
+                                        data-submission-id="{{ $submission->id }}"
                                         class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-500 text-white rounded-lg text-[10px] font-semibold hover:bg-amber-600 transition cursor-pointer">
                                         <i class="fa-solid fa-pen"></i> Minta Revisi
                                     </button>
@@ -222,8 +224,7 @@
         {{-- Form Content --}}
         <form method="POST" action="{{ route('freelancer.workspaces.submissions.store', $workspace) }}"
             enctype="multipart/form-data" class="p-6 space-y-5"
-            data-draft-form
-            data-draft-key="fl:ws-submission-upload:{{ $workspace->id }}">
+            @if (auth()->user()->role === 'freelancer') data-draft-form data-draft-key="fl:ws-submission-upload:{{ $workspace->id }}" @endif>
             @csrf
 
             {{-- Input Judul --}}
@@ -331,8 +332,15 @@
                 <i class="fa-solid fa-xmark text-slate-500 dark:text-slate-400"></i>
             </button>
         </div>
-        <form method="POST" action="" id="acceptForm" class="p-6 space-y-4">
+        {{-- Draft otomatis (localStorage) PER submission: key dasar
+             co:ws-submission-accept:<workspace> + pembeda data-draft-variant
+             yang diisi JS saat modal dibuka (lihat openAcceptModal). --}}
+        <form method="POST" action="" id="acceptForm" class="p-6 space-y-4"
+            @if (auth()->user()->role === 'company') data-draft-form data-draft-key="co:ws-submission-accept:{{ $workspace->id }}" @endif>
             @csrf
+            @if (auth()->user()->role === 'company')
+                <input type="hidden" id="acceptSubmissionId" value="" data-draft-variant>
+            @endif
 
             <div class="flex items-center gap-3 px-4 py-3 bg-emerald-50 dark:bg-emerald-900/40 border border-emerald-200 dark:border-emerald-900 rounded-xl text-sm text-emerald-700 dark:text-emerald-300">
                 <i class="fa-solid fa-check-circle"></i>
@@ -366,8 +374,15 @@
                 <i class="fa-solid fa-xmark text-slate-500 dark:text-slate-400"></i>
             </button>
         </div>
-        <form method="POST" action="" id="revisionForm" class="p-6 space-y-4">
+        {{-- Draft otomatis (localStorage) PER submission: key dasar
+             co:ws-submission-revision:<workspace> + pembeda data-draft-variant
+             yang diisi JS saat modal dibuka (lihat openRevisionModal). --}}
+        <form method="POST" action="" id="revisionForm" class="p-6 space-y-4"
+            @if (auth()->user()->role === 'company') data-draft-form data-draft-key="co:ws-submission-revision:{{ $workspace->id }}" @endif>
             @csrf
+            @if (auth()->user()->role === 'company')
+                <input type="hidden" id="revisionSubmissionId" value="" data-draft-variant>
+            @endif
 
             <div class="flex items-center gap-3 px-4 py-3 bg-amber-50 dark:bg-amber-900/40 border border-amber-200 dark:border-amber-900 rounded-xl text-sm text-amber-700 dark:text-amber-300">
                 <i class="fa-solid fa-pen"></i>
@@ -391,12 +406,34 @@
 </div>
 
 <script>
+    /**
+     * Pulihkan draft modal Company untuk submission yang dibuka.
+     *
+     * Key draft form = data-draft-key + ID submission (pembeda memakai
+     * `data-draft-variant`), jadi catatan tiap submission tidak bercampur dan
+     * hanya dipulihkan saat modalnya benar-benar dibuka.
+     */
+    function restoreSubmissionDraft(form, buttonEl) {
+        const variant = form.querySelector('[data-draft-variant]');
+        if (!variant) return;
+
+        const submissionId = buttonEl.getAttribute('data-submission-id') || '';
+        if (variant.value === submissionId) return;
+
+        variant.value = submissionId;
+
+        if (window.FormDraftAutosave && typeof window.FormDraftAutosave.restoreForm === 'function') {
+            window.FormDraftAutosave.restoreForm(form);
+        }
+    }
+
     function openAcceptModal(buttonEl) {
         const form = document.getElementById('acceptForm');
         const actionUrl = buttonEl.getAttribute('data-action');
 
         if (form && actionUrl) {
             form.action = actionUrl;
+            restoreSubmissionDraft(form, buttonEl);
             document.getElementById('acceptModal').classList.remove('hidden');
         }
     }
@@ -407,6 +444,7 @@
 
         if (form && actionUrl) {
             form.action = actionUrl;
+            restoreSubmissionDraft(form, buttonEl);
             document.getElementById('revisionModal').classList.remove('hidden');
         }
     }

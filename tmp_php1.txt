@@ -1,0 +1,44 @@
+
+   FAIL  Tests\Feature\CompanyFormDraftAutosaveTest
+  ✓ halaman buat proyek memuat engine draft company                                          1.32s  
+  ✓ halaman edit proyek memuat draft per project                                             0.08s  
+  ✓ halaman edit profil company memuat draft                                                 0.05s  
+  ✓ halaman buat laporan company memuat draft                                                0.06s  
+  ✓ halaman review create company memuat draft per project                                   0.07s  
+  ✓ halaman upload bukti pembayaran memuat draft per payment                                 0.06s  
+  ✓ halaman kuota gateway memuat draft per payment                                           0.07s  
+  ✓ halaman kuota gateway mempertahankan draft buat proyek                                   0.06s  
+  ✓ link kembali ke buat proyek tidak menghapus draft                                        0.06s  
+  ⨯ store terblokir kuota tidak menghapus draft buat proyek                                  0.36s  
+  ✓ workspace company memuat draft company tanpa membocorkan milik freelancer                0.12s  
+  ✓ form bukti tambahan company sengaja tidak dipasangi draft                                0.09s  
+  ✓ penanda clear draft dari flash session dirender di halaman company                       0.07s  
+  ✓ tanpa flash sukses tidak ada penanda clear draft                                         0.08s  
+  ✓ kirim pesan workspace company menandai clear draft chat                                  0.11s  
+  ✓ aksi tambah dan rename tahap company menandai clear draft                                0.10s  
+  ✓ terima submission menandai clear prefix draft modal                                      0.09s  
+  ✓ minta revisi submission menandai clear prefix draft modal                                0.05s  
+  ────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\CompanyFormDraftAutosaveTest > store terblokir kuota tidak menghapus dr…   
+  Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+-'...grok-free.dev/company/projects/create'
++'...grok-free.dev/company/profile'
+
+  at tests\Feature\CompanyFormDraftAutosaveTest.php:234
+    230▕                 'skills'              => 'PHP,Laravel',
+    231▕                 'status'              => Project::STATUS_OPEN,
+    232▕             ]);
+    233▕ 
+  ➜ 234▕         $response->assertRedirect(route('company.projects.create'));
+    235▕         $response->assertSessionHas('quota_payment_id');
+    236▕         $response->assertSessionMissing('draft_clear');
+    237▕         $response->assertSessionMissing('draft_clear_prefix');
+    238▕     }
+
+
+  Tests:    1 failed, 17 passed (81 assertions)
+  Duration: 3.22s
+

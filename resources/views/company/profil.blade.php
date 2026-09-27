@@ -446,5 +446,9 @@
         </div>
     </div>
 
+{{-- Engine auto-save draft (Company) juga dimuat di halaman tujuan redirect
+     sukses "Simpan Perubahan" profil supaya draft form edit profil dibersihkan. --}}
+@include('partials.form-draft-autosave')
+
 </body>
 </html>

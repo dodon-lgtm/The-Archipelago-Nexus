@@ -1,0 +1,10 @@
+184:                                            data-draft-form
+185:                                            data-draft-key="co:quota-payment:{{ $payment->id }}">
+297:                                    <a href="{{ route('company.projects.create') }}"
+299:                                        <i class="fa-solid fa-arrow-left text-[10px]"></i> Kembali ke Buat Proyek
+311:                                    <a href="{{ route('company.projects.create') }}"
+313:                                        <i class="fa-solid fa-arrow-left text-[10px]"></i> Kembali ke Buat Proyek
+332:                                    <a href="{{ route('company.projects.create') }}"
+334:                                        <i class="fa-solid fa-plus text-xs"></i> Kembali ke Buat Proyek
+441:                            window.location.href = "{{ route('company.projects.create') }}";
+510:@include('partials.form-draft-autosave')

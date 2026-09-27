@@ -290,6 +290,43 @@ describe('Penerapan draft ke form', () => {
 
         assert.equal(internals.applyEntries(fields, entries), 0);
     });
+
+    it('memulihkan field ber-nama sama (array) sesuai urutan barisnya', () => {
+        const { internals, dom } = boot();
+        const form = el('form', { attrs: { 'data-draft-form': '' }, parent: dom.body });
+        const mk = (tag, attrs) => el(tag, { attrs, parent: form });
+
+        // Meniru baris tahap dinamis pada form Company: stage_name[] / stage_desc[].
+        const nama1 = mk('input', { name: 'stage_name[]' });
+        const desc1 = mk('textarea', { name: 'stage_desc[]' });
+        const nama2 = mk('input', { name: 'stage_name[]' });
+        const desc2 = mk('textarea', { name: 'stage_desc[]' });
+
+        const fields = [nama1, desc1, nama2, desc2];
+        const entries = [
+            ['n:stage_name[]', 'v', 'Brief'],
+            ['n:stage_desc[]', 'v', 'Analisis kebutuhan'],
+            ['n:stage_name[]', 'v', 'Finalisasi'],
+            ['n:stage_desc[]', 'v', 'Serah terima']
+        ];
+
+        assert.equal(internals.applyEntries(fields, entries), 4);
+        assert.equal(nama1.value, 'Brief');
+        assert.equal(desc1.value, 'Analisis kebutuhan');
+        assert.equal(nama2.value, 'Finalisasi');
+        assert.equal(desc2.value, 'Serah terima');
+        assert.equal(internals.applyEntries(fields, entries), 0);
+
+        // Entri lebih banyak dari baris di DOM (baris tambahan dibuat lewat JS,
+        // belum ada saat restore) → entri sisa dilewati, baris pertama aman.
+        assert.equal(internals.applyEntries(fields, [
+            ['n:stage_name[]', 'v', 'A'],
+            ['n:stage_name[]', 'v', 'B'],
+            ['n:stage_name[]', 'v', 'C']
+        ]), 2);
+        assert.equal(nama1.value, 'A');
+        assert.equal(nama2.value, 'B');
+    });
 });
 
 describe('Lapisan storage (localStorage)', () => {
@@ -409,6 +446,54 @@ describe('Lapisan storage (localStorage)', () => {
     });
 });
 
+
+describe('Namespace storage per role', () => {
+    const CO_NS = 'apexforge.co.draft.v1:';
+
+    /** Boot engine dengan penanda namespace pada <script> pemuat draft. */
+    function bootWithNamespace(namespace) {
+        const dom = createDom({ pathname: '/company/projects/create' });
+        el('script', { attrs: { 'data-draft-namespace': namespace }, parent: dom.body });
+        return { dom, api: runEngine(dom), storage: dom.window.localStorage };
+    }
+
+    it('memakai namespace default Freelancer kalau tidak ada penanda', () => {
+        const { api } = boot();
+
+        assert.equal(api._internals.NS, NS);
+        assert.equal(api._internals.INDEX_KEY, INDEX_KEY);
+    });
+
+    it('memakai namespace Company dari data-draft-namespace', () => {
+        const { api, storage } = bootWithNamespace(CO_NS);
+
+        assert.equal(api._internals.NS, CO_NS);
+        assert.equal(api._internals.INDEX_KEY, CO_NS + '__index__');
+
+        api._internals.writeDraft('co:project-create', {
+            v: 1,
+            key: 'co:project-create',
+            path: '/company/projects/create',
+            savedAt: Date.now(),
+            pending: null,
+            fields: [['n:project_name', 'v', 'Website E-commerce']]
+        });
+
+        // Draft Company masuk ke namespace Company, bukan namespace Freelancer.
+        assert.equal(storage.getItem(CO_NS + 'co:project-create') !== null, true);
+        assert.equal(storage.getItem(NS + 'co:project-create'), null);
+        assert.equal(
+            JSON.parse(storage.getItem(CO_NS + '__index__')).keys['co:project-create'] !== undefined,
+            true
+        );
+    });
+
+    it('menambahkan tanda ":" & mengabaikan nilai namespace yang tidak valid', () => {
+        assert.equal(bootWithNamespace('apexforge.co.draft.v2').api._internals.NS, 'apexforge.co.draft.v2:');
+        assert.equal(bootWithNamespace('bad namespace!').api._internals.NS, NS);
+        assert.equal(bootWithNamespace('').api._internals.NS, NS);
+    });
+});
 
 describe('Perilaku engine saat halaman dibuka', () => {
     const PATH = '/freelancer/penawaran/create/9';
@@ -635,4 +720,236 @@ describe('Perilaku engine saat halaman dibuka', () => {
         assert.equal(dom.document.querySelectorAll('[role="status"]').length, 0);
     });
 });
+
+/**
+ * Regression test bug: draft form "Buat Proyek" (co:project-create) hilang
+ * saat user kembali dari halaman pembayaran kuota.
+ *
+ * Alur yang dikunci di sini:
+ *   Buat Proyek -> submit (diblokir modal kuota) -> /company/quota-payment/{id}
+ *   -> "Kembali ke Buat Proyek" -> draft harus dipulihkan.
+ *
+ * Root cause lama: halaman gateway menganggap perpindahan halaman sebagai
+ * "submit sukses" (pending.path !== path) sehingga draft dihapus. Halaman
+ * perantara sekarang mendeklarasikan data-draft-keep-pending.
+ */
+describe('Company: draft co:project-create bertahan lewat alur pembayaran kuota', () => {
+    const CO_NS = 'apexforge.co.draft.v1:';
+    const CO_INDEX = CO_NS + '__index__';
+    const CREATE_PATH = '/company/projects/create';
+    const GATEWAY_PATH = '/company/quota-payment/52';
+    const FORM_KEY = 'co:project-create';
+
+    /** Tulis draft Company langsung ke storage + index (mirip seedDraft, ns Company). */
+    function seedCompanyDraft(storage, key, fields, overrides = {}) {
+        const rec = Object.assign({
+            v: 1,
+            key,
+            path: CREATE_PATH,
+            savedAt: Date.now(),
+            pending: null,
+            fields
+        }, overrides);
+
+        storage.setItem(CO_NS + key, JSON.stringify(rec));
+        const idx = JSON.parse(storage.getItem(CO_INDEX) || '{"v":1,"keys":{}}');
+        idx.keys[key] = { savedAt: rec.savedAt, path: rec.path };
+        storage.setItem(CO_INDEX, JSON.stringify(idx));
+
+        return rec;
+    }
+
+    /** Bangun DOM halaman Company + form "Buat Proyek" (field biasa + tahap dinamis). */
+    function buildCreatePage(dom) {
+        el('script', { attrs: { 'data-draft-namespace': CO_NS }, parent: dom.body });
+
+        const form = el('form', {
+            attrs: { 'data-draft-form': '', 'data-draft-key': FORM_KEY },
+            parent: dom.body
+        });
+        const nama = el('input', { attrs: { name: 'project_name' }, parent: form });
+        const deskripsi = el('textarea', { attrs: { name: 'description' }, parent: form });
+        const kategori = el('select', { attrs: { name: 'category_id' }, parent: form });
+        const budget = el('input', { attrs: { name: 'budget_min', type: 'text' }, parent: form });
+        const deadline = el('input', { attrs: { name: 'deadline', type: 'date' }, parent: form });
+        // Tahap dinamis: stage_name[] / stage_desc[] (dua baris).
+        const stageName1 = el('input', { attrs: { name: 'stage_name[]' }, parent: form });
+        const stageDesc1 = el('textarea', { attrs: { name: 'stage_desc[]' }, parent: form });
+        const stageName2 = el('input', { attrs: { name: 'stage_name[]' }, parent: form });
+        const stageDesc2 = el('textarea', { attrs: { name: 'stage_desc[]' }, parent: form });
+
+        return {
+            form, nama, deskripsi, kategori, budget, deadline,
+            stageName1, stageDesc1, stageName2, stageDesc2
+        };
+    }
+
+    const FIELDS = [
+        ['n:project_name', 'v', 'Website E-commerce'],
+        ['n:description', 'v', 'Butuh landing page + CMS'],
+        ['n:category_id', 'v', '3'],
+        ['n:budget_min', 'v', '5000000'],
+        ['n:deadline', 'v', '2026-11-30'],
+        ['n:stage_name[]', 'v', 'Riset'],
+        ['n:stage_desc[]', 'v', 'Kebutuhan user & wireframe'],
+        ['n:stage_name[]', 'v', 'Development'],
+        ['n:stage_desc[]', 'v', 'Bangun fitur inti']
+    ];
+
+    /** DOM halaman gateway pembayaran kuota + penanda keep-pending. */
+    function buildGatewayPage(storage, keepPending = FORM_KEY) {
+        const dom = createDom({ pathname: GATEWAY_PATH, storage });
+        el('script', { attrs: { 'data-draft-namespace': CO_NS }, parent: dom.body });
+        if (keepPending) {
+            el('span', { attrs: { 'data-draft-keep-pending': keepPending }, parent: dom.body });
+        }
+        return dom;
+    }
+
+    it('BUG: draft tidak dihapus saat pindah ke halaman pembayaran kuota', () => {
+        const storage = createStorage();
+        // Draft tersimpan + sudah ditandai pending karena form di-submit (modal kuota
+        // memblokir submit, tapi listener engine tetap menandai pending).
+        seedCompanyDraft(storage, FORM_KEY, FIELDS, {
+            path: CREATE_PATH,
+            pending: { at: Date.now(), path: CREATE_PATH }
+        });
+
+        const dom = buildGatewayPage(storage);
+        const api = runEngine(dom);
+        const rec = api._internals.readDraft(FORM_KEY);
+
+        assert.equal(rec !== null, true, 'draft co:project-create tidak boleh terhapus di halaman pembayaran');
+        assert.equal(rec.pending, null, 'tanda pending dilepas, draft dipertahankan');
+        assert.deepEqual(normalize(rec.fields), FIELDS);
+    });
+
+    it('BUG: seluruh draft dipulihkan saat kembali ke form Buat Proyek', () => {
+        const storage = createStorage();
+        seedCompanyDraft(storage, FORM_KEY, FIELDS, {
+            path: CREATE_PATH,
+            pending: { at: Date.now(), path: CREATE_PATH }
+        });
+
+        // Gateway: draft dipertahankan.
+        runEngine(buildGatewayPage(storage));
+
+        // "Kembali ke Buat Proyek" -> semua field dipulihkan, tahap dinamis ikut.
+        const back = createDom({ pathname: CREATE_PATH, storage });
+        const ui = buildCreatePage(back);
+        runEngine(back);
+
+        assert.equal(ui.nama.value, 'Website E-commerce');
+        assert.equal(ui.deskripsi.value, 'Butuh landing page + CMS');
+        assert.equal(ui.kategori.value, '3');
+        assert.equal(ui.budget.value, '5000000');
+        assert.equal(ui.deadline.value, '2026-11-30');
+        // Ordinal restore: baris tahap dinamis kembali sesuai urutan.
+        assert.equal(ui.stageName1.value, 'Riset');
+        assert.equal(ui.stageDesc1.value, 'Kebutuhan user & wireframe');
+        assert.equal(ui.stageName2.value, 'Development');
+        assert.equal(ui.stageDesc2.value, 'Bangun fitur inti');
+    });
+
+    it('tanpa penanda keep-pending, draft tetap dihapus (perilaku lama dipertahankan)', () => {
+        const storage = createStorage();
+        seedCompanyDraft(storage, FORM_KEY, FIELDS, {
+            path: CREATE_PATH,
+            pending: { at: Date.now(), path: CREATE_PATH }
+        });
+
+        // Halaman lain tanpa data-draft-keep-pending -> dianggap submit sukses.
+        const dom = createDom({ pathname: '/company/dashboard', storage });
+        el('script', { attrs: { 'data-draft-namespace': CO_NS }, parent: dom.body });
+        const api = runEngine(dom);
+
+        assert.equal(api._internals.readDraft(FORM_KEY), null);
+    });
+
+    it('menerima beberapa key dipisah spoma pada data-draft-keep-pending', () => {
+        const storage = createStorage();
+        seedCompanyDraft(storage, FORM_KEY, FIELDS, {
+            path: CREATE_PATH,
+            pending: { at: Date.now(), path: CREATE_PATH }
+        });
+        seedCompanyDraft(storage, 'co:project-create-2', FIELDS, {
+            path: CREATE_PATH,
+            pending: { at: Date.now(), path: CREATE_PATH }
+        });
+        // Key ini tidak disebut -> tetap dianggap submit sukses.
+        seedCompanyDraft(storage, 'co:project-edit:9', FIELDS, {
+            path: CREATE_PATH,
+            pending: { at: Date.now(), path: CREATE_PATH }
+        });
+
+        const dom = buildGatewayPage(storage, 'co:project-create co:project-create-2');
+        const api = runEngine(dom);
+
+        assert.equal(api._internals.readDraft(FORM_KEY) !== null, true);
+        assert.equal(api._internals.readDraft('co:project-create-2') !== null, true);
+        assert.equal(api._internals.readDraft('co:project-edit:9'), null);
+    });
+
+    it('TEST B: refresh di halaman Buat Proyek tidak menghapus draft', () => {
+        const storage = createStorage();
+        seedCompanyDraft(storage, FORM_KEY, FIELDS, { path: CREATE_PATH });
+
+        // Refresh = halaman dibuka ulang dengan storage yang sama.
+        const first = createDom({ pathname: CREATE_PATH, storage });
+        buildCreatePage(first);
+        runEngine(first);
+
+        const again = createDom({ pathname: CREATE_PATH, storage });
+        const ui2 = buildCreatePage(again);
+        runEngine(again);
+
+        assert.equal(ui2.nama.value, 'Website E-commerce');
+        assert.equal(ui2.stageName2.value, 'Development');
+    });
+
+    it('TEST C: draft dihapus setelah proyek benar-benar berhasil dibuat', () => {
+        const storage = createStorage();
+        seedCompanyDraft(storage, FORM_KEY, FIELDS, {
+            path: CREATE_PATH,
+            pending: { at: Date.now(), path: CREATE_PATH }
+        });
+
+        // Submit sukses -> controller mengarahkan ke dashboard Company.
+        const dash = createDom({ pathname: '/company/dashboard', storage });
+        el('script', { attrs: { 'data-draft-namespace': CO_NS }, parent: dash.body });
+        const api = runEngine(dash);
+        assert.equal(api._internals.readDraft(FORM_KEY), null);
+
+        // Buka lagi form Buat Proyek -> tidak ada draft lama yang muncul.
+        const again = createDom({ pathname: CREATE_PATH, storage });
+        const ui = buildCreatePage(again);
+        runEngine(again);
+
+        assert.equal(ui.nama.value, '');
+        assert.equal(ui.stageName1.value, '');
+    });
+
+    it('TEST D: submit gagal validasi di halaman yang sama -> draft tetap tersedia', () => {
+        const storage = createStorage();
+        seedCompanyDraft(storage, FORM_KEY, FIELDS, {
+            path: CREATE_PATH,
+            pending: { at: Date.now(), path: CREATE_PATH }
+        });
+
+        // Validasi gagal -> redirect balik ke path yang sama.
+        const dom = createDom({ pathname: CREATE_PATH, storage });
+        const ui = buildCreatePage(dom);
+        runEngine(dom);
+
+        const rec = api$read(dom, FORM_KEY);
+        assert.equal(rec !== null, true);
+        assert.equal(rec.pending, null);
+        assert.equal(ui.nama.value, 'Website E-commerce');
+    });
+
+    function api$read(dom, key) {
+        return JSON.parse(dom.window.localStorage.getItem(CO_NS + key) || 'null');
+    }
+});
+
 

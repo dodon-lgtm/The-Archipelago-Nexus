@@ -2336,6 +2336,9 @@
 {{-- Modal Negosiasi Chat --}}
 @include('negotiations.modal')
 
+{{-- Engine auto-save draft (Company) juga dimuat di halaman tujuan redirect
+     sukses "Edit Proyek" supaya draft yang sudah tersimpan dibersihkan. --}}
+@include('partials.form-draft-autosave')
 
 </body>
 </html>

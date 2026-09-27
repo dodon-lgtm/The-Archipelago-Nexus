@@ -623,5 +623,10 @@
         });
     </script>
 
+{{-- Engine auto-save draft juga dimuat di halaman tujuan redirect sukses
+     (mis. setelah "Publikasikan Proyek") supaya penanda hapus draft dari
+     controller + pembersihan draft pending langsung diproses. --}}
+@include('partials.form-draft-autosave')
+
 </body>
 </html>

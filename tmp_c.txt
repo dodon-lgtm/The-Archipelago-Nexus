@@ -1,0 +1,42 @@
+441:                                            {{ $quotaData['used_slots'] ?? 0 }} / {{ $quotaData['free_quota'] ?? 3 }} tersisa
+445:                                        <span class="text-lg font-extrabold {{ ($quotaData['remaining'] ?? ($quotaData['free_quota'] ?? 3) - ($quotaData['used_slots'] ?? 0)) > 0 ? 'text-emerald-600' : 'text-red-500' }}">
+446:                                            {{ max(0, ($quotaData['available_slots'] ?? ($quotaData['free_quota'] ?? 3)) - ($quotaData['used_slots'] ?? 0)) }}
+456:                                            $used = $quotaData['used_slots'] ?? 0;
+457:                                            $limit = $quotaData['free_quota'] ?? 3;
+458:                                            $available = $quotaData['available_slots'] ?? $limit;
+480:                                        Kuota gratis habis. Proyek tambahan: Rp {{ number_format($quotaData['quota_price'], 0, ',', '.') }}
+525:    <div id="quotaModal" class="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 hidden">
+529:                <p class="text-xs text-slate-500 mt-1 dark:text-slate-400">Anda telah mencapai batas kuota gratis ({{ $quotaData['free_quota'] ?? 3 }} proyek/bulan).</p>
+537:                    <span class="font-bold text-blue-600 dark:text-blue-400" id="quotaUsedInfo">{{ session('quota_used', $quotaData['used_slots'] ?? '-') }}</span>
+539:                    <span class="font-bold text-slate-900 dark:text-white" id="quotaFreeInfo">{{ session('quota_free', $quotaData['free_quota'] ?? 3) }}</span>
+544:                    <span class="font-bold text-blue-600" id="quotaPriceDisplay">Rp {{ number_format($quotaData['quota_price'], 0, ',', '.') }}</span>.
+552:<a href="{{ session('quota_payment_id') ? route('company.quota.payment.show', session('quota_payment_id')) : route('company.quota.payment.start') }}"
+555:                        <i class="fa-solid fa-credit-card"></i> <span id="btnPayQuotaText">Bayar Rp{{ number_format($quotaData['quota_price'], 0, ',', '.') }}</span>
+698:            const modal = document.getElementById('deleteStageModal');
+699:            const modalInner = modal.querySelector('div.glass-card');
+701:            modal.classList.remove('hidden');
+703:                modal.classList.remove('opacity-0');
+704:                modalInner.classList.remove('scale-95');
+709:            const modal = document.getElementById('deleteStageModal');
+710:            const modalInner = modal.querySelector('div.glass-card');
+712:            modal.classList.add('opacity-0');
+713:            modalInner.classList.add('scale-95');
+716:                modal.classList.add('hidden');
+736:        const quotaData = @json($quotaData ?? null);
+743:            document.getElementById('quotaModal').classList.remove('hidden');
+744:            if (quotaData) {
+745:                document.getElementById('quotaUsedInfo').textContent = quotaData.used_slots;
+746:                const free = document.getElementById('quotaFreeInfo'); 
+747:                if(free && quotaData.free_quota !== undefined) free.textContent = quotaData.free_quota;
+748:                // Update price displays - use quota_price from embedded server data
+749:                const price = quotaData.quota_price ?? 10000;
+750:                const priceDisplay = document.getElementById('quotaPriceDisplay');
+753:                if (btnText) btnText.textContent = 'Bayar ' + formatPrice(price);
+756:        function closeQuotaModal() { document.getElementById('quotaModal').classList.add('hidden'); }
+759:            // Action tombol hapus di dalam modal Delete Stage
+770:            // Close modal Delete Stage jika overlay hitam diklik
+780:            if (form && quotaData && !quotaData.can_create) {
+787:            // Open modal otomatis jika redirect dari store() karena kuota habis
+788:            @if(session('quota_payment_id'))
+793:        // Close modal on backdrop click & Escape
+794:        document.getElementById('quotaModal').addEventListener('click', function(e) {

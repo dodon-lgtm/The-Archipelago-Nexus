@@ -1,0 +1,238 @@
+    private function assertCompanyDraftPage(\Illuminate\Testing\TestResponse $response): void
+    {
+        $response->assertOk();
+        $response->assertSee('js/form-draft-autosave.js', false);
+        $response->assertSee('data-draft-namespace="' . self::CO_NS . '"', false);
+        $response->assertDontSee(self::FL_NS, false);
+    }
+
+    public function test_halaman_buat_proyek_memuat_engine_draft_company(): void
+    {
+        $response = $this->asCompany('company.projects.create');
+
+        $this->assertCompanyDraftPage($response);
+
+        $response->assertSee('data-draft-key="co:project-create"', false);
+        // Budget tersimpan di hidden #real_budget → wajib data-draft-include
+        // (hidden tanpa flag itu sengaja dilewati engine).
+        $response->assertSee('name="budget" id="real_budget"', false);
+        $response->assertSee('data-draft-include', false);
+    }
+
+    public function test_halaman_edit_proyek_memuat_draft_per_project(): void
+    {
+        $response = $this->asCompany('company.projects.edit', ['project' => $this->project->id]);
+
+        $this->assertCompanyDraftPage($response);
+
+        $response->assertSee('data-draft-key="co:project-edit:' . $this->project->id . '"', false);
+    }
+
+    public function test_halaman_edit_profil_company_memuat_draft(): void
+    {
+        $response = $this->asCompany('company.profile.edit');
+
+        $this->assertCompanyDraftPage($response);
+
+        $response->assertSee('data-draft-key="co:profile:' . $this->company->id . '"', false);
+    }
+
+    public function test_halaman_buat_laporan_company_memuat_draft(): void
+    {
+        $response = $this->asCompany('company.reports.create');
+
+        $this->assertCompanyDraftPage($response);
+
+        // Tanpa konteks (workspace/project/freelancer) → key memakai 0-0-0.
+        $response->assertSee('data-draft-key="co:report-create:0-0-0"', false);
+    }
+
+    public function test_halaman_review_create_company_memuat_draft_per_project(): void
+    {
+        $response = $this->asCompany('company.client.review.create', ['project' => $this->project->id]);
+
+        $this->assertCompanyDraftPage($response);
+
+        $response->assertSee('data-draft-key="co:review-create:' . $this->project->id . '"', false);
+    }
+
+    public function test_halaman_upload_bukti_pembayaran_memuat_draft_per_payment(): void
+    {
+        $payment = $this->makeWorkspacePayment();
+
+        $response = $this->asCompany('company.payments.upload-form', ['workspace' => $this->workspace->id]);
+
+        $this->assertCompanyDraftPage($response);
+
+        $response->assertSee('data-draft-key="co:payment-upload:' . $payment->id . '"', false);
+    }
+
+    public function test_halaman_kuota_gateway_memuat_draft_per_payment(): void
+    {
+        $payment = Payment::create([
+            'workspace_id'   => null,
+            'payment_type'   => Payment::PAYMENT_TYPE_QUOTA,
+            'company_id'     => $this->company->id,
+            'freelancer_id'  => null,
+            'invoice_number' => 'INV-QUOTA-TEST-1',
+            'amount'         => 10000,
+            'status'         => 'pending',
+        ]);
+
+        $response = $this->asCompany('company.quota.payment.show', ['payment' => $payment->id]);
+
+        $this->assertCompanyDraftPage($response);
+
+        $response->assertSee('data-draft-key="co:quota-payment:' . $payment->id . '"', false);
+    }
+
+    public function test_workspace_company_memuat_draft_company_tanpa_membocorkan_milik_freelancer(): void
+    {
+        $response = $this->asCompany('company.workspaces.show', ['workspace' => $this->workspace->id]);
+
+        $this->assertCompanyDraftPage($response);
+
+        // Form Company pada halaman workspace ini.
+        $response->assertSee('data-draft-key="co:ws-message:' . $this->workspace->id . '"', false);
+        $response->assertSee('data-draft-key="co:ws-addstage:' . $this->workspace->id . '"', false);
+        $response->assertSee('data-draft-key="co:ws-submission-accept:' . $this->workspace->id . '"', false);
+        $response->assertSee('data-draft-key="co:ws-submission-revision:' . $this->workspace->id . '"', false);
+
+        // Form & penanda khusus Freelancer tidak boleh muncul di halaman Company.
+        $response->assertDontSee('data-draft-key="fl:ws-addstage:' . $this->workspace->id . '"', false);
+        $response->assertDontSee('data-draft-key="fl:ws-modal:' . $this->workspace->id . '"', false);
+        $response->assertDontSee('data-draft-key="fl:ws-note:' . $this->workspace->id . '"', false);
+        $response->assertDontSee('data-draft-key="fl:ws-submission-upload:' . $this->workspace->id . '"', false);
+    }
+
+    /**
+     * Form bukti tambahan Company hanya berisi input file (tidak ada field teks)
+     * sehingga sengaja TIDAK dipasangi draft — file tidak pernah disimpan engine.
+     */
+    public function test_form_bukti_tambahan_company_sengaja_tidak_dipasangi_draft(): void
+    {
+        $report = Report::create([
+            'reporter_id'      => $this->company->id,
+            'reported_user_id' => $this->freelancer->id,
+            'subject'          => 'Bukti hasil kerja tidak sesuai',
+            'description'      => 'Perlu bukti tambahan.',
+            'status'           => Report::STATUS_MENUNGGU_BUKTI,
+            'category'         => Report::CATEGORY_HASIL_TIDAK_SESUAI,
+            'target'           => Report::TARGET_FREELANCER,
+        ]);
+
+        $response = $this->asCompany('company.reports.show', ['report' => $report->id]);
+
+        $response->assertOk();
+        $response->assertSee('company/reports/' . $report->id . '/evidence', false);
+        $response->assertDontSee('data-draft-form', false);
+    }
+
+    /** Payment workspace + status workspace "Menunggu Pembayaran". */
+    private function makeWorkspacePayment(): Payment
+    {
+        $this->workspace->update(['status' => 'Menunggu Pembayaran']);
+
+        return Payment::create([
+            'workspace_id'   => $this->workspace->id,
+            'payment_type'   => Payment::PAYMENT_TYPE_WORKSPACE,
+            'company_id'     => $this->company->id,
+            'freelancer_id'  => $this->freelancer->id,
+            'invoice_number' => 'INV-TEST-1',
+            'amount'         => 1000000,
+            'status'         => 'pending',
+        ]);
+    }
+
+    /** Submission berstatus pending milik workspace pada setUp(). */
+    private function pendingSubmission(): ProjectSubmission
+    {
+        return ProjectSubmission::create([
+            'workspace_id' => $this->workspace->id,
+            'submitted_by' => $this->freelancer->id,
+            'title'        => 'Hasil Pekerjaan Tahap 1',
+            'status'       => 'pending',
+        ]);
+    }
+
+    public function test_penanda_clear_draft_dari_flash_session_dirender_di_halaman_company(): void
+    {
+        $response = $this->actingAs($this->company)
+            ->withSession([
+                'draft_clear'        => 'co:ws-message:' . $this->workspace->id,
+                'draft_clear_prefix' => 'co:ws-submission-revision:' . $this->workspace->id . ':',
+            ])
+            ->get(route('company.workspaces.show', $this->workspace));
+
+        $response->assertOk();
+        $response->assertSee('data-draft-clear="co:ws-message:' . $this->workspace->id . '"', false);
+        $response->assertSee('data-draft-clear-prefix="co:ws-submission-revision:' . $this->workspace->id . ':"', false);
+    }
+
+    public function test_tanpa_flash_sukses_tidak_ada_penanda_clear_draft(): void
+    {
+        $this->actingAs($this->company)
+            ->get(route('company.workspaces.show', $this->workspace))
+            ->assertOk()
+            ->assertDontSee('data-draft-clear="co:ws-message:' . $this->workspace->id . '"', false);
+    }
+
+    public function test_kirim_pesan_workspace_company_menandai_clear_draft_chat(): void
+    {
+        $response = $this->actingAs($this->company)
+            ->post(route('company.workspaces.message', $this->workspace), ['message' => 'Halo, mohon dipercepat.']);
+
+        $response->assertRedirect(route('company.workspaces.show', $this->workspace));
+        $response->assertSessionHas('draft_clear', 'co:ws-message:' . $this->workspace->id);
+    }
+
+    public function test_aksi_tambah_dan_rename_tahap_company_menandai_clear_draft(): void
+    {
+        $add = $this->actingAs($this->company)->post(route('company.workspaces.progress', $this->workspace), [
+            'action'    => 'add',
+            'new_stage' => 'Riset Kebutuhan',
+        ]);
+
+        $add->assertSessionHas('draft_clear', 'co:ws-addstage:' . $this->workspace->id);
+
+        $rename = $this->actingAs($this->company)->post(route('company.workspaces.progress', $this->workspace), [
+            'action'    => 'rename',
+            'old_stage' => 'Riset Kebutuhan',
+            'new_stage' => 'Riset & Analisis',
+        ]);
+
+        $rename->assertSessionHas('draft_clear_prefix', 'co:ws-stage-rename:' . $this->workspace->id . ':');
+    }
+
+    public function test_terima_submission_menandai_clear_prefix_draft_modal(): void
+    {
+        $submission = $this->pendingSubmission();
+
+        $response = $this->actingAs($this->company)->post(
+            route('company.workspaces.submissions.accept', [
+                'workspace'  => $this->workspace->id,
+                'submission' => $submission->id,
+            ]),
+            ['company_note' => 'Hasil sudah sesuai.']
+        );
+
+        $response->assertRedirect(route('company.workspaces.show', $this->workspace));
+        $response->assertSessionHas('draft_clear_prefix', 'co:ws-submission-accept:' . $this->workspace->id . ':');
+    }
+
+    public function test_minta_revisi_submission_menandai_clear_prefix_draft_modal(): void
+    {
+        $submission = $this->pendingSubmission();
+
+        $response = $this->actingAs($this->company)->post(
+            route('company.workspaces.submissions.revision', [
+                'workspace'  => $this->workspace->id,
+                'submission' => $submission->id,
+            ]),
+            ['company_note' => 'Mohon perbaiki halaman login.']
+        );
+
+        $response->assertRedirect(route('company.workspaces.show', $this->workspace));
+        $response->assertSessionHas('draft_clear_prefix', 'co:ws-submission-revision:' . $this->workspace->id . ':');
+    }
+}

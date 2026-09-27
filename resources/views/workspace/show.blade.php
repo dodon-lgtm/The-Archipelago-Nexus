@@ -779,10 +779,11 @@
                                                         </div>
                                                         @if ($canManageStage)
                                                             <div id="editItem-{{ $order }}" class="hidden mx-2.5 mb-2.5">
-                                                                <form method="POST" action="{{ route($stageActionRoute, $workspace) }}" class="bg-white dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-lg p-2.5 space-y-2">
+                                                                <form method="POST" action="{{ route($stageActionRoute, $workspace) }}" class="bg-white dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-lg p-2.5 space-y-2"
+                                                                    @if (auth()->user()->role === 'company') data-draft-form data-draft-key="co:ws-stage-rename:{{ $workspace->id }}" @endif>
                                                                     @csrf
                                                                     <input type="hidden" name="action" value="rename">
-                                                                    <input type="hidden" name="old_stage" value="{{ $stage ?? 'Tanpa Nama' }}">
+                                                                    <input type="hidden" name="old_stage" value="{{ $stage ?? 'Tanpa Nama' }}" @if (auth()->user()->role === 'company') data-draft-variant @endif>
                                                                     <input type="text" name="new_stage" value="{{ $stage ?? 'Tanpa Nama' }}" maxlength="255" placeholder="Nama tahap"
                                                                         class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-700 rounded-md text-xs font-semibold dark:text-white focus:outline-none focus:border-blue-400">
                                                                     <textarea name="description" rows="2" maxlength="2000" placeholder="Deskripsi (opsional)"
@@ -818,7 +819,9 @@
                                         <i class="fa-solid fa-plus text-[11px]"></i> Tambah Tahap
                                     </button>
                                     <div id="companyAddStageForm" class="hidden">
-                                        <form method="POST" action="{{ route('company.workspaces.progress', $workspace) }}" class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-xl p-3 space-y-2.5 shadow-sm">
+                                        <form method="POST" action="{{ route('company.workspaces.progress', $workspace) }}" class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-xl p-3 space-y-2.5 shadow-sm"
+                                            data-draft-form
+                                            data-draft-key="co:ws-addstage:{{ $workspace->id }}">
                                             @csrf
                                             <input type="hidden" name="action" value="add">
                                             <div>
@@ -964,7 +967,8 @@
 
                         {{-- Chat Input --}}
                         <div class="px-6 py-5 border-t border-blue-50/50 dark:border-slate-800 bg-white dark:bg-slate-900 shrink-0 relative z-10">
-                            <form method="POST" action="{{ route(auth()->user()->role === 'company' ? 'company.workspaces.message' : 'freelancer.workspaces.message', $workspace) }}" class="flex items-center gap-3">
+                            <form method="POST" action="{{ route(auth()->user()->role === 'company' ? 'company.workspaces.message' : 'freelancer.workspaces.message', $workspace) }}" class="flex items-center gap-3"
+                                @if (auth()->user()->role === 'company') data-draft-form data-draft-key="co:ws-message:{{ $workspace->id }}" @endif>
                                 @csrf
                                 <input type="text" name="message" placeholder="Ketik pesan..." required maxlength="1000"
                                     class="flex-1 px-5 py-3.5 bg-blue-50/50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-xl text-sm text-blue-950 dark:text-white font-medium placeholder-blue-300 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 focus:bg-white dark:focus:bg-slate-800 transition-all">
@@ -1053,7 +1057,9 @@
 
                                 {{-- Payment Upload Form (rejected / re-upload) --}}
                                 @if($payment->status === 'rejected')
-                                    <form method="POST" action="{{ route('company.payments.upload', $workspace) }}" enctype="multipart/form-data" class="space-y-5 bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 p-5 rounded-2xl shadow-sm">
+                                    <form method="POST" action="{{ route('company.payments.upload', $workspace) }}" enctype="multipart/form-data" class="space-y-5 bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 p-5 rounded-2xl shadow-sm"
+                                        data-draft-form
+                                        data-draft-key="co:payment-upload:{{ $payment->id }}">
                                         @csrf
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                                             <div>
@@ -1244,7 +1250,9 @@
             </div>
 
             {{-- Pastikan nama route & parameter sesuai dengan web.php Anda --}}
-            <form method="POST" action="{{ route('company.workspaces.review.store', $workspace) }}" class="p-6 space-y-6 bg-white dark:bg-slate-900">
+            <form method="POST" action="{{ route('company.workspaces.review.store', $workspace) }}" class="p-6 space-y-6 bg-white dark:bg-slate-900"
+                data-draft-form
+                data-draft-key="co:ws-review:{{ $workspace->id }}">
                 @csrf
                 <div class="bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-800 rounded-2xl p-5 text-center shadow-inner">
                     <label class="block text-[10px] font-black text-blue-500 dark:text-blue-400 uppercase tracking-widest mb-3">Pilih Rating</label>

@@ -199,7 +199,11 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
         </div>
 
         {{-- Form Review --}}
-        <form action="{{ route('client.review.store', $project->id) }}" method="POST">
+        {{-- Draft otomatis (localStorage, key co:review-create:<project id>):
+             rating (radio) + ulasan ikut tersimpan saat modal/form belum dikirim. --}}
+        <form action="{{ route('company.client.review.store', $project->id) }}" method="POST"
+            data-draft-form
+            data-draft-key="co:review-create:{{ $project->id }}">
             @csrf
 
             <div class="mb-4 text-center">
@@ -228,5 +232,6 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+@include('partials.form-draft-autosave')
 </body>
 </html>

@@ -1,13 +1,18 @@
 /**
- * Auto-Save Draft Form Freelancer — menyimpan isi form secara otomatis
+ * Auto-Save Draft Form — menyimpan isi form secara otomatis
  * (localStorage) lalu memulihkannya saat user kembali ke form tersebut.
  *
- * Cakupan: HANYA role Freelancer. Script ini hanya di-include oleh
+ * Cakupan: role Freelancer dan Company. Script ini hanya di-include oleh
  * `resources/views/partials/form-draft-autosave.blade.php` yang dibungkus
- * guard `auth()->user()->role === 'freelancer'`, sehingga Company & Admin
- * tidak pernah memuat file ini.
+ * guard role, sehingga Admin (dan role lain) tidak pernah memuat file ini.
  *
- * Halaman pengguna (form ber-atribut data-draft-form):
+ * Isolasi antar role: tiap role memakai namespace localStorage sendiri lewat
+ * atribut `data-draft-namespace` pada <script> pemuat (lihat partial di atas):
+ *   - Freelancer : apexforge.fl.draft.v1:  (default, prefix key "fl:")
+ *   - Company    : apexforge.co.draft.v1:  (prefix key "co:")
+ * Jadi draft Company & Freelancer tidak saling menimpa walau engine-nya sama.
+ *
+ * Halaman Freelancer (form ber-atribut data-draft-form):
  *   - resources/views/freelancer/penawaran/create.blade.php   (Kirim Penawaran)
  *   - resources/views/freelancer/edit_profile.blade.php       (Edit Profil)
  *   - resources/views/freelancer/pendapatan/index.blade.php   (Modal Tarik Saldo)
@@ -15,6 +20,18 @@
  *   - resources/views/freelancer/reports/show.blade.php       (Unggah Bukti Tambahan)
  *   - resources/views/workspace/show.blade.php                (Catatan Progress, Tambah Tahap, Modal Update Progress)
  *   - resources/views/workspace/_submissions.blade.php        (Modal Upload Hasil Pekerjaan)
+ *
+ * Halaman Company:
+ *   - resources/views/company/projects/create.blade.php        (Buat Proyek)
+ *   - resources/views/company/projects/edit.blade.php          (Edit Proyek)
+ *   - resources/views/company/edit_profil.blade.php            (Edit Profil Perusahaan)
+ *   - resources/views/company/reports/create.blade.php         (Buat Laporan)
+ *   - resources/views/company/review_create.blade.php          (Rating & Ulasan)
+ *   - resources/views/company/payments/upload.blade.php        (Upload Bukti Pembayaran)
+ *   - resources/views/company/payments/quota-gateway.blade.php (Pembayaran Kuota Manual)
+ *   - resources/views/workspace/show.blade.php                 (Chat, Tambah Tahap, Ubah Tahap,
+ *                                                               Upload Bukti Pembayaran, Modal Rating)
+ *   - resources/views/workspace/_submissions.blade.php         (Modal Terima & Minta Revisi)
  *
  * Kontrak dengan view (Blade):
  *   1. <form ... data-draft-form>                      → form yang draft-nya disimpan
@@ -26,6 +43,10 @@
  *   7. data-draft-clear="fl:key"                       → elemen sukses; draft dengan key tsb dihapus
  *   8. data-draft-clear-prefix="fl:prefix:"            → hapus semua draft dengan awalan key tsb
  *   9. window.FormDraftAutosave.restoreForm(form)      → pulihkan draft secara manual (mis. saat modal dibuka)
+ *  10. data-draft-namespace="apexforge.co.draft.v1:"   → pada <script> pemuat; ganti namespace storage (isolasi role)
+ *  11. data-draft-keep-pending="co:project-create"      → pada halaman perantara (mis. gateway
+ *      pembayaran kuota): key draft yang pending-nya TIDAK boleh dianggap "submit sukses"
+ *      hanya karena user pindah halaman. Draft ikut dipertahankan.
  *
  * Perilaku:
  *   - Text/textarea   : event "input" + debounce 400ms (tanpa tombol simpan)
@@ -34,6 +55,7 @@
  *   - Form dibuka lagi : draft dipulihkan otomatis + notifikasi kecil "Draft dipulihkan"
  *   - Validation gagal : draft TIDAK dihapus (redirect balik ke path yang sama)
  *   - Submit berhasil  : draft dihapus (redirect ke path lain / data-draft-clear)
+ *   - Pindah ke halaman perantara (data-draft-keep-pending) : draft TIDAK dihapus
  *   - Reset / "Buang"  : draft dihapus
  *
  * Data sensitif tidak pernah disimpan: password, token CSRF, OTP, CVV,
@@ -43,7 +65,11 @@
     'use strict';
 
     // ────────────────────────────────────────────── Konstanta
-    var NS = 'apexforge.fl.draft.v1:';
+    // Namespace default = Freelancer (draft lama tetap terbaca). Halaman
+    // Company memakai namespace sendiri lewat atribut `data-draft-namespace`
+    // pada <script> pemuat: lihat partials/form-draft-autosave.blade.php.
+    var DEFAULT_NS = 'apexforge.fl.draft.v1:';
+    var NS = resolveNamespace();
     var INDEX_KEY = NS + '__index__';
     var SCHEMA = 1;
     var TEXT_DEBOUNCE_MS = 400;
@@ -76,6 +102,29 @@
         image: 1,
         password: 1
     };
+
+    /**
+     * Namespace storage yang dipakai engine.
+     *
+     * Halaman Company memuat engine lewat partial dengan
+     * `data-draft-namespace="apexforge.co.draft.v1:"`, sehingga draft Company
+     * dan Freelancer tersimpan di namespace terpisah (tidak saling menimpa).
+     * Atribut tidak ada / nilainya tidak valid → pakai namespace default.
+     */
+    function resolveNamespace() {
+        try {
+            var el = document.querySelector('[data-draft-namespace]');
+            var raw = attr(el, 'data-draft-namespace');
+            if (raw) {
+                var value = String(raw).trim();
+                if (/^[A-Za-z0-9._:-]{1,80}$/.test(value)) {
+                    return value.charAt(value.length - 1) === ':' ? value : value + ':';
+                }
+            }
+        } catch (e) { /* diamkan → namespace default */ }
+
+        return DEFAULT_NS;
+    }
 
     // ────────────────────────────────────────────── Helper DOM
     function attr(el, name) {
@@ -403,6 +452,9 @@
     function applyEntries(fields, entries) {
         var changed = 0;
         var groups = {};
+        // Penghitung entri per identitas: dipakai field ber-nama sama
+        // (mis. `stage_name[]` pada baris tahap dinamis).
+        var seenValue = {};
         var i;
 
         for (i = 0; i < fields.length; i++) {
@@ -447,7 +499,17 @@
                 continue;
             }
 
-            var el = group[0];
+            // Nama field bisa dipakai beberapa elemen sekaligus (mis. input
+            // array `stage_name[]`). Entri draft disimpan urut DOM, jadi entri
+            // ke-n berlaku untuk elemen ke-n dengan nama tersebut. Kalau
+            // elemennya belum ada di DOM saat restore, entri itu dilewati
+            // (tidak menimpa baris pertama).
+            var ordinal = seenValue[key] || 0;
+            seenValue[key] = ordinal + 1;
+
+            var el = group[ordinal];
+            if (!el) continue;
+
             var next = entry[2];
             if (Array.isArray(next) && el.options) {
                 var touched = false;
@@ -765,23 +827,50 @@
         });
     }
 
+    /**
+     * Key draft yang tanda pending-nya TIDAK boleh dibaca sebagai "submit sukses"
+     * di halaman ini. Dideklarasikan lewat atribut `data-draft-keep-pending`
+     * pada elemen halaman (nilai = key draft, dipisah spoma/koma).
+     *
+     * Dipakai untuk halaman "perantara" yang hanya meneruskan user dari sebuah
+     * form ke halaman lain tanpa form itu selesai diproses — mis. alur
+     * Company "Buat Proyek → Pembayaran Kuota". Pindah ke halaman pembayaran
+     * BUKAN berarti proyek sudah berhasil dibuat, jadi draft wajib tetap hidup.
+     */
+    function keepPendingKeys() {
+        var out = {};
+        var els = document.querySelectorAll('[data-draft-keep-pending]');
+        for (var i = 0; i < els.length; i++) {
+            var raw = attr(els[i], 'data-draft-keep-pending');
+            if (!raw) continue;
+            var parts = String(raw).split(/[,\s]+/);
+            for (var p = 0; p < parts.length; p++) {
+                if (parts[p]) out[parts[p]] = true;
+            }
+        }
+        return out;
+    }
+
     // ────────────────────────────────────────────── Pending & marker sukses
     function processPending(now) {
         var idx = readIndex();
         var keys = Object.keys(idx.keys);
         var path = draftPath();
+        var keep = keepPendingKeys();
 
         for (var i = 0; i < keys.length; i++) {
             var rec = readDraft(keys[i]);
             if (!rec || !rec.pending) continue;
 
-            if (rec.pending.path !== path) {
+            if (rec.pending.path !== path && !keep[keys[i]]) {
                 // Submit sukses (redirect ke halaman lain) → draft dihapus.
                 dropDraft(keys[i]);
                 continue;
             }
 
-            // Kembali ke form yang sama → kemungkinan validation gagal.
+            // Kembali ke form yang sama (kemungkinan validation gagal), atau
+            // pindah halaman yang menyatakan draft ini harus dipertahankan
+            // (mis. form Buat Proyek → Pembayaran Kuota).
             // Draft TIDAK dihapus, hanya tanda pending-nya yang dilepas.
             rec.pending = null;
             rec.savedAt = rec.savedAt || now;

@@ -202,7 +202,11 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                 <div class="glass-card rounded-3xl relative overflow-hidden dark:bg-slate-900 dark:border-slate-800">
                     <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 via-blue-600 to-blue-400"></div>
 
-                    <form method="POST" action="{{ route('company.projects.update', $project) }}" enctype="multipart/form-data" class="p-6 lg:p-8">
+                    {{-- Draft otomatis (localStorage, key co:project-edit:<id>): field yang
+                         dikunci (disabled) otomatis dilewati engine. --}}
+                    <form method="POST" action="{{ route('company.projects.update', $project) }}" enctype="multipart/form-data" class="p-6 lg:p-8"
+                        data-draft-form
+                        data-draft-key="co:project-edit:{{ $project->id }}">
                         @csrf
                         @method('PUT')
 
@@ -316,7 +320,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                         <div class="absolute inset-y-0 left-0 flex items-center pl-5 pointer-events-none">
                                             <span class="text-blue-400 font-bold text-sm dark:text-slate-400">Rp</span>
                                         </div>
-                                        <input type="hidden" name="budget" id="real_budget" value="{{ old('budget', $project->budget) }}">
+                                        <input type="hidden" name="budget" id="real_budget" value="{{ old('budget', $project->budget) }}" data-draft-include>
                                         <input type="text" id="display_budget" {{ $isLocked('budget') ? 'disabled' : '' }}
                                             class="w-full pl-12 pr-5 py-3.5 bg-blue-50/50 border @error('budget') border-blue-500 ring-2 ring-blue-500/20 @else border-blue-100 @enderror rounded-xl text-sm font-bold text-blue-950 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 focus:bg-white transition-all placeholder:text-blue-300 placeholder:font-medium dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:focus:bg-slate-800 dark:placeholder:text-slate-500 {{ $isLocked('budget') ? 'opacity-60 cursor-not-allowed' : '' }}"
                                             placeholder="5000000">
@@ -518,5 +522,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
             });
         });
     </script>
+@include('partials.form-draft-autosave')
+
 </body>
 </html>

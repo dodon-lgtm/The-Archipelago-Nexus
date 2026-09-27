@@ -82,13 +82,18 @@ class User extends Authenticatable
         return $this->hasMany(Message::class, 'sender_id');
     }
 
-    // Di dalam class Userextends Authenticatable
+    // Di dalam class User extends Authenticatable
 
     // Tambahkan relasi ini
     public function freelanceProfile()
     {
         return $this->hasOne(FreelancerProfile::class, 'user_id', 'id'); 
         // Sesuaikan 'user_id' jika nama foreign key di tabel freelance_profile berbeda (misal: 'freelancer_id')
+    }
+
+    public function freelancerProfile()
+    {
+        return $this->freelanceProfile();
     }
 
 
