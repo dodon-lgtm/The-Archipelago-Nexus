@@ -324,7 +324,9 @@ class ProjectSubmissionController extends Controller
 
             return redirect()
                 ->route('company.workspaces.show', $workspace)
-                ->with('success', 'Hasil pekerjaan telah diterima. Proyek berhasil diselesaikan!' . $releaseText);
+                ->with('success', 'Hasil pekerjaan telah diterima. Proyek berhasil diselesaikan!' . $releaseText)
+                // Draft catatan modal "Terima" (per submission) sudah terkirim.
+                ->with('draft_clear_prefix', 'co:ws-submission-accept:' . $workspace->id . ':');
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -396,6 +398,8 @@ class ProjectSubmissionController extends Controller
 
         return redirect()
             ->route('company.workspaces.show', $workspace)
-            ->with('success', 'Permintaan revisi telah dikirim.');
+            ->with('success', 'Permintaan revisi telah dikirim.')
+            // Draft catatan modal "Minta Revisi" (per submission) sudah terkirim.
+            ->with('draft_clear_prefix', 'co:ws-submission-revision:' . $workspace->id . ':');
     }
 }

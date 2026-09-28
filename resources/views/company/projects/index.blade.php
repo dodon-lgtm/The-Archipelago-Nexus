@@ -180,7 +180,7 @@
                 @endif
 
                 {{-- FILTER PROJECT --}}
-                <form method="GET" action="{{ route('company.projects.index') }}"
+                <form method="GET" action="{{ route('company.projects.index') }}" data-live-filter
                     class="reveal reveal-2 flex flex-col sm:flex-row gap-2.5 items-stretch sm:items-center flex-wrap">
                     
                     {{-- Pencarian nama proyek --}}
@@ -205,21 +205,12 @@
                         </span>
                     </div>
 
-                    {{-- Tombol Terapkan --}}
-                    <button type="submit"
-                        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-brand text-white rounded-xl text-sm font-bold shadow-md shadow-brand/20 hover:bg-brand-dark transition shrink-0">
-                        <i class="fa-solid fa-filter text-xs"></i>
-                        Terapkan
-                    </button>
-
-                    {{-- Tombol Reset (muncul jika ada filter aktif) --}}
-                    @if(request()->filled('status') || request()->filled('search'))
-                        <a href="{{ route('company.projects.index') }}"
-                            class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-xl text-sm font-bold hover:bg-slate-50 transition shrink-0 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-300">
-                            <i class="fa-solid fa-rotate-left text-xs"></i>
-                            Reset
-                        </a>
-                    @endif
+                    {{-- Tombol Reset (muncul otomatis saat filter aktif — ditangani company-live-filter.js) --}}
+                    <a href="{{ route('company.projects.index') }}" data-live-filter-reset
+                        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-xl text-sm font-bold hover:bg-slate-50 transition shrink-0 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-300{{ request()->filled('status') || request()->filled('search') ? '' : ' hidden' }}">
+                        <i class="fa-solid fa-rotate-left text-xs"></i>
+                        Reset
+                    </a>
                 </form>
 
                 {{-- SUB HEADER & TITLE --}}
@@ -237,7 +228,7 @@
                 </div>
 
                 {{-- PROJECT LIST --}}
-                <div class="reveal reveal-3 space-y-3">
+                <div class="reveal reveal-3 space-y-3" id="project-results">
                     @forelse ($projects as $project)
                         @php
                             $status = $project->status ?? 'open';
@@ -365,23 +356,28 @@
                             <div class="w-14 h-14 mx-auto mb-3 bg-blue-50 text-slate-400 rounded-2xl flex items-center justify-center text-xl shadow-inner dark:bg-slate-800 dark:text-slate-400">
                                 <i class="fa-regular fa-folder-open"></i>
                             </div>
-                            <h3 class="text-sm font-bold text-slate-700 dark:text-white">Belum ada proyek</h3>
-                            <p class="text-xs text-slate-400 mt-1 max-w-xs mx-auto dark:text-slate-400">Mulai buat proyek pertama Anda dan temukan talenta terbaik.</p>
+                            @if(request()->filled('search') || request()->filled('status'))
+                                <h3 class="text-sm font-bold text-slate-700 dark:text-white">Tidak Ada Proyek Sesuai Filter</h3>
+                                <p class="text-xs text-slate-400 mt-1 max-w-xs mx-auto dark:text-slate-400">Tidak ada proyek yang cocok dengan pencarian atau status yang Anda pilih. Coba ubah kata kunci atau filter status.</p>
+                            @else
+                                <h3 class="text-sm font-bold text-slate-700 dark:text-white">Belum ada proyek</h3>
+                                <p class="text-xs text-slate-400 mt-1 max-w-xs mx-auto dark:text-slate-400">Mulai buat proyek pertama Anda dan temukan talenta terbaik.</p>
+                            @endif
                             <a href="{{ route('company.projects.create') }}" class="btn-shimmer inline-flex items-center gap-2 mt-4 px-4 py-2.5 bg-brand text-white rounded-xl text-xs font-bold shadow-md shadow-brand/20">
                                 <i class="fa-solid fa-plus text-[10px]"></i> Buat Proyek
                             </a>
                         </div>
                     @endforelse
-                </div>
 
-                {{-- PAGINATION --}}
-                @if ($projects->hasPages())
-                    <div class="pt-4 flex justify-center">
-                        <div class="bg-white border border-blue-100/80 rounded-2xl shadow-sm px-4 py-2 dark:bg-slate-900 dark:border-slate-800">
-                            {{ $projects->links() }}
+                    {{-- PAGINATION --}}
+                    @if ($projects->hasPages())
+                        <div class="pt-4 flex justify-center">
+                            <div class="bg-white border border-blue-100/80 rounded-2xl shadow-sm px-4 py-2 dark:bg-slate-900 dark:border-slate-800">
+                                {{ $projects->links() }}
+                            </div>
                         </div>
-                    </div>
-                @endif
+                    @endif
+                </div>
 
             </div>
         </main>
@@ -391,5 +387,6 @@
 
     </div>
 
+    <script src="{{ asset('js/company-live-filter.js') }}" defer></script>
 </body>
 </html>

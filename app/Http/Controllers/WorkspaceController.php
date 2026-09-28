@@ -288,12 +288,21 @@ class WorkspaceController extends Controller
             projectId: $workspace->project_id,
         );
 
-        return redirect()
+        $redirect = redirect()
             ->route(
                 Auth::user()->role === 'company' ? 'company.workspaces.show' : 'freelancer.workspaces.show',
                 $workspace
             )
             ->with('success', 'Pesan berhasil dikirim.');
+
+        // Draft form chat Company ada di halaman yang sama dengan tujuan redirect
+        // → beri penanda agar draft yang sudah terkirim tidak dipulihkan lagi.
+        // (Freelancer tidak memakai draft pada form chat.)
+        if (Auth::user()->role === 'company') {
+            $redirect->with('draft_clear', 'co:ws-message:' . $workspace->id);
+        }
+
+        return $redirect;
     }
 
     /**
@@ -585,9 +594,27 @@ class WorkspaceController extends Controller
      */
     private function backWithSuccess(string $message): RedirectResponse
     {
-        return redirect()
+        $redirect = redirect()
             ->route($this->backToWorkspace(), request()->route('workspace'))
             ->with('success', $message);
+
+        // Aksi Company (tambah/ubah/hapus tahap) redirect kembali ke path yang
+        // sama, padahal formnya sudah sukses diproses → kirim penanda hapus
+        // draft supaya isinya tidak dipulihkan lagi sebagai "draft".
+        // Draft Freelancer tidak dipakai pada form-form ini.
+        if (Auth::check() && Auth::user()->role === 'company') {
+            $workspace = request()->route('workspace');
+            $workspaceId = $workspace instanceof Workspace ? $workspace->id : (int) $workspace;
+            $action = (string) request()->input('action', '');
+
+            if ($action === 'add') {
+                $redirect->with('draft_clear', 'co:ws-addstage:' . $workspaceId);
+            } elseif (in_array($action, ['rename', 'delete'], true)) {
+                $redirect->with('draft_clear_prefix', 'co:ws-stage-rename:' . $workspaceId . ':');
+            }
+        }
+
+        return $redirect;
     }
 
     /**

@@ -228,7 +228,10 @@ class PaymentController extends Controller
 
         return redirect()
             ->route('company.workspaces.show', $workspace)
-            ->with('success', 'Bukti pembayaran berhasil dikirim. Menunggu verifikasi admin.');
+            ->with('success', 'Bukti pembayaran berhasil dikirim. Menunggu verifikasi admin.')
+            // Form upload (halaman workspace / halaman upload) sudah terkirim →
+            // hapus draft Company-nya agar tidak dipulihkan lagi.
+            ->with('draft_clear', 'co:payment-upload:' . $payment->id);
     }
 
     /**
@@ -670,7 +673,10 @@ class PaymentController extends Controller
 
         return redirect()
             ->route('company.quota.payment.show', $payment)
-            ->with('success', 'Bukti pembayaran kuota berhasil dikirim. Menunggu verifikasi admin.');
+            ->with('success', 'Bukti pembayaran kuota berhasil dikirim. Menunggu verifikasi admin.')
+            // Form manual ada di halaman yang sama dengan tujuan redirect →
+            // penanda hapus draft Company untuk pembayaran kuota ini.
+            ->with('draft_clear', 'co:quota-payment:' . $payment->id);
     }
 
     /**

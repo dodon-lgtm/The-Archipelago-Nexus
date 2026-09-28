@@ -10,6 +10,51 @@
         </a>
     </div>
 
+    @if($canRelease || $canRefund)
+        <div class="bg-white rounded-2xl border border-green-100 shadow-sm p-6 mb-6">
+            <h2 class="font-bold text-slate-800 mb-4">Keputusan Dana Escrow</h2>
+
+            @if($payment && $payment->isFundsHeld())
+                <p class="text-sm text-slate-500 mb-4">
+                    Dana sedang tertahan. Admin dapat memutuskan merilis ke Freelancer atau merefund ke Company.
+                </p>
+
+                {{-- Release to Freelancer --}}
+                @if($canRelease)
+                    <form method="POST" action="{{ route('admin.workspace.resolution.decide', $workspace) }}"
+                      onsubmit="return adminConfirm('Yakin merilis dana ke Freelancer? Aksi tercatat di ledger dan tidak dapat dibatalkan.', this)">
+                        @csrf
+                        @method('POST')
+                        <input type="hidden" name="action" value="release_to_freelancer">
+                        <textarea name="reason" rows="3" required placeholder="Alasan keputusan (wajib)..."
+                          class="w-full rounded-xl border-blue-100 bg-[#f6f9ff] px-4 py-2.5 text-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none"></textarea>
+                        <div class="mt-3">
+                            <button type="submit"
+                                    class="w-full px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-sm font-semibold transition">
+                                <i class="fa-solid fa-hand-holding-dollar mr-1"></i> Release ke Freelancer
+                            </button>
+                        </div>
+                    </form>
+                @endif
+
+                {{-- Refund to Company --}}
+                @if($canRefund)
+                    <form method="POST" action="{{ route('admin.workspace.resolution.decide', $workspace) }}"
+                      onsubmit="return adminConfirm('Yakin merefund dana ke Company? Aksi tercatat di ledger dan tidak dapat dibatalkan.', this)">
+                        @csrf
+                        @method('POST')
+                        <input type="hidden" name="action" value="refund_to_company">
+                        <textarea name="reason" rows="3" required placeholder="Alasan keputusan (wajib)..."
+                          class="w-full rounded-xl border-blue-100 bg-[#f6f9ff] px-4 py-2.5 text-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none"></textarea>
+                        <div class="mt-3">
+                            <button type="submit"
+                                    class="w-full px-4 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-xl text-sm font-semibold transition">
+                                <i class="fa-solid fa-rotate-left mr-1"></i> Refund ke Company
+                            </button>
+                        </div>
+                    </form>
+                @endif
+                @endif
     {{-- Header Ringkas --}}
     <div class="bg-white dark:bg-slate-900 dark:border-slate-800 rounded-2xl border border-blue-100 shadow-sm p-5 mb-6 transition-colors duration-300">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">

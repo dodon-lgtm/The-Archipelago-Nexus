@@ -181,30 +181,14 @@
     <!-- Container Utama -->
     <div class="max-w-md w-full bg-white rounded-3xl shadow-xl border border-blue-50 overflow-hidden mx-auto">
 
-        <!-- Flash Message -->
-        @if (session('status'))
-            <div class="p-4 bg-green-100 text-green-800 rounded-t-3xl mb-4 animate-fade-in">
-                <i class="fa-solid fa-circle-check text-lg mr-2"></i>
-                <span>{{ session('status') }}</span>
-            </div>
-        @endif
-
-        @if (session('error'))
-            <div class="p-4 bg-red-100 text-red-800 rounded-t-3xl mb-4 animate-fade-in">
-                <i class="fa-solid fa-circle-exclamation text-lg mr-2"></i>
-                <span>{{ session('error') }}</span>
-            </div>
-        @endif
+        {{-- Popup (success/error) --}}
+        @include('auth.partials.flash-popup', [
+            'type'    => session('error') ? 'error' : 'success',
+            'message' => session('error') ?: session('status'),
+        ])
 
         <form action="{{ route('password.reset.submit') }}" method="POST" class="p-6 md:p-8 space-y-4">
             @csrf
-
-            @if (session('error'))
-                <div class="p-4 bg-red-100 text-red-800 rounded-b-3xl mb-4 animate-fade-in">
-                    <i class="fa-solid fa-circle-exclamation text-lg mr-2"></i>
-                    <span>{{ session('error') }}</span>
-                </div>
-            @endif
 
             <input type="hidden" name="otp_id" value="{{ session('otp_id') }}">
 
@@ -258,21 +242,6 @@
             </div>
         </form>
     </div>
-
-    <script>
-        // Fade out fading for messages
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(() => {
-                const messages = document.querySelectorAll('.animate-fade-in');
-                messages.forEach((msg, index) => {
-                    setTimeout(() => {
-                        msg.style.opacity = '1';
-                        msg.style.transform = 'translateY(0)';
-                    }, index * 100);
-                });
-            }, 100);
-        });
-    </script>
 
 </body>
 

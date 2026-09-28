@@ -342,7 +342,11 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                 </div>
             @endif
 
-            <form action="{{ route('company.profile.update') }}" method="POST" enctype="multipart/form-data">
+            {{-- Draft otomatis (localStorage, key co:profile:<user id>): input file
+                 (logo) tidak ikut disimpan, hanya field teks/select. --}}
+            <form action="{{ route('company.profile.update') }}" method="POST" enctype="multipart/form-data"
+                data-draft-form
+                data-draft-key="co:profile:{{ Auth::id() }}">
                 @csrf
                 
                 <div class="row align-items-center mb-4">
@@ -446,6 +450,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
       }, 150);
   }
 </script>
+@include('partials.form-draft-autosave')
 
 </body>
 </html> 

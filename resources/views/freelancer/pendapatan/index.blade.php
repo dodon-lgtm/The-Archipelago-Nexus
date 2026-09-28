@@ -153,11 +153,7 @@
                             </div>
                             <div class="min-w-0 flex-1">
                                 <p class="text-xs text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider">Saldo Tersedia</p>
-<<<<<<< Updated upstream
-                                <h3 class="text-2xl font-black text-emerald-600 dark:text-emerald-300" title="Rp {{ number_format($availableBalance ?? 0, 0, ',', '.') }}">
-=======
                                 <h3 class="text-lg sm:text-xl font-black text-emerald-600 dark:text-emerald-300 tracking-tight leading-tight" title="Rp {{ number_format($availableBalance ?? 0, 0, ',', '.') }}">
->>>>>>> Stashed changes
                                     {{ formatRupiahShort($availableBalance ?? 0) }}
                                 </h3>
                             </div>
@@ -172,11 +168,7 @@
                             </div>
                             <div class="min-w-0 flex-1">
                                 <p class="text-xs text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider">Saldo Tertahan (Escrow)</p>
-<<<<<<< Updated upstream
-                                <h3 class="text-2xl font-black text-amber-600 dark:text-amber-300" title="Rp {{ number_format($totalHeld ?? 0, 0, ',', '.') }}">
-=======
                                 <h3 class="text-lg sm:text-xl font-black text-amber-600 dark:text-amber-300 tracking-tight leading-tight" title="Rp {{ number_format($totalHeld ?? 0, 0, ',', '.') }}">
->>>>>>> Stashed changes
                                     {{ formatRupiahShort($totalHeld ?? 0) }}
                                 </h3>
                                 @if((float) ($totalPending ?? 0) > 0)
@@ -196,11 +188,7 @@
                             </div>
                             <div class="min-w-0 flex-1">
                                 <p class="text-xs text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider">Total Pendapatan</p>
-<<<<<<< Updated upstream
-                                <h3 class="text-2xl font-black text-blue-600 dark:text-blue-300" title="Rp {{ number_format($totalEarned ?? 0, 0, ',', '.') }}">
-=======
                                 <h3 class="text-lg sm:text-xl font-black text-blue-600 dark:text-blue-300 tracking-tight leading-tight" title="Rp {{ number_format($totalEarned ?? 0, 0, ',', '.') }}">
->>>>>>> Stashed changes
                                     {{ formatRupiahShort($totalEarned ?? 0) }}
                                 </h3>
                             </div>
@@ -215,11 +203,7 @@
                             </div>
                             <div class="min-w-0 flex-1">
                                 <p class="text-xs text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider">Direfund ke Company</p>
-<<<<<<< Updated upstream
-                                <h3 class="text-2xl font-black text-red-600 dark:text-red-300" title="Rp {{ number_format($totalRefunded ?? 0, 0, ',', '.') }}">
-=======
                                 <h3 class="text-lg sm:text-xl font-black text-red-600 dark:text-red-300 tracking-tight leading-tight" title="Rp {{ number_format($totalRefunded ?? 0, 0, ',', '.') }}">
->>>>>>> Stashed changes
                                     {{ formatRupiahShort($totalRefunded ?? 0) }}
                                 </h3>
                             </div>
@@ -230,7 +214,8 @@
 
                 {{-- Flash Messages --}}
                 @if(session('success'))
-                    <div class="flex items-center gap-3 px-4 py-3 bg-emerald-50 dark:bg-emerald-900/40 border border-emerald-200 dark:border-emerald-900 text-emerald-700 dark:text-emerald-300 rounded-xl text-sm font-medium">
+                    <div class="flex items-center gap-3 px-4 py-3 bg-emerald-50 dark:bg-emerald-900/40 border border-emerald-200 dark:border-emerald-900 text-emerald-700 dark:text-emerald-300 rounded-xl text-sm font-medium"
+                         data-draft-clear="fl:withdraw:{{ Auth::id() }}">
                         <i class="fa-solid fa-check-circle"></i> {{ session('success') }}
                     </div>
                 @endif
@@ -502,7 +487,9 @@
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('freelancer.withdrawals.store') }}" id="withdrawForm" class="space-y-5">
+            <form method="POST" action="{{ route('freelancer.withdrawals.store') }}" id="withdrawForm" class="space-y-5"
+                data-draft-form
+                data-draft-key="fl:withdraw:{{ Auth::id() }}">
                 @csrf
 
                 {{-- Step 1: Metode pencairan --}}
@@ -892,5 +879,6 @@
     });
 </script>
 
+@include('partials.form-draft-autosave')
 </body>
 </html>

@@ -194,7 +194,12 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                     {{-- Decorative top line --}}
                     <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 via-blue-600 to-blue-400"></div>
 
-                    <form method="POST" action="{{ route('company.projects.store') }}" enctype="multipart/form-data" class="p-6 lg:p-8">
+                    {{-- Draft otomatis (localStorage, key co:project-create): teks form
+                         dan baris tahap dinamis (stage_name[] / stage_desc[]) tersimpan
+                         per urutan baris. --}}
+                    <form method="POST" action="{{ route('company.projects.store') }}" enctype="multipart/form-data" class="p-6 lg:p-8"
+                        data-draft-form
+                        data-draft-key="co:project-create">
                         @csrf
 
                         {{-- VALIDATION ERRORS (Global) --}}
@@ -306,7 +311,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                         <div class="absolute inset-y-0 left-0 flex items-center pl-5 pointer-events-none">
                                             <span class="text-blue-400 font-bold text-sm dark:text-slate-400">Rp</span>
                                         </div>
-                                        <input type="hidden" name="budget" id="real_budget" value="{{ old('budget') }}">
+                                        <input type="hidden" name="budget" id="real_budget" value="{{ old('budget') }}" data-draft-include>
                                         <input type="text" id="display_budget"
                                             class="w-full pl-12 pr-5 py-3.5 bg-blue-50/50 border @error('budget') border-blue-500 ring-2 ring-blue-500/20 @else border-blue-100 @enderror rounded-xl text-sm font-bold text-blue-950 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 focus:bg-white transition-all placeholder:text-blue-300 placeholder:font-medium dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:focus:bg-slate-800 dark:placeholder:text-slate-500"
                                             placeholder="5000000" required>
@@ -487,7 +492,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                 <select name="status"
                                     class="px-5 py-2.5 bg-white border border-blue-200 rounded-xl text-sm font-bold text-blue-950 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all cursor-pointer shadow-sm dark:bg-slate-800 dark:border-slate-700 dark:text-white">
                                     <option value="open" {{ old('status', 'open') == 'open' ? 'selected' : '' }}>Open</option>
-                                    <option value="closed" {{ old('status') == 'closed' ? 'selected' : '' }}>Tutup</option>
+                                    {{-- <option value="closed" {{ old('status') == 'closed' ? 'selected' : '' }}>Tutup</option> --}}
                                     <option value="archived" {{ old('status') == 'archived' ? 'selected' : '' }}>Arsip</option>
                                 </select>
                             </div>
@@ -800,5 +805,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
             }
         });
     </script>
+@include('partials.form-draft-autosave')
+
 </body>
 </html>

@@ -385,7 +385,9 @@
                     </div>
                 @endif
 
-                <form action="{{ route('freelancer.profile.update') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('freelancer.profile.update') }}" method="POST" enctype="multipart/form-data"
+                    data-draft-form
+                    data-draft-key="fl:profile:{{ Auth::id() }}">
                     @csrf
 
                     <!-- FOTO PROFIL -->
@@ -574,5 +576,7 @@
         easing: 'ease-out-cubic'
     });
 </script>
+
+@include('partials.form-draft-autosave')
 </body>
 </html>

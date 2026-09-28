@@ -1062,7 +1062,44 @@
                 x-data="{
                     search: '',
                     statusFilter: 'all',
+                    sortOption: '{{ in_array(request('sort'), ['harga_tertinggi', 'harga_terendah'], true) ? request('sort') : '' }}',
                     items: @js($penawaranData),
+
+                    init() {
+                        this.$nextTick(() => this.applySort());
+                        this.$watch('sortOption', () => this.applySort());
+                    },
+                    setSort(value) {
+                        this.sortOption = value;
+                        try {
+                            const url = new URL(window.location.href);
+                            if (value) url.searchParams.set('sort', value);
+                            else url.searchParams.delete('sort');
+                            window.history.replaceState(null, '', url.pathname + url.search + url.hash);
+                        } catch (e) {}
+                    },
+                    sortedItems() {
+                        const list = this.items.slice();
+                        if (this.sortOption === 'harga_tertinggi') {
+                            list.sort((a, b) => Number(b.harga) - Number(a.harga));
+                        } else if (this.sortOption === 'harga_terendah') {
+                            list.sort((a, b) => Number(a.harga) - Number(b.harga));
+                        }
+                        return list;
+                    },
+                    applySort() {
+                        const container = document.getElementById('penawaran-list');
+                        if (!container) return;
+                        const cards = container.querySelectorAll('[data-penawaran-card]');
+                        this.sortedItems().forEach(item => {
+                            for (let i = 0; i < cards.length; i++) {
+                                if (Number(cards[i].getAttribute('data-penawaran-card')) === Number(item.id)) {
+                                    container.appendChild(cards[i]);
+                                    break;
+                                }
+                            }
+                        });
+                    },
 
                     get filteredItems() {
                         return this.items.filter(item => {
@@ -1203,17 +1240,29 @@
                             <span class="w-px h-6 bg-slate-200 dark:bg-slate-700 mx-1 shrink-0"></span>
 
                             <a href="{{ route('company.projects.show', $project) }}"
-                               class="px-3 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors {{ request('sort') ? 'bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700' : 'bg-blue-600 text-white' }}">
+                               @click.prevent="setSort('')"
+                               :class="sortOption === ''
+                                   ? 'bg-blue-600 text-white'
+                                   : 'bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700'"
+                               class="px-3 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors">
                                 Terbaru
                             </a>
 
                             <a href="{{ route('company.projects.show', array_merge([$project], ['sort' => 'harga_tertinggi'])) }}"
-                               class="px-3 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors {{ request('sort') === 'harga_tertinggi' ? 'bg-blue-600 text-white' : 'bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700' }}">
+                               @click.prevent="setSort('harga_tertinggi')"
+                               :class="sortOption === 'harga_tertinggi'
+                                   ? 'bg-blue-600 text-white'
+                                   : 'bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700'"
+                               class="px-3 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors">
                                 Harga Tertinggi
                             </a>
 
                             <a href="{{ route('company.projects.show', array_merge([$project], ['sort' => 'harga_terendah'])) }}"
-                               class="px-3 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors {{ request('sort') === 'harga_terendah' ? 'bg-blue-600 text-white' : 'bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700' }}">
+                               @click.prevent="setSort('harga_terendah')"
+                               :class="sortOption === 'harga_terendah'
+                                   ? 'bg-blue-600 text-white'
+                                   : 'bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700'"
+                               class="px-3 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors">
                                 Harga Terendah
                             </a>
 
@@ -1254,7 +1303,7 @@
                             </div>
                         </template>
 
-                        <div class="space-y-4">
+                        <div class="space-y-4" id="penawaran-list">
 
                             @foreach($project->penawarans as $penawaran)
 
@@ -1269,6 +1318,7 @@
                                 @endphp
 
                                 <div
+                                    data-penawaran-card="{{ $penawaran->id }}"
                                     x-data="{ open: false }"
                                     x-show="filteredItems.some(i => i.id === {{ $penawaran->id }})"
                                     class="reveal-on-scroll reveal-fallback border border-slate-200 dark:border-slate-800 border-l-4 {{ $accentClass }} rounded-xl bg-white dark:bg-slate-900 lift-card overflow-hidden"
@@ -2291,6 +2341,9 @@
 {{-- Modal Negosiasi Chat --}}
 @include('negotiations.modal')
 
+{{-- Engine auto-save draft (Company) juga dimuat di halaman tujuan redirect
+     sukses "Edit Proyek" supaya draft yang sudah tersimpan dibersihkan. --}}
+@include('partials.form-draft-autosave')
 
 </body>
 </html>

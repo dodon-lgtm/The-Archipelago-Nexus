@@ -194,7 +194,11 @@
                         </div>
                     </div>
 
-                    <form method="POST" action="{{ route('company.reports.store') }}" enctype="multipart/form-data" class="space-y-6">
+                    {{-- Draft otomatis (localStorage, key co:report-create:<workspace>-<project>-<user>):
+                         konteks laporan (hidden id) tidak disimpan karena sudah tetap dari URL. --}}
+                    <form method="POST" action="{{ route('company.reports.store') }}" enctype="multipart/form-data" class="space-y-6"
+                        data-draft-form
+                        data-draft-key="co:report-create:{{ $workspace?->id ?? 0 }}-{{ $project?->id ?? 0 }}-{{ $reportedUser?->id ?? 0 }}">
                         @csrf
 
                         {{-- Hidden inputs for contextual reporting --}}
@@ -404,6 +408,8 @@
             </div>
         </main>
     </div>
+
+@include('partials.form-draft-autosave')
 
 </body>
 </html>

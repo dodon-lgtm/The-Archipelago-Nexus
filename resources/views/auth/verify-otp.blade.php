@@ -181,51 +181,27 @@
     <!-- Container Utama -->
     <div class="max-w-md w-full bg-white rounded-3xl shadow-xl border border-blue-50 overflow-hidden mx-auto">
 
-        <!-- Flash Messages -->
-        @if (session('status'))
-            <div class="p-4 bg-green-100 text-green-800 rounded-t-3xl mb-4 animate-fade-in">
-                <i class="fa-solid fa-circle-check text-lg mr-2"></i>
-                <span>{{ session('status') }}</span>
-            </div>
-        @endif
-
-        @if (session('error'))
-            <div class="p-4 bg-red-100 text-red-800 rounded-t-3xl mb-4 animate-fade-in">
-                <i class="fa-solid fa-circle-exclamation text-lg mr-2"></i>
-                <span>{{ session('error') }}</span>
-            </div>
-        @endif
+        {{-- Popup unique: success (status) + error (otp/expired/attempts/invalid) --}}
+        @php
+            $otpHasError = session('otp_expired') || session('too_many_attempts')
+                || session('otp_invalid') || session('error') || $errors->has('otp');
+            $otpMessage  = session('otp_expired')
+                ? session('otp_expired')
+                : (session('too_many_attempts')
+                    ? session('too_many_attempts')
+                    : (session('otp_invalid')
+                        ? session('otp_invalid')
+                        : (session('error')
+                            ? session('error')
+                            : ($errors->has('otp') ? $errors->first('otp') : ''))));
+        @endphp
+        @include('auth.partials.flash-popup', [
+            'type'    => $otpHasError ? 'error' : 'success',
+            'message' => $otpHasError ? $otpMessage : session('status'),
+        ])
 
         <form action="{{ route('password.verify.submit') }}" method="POST" class="p-6 md:p-8 space-y-4">
             @csrf
-
-            @if (session('otp_expired'))
-                <div class="p-4 bg-red-100 text-red-800 rounded-b-3xl mb-4 animate-fade-in">
-                    <i class="fa-solid fa-circle-exclamation text-lg mr-2"></i>
-                    <span>{{ session('otp_expired') }}</span>
-                </div>
-            @endif
-
-            @if (session('too_many_attempts'))
-                <div class="p-4 bg-red-100 text-red-800 rounded-b-3xl mb-4 animate-fade-in">
-                    <i class="fa-solid fa-circle-exclamation text-lg mr-2"></i>
-                    <span>{{ session('too_many_attempts') }}</span>
-                </div>
-            @endif
-
-            @error('otp')
-                <div class="p-4 bg-red-100 text-red-800 rounded-b-3xl mb-4 animate-fade-in">
-                    <i class="fa-solid fa-circle-exclamation text-lg mr-2"></i>
-                    <span>{{ $message }}</span>
-                </div>
-            @enderror
-
-            @if (session('otp_invalid'))
-                <div class="p-4 bg-red-100 text-red-800 rounded-b-3xl mb-4 animate-fade-in">
-                    <i class="fa-solid fa-circle-exclamation text-lg mr-2"></i>
-                    <span>{{ session('otp_invalid') }}</span>
-                </div>
-            @endif
 
             <input type="hidden" name="otp_id" value="{{ session('otp_id') }}">
 

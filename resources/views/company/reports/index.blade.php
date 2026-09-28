@@ -323,5 +323,9 @@
 
     </div>
 
+{{-- Engine auto-save draft (Company) juga dimuat di halaman tujuan redirect
+     sukses "Buat Laporan" supaya draft yang sudah terkirim dibersihkan. --}}
+@include('partials.form-draft-autosave')
+
 </body>
 </html>
