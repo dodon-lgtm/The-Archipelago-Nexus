@@ -34,7 +34,7 @@ class CompanyProjectSeeder extends Seeder
 {
     // ─── Identitas akun company yang dibuat ───────────────────────────────
     public const COMPANY_NAME     = 'PT Nusantara Karya Digital';
-    public const COMPANY_EMAIL    = 'nusantara@archipelagonexus.com';
+    public const COMPANY_EMAIL    = 'nusantara@vexus.id';
     public const COMPANY_PASSWORD = 'company123';
     public const COMPANY_PHONE    = '081298765432';
     public const COMPANY_CONTACT  = 'Rangga Prasetyo';

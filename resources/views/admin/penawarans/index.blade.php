@@ -8,7 +8,7 @@
         :count="$penawarans->total()" countLabel="penawaran" countIcon="fa-file-invoice" />
     {{-- Search & Filter --}}
     <div class="bg-white rounded-2xl border border-blue-100 p-4 mb-4 shadow-sm">
-        <form method="GET" action="{{ route('admin.penawarans.index') }}" class="flex flex-wrap gap-3 items-end">
+        <form method="GET" action="{{ route('admin.penawarans.index') }}" data-live-filter class="flex flex-wrap gap-3 items-end">
             <div class="flex-1 min-w-[200px]">
                 <label class="text-[11px] font-bold uppercase tracking-wide text-slate-500 mb-1.5 block">
                     <i class="fa-solid fa-magnifying-glass mr-1 text-blue-400"></i> Cari
@@ -29,14 +29,13 @@
                 </select>
             </div>
             <div class="flex items-center gap-2 w-full sm:w-auto">
-                <button type="submit" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-5 py-2.5 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white rounded-xl text-sm font-semibold shadow-sm transition"><i class="fa-solid fa-search"></i> Cari</button>
                 <a href="{{ route('admin.penawarans.index') }}" class="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-sm font-semibold transition"><i class="fa-solid fa-rotate-left text-xs"></i> Reset</a>
             </div>
         </form>
     </div>
 
     {{-- Table --}}
-    <div class="bg-white rounded-2xl border border-blue-100 shadow-sm overflow-hidden">
+    <div class="bg-white rounded-2xl border border-blue-100 shadow-sm overflow-hidden" data-live-filter-results>
         <div class="overflow-x-auto">
             <table class="w-full text-sm min-w-[820px]">
                 <thead class="bg-[#f6f9ff] border-b border-blue-100">
@@ -105,5 +104,7 @@
         </div>
     </div>
 
-    <x-admin.pagination :paginator="$penawarans" />
+    <div data-live-filter-results>
+        <x-admin.pagination :paginator="$penawarans" />
+    </div>
 @endsection

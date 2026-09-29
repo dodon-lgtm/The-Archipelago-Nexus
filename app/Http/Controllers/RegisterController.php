@@ -110,6 +110,15 @@ class RegisterController extends Controller
                 'note'                => null,
             ]);
 
+            // Simpan identifier (email) pendaftaran company di SESSION agar
+            // halaman login dapat menampilkan informasi "sedang diproses".
+            //
+            // Session HANYA menyimpan identifier berupa alamat email — bukan
+            // object CompanyAccountRequest, bukan password, dan bukan data
+            // sensitif lain. Status sebenarnya selalu diverifikasi ulang ke
+            // tabel company_account_requests oleh AuthController::showLogin().
+            $request->session()->put('pending_company_email', $email);
+
             return redirect()->route('login')
                 ->with('success', 'Registrasi berhasil. Akun perusahaan Anda sedang menunggu persetujuan Admin.');
         }

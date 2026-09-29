@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Daftar Akun - ApexForge Labs</title>
+    <title>Daftar Akun - Vexus</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -53,17 +53,17 @@
     </style>
 <style>
 
-/* ApexForge Labs — Unified UI System */
+/* Vexus — Unified UI System */
 :root{
-    --af-primary:#2563eb;
-    --af-primary-dark:#1d4ed8;
-    --af-primary-soft:#eff6ff;
-    --af-sky:#38bdf8;
-    --af-ink:#0f172a;
-    --af-muted:#64748b;
-    --af-border:#dbeafe;
-    --af-surface:#ffffff;
-    --af-page:#f6f9ff;
+    --vx-primary:#2563eb;
+    --vx-primary-dark:#1d4ed8;
+    --vx-primary-soft:#eff6ff;
+    --vx-sky:#38bdf8;
+    --vx-ink:#0f172a;
+    --vx-muted:#64748b;
+    --vx-border:#dbeafe;
+    --vx-surface:#ffffff;
+    --vx-page:#f6f9ff;
 }
 html{scroll-behavior:smooth}
 body{
@@ -71,7 +71,7 @@ body{
     background:
         radial-gradient(circle at 10% -10%,rgba(56,189,248,.10),transparent 30%),
         radial-gradient(circle at 100% 0%,rgba(37,99,235,.08),transparent 28%),
-        var(--af-page);
+        var(--vx-page);
 }
 ::selection{background:rgba(37,99,235,.18);color:#0f172a}
 ::-webkit-scrollbar{width:7px;height:7px}
@@ -80,7 +80,7 @@ body{
 ::-webkit-scrollbar-thumb:hover{background:rgba(37,99,235,.38)}
 
 input,select,textarea{
-    border-color:var(--af-border)!important;
+    border-color:var(--vx-border)!important;
     background:rgba(255,255,255,.92);
     transition:border-color .2s ease,box-shadow .2s ease,background .2s ease;
 }
@@ -153,10 +153,10 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                 <!-- Header Brand -->
                 <div class="flex items-center gap-3">
                     <div class="w-9 h-9 bg-slate-900 text-white rounded-xl flex items-center justify-center font-bold text-xs shadow-md shadow-slate-900/20 overflow-hidden ring-2 ring-slate-900/10">
-                        <img src="{{ asset('images/nexus.jpg') }}" alt="ApexForge Labs Logo" class="w-7 h-7 rounded-full object-cover">
+                        <img src="{{ asset('images/vexus.jpg') }}" alt="Vexus Logo" class="w-7 h-7 rounded-full object-cover">
                     </div>
                     <span class="font-extrabold text-base tracking-tight text-slate-900">
-                        ApexForge Labs
+                        Vexus
                     </span>
                 </div>
 
@@ -175,7 +175,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                         <br>
                         Proyek Impian Anda di
                         <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
-                            ApexForge Labs
+                            Vexus
                         </span>
                     </h1>
 
@@ -236,13 +236,13 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
             <div class="text-center space-y-2 relative z-10">
                 <div class="w-14 h-14 bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl mx-auto flex items-center justify-center shadow-inner overflow-hidden">
                     <div class="w-9 h-9 bg-gradient-to-br from-slate-800 to-black rounded-xl shadow-md flex items-center justify-center overflow-hidden ring-1 ring-white/10">
-                        <img src="{{ asset('images/nexus.jpg') }}" alt="ApexForge Labs Logo" class="w-6 h-6 rounded-full object-cover">
+                        <img src="{{ asset('images/vexus.jpg') }}" alt="Vexus Logo" class="w-6 h-6 rounded-full object-cover">
                     </div>
                 </div>
 
                 <div>
                     <h2 class="font-extrabold text-base tracking-wide text-white">
-                        ApexForge<span class="text-blue-400">Labs</span>
+                        Vexus
                     </h2>
                     <p class="text-[11px] text-slate-400 font-medium mt-0.5">
                         Buat akun baru untuk melanjutkan
@@ -264,11 +264,13 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                     >
                 @endif
 
-                {{-- Flash Popup (success) --}}
-                @include('auth.partials.flash-popup', [
-                    'type'    => 'success',
-                    'message' => session('success'),
-                ])
+                <!-- Pesan Success -->
+                @if (session('success'))
+                    <div class="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs flex items-center gap-2">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>{{ session('success') }}</span>
+                    </div>
+                @endif
 
                 <!-- Role Switcher Freelancer / Perusahaan -->
                 <div class="flex gap-1 p-1 bg-slate-800/80 border border-slate-700/60 rounded-xl">
@@ -427,9 +429,10 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                             >
                             <label for="terms_accepted" class="text-xs text-slate-200 cursor-pointer leading-relaxed">
                                 Saya telah membaca dan menyetujui
-                                <a href="{{ route('syarat-ketentuan') }}" target="_blank" class="text-blue-400 hover:text-blue-300 underline font-medium">
-                                    Syarat & Ketentuan ApexForge Labs
-                                </a>
+                                <button type="button" data-policy-modal="terms" aria-haspopup="dialog" aria-controls="policyModal"
+                                    class="text-blue-400 hover:text-blue-300 underline font-medium cursor-pointer bg-transparent border-0 p-0 text-left align-baseline">
+                                    Syarat & Ketentuan Vexus
+                                </button>
                                 {{-- @if($termsPolicy) v{{ $termsPolicy->version }} (berlaku sejak {{ $termsPolicy->updated_at?->translatedFormat('d M Y') }}) @endif --}}
                                 <span class="text-slate-500">*</span>
                             </label>
@@ -453,9 +456,10 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                             >
                             <label for="privacy_accepted" class="text-xs text-slate-200 cursor-pointer leading-relaxed">
                                 Saya telah membaca dan memahami
-                                <a href="{{ route('kebijakan-privasi') }}" target="_blank" class="text-blue-400 hover:text-blue-300 underline font-medium">
-                                    Kebijakan Privasi ApexForge Labs
-                                </a>
+                                <button type="button" data-policy-modal="privacy" aria-haspopup="dialog" aria-controls="policyModal"
+                                    class="text-blue-400 hover:text-blue-300 underline font-medium cursor-pointer bg-transparent border-0 p-0 text-left align-baseline">
+                                    Kebijakan Privasi Vexus
+                                </button>
                                 {{-- @if($privacyPolicy) v{{ $privacyPolicy->version }} (berlaku sejak {{ $privacyPolicy->updated_at?->translatedFormat('d M Y') }}) @endif --}}
                                 <span class="text-slate-500">*</span>
                             </label>
@@ -480,9 +484,10 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                             >
                             <label for="usage_accepted" class="text-xs text-slate-200 cursor-pointer leading-relaxed">
                                 Saya telah membaca dan menyetujui
-                                <a href="{{ route('kebijakan-penggunaan') }}" target="_blank" class="text-blue-400 hover:text-blue-300 underline font-medium">
-                                    Kebijakan Penggunaan Platform ApexForge Labs
-                                </a>
+                                <button type="button" data-policy-modal="usage" aria-haspopup="dialog" aria-controls="policyModal"
+                                    class="text-blue-400 hover:text-blue-300 underline font-medium cursor-pointer bg-transparent border-0 p-0 text-left align-baseline">
+                                    Kebijakan Penggunaan Platform Vexus
+                                </button>
                                 {{-- v{{ $usagePolicy->version }} (berlaku sejak {{ $usagePolicy->updated_at?->translatedFormat('d M Y') }}) --}}
                                 <span class="text-slate-500">*</span>
                             </label>
@@ -509,7 +514,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                 {{ old('marketing_accepted') ? 'checked' : '' }}
                             >
                             <label for="marketing_accepted" class="text-xs text-slate-300 cursor-pointer leading-relaxed">
-                                Saya ingin menerima informasi, pembaruan, dan penawaran dari ApexForge Labs.
+                                Saya ingin menerima informasi, pembaruan, dan penawaran dari Vexus.
                                 <span class="text-slate-500">(Opsional)</span>
                             </label>
                         </div>
@@ -610,6 +615,94 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
     </div>
 
+    {{-- =========================================================
+        MODAL KEBIJAKAN (Syarat & Ketentuan / Privasi / Penggunaan)
+        - Konten diambil langsung dari model Policy (database),
+          tidak ada isi policy yang disalin ke view ini.
+        - Rendering memakai mekanisme yang sama dengan halaman
+          kebijakan existing: e() + nl2br() per paragraf.
+        - Satu modal dipakai ulang untuk ketiga policy.
+    ========================================================== --}}
+    @php
+        $policyModalItems = [
+            'terms' => [
+                'label'  => 'Syarat & Ketentuan Vexus',
+                'policy' => $termsPolicy ?? null,
+            ],
+            'privacy' => [
+                'label'  => 'Kebijakan Privasi Vexus',
+                'policy' => $privacyPolicy ?? null,
+            ],
+            'usage' => [
+                'label'  => 'Kebijakan Penggunaan Platform Vexus',
+                'policy' => $usagePolicy ?? null,
+            ],
+        ];
+    @endphp
+
+    <div id="policyModal" class="fixed inset-0 z-[80] hidden" role="dialog" aria-modal="true" aria-labelledby="policyModalTitle">
+        <div id="policyModalBackdrop" class="absolute inset-0 bg-slate-950/75 backdrop-blur-sm"></div>
+
+        <div class="relative h-full w-full flex items-center justify-center p-3 sm:p-6">
+            <div class="relative w-full max-w-2xl max-h-[88vh] flex flex-col overflow-hidden rounded-2xl bg-slate-900 border border-slate-700/60 shadow-2xl">
+
+                {{-- HEADER --}}
+                <div class="flex items-start justify-between gap-3 px-4 sm:px-6 py-4 border-b border-slate-700/60">
+                    <div class="min-w-0">
+                        <h3 id="policyModalTitle" class="text-sm font-bold text-white leading-snug">Kebijakan</h3>
+                        <p class="text-[10px] text-slate-400 mt-0.5">Vexus</p>
+                    </div>
+                    <button type="button" id="policyModalClose" aria-label="Tutup modal kebijakan"
+                        class="shrink-0 w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-colors">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                {{-- BODY: scroll internal bila isi kebijakan panjang --}}
+                <div id="policyModalBody" class="flex-1 overflow-y-auto px-4 sm:px-6 py-4 space-y-3">
+                    @foreach ($policyModalItems as $policyModalKey => $policyModalItem)
+                        <div class="hidden" data-policy-panel="{{ $policyModalKey }}" data-policy-label="{{ $policyModalItem['label'] }}">
+                            @if ($policyModalItem['policy'] && trim((string) $policyModalItem['policy']->content) !== '')
+                                <div class="flex flex-wrap items-center gap-2 mb-4">
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-500/10 border border-blue-500/25 text-blue-300 text-[10px] font-bold">
+                                        <i class="fa-solid fa-code-branch"></i>
+                                        Versi: v{{ $policyModalItem['policy']->version }}
+                                    </span>
+                                    @if ($policyModalItem['policy']->updated_at)
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700/60 text-slate-300 text-[10px] font-bold">
+                                            <i class="fa-regular fa-calendar"></i>
+                                            Berlaku sejak: {{ $policyModalItem['policy']->updated_at->translatedFormat('d M Y') }}
+                                        </span>
+                                    @endif
+                                </div>
+
+                                <div class="space-y-3 text-[11px] sm:text-xs text-slate-300 leading-relaxed">
+                                    @foreach (preg_split('/\r\n|\r|\n/', $policyModalItem['policy']->content) as $policyParagraph)
+                                        @php($policyText = trim($policyParagraph))
+                                        @if ($policyText !== '')
+                                            <p>{!! nl2br(e($policyText)) !!}</p>
+                                        @endif
+                                    @endforeach
+                                </div>
+                            @else
+                                <p class="text-xs text-slate-400">Konten {{ $policyModalItem['label'] }} belum tersedia.</p>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+
+                {{-- FOOTER --}}
+                <div class="flex justify-end px-4 sm:px-6 py-4 border-t border-slate-700/60">
+                    <button type="button" id="policyModalFooterClose"
+                        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-bold shadow-lg shadow-blue-600/20 transition">
+                        <i class="fa-solid fa-xmark"></i>
+                        Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- AOS Animation Library JS -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
@@ -655,6 +748,82 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                 icon.classList.add('fa-eye');
             }
         }
+    </script>
+
+    {{-- =========================================================
+        MODAL KEBIJAKAN: OPEN / CLOSE (JavaScript minimal)
+        - Trigger  : klik nama policy (data-policy-modal)
+        - Tutup    : tombol X, tombol Tutup, Escape, klik backdrop
+        - Tidak menambah library / dependency baru.
+    ========================================================== --}}
+    <script>
+        (function () {
+            var modal = document.getElementById('policyModal');
+            if (!modal) { return; }
+
+            var titleEl       = document.getElementById('policyModalTitle');
+            var bodyEl        = document.getElementById('policyModalBody');
+            var backdropEl    = document.getElementById('policyModalBackdrop');
+            var closeBtn      = document.getElementById('policyModalClose');
+            var footerCloseBtn = document.getElementById('policyModalFooterClose');
+            var panels        = modal.querySelectorAll('[data-policy-panel]');
+            var lastFocused   = null;
+
+            function openPolicyModal(key, trigger) {
+                var panel = modal.querySelector('[data-policy-panel="' + key + '"]');
+                if (!panel) { return; }
+
+                panels.forEach(function (item) {
+                    item.classList.add('hidden');
+                });
+                panel.classList.remove('hidden');
+
+                if (titleEl) {
+                    titleEl.textContent = panel.getAttribute('data-policy-label') || 'Kebijakan';
+                }
+
+                if (bodyEl) { bodyEl.scrollTop = 0; }
+
+                lastFocused = trigger || document.activeElement;
+
+                modal.classList.remove('hidden');
+                // Halaman register tidak ikut scroll selama modal terbuka.
+                document.body.style.overflow = 'hidden';
+
+                if (closeBtn) { closeBtn.focus(); }
+            }
+
+            function closePolicyModal() {
+                modal.classList.add('hidden');
+                document.body.style.overflow = '';
+
+                if (lastFocused && typeof lastFocused.focus === 'function') {
+                    lastFocused.focus();
+                }
+            }
+
+            document.querySelectorAll('[data-policy-modal]').forEach(function (trigger) {
+                trigger.addEventListener('click', function (event) {
+                    // Jangan navigasi, jangan submit form, dan jangan teruskan
+                    // klik ke <label> checkbox di sekitarnya.
+                    event.preventDefault();
+                    event.stopPropagation();
+                    openPolicyModal(this.getAttribute('data-policy-modal'), this);
+                });
+            });
+
+            if (closeBtn) { closeBtn.addEventListener('click', closePolicyModal); }
+            if (footerCloseBtn) { footerCloseBtn.addEventListener('click', closePolicyModal); }
+
+            // Klik backdrop (area gelap di luar kartu modal) menutup modal.
+            if (backdropEl) { backdropEl.addEventListener('click', closePolicyModal); }
+
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape' && !modal.classList.contains('hidden')) {
+                    closePolicyModal();
+                }
+            });
+        })();
     </script>
 </body>
 </html>

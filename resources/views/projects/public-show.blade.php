@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @include('partials.theme-boot')
-    <title>{{ $project->project_name }} - ApexForge Labs</title>
+    <title>{{ $project->project_name }} - Vexus</title>
 
     {{-- =========================================================
         TAILWIND
@@ -73,10 +73,10 @@
                 {{-- LOGO --}}
                 <a href="{{ route('landing') }}" class="flex items-center gap-3 group">
                     <div class="relative w-10 h-10 rounded-xl overflow-hidden shadow-md shadow-blue-500/10 group-hover:scale-105 transition-transform duration-200">
-                        <img src="{{ asset('images/nexus.jpg') }}" alt="ApexForge Labs" class="w-full h-full object-cover">
+                        <img src="{{ asset('images/vexus.jpg') }}" alt="Vexus" class="w-full h-full object-cover">
                     </div>
                     <div class="leading-tight">
-                        <div class="font-black text-base tracking-tight text-slate-900 dark:text-white">ApexForge</div>
+                        <div class="font-black text-base tracking-tight text-slate-900 dark:text-white">Vexus</div>
                         <div class="font-bold text-xs text-blue-600 dark:text-blue-400">Labs</div>
                     </div>
                 </a>
@@ -342,14 +342,14 @@
             <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div class="flex items-center gap-3">
                     <div class="w-8 h-8 rounded-xl overflow-hidden shadow-sm">
-                        <img src="{{ asset('images/nexus.jpg') }}" alt="ApexForge Labs" class="w-full h-full object-cover">
+                        <img src="{{ asset('images/vexus.jpg') }}" alt="Vexus" class="w-full h-full object-cover">
                     </div>
                     <div>
-                        <p class="text-xs font-black text-slate-900 dark:text-white">ApexForge Labs</p>
+                        <p class="text-xs font-black text-slate-900 dark:text-white">Vexus</p>
                         <p class="text-[10px] text-slate-400 dark:text-slate-400">Marketplace Freelance Indonesia</p>
                     </div>
                 </div>
-                <p class="text-xs text-slate-400 dark:text-slate-400">© {{ date('Y') }} ApexForge Labs. Semua hak dilindungi.</p>
+                <p class="text-xs text-slate-400 dark:text-slate-400">© {{ date('Y') }} Vexus. Semua hak dilindungi.</p>
             </div>
         </div>
     </footer>

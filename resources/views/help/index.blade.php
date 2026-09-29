@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @include('partials.theme-boot')
 
-    <title>Pusat Bantuan - ApexForge Labs</title>
+    <title>Pusat Bantuan - Vexus</title>
 
     {{-- Tailwind CSS --}}
     <script src="https://cdn.tailwindcss.com"></script>
@@ -87,12 +87,12 @@
                 <a href="{{ url('/') }}" class="flex items-center gap-3 group">
                     <div
                         class="w-12 h-12 rounded-2xl overflow-hidden flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform duration-300">
-                        <img src="{{ asset('images/nexus.jpg') }}" alt="Nexus" class="w-full h-full object-cover">
+                        <img src="{{ asset('images/vexus.jpg') }}" alt="Vexus" class="w-full h-full object-cover">
                     </div>
 
                     <div class="leading-tight">
                         <h1 class="text-base sm:text-lg font-black text-slate-900 dark:text-slate-100">
-                            ApexForge Labs
+                            Vexus
                         </h1>
 
                         <p
@@ -158,7 +158,7 @@
 
             {{-- Description --}}
             <p class="mt-5 max-w-3xl mx-auto text-base sm:text-lg leading-8 text-slate-500 dark:text-slate-300">
-                Temukan informasi lengkap mengenai penggunaan ApexForge Labs,
+                Temukan informasi lengkap mengenai penggunaan Vexus,
                 mulai dari akun, proyek, proses pengerjaan, pembayaran,
                 keamanan, hingga berbagai hal yang berkaitan dengan layanan
                 platform.
@@ -282,7 +282,7 @@
 
                 <p class="text-slate-500 dark:text-slate-300 leading-7">
                     Berikut beberapa pertanyaan yang berkaitan dengan akun
-                    pengguna ApexForge Labs.
+                    pengguna Vexus.
                 </p>
             </div>
 
@@ -296,7 +296,7 @@
                     <button type="button"
                         class="faq-button w-full flex items-center justify-between gap-5 text-left px-6 py-5 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
                         <span class="font-bold text-slate-900 dark:text-slate-100 leading-7">
-                            Bagaimana cara membuat akun di ApexForge Labs?
+                            Bagaimana cara membuat akun di Vexus?
                         </span>
 
                         <span

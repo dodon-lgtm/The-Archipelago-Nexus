@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @include('partials.theme-boot')
-    <title>Buat Laporan - ApexForge Labs</title>
+    <title>Buat Laporan - Vexus</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -118,11 +118,11 @@
         }
     </style>
     <style>
-        /* ApexForge Labs — Unified UI System */
+        /* Vexus — Unified UI System */
         :root {
-            --af-primary: #2563eb;
-            --af-primary-dark: #1d4ed8;
-            --af-sky: #38bdf8;
+            --vx-primary: #2563eb;
+            --vx-primary-dark: #1d4ed8;
+            --vx-sky: #38bdf8;
         }
 
         html {
@@ -402,7 +402,7 @@
                                 </div>
                                 <div class="pt-1 text-slate-600 dark:text-slate-300 font-bold leading-relaxed">
                                     Laporan Anda akan diamankan dan ditinjau secara mendalam oleh tim administrator
-                                    ApexForge. Pastikan menyertakan bukti valid untuk mempercepat proses investigasi.
+                                    Vexus. Pastikan menyertakan bukti valid untuk mempercepat proses investigasi.
                                 </div>
                             </div>
 

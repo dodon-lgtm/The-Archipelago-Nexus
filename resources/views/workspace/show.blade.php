@@ -196,24 +196,24 @@
         }
     </style>
     <style>
-        /* ApexForge Labs â€” Unified UI System */
+        /* Vexus â€” Unified UI System */
         :root {
-            --af-primary: #2563eb;
-            --af-primary-dark: #1d4ed8;
-            --af-primary-soft: #eff6ff;
-            --af-sky: #38bdf8;
-            --af-ink: #0f172a;
-            --af-muted: #64748b;
-            --af-border: #dbeafe;
-            --af-surface: #ffffff;
-            --af-page: #f6f9ff;
+            --vx-primary: #2563eb;
+            --vx-primary-dark: #1d4ed8;
+            --vx-primary-soft: #eff6ff;
+            --vx-sky: #38bdf8;
+            --vx-ink: #0f172a;
+            --vx-muted: #64748b;
+            --vx-border: #dbeafe;
+            --vx-surface: #ffffff;
+            --vx-page: #f6f9ff;
         }
 
         /* Perbaikan CSS Dark Mode */
         .dark {
-            --af-page: #0f172a;
-            --af-surface: #0f172a;
-            --af-border: #334155;
+            --vx-page: #0f172a;
+            --vx-surface: #0f172a;
+            --vx-border: #334155;
         }
 
         .dark input, 
@@ -241,7 +241,7 @@
             background:
                 radial-gradient(circle at 10% -10%, rgba(56, 189, 248, .10), transparent 30%),
                 radial-gradient(circle at 100% 0%, rgba(37, 99, 235, .08), transparent 28%),
-                var(--af-page);
+                var(--vx-page);
         }
 
         ::selection {
@@ -270,7 +270,7 @@
         input,
         select,
         textarea {
-            border-color: var(--af-border) !important;
+            border-color: var(--vx-border) !important;
             background: rgba(255, 255, 255, .92);
             transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
         }
@@ -400,7 +400,8 @@
 
                 {{-- Pure Blue System Alerts --}}
                 @if (session('success'))
-                    <div class="mb-8 overflow-hidden relative bg-blue-50 dark:bg-slate-800 border border-blue-200 dark:border-slate-700 p-4 rounded-2xl flex items-start gap-4">
+                    <div class="mb-8 overflow-hidden relative bg-blue-50 dark:bg-slate-800 border border-blue-200 dark:border-slate-700 p-4 rounded-2xl flex items-start gap-4"
+                        data-draft-clear="fl:ws-submission:{{ $workspace->id }}">
                         <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(59,130,246,0.4)]">
                             <i class="fa-solid fa-check text-white text-sm"></i>
                         </div>
@@ -414,6 +415,29 @@
                             <i class="fa-solid fa-xmark text-sm"></i>
                         </div>
                         <div class="pt-1.5 font-bold text-blue-950 dark:text-white text-sm">{{ session('error') }}</div>
+                    </div>
+                @endif
+
+                {{-- Validation Errors (mis. form progress / tahap pengerjaan).
+                     Sebelumnya halaman ini tidak menampilkan $errors sama sekali,
+                     sehingga kegagalan validasi terlihat seperti "tidak terjadi apa-apa". --}}
+                @if ($errors->any())
+                    <div class="mb-8 overflow-hidden relative bg-white dark:bg-slate-900 border-2 border-blue-600 p-4 rounded-2xl shadow-[0_0_20px_rgba(59,130,246,0.15)]">
+                        <div class="flex items-start gap-4">
+                            <div class="w-8 h-8 rounded-full bg-blue-100 dark:bg-slate-800 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-slate-700 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-triangle-exclamation text-sm"></i>
+                            </div>
+                            <div class="pt-0.5 min-w-0">
+                                <p class="font-bold text-blue-950 dark:text-white text-sm mb-1">
+                                    Perubahan tidak dapat diproses
+                                </p>
+                                <ul class="list-disc list-inside space-y-0.5 text-[12px] font-medium text-blue-900/80 dark:text-slate-300">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 @endif
 
@@ -664,10 +688,12 @@
                                                                     </button>
                                                                 @endif
                                                                 <div id="updateForm-{{ $detailOrder }}" class="w-full {{ $reopenNoteForm ? '' : 'hidden' }}">
-                                                                    <form method="POST" action="{{ route('freelancer.workspaces.progress', $workspace) }}" class="space-y-2 pt-3 border-t border-blue-100/60 dark:border-slate-800">
+                                                                    <form method="POST" action="{{ route('freelancer.workspaces.progress', $workspace) }}" class="space-y-2 pt-3 border-t border-blue-100/60 dark:border-slate-800"
+                                                                        data-draft-form
+                                                                        data-draft-key="fl:ws-note:{{ $workspace->id }}">
                                                                         @csrf
                                                                         <input type="hidden" name="action" value="note">
-                                                                        <input type="hidden" name="stage" value="{{ $detailStage }}">
+                                                                        <input type="hidden" name="stage" value="{{ $detailStage }}" data-draft-variant>
                                                                         <div>
                                                                             <label class="block text-[8px] font-black uppercase tracking-widest text-blue-500 dark:text-blue-400 mb-1" for="stageNote-{{ $detailOrder }}">Catatan / Deskripsi Pengerjaan</label>
                                                                             <textarea id="stageNote-{{ $detailOrder }}" name="description" rows="2" maxlength="500"
@@ -776,10 +802,11 @@
                                                         </div>
                                                         @if ($canManageStage)
                                                             <div id="editItem-{{ $order }}" class="hidden mx-2.5 mb-2.5">
-                                                                <form method="POST" action="{{ route($stageActionRoute, $workspace) }}" class="bg-white dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-lg p-2.5 space-y-2">
+                                                                <form method="POST" action="{{ route($stageActionRoute, $workspace) }}" class="bg-white dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-lg p-2.5 space-y-2"
+                                                                    @if (auth()->user()->role === 'company') data-draft-form data-draft-key="co:ws-stage-rename:{{ $workspace->id }}" @endif>
                                                                     @csrf
                                                                     <input type="hidden" name="action" value="rename">
-                                                                    <input type="hidden" name="old_stage" value="{{ $stage ?? 'Tanpa Nama' }}">
+                                                                    <input type="hidden" name="old_stage" value="{{ $stage ?? 'Tanpa Nama' }}" @if (auth()->user()->role === 'company') data-draft-variant @endif>
                                                                     <input type="text" name="new_stage" value="{{ $stage ?? 'Tanpa Nama' }}" maxlength="255" placeholder="Nama tahap"
                                                                         class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-700 rounded-md text-xs font-semibold dark:text-white focus:outline-none focus:border-blue-400">
                                                                     <textarea name="description" rows="2" maxlength="2000" placeholder="Deskripsi (opsional)"
@@ -815,7 +842,9 @@
                                         <i class="fa-solid fa-plus text-[11px]"></i> Tambah Tahap
                                     </button>
                                     <div id="companyAddStageForm" class="hidden">
-                                        <form method="POST" action="{{ route('company.workspaces.progress', $workspace) }}" class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-xl p-3 space-y-2.5 shadow-sm">
+                                        <form method="POST" action="{{ route('company.workspaces.progress', $workspace) }}" class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-xl p-3 space-y-2.5 shadow-sm"
+                                            data-draft-form
+                                            data-draft-key="co:ws-addstage:{{ $workspace->id }}">
                                             @csrf
                                             <input type="hidden" name="action" value="add">
                                             <div>
@@ -839,7 +868,9 @@
                                         </form>
                                     </div>
                                 @elseif ((int) $workspace->freelancer_id === (int) auth()->id() && auth()->user()->role === 'freelancer')
-                                    <form method="POST" action="{{ route('freelancer.workspaces.progress', $workspace) }}" class="flex gap-2">
+                                    <form method="POST" action="{{ route('freelancer.workspaces.progress', $workspace) }}" class="flex gap-2"
+                                        data-draft-form
+                                        data-draft-key="fl:ws-addstage:{{ $workspace->id }}">
                                         @csrf
                                         <input type="hidden" name="action" value="add">
                                         <input type="text" name="new_stage" maxlength="255" required placeholder="Nama tahap baru..."
@@ -959,7 +990,8 @@
 
                         {{-- Chat Input --}}
                         <div class="px-6 py-5 border-t border-blue-50/50 dark:border-slate-800 bg-white dark:bg-slate-900 shrink-0 relative z-10">
-                            <form method="POST" action="{{ route(auth()->user()->role === 'company' ? 'company.workspaces.message' : 'freelancer.workspaces.message', $workspace) }}" class="flex items-center gap-3">
+                            <form method="POST" action="{{ route(auth()->user()->role === 'company' ? 'company.workspaces.message' : 'freelancer.workspaces.message', $workspace) }}" class="flex items-center gap-3"
+                                @if (auth()->user()->role === 'company') data-draft-form data-draft-key="co:ws-message:{{ $workspace->id }}" @endif>
                                 @csrf
                                 <input type="text" name="message" placeholder="Ketik pesan..." required maxlength="1000"
                                     class="flex-1 px-5 py-3.5 bg-blue-50/50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-xl text-sm text-blue-950 dark:text-white font-medium placeholder-blue-300 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 focus:bg-white dark:focus:bg-slate-800 transition-all">
@@ -990,11 +1022,11 @@
                                             <span class="text-xs font-bold text-blue-950 dark:text-white bg-blue-50 dark:bg-slate-800 px-2 py-0.5 rounded">{{ $payment->invoice_number }}</span>
                                         </div>
                                         <div class="flex items-center justify-between">
-                                            <p class="text-[10px] font-black text-blue-400 dark:text-slate-400 uppercase tracking-widest">Total</p>
-                                            <span class="text-sm font-bold text-blue-900 dark:text-white">Rp {{ number_format($payment->amount, 0, ',', '.') }}</span>
+                                            <p class="text-[10px] font-black text-blue-400 dark:text-slate-400 uppercase tracking-widest">Nilai Pekerjaan</p>
+                                            <span class="text-sm font-bold text-blue-900 dark:text-white">Rp {{ number_format($payment->freelancer_receive, 0, ',', '.') }}</span>
                                         </div>
                                         <div class="flex items-center justify-between">
-                                            <p class="text-[10px] font-black text-blue-400 dark:text-slate-400 uppercase tracking-widest">Biaya Platform (5%)</p>
+                                            <p class="text-[10px] font-black text-blue-400 dark:text-slate-400 uppercase tracking-widest">Biaya Platform{{ ($payment->platform_fee_rate !== null && $payment->platform_fee_rate !== '') ? ' (' . rtrim(rtrim(number_format((float) $payment->platform_fee_rate, 2, '.', ''), '0'), '.') . '%)' : '' }}</p>
                                             <span class="text-xs font-bold text-blue-500 dark:text-blue-400">Rp {{ number_format($payment->platform_fee, 0, ',', '.') }}</span>
                                         </div>
                                         <div class="flex items-center justify-between pt-3 border-t border-blue-100/50 dark:border-slate-800">
@@ -1048,7 +1080,9 @@
 
                                 {{-- Payment Upload Form (rejected / re-upload) --}}
                                 @if($payment->status === 'rejected')
-                                    <form method="POST" action="{{ route('company.payments.upload', $workspace) }}" enctype="multipart/form-data" class="space-y-5 bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 p-5 rounded-2xl shadow-sm">
+                                    <form method="POST" action="{{ route('company.payments.upload', $workspace) }}" enctype="multipart/form-data" class="space-y-5 bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 p-5 rounded-2xl shadow-sm"
+                                        data-draft-form
+                                        data-draft-key="co:payment-upload:{{ $payment->id }}">
                                         @csrf
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                                             <div>
@@ -1239,7 +1273,9 @@
             </div>
 
             {{-- Pastikan nama route & parameter sesuai dengan web.php Anda --}}
-            <form method="POST" action="{{ route('company.workspaces.review.store', $workspace) }}" class="p-6 space-y-6 bg-white dark:bg-slate-900">
+            <form method="POST" action="{{ route('company.workspaces.review.store', $workspace) }}" class="p-6 space-y-6 bg-white dark:bg-slate-900"
+                data-draft-form
+                data-draft-key="co:ws-review:{{ $workspace->id }}">
                 @csrf
                 <div class="bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-800 rounded-2xl p-5 text-center shadow-inner">
                     <label class="block text-[10px] font-black text-blue-500 dark:text-blue-400 uppercase tracking-widest mb-3">Pilih Rating</label>
@@ -1464,10 +1500,11 @@
                 </div>
             </div>
 
-            <form id="updateProgressForm" method="POST" action="" class="p-6 space-y-5">
+            <form id="updateProgressForm" method="POST" action="" class="p-6 space-y-5"
+                @if (auth()->user()->role === 'freelancer') data-draft-form data-draft-key="fl:ws-modal:{{ $workspace->id }}" @endif>
                 @csrf
                 <input type="hidden" name="action" value="select">
-                <input type="hidden" name="stage" id="updateProgressStageInput" value="">
+                <input type="hidden" name="stage" id="updateProgressStageInput" value="" data-draft-variant>
 
                 <div class="flex items-center justify-between p-4 bg-blue-50/50 rounded-xl border border-blue-100">
                     <div class="flex items-center gap-3">
@@ -1499,7 +1536,7 @@
                         class="flex-1 px-4 py-2.5 bg-white border border-blue-200 text-slate-500 rounded-xl text-[11px] font-bold hover:bg-slate-50">
                         Batal
                     </button>
-                    <button type="button" id="saveProgressBtn"
+                    <button type="button" id="saveProgressBtn" data-draft-submit-trigger
                         class="flex-1 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-[11px] font-bold flex items-center justify-center gap-2">
                         <i class="fa-solid fa-floppy-disk"></i> Simpan Update
                     </button>
@@ -1529,6 +1566,11 @@
 
             // Set form action ke route progres freelancer
             document.getElementById('updateProgressForm').action = '{{ route('freelancer.workspaces.progress', $workspace) }}';
+
+            // Pulihkan draft catatan tahap ini (auto-save draft Freelancer).
+            if (window.FormDraftAutosave) {
+                window.FormDraftAutosave.restoreForm(document.getElementById('updateProgressForm'));
+            }
 
             const modal = document.getElementById('updateProgressModal');
             const modalInner = modal.querySelector('div.modal-panel');
@@ -1634,6 +1676,8 @@
             });
         });
     </script>
+@include('partials.form-draft-autosave')
+
 </body>
 
 </html>

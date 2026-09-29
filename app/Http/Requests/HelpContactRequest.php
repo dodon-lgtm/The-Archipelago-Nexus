@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * Form Request untuk form kontak "Hubungi Kami via Email"
- * pada halaman Pusat Bantuan ApexForge Labs.
+ * pada halaman Pusat Bantuan Vexus.
  *
  * Kategori memakai daftar yang sudah disepakati untuk support email.
  */

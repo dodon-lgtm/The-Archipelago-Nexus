@@ -27,7 +27,7 @@ class HelpCenterController extends Controller
      * Store contact form submission (public).
      *
      * Validates the form, keeps a legacy website-report record (best-effort,
-     * only for logged-in users), then sends the message to the ApexForge Labs
+     * only for logged-in users), then sends the message to the Vexus
      * help inbox via Laravel Mail. On failure it shows a safe generic message
      * without leaking SMTP details.
      */
@@ -67,7 +67,7 @@ class HelpCenterController extends Controller
             }
         }
 
-        // Fitur utama: kirim email ke inbox Pusat Bantuan ApexForge Labs.
+        // Fitur utama: kirim email ke inbox Pusat Bantuan Vexus.
         try {
             Mail::to(config('mail.help_to'))
                 ->send(new HelpContactMail([
@@ -92,7 +92,7 @@ class HelpCenterController extends Controller
         }
 
         return redirect()->back()
-            ->with('success', 'Pesan berhasil dikirim. Tim ApexForge Labs akan meninjau pesan Anda.');
+            ->with('success', 'Pesan berhasil dikirim. Tim Vexus akan meninjau pesan Anda.');
     }
 
     /**
@@ -220,12 +220,12 @@ class HelpCenterController extends Controller
                 'title' => 'Keamanan',
                 'items' => [
                     [
-                        'question' => 'Bagaimana ApexForge Labs menjaga keamanan data?',
+                        'question' => 'Bagaimana Vexus menjaga keamanan data?',
                         'answer' => 'Kami menggunakan enkripsi SSL, penyimpanan password ter-hash (bcrypt), verifikasi email wajib, dan opsi 2FA. Data pribadi tidak dibagikan ke pihak ketiga tanpa izin.',
                     ],
                     [
                         'question' => 'Apa yang harus saya lakukan jika akun dicuri?',
-                        'answer' => 'Segera hubungi support@apexforgelabs.id dengan subjek "AKUN DICURI". Sertakan bukti kepemilikan akun. Tim kami akan mengunci akun dan membantu recovery.',
+                        'answer' => 'Segera hubungi support@vexus.id dengan subjek "AKUN DICURI". Sertakan bukti kepemilikan akun. Tim kami akan mengunci akun dan membantu recovery.',
                     ],
                     [
                         'question' => 'Apakah transaksi di luar platform diizinkan?',
@@ -238,7 +238,7 @@ class HelpCenterController extends Controller
                 'items' => [
                     [
                         'question' => 'Bagaimana cara menghubungi admin?',
-                        'answer' => 'Gunakan formulir "Hubungi Admin" di halaman ini, atau email ke support@apexforgelabs.id. Kami merespons dalam 1x24 jam pada hari kerja.',
+                        'answer' => 'Gunakan formulir "Hubungi Admin" di halaman ini, atau email ke support@vexus.id. Kami merespons dalam 1x24 jam pada hari kerja.',
                     ],
                     [
                         'question' => 'Di mana saya bisa melihat Ketentuan Layanan dan Kebijakan Privasi?',
@@ -246,7 +246,7 @@ class HelpCenterController extends Controller
                     ],
                     [
                         'question' => 'Apakah ada aplikasi mobile?',
-                        'answer' => 'Saat ini ApexForge Labs hanya tersedia sebagai web app responsif yang bisa diakses dari browser mobile. Aplikasi native sedang dalam pengembangan.',
+                        'answer' => 'Saat ini Vexus hanya tersedia sebagai web app responsif yang bisa diakses dari browser mobile. Aplikasi native sedang dalam pengembangan.',
                     ],
                 ],
             ],

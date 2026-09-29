@@ -13,7 +13,7 @@ class UserRoleSeeder extends Seeder
     public function run(): void
     {
         // ── Company User (already approved) ──
-        $companyEmail = Str::lower(trim('company@archipelagonexus.com'));
+        $companyEmail = Str::lower(trim('company@vexus.id'));
 
         /** @var User|null $companyUser */
         $companyUser = User::query()->where('email', $companyEmail)->first();
@@ -31,7 +31,7 @@ class UserRoleSeeder extends Seeder
         CompanyAccountRequest::query()->updateOrCreate(
             ['company_email' => $companyEmail],
             [
-                'company_name' => 'Archipelago Tech Corp',
+                'company_name' => 'Vexus Tech Corp',
                 'contact_person' => 'Company Testing',
                 'company_phone' => '081234567890',
                 'company_address' => 'Jl. Merdeka No. 123, Jakarta Pusat',
@@ -43,7 +43,7 @@ class UserRoleSeeder extends Seeder
         );
 
         // ── Freelancer User ──
-        $freelancerEmail = Str::lower(trim('freelancer@archipelagonexus.com'));
+        $freelancerEmail = Str::lower(trim('freelancer@vexus.id'));
 
         $existingFreelancer = User::query()->where('email', $freelancerEmail)->exists();
 

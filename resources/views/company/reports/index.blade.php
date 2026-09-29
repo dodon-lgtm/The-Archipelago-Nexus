@@ -8,7 +8,7 @@
     {{-- Script Inisialisasi Dark Mode --}}
     
 
-    <title>Laporan Saya | ApexForge Labs</title>
+    <title>Laporan Saya | Vexus</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -322,6 +322,10 @@
         </main>
 
     </div>
+
+{{-- Engine auto-save draft (Company) juga dimuat di halaman tujuan redirect
+     sukses "Buat Laporan" supaya draft yang sudah terkirim dibersihkan. --}}
+@include('partials.form-draft-autosave')
 
 </body>
 </html>

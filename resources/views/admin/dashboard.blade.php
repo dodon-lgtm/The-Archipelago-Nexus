@@ -35,7 +35,7 @@
                     Halo, {{ auth()->user()->name ?? 'Administrator' }}
                 </h1>
                 <p class="mt-2 text-xs sm:text-sm text-blue-100/80 font-medium max-w-2xl leading-relaxed">
-                    Ringkasan performa platform, verifikasi akun mitra, dan pengawasan aktivitas ekosistem ApexForge Labs.
+                    Ringkasan performa platform, verifikasi akun mitra, dan pengawasan aktivitas ekosistem Vexus.
                 </p>
 
                 <div class="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-[11px] font-semibold text-blue-100/70">

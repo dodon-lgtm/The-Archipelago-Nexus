@@ -55,32 +55,28 @@
         .stepper-line { height: 2px; flex: 1; transition: all .3s ease; }
 
         :root {
-            --af-primary: #2563eb;
-            --af-page: #f6f9ff;
+            --vx-primary: #2563eb;
+            --vx-page: #f6f9ff;
         }
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background:
                 radial-gradient(circle at 10% -10%, rgba(56,189,248,.10), transparent 30%),
                 radial-gradient(circle at 100% 0%, rgba(37,99,235,.08), transparent 28%),
-                var(--af-page);
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> dd8dd7bfa150757dfa190c887c2e9209b57371eb
+                var(--vx-page);
         }
 
-        /* ApexForge Labs — Unified UI System */
+        /* Vexus — Unified UI System */
         :root{
-            --af-primary:#2563eb;
-            --af-primary-dark:#1d4ed8;
-            --af-primary-soft:#eff6ff;
-            --af-sky:#38bdf8;
-            --af-ink:#0f172a;
-            --af-muted:#64748b;
-            --af-border:#dbeafe;
-            --af-surface:#ffffff;
-            --af-page:#f6f9ff;
+            --vx-primary:#2563eb;
+            --vx-primary-dark:#1d4ed8;
+            --vx-primary-soft:#eff6ff;
+            --vx-sky:#38bdf8;
+            --vx-ink:#0f172a;
+            --vx-muted:#64748b;
+            --vx-border:#dbeafe;
+            --vx-surface:#ffffff;
+            --vx-page:#f6f9ff;
         }
         html{scroll-behavior:smooth}
         body{
@@ -88,7 +84,7 @@
             background:
                 radial-gradient(circle at 10% -10%,rgba(56,189,248,.10),transparent 30%),
                 radial-gradient(circle at 100% 0%,rgba(37,99,235,.08),transparent 28%),
-                var(--af-page);
+                var(--vx-page);
         }
         ::selection{background:rgba(37,99,235,.18);color:#0f172a}
         ::-webkit-scrollbar{width:7px;height:7px}
@@ -97,7 +93,7 @@
         ::-webkit-scrollbar-thumb:hover{background:rgba(37,99,235,.38)}
 
         input,select,textarea{
-            border-color:var(--af-border)!important;
+            border-color:var(--vx-border)!important;
             background:rgba(255,255,255,.92);
             transition:border-color .2s ease,box-shadow .2s ease,background .2s ease;
         }
@@ -145,8 +141,6 @@
         }
         @media (prefers-reduced-motion:reduce){
             *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
-=======
->>>>>>> f83ecba (upgrade pembayaran manual)
         }
     </style>
 </head>
@@ -377,21 +371,21 @@
 
                                 <div class="border-t border-blue-50 dark:border-slate-800 pt-4 space-y-2">
                                     <div class="flex items-center justify-between">
-                                        <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Biaya Proyek</p>
-                                        <span class="text-xs font-semibold text-slate-600 dark:text-slate-400">Rp {{ number_format($payment->amount, 0, ',', '.') }}</span>
+                                        <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Nilai Pekerjaan</p>
+                                        <span class="text-xs font-semibold text-slate-600 dark:text-slate-400">Rp {{ number_format($payment->freelancer_receive, 0, ',', '.') }}</span>
                                     </div>
                                     <div class="flex items-center justify-between">
                                         <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Fee Platform{{ ($payment->platform_fee_rate !== null && $payment->platform_fee_rate !== '') ? ' (' . rtrim(rtrim(number_format((float) $payment->platform_fee_rate, 2, '.', ''), '0'), '.') . '%)' : '' }}</p>
                                         <span class="text-xs font-semibold text-slate-600 dark:text-slate-400">Rp {{ number_format($payment->platform_fee, 0, ',', '.') }}</span>
                                     </div>
-                                    <div class="flex items-center justify-between">
-                                        <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Freelancer Menerima</p>
-                                        <span class="text-xs font-semibold text-slate-600 dark:text-slate-400">Rp {{ number_format($payment->freelancer_receive, 0, ',', '.') }}</span>
-                                    </div>
                                     <div class="flex items-center justify-between pt-2 border-t border-blue-100 dark:border-slate-800">
                                         <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Total Dibayar Company</p>
                                         <span class="text-lg font-extrabold text-emerald-600">Rp {{ number_format($payment->amount, 0, ',', '.') }}</span>
                                     </div>
+                                    <p class="text-[10px] text-slate-400 leading-relaxed">
+                                        Fee platform ditambahkan di atas nilai pekerjaan. Freelancer menerima nilai pekerjaan penuh
+                                        Rp {{ number_format($payment->freelancer_receive, 0, ',', '.') }} setelah Anda menerima hasil pekerjaannya.
+                                    </p>
                                 </div>
 
                                 <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-800/50 rounded-xl px-4 py-3">

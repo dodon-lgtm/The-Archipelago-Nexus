@@ -8,7 +8,7 @@
 
 @include('partials.theme-boot')
 
-<title>{{ $project->project_name ?? 'Detail Proyek' }} - ApexForge Labs</title>
+<title>{{ $project->project_name ?? 'Detail Proyek' }} - Vexus</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
 
@@ -50,21 +50,21 @@
     }
 
     :root {
-        --af-primary: #2563eb;
-        --af-primary-dark: #1d4ed8;
-        --af-primary-soft: #eff6ff;
-        --af-sky: #38bdf8;
-        --af-ink: #0f172a;
-        --af-muted: #64748b;
-        --af-border: #dbeafe;
-        --af-surface: #ffffff;
-        --af-page: #f6f9ff;
+        --vx-primary: #2563eb;
+        --vx-primary-dark: #1d4ed8;
+        --vx-primary-soft: #eff6ff;
+        --vx-sky: #38bdf8;
+        --vx-ink: #0f172a;
+        --vx-muted: #64748b;
+        --vx-border: #dbeafe;
+        --vx-surface: #ffffff;
+        --vx-page: #f6f9ff;
     }
 
     input,
     select,
     textarea {
-        border-color: var(--af-border) !important;
+        border-color: var(--vx-border) !important;
         background: rgba(255, 255, 255, .92);
         transition:
             border-color .2s ease,

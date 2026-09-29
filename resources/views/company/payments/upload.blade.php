@@ -29,15 +29,15 @@
     </script>
     <style>
         :root{
-            --af-primary:#2563eb;
-            --af-primary-dark:#1d4ed8;
-            --af-primary-soft:#eff6ff;
-            --af-sky:#38bdf8;
-            --af-ink:#0f172a;
-            --af-muted:#64748b;
-            --af-border:#dbeafe;
-            --af-surface:#ffffff;
-            --af-page:#f6f9ff;
+            --vx-primary:#2563eb;
+            --vx-primary-dark:#1d4ed8;
+            --vx-primary-soft:#eff6ff;
+            --vx-sky:#38bdf8;
+            --vx-ink:#0f172a;
+            --vx-muted:#64748b;
+            --vx-border:#dbeafe;
+            --vx-surface:#ffffff;
+            --vx-page:#f6f9ff;
         }
         html{scroll-behavior:smooth}
         body{
@@ -45,10 +45,10 @@
             background:
                 radial-gradient(circle at 10% -10%,rgba(56,189,248,.10),transparent 30%),
                 radial-gradient(circle at 100% 0%,rgba(37,99,235,.08),transparent 28%),
-                var(--af-page);
+                var(--vx-page);
         }
         input,select,textarea{
-            border-color:var(--af-border)!important;
+            border-color:var(--vx-border)!important;
             background:rgba(255,255,255,.92);
             transition:border-color .2s ease,box-shadow .2s ease,background .2s ease;
         }
@@ -90,7 +90,7 @@
                 {{-- Header --}}
                 <div class="mb-6">
                     <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white">Pembayaran Manual</h1>
-                    <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Lakukan transfer ke rekening/wallet ApexForge Labs, lalu kirim bukti pembayaran untuk diverifikasi Admin.</p>
+                    <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Lakukan transfer ke rekening/wallet Vexus, lalu kirim bukti pembayaran untuk diverifikasi Admin.</p>
                 </div>
 
                 {{-- Alerts --}}
@@ -178,6 +178,16 @@
                                 <span class="inline-flex items-center gap-1.5 mt-1 px-2.5 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-brand border border-blue-100 dark:border-blue-800/60 text-[10px] font-bold">
                                     <i class="fa-solid fa-hand-holding-dollar text-[9px]"></i> Manual</span>
                             </div>
+                            <div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-blue-100 dark:border-slate-800">
+                                <div>
+                                    <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Nilai Pekerjaan</p>
+                                    <p class="font-semibold text-slate-700 dark:text-slate-200 mt-0.5">Rp {{ number_format($payment->freelancer_receive, 0, ',', '.') }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Fee Platform{{ ($payment->platform_fee_rate !== null && $payment->platform_fee_rate !== '') ? ' (' . rtrim(rtrim(number_format((float) $payment->platform_fee_rate, 2, '.', ''), '0'), '.') . '%)' : '' }}</p>
+                                    <p class="font-semibold text-slate-700 dark:text-slate-200 mt-0.5">Rp {{ number_format($payment->platform_fee, 0, ',', '.') }}</p>
+                                </div>
+                            </div>
                             <div class="md:col-span-2 flex items-center justify-between pt-4 border-t border-blue-100 dark:border-slate-800">
                                 <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Total Pembayaran</p>
                                 <span class="text-xl font-extrabold text-emerald-600">Rp {{ number_format($payment->amount, 0, ',', '.') }}</span>
@@ -202,7 +212,7 @@
 {{-- Tujuan Pembayaran --}}
                 <h2 class="text-sm font-bold text-slate-800 dark:text-slate-100 mt-8 mb-1">
                     <i class="fa-solid fa-building-columns text-brand mr-1"></i> Rekening / Wallet Tujuan Pembayaran</h2>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Transfer ke rekening/wallet milik ApexForge Labs di bawah ini, lalu pilih tujuan yang Anda gunakan.</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Transfer ke rekening/wallet milik Vexus di bawah ini, lalu pilih tujuan yang Anda gunakan.</p>
 
                 @php $firstDest = true; @endphp
                 @foreach($destinations as $key => $destination)
@@ -218,7 +228,7 @@
                                     <i class="fa-solid {{ $destination['icon'] ?? 'fa-money-bill-transfer' }} text-lg"></i>
                                 </div>
                                 <div>
-                                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{{ $destination['title'] ?? 'ApexForge Labs' }}</p>
+                                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{{ $destination['title'] ?? 'Vexus' }}</p>
                                     <h3 class="font-bold text-slate-800 dark:text-white text-sm">{{ $destination['label'] ?? 'Manual' }}</h3>
                                 </div>
                             </div>
@@ -263,7 +273,9 @@
                         </div>
                     </div>
                     <div class="p-6">
-                        <form method="POST" action="{{ route('company.payments.upload', $workspace) }}" enctype="multipart/form-data" id="manualPaymentForm" class="space-y-5">
+                        <form method="POST" action="{{ route('company.payments.upload', $workspace) }}" enctype="multipart/form-data" id="manualPaymentForm" class="space-y-5"
+                            data-draft-form
+                            data-draft-key="co:payment-upload:{{ $payment->id }}">
                             @csrf
 
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -340,7 +352,7 @@
 
 <div class="flex items-start gap-3 px-4 py-3 bg-blue-50 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-800/60 rounded-xl text-xs text-slate-600 dark:text-slate-300">
                                 <i class="fa-solid fa-shield-halved mt-0.5 text-brand"></i>
-                                <span>Setelah dikirim, pembayaran berstatus <strong>Menunggu Verifikasi</strong>. Admin ApexForge Labs akan memverifikasi bukti Anda, lalu Workspace otomatis terbuka.</span>
+                                <span>Setelah dikirim, pembayaran berstatus <strong>Menunggu Verifikasi</strong>. Admin Vexus akan memverifikasi bukti Anda, lalu Workspace otomatis terbuka.</span>
                             </div>
 
                             <button type="submit"
@@ -412,6 +424,8 @@
             });
         })();
     </script>
+@include('partials.form-draft-autosave')
+
 </body>
 
 </html>

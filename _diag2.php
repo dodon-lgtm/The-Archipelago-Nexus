@@ -1,5 +1,5 @@
 <?php
-$root = 'C:/xampp/htdocs/The-Archipelago-Nexus';
+$root = 'C:/xampp/htdocs/Vexus';
 
 $lp = $root . '/resources/views/landingpage.blade.php';
 $a = file($lp);

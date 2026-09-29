@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Persetujuan Kebijakan Diperlukan - ApexForge Labs</title>
+    <title>Persetujuan Kebijakan Diperlukan - Vexus</title>
 
     {{-- Tailwind CSS --}}
     <script src="https://cdn.tailwindcss.com"></script>
@@ -25,10 +25,10 @@
             <!-- Header Brand -->
             <div class="flex items-center gap-3 justify-center">
                 <div class="w-9 h-9 bg-slate-900 text-white rounded-xl flex items-center justify-center font-bold text-xs shadow-md shadow-slate-900/20 overflow-hidden ring-2 ring-slate-900/10">
-                    <img src="{{ asset('images/nexus.jpg') }}" alt="ApexForge Labs Logo" class="w-7 h-7 rounded-full object-cover">
+                    <img src="{{ asset('images/vexus.jpg') }}" alt="Vexus Logo" class="w-7 h-7 rounded-full object-cover">
                 </div>
                 <span class="font-extrabold text-base tracking-tight text-slate-900">
-                    ApexForge Labs
+                    Vexus
                 </span>
             </div>
 
@@ -104,7 +104,7 @@
             </form>
 
             <div class="text-center text-xs text-slate-400 pt-4">
-                <p>Dengan melanjutkan, Anda menyetujui kebijakan terbaru ApexForge Labs.</p>
+                <p>Dengan melanjutkan, Anda menyetujui kebijakan terbaru Vexus.</p>
             </div>
         </div>
     </div>

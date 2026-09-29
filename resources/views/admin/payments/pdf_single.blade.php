@@ -127,7 +127,7 @@
                 <tr>
                     <td style="width:60%;">
                         <div class="brand">
-                            ApexForge Labs
+                            Vexus
                             <small>Freelance Marketplace Indonesia</small>
                         </div>
                     </td>
@@ -249,7 +249,7 @@
                     </td>
                     <td style="text-align:center;">
                         <span class="lbl">Mengetahui, Administrator</span>
-                        <div class="pill pill-blue">{{ $payment->verifier->name ?? 'ApexForge Admin' }}</div>
+                        <div class="pill pill-blue">{{ $payment->verifier->name ?? 'Vexus Admin' }}</div>
                         <div style="margin-top:52px;"></div>
                         <span class="val" style="font-size:9px; color:#64748b;">Dicetak: {{ now()->setTimezone('Asia/Jakarta')->format('d M Y H:i') }} WIB</span>
                     </td>
@@ -258,7 +258,7 @@
         </div>
 
         <div class="footer">
-            ApexForge Labs &bull; Freelance Marketplace Indonesia &bull; Pembayaran tervalidasi dan telah dikonfirmasi oleh administrator.
+            Vexus &bull; Freelance Marketplace Indonesia &bull; Pembayaran tervalidasi dan telah dikonfirmasi oleh administrator.
         </div>
 
     </div>

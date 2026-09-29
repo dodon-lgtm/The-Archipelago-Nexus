@@ -141,7 +141,7 @@ class WorkspaceController extends Controller
      * Hitung jumlah notifikasi unread per workspace untuk user tertentu.
      * Dipetakan array: [workspace_id => jumlah]. Tidak memicu N+1.
      */
-    private function unreadCountForUser(LengthAwarePaginator $workspaces, int$userId): array
+    private function unreadCountForUser(LengthAwarePaginator $workspaces, int $userId): array
     {
         $ids = collect($workspaces->items())->pluck('id')->filter()->values()->all();
         if (empty($ids)) {
@@ -155,7 +155,7 @@ class WorkspaceController extends Controller
             ->selectRaw('workspace_id, COUNT(*) as total')
             ->groupBy('workspace_id')
             ->pluck('total', 'workspace_id')
-            ->map(fn ($v) => (int)$v)
+            ->map(fn ($v) => (int) $v)
             ->all();
     }
 
@@ -194,54 +194,55 @@ class WorkspaceController extends Controller
             'project',
             'company',
             'freelancer',
-            'messages' => function ($q) {$q->with('sender')->oldest();
+            'messages' => function ($q) {
+                $q->with('sender')->oldest();
             },
-            'progressHistories' => function ($q) {$q->latest();
+            'progressHistories' => function ($q) {
+                $q->latest();
             },
             'latestProgress',
-            'submissions' => function ($q) {$q->with(['submitter', 'files'])->latest();
+            'submissions' => function ($q) {
+                $q->with(['submitter', 'files'])->latest();
             },
         ]);
 
-        // ── Stage-based progress (NON-LINEAR / FLEKSIBEL) ──────────────────────
-        // Sumber kebenaran: daftar stage + flag is_completed di JSON stages.
-        $stages =$workspace->stageList();
+        // ── Stage-based progress ─────────────────────────────────────────────
+        // Sumber kebenaran: daftar stage custom terurut milik freelancer.
+        $stages = $workspace->stageList();
 
         // Item tahap lengkap (nama, deskripsi, pembuat) untuk ditampilkan di UI,
         // dienrich dengan objek User pembuat (company/freelancer workspace ini).
-        $stageItems =$workspace->stageItems();
-        $company =$workspace->company;
-        $freelancer =$workspace->freelancer;
-        foreach ($stageItems as$i => $item) {$stageItems[$i]['creator'] = match ((int) ($item['created_by'] ?? 0)) {
+        $stageItems = $workspace->stageItems();
+        $company = $workspace->company;
+        $freelancer = $workspace->freelancer;
+        foreach ($stageItems as $i => $item) {
+            $stageItems[$i]['creator'] = match ((int) ($item['created_by'] ?? 0)) {
                 (int) ($freelancer->id ?? 0) => $freelancer,
                 (int) ($company->id ?? 0) => $company,
                 default => null,
             };
         }
 
-        $latestProgress =$workspace->latestProgress;
-        // Legacy active stage/order dipertahankan untuk fallback timeline lama
-        $activeStage =$latestProgress?->stage;
-        $activeStageOrder = ($latestProgress &&$latestProgress->stage_order)
+        $latestProgress = $workspace->latestProgress;
+        $activeStage = $latestProgress?->stage;
+        $activeStageOrder = ($latestProgress && $latestProgress->stage_order)
             ? (int) $latestProgress->stage_order
-            : (!$activeStage ? 0 : (array_search($activeStage,$stages) !== false ? array_search($activeStage,$stages) + 1 : 0));
+            : (!$activeStage ? 0 : (array_search($activeStage, $stages) !== false ? array_search($activeStage, $stages) + 1 : 0));
 
         $totalStages = count($stages);
-        $completedCount =$workspace->completedStagesCount();
 
-        // Persentase FLEKSIBEL: dihitung SERVER-SIDE dari JUMLAH CEKLIS (count-based)
-        $progressValue =$workspace->currentProgress();
-        // Sinkronkan kolom progress di DB jika masih berbeda (auto-heal)
-        if ((int) ($workspace->progress ?? 0) !== (int) $progressValue) {$workspace->update(['progress' => $progressValue]);$workspace->refresh();
-        }
+        // Persentase dihitung SERVER-SIDE dari JUMLAH CEKLIS (count-based),
+        // bukan dari urutan stage dan bukan dari nilai browser.
+        $progressValue = $workspace->currentProgress();
+        $completedCountVal = $workspace->completedStageCount();
 
         // Load payment data if exists
-        $payment =$workspace->payment;
+        $payment = $workspace->payment;
 
         return view('workspace.show', compact(
             'workspace', 'stages', 'stageItems', 'activeStage',
-            'activeStageOrder', 'totalStages', 'completedCount',
-            'latestProgress', 'progressValue',
+            'activeStageOrder', 'totalStages',
+            'latestProgress', 'progressValue', 'completedCountVal',
             'payment'
         ));
     }
@@ -249,7 +250,7 @@ class WorkspaceController extends Controller
     /**
      * Kirim pesan chat.
      */
-    public function sendMessage(Request $request, Workspace$workspace): RedirectResponse
+    public function sendMessage(Request $request, Workspace $workspace): RedirectResponse
     {
         $this->authorizeAccess($workspace);
 
@@ -265,13 +266,13 @@ class WorkspaceController extends Controller
         ]);
 
         // Tentukan penerima notifikasi (lawan bicara)
-        $receiverId = Auth::id() === (int)$workspace->company_id
+        $receiverId = Auth::id() === (int) $workspace->company_id
             ? $workspace->freelancer_id
             : $workspace->company_id;
 
         // Tentukan redirect sesuai role penerima
-        $receiverRole = ($receiverId === (int)$workspace->company_id) ? 'company' : 'freelancer';
-        $redirectRoute =$receiverRole === 'company'
+        $receiverRole = ($receiverId === (int) $workspace->company_id) ? 'company' : 'freelancer';
+        $redirectRoute = $receiverRole === 'company'
             ? route('company.workspaces.show', $workspace)
             : route('freelancer.workspaces.show', $workspace);
 
@@ -287,33 +288,41 @@ class WorkspaceController extends Controller
             projectId: $workspace->project_id,
         );
 
-        return redirect()
+        $redirect = redirect()
             ->route(
                 Auth::user()->role === 'company' ? 'company.workspaces.show' : 'freelancer.workspaces.show',
                 $workspace
             )
             ->with('success', 'Pesan berhasil dikirim.');
+
+        // Draft form chat Company ada di halaman yang sama dengan tujuan redirect
+        // → beri penanda agar draft yang sudah terkirim tidak dipulihkan lagi.
+        // (Freelancer tidak memakai draft pada form chat.)
+        if (Auth::user()->role === 'company') {
+            $redirect->with('draft_clear', 'co:ws-message:' . $workspace->id);
+        }
+
+        return $redirect;
     }
 
     /**
-     * Update progress berbasis STAGE — NON-LINEAR / FLEKSIBEL.
+     * Update progress berbasis STAGE (hanya freelancer).
      *
      * Prinsip keamanan:
-     * - Persentase SELALU dihitung server-side via (completed/total*100).
+     * - Persentase SELALU dihitung server-side dari urutan stage.
      * - Nilai `progress`/`percentage`/`completion` dari browser DIBIARKAN.
-     * - Freelancer dapat menyelesaikan tahap MANA SAJA tanpa urutan (flexible).
-     * - Deskripsi/catatan pengerjaan WAJIB saat menandai selesai (via modal).
+     * - Freelancer hanya mengontrol stage (nama + urutan).
      */
-    public function updateProgress(Request $request, Workspace$workspace): RedirectResponse
+    public function updateProgress(Request $request, Workspace $workspace): RedirectResponse
     {
         // Pelaku harus BENAR-BENAR terkait dengan workspace ini:
         // Company pemilik ATAU freelancer yang ditugaskan.
         $this->authorizeAccess($workspace);
 
-        $action = (string)$request->input('action', '');
+        $action = (string) $request->input('action', '');
 
-        // Aksi yang mengubah status progres (select/move_next/toggle/update_stage) khusus freelancer.
-        if (in_array($action, ['select', 'move_next', 'update_stage', 'toggle'], true)
+        // Aksi yang mengubah status progres (select/move_next) TETAP khusus freelancer.
+        if (in_array($action, ['select', 'move_next'], true)
             && (int) $workspace->freelancer_id !== (int) Auth::id()) {
             abort(403, 'Hanya freelancer yang dapat mengupdate progress.');
         }
@@ -321,149 +330,124 @@ class WorkspaceController extends Controller
         // BACKEND GUARD: Kunci perubahan tahap jika workspace dalam tahap pembayaran atau selesai
         if (in_array($workspace->status, ['Menunggu Pembayaran', 'Menunggu Verifikasi Admin', 'Selesai'], true)) {
             return redirect()
-                ->route($this->backToWorkspace(),$workspace)
+                ->route($this->backToWorkspace(), $workspace)
                 ->with('error', 'Tidak dapat mengubah tahap/progres selama workspace dalam proses pembayaran, verifikasi admin, atau sudah selesai.');
         }
 
         $request->validate([
-            'action' => 'required|in:select,note,add,rename,delete,move_next,update_stage,toggle',
-            'stage' => 'nullable|string|max:255',
-            'new_stage' => 'nullable|string|max:255',
-            'old_stage' => 'nullable|string|max:255',
+            'action' => 'required|in:select,note,add,rename,delete,move_next',
+            // `stage` hanya dibutuhkan oleh aksi yang memilih / mencatat tahap
+            // (select & note). Aksi lain memakai field-nya masing-masing:
+            // - move_next : dihitung otomatis dari daftar tahap
+            // - add       : new_stage
+            // - rename    : old_stage + new_stage
+            // - delete    : old_stage
+            //
+            // Perbaikan bug: sebelumnya rule ini ikut mewajibkan `stage` untuk
+            // rename/delete, padahal form UI (workspace/show.blade.php) hanya
+            // mengirim old_stage/new_stage sehingga request selalu gagal
+            // validasi SEBELUM diproses controller (rename/delete tidak jalan).
+            'stage' => in_array($request->action, ['select', 'note'], true)
+                ? 'required|string|max:255'
+                : 'nullable|string|max:255',
+            'new_stage' => $request->action === 'rename' ? 'required|string|max:255' : ($request->action === 'add' ? 'required|string|max:255' : 'nullable|string|max:255'),
+            'old_stage' => $request->action === 'delete' ? 'required|string|max:255' : 'nullable|string|max:255',
             'description' => 'nullable|string|max:2000',
-            'is_completed' => 'nullable',
         ]);
 
-        $stageItems = $workspace->stageItems();$stages = array_values(array_map(fn (array $item) =>$item['name'], $stageItems));$description = $request->input('description');$userId = (int) Auth::id();
+        $stageItems = $workspace->stageItems();
+        $stages = array_values(array_map(fn (array $item) => $item['name'], $stageItems));
+        $description = $request->input('description');
+        $userId = (int) Auth::id();
+
+        // Catatan: properti `latestProgress` dulu dipakai untuk perhitungan progres
+        // berbasis urutan; kini seluruh perhitungan progres murni berbasis
+        // JUMLAH CEKLIS (count-based) via Workspace::currentProgress().
 
         // ── Mutasi daftar stage (source of truth) berdasarkan aksi ──────────
         switch ($action) {
             case 'add':
-                $newStage = trim((string)$request->input('new_stage', ''));
+                $newStage = trim((string) $request->input('new_stage', ''));
                 if ($newStage === '') {
                     return $this->backWithError('Nama tahap tidak boleh kosong.');
                 }
-                if (in_array($newStage,$stages, true)) {
+                if (in_array($newStage, $stages, true)) {
                     return $this->backWithError('Tahap "' . $newStage . '" sudah ada.');
                 }
+                // Sumber kebenaran satu-satu: simpan pembuat + deskripsi.
+                // Urutan baru = posisi terakhir + 1 (= append). Status ceklis
+                // default false (bukan selesai) sampai freelancer menandainya.
                 $stageItems[] = [
                     'name' => $newStage,
-                    'description' => $description !== null && $description !== '' ? (string)$description : null,
+                    'description' => $description !== null && $description !== '' ? (string) $description : null,
                     'created_by' => $userId,
                     'is_completed' => false,
-                    'note' => null,
-                    'completed_at' => null,
-                    'completed_by' => null,
                 ];
-                $workspace->update(['stages' => array_values($stageItems)]);
+                $workspace->update(['stages' => $stageItems]);
                 $this->syncProgressColumn($workspace);
                 return $this->backWithSuccess('Tahap "' . $newStage . '" berhasil ditambahkan.');
 
             case 'rename':
-                $oldStage = trim((string)$request->input('old_stage', ''));
-                $newStage = trim((string)$request->input('new_stage', ''));
-                if ($oldStage === '') {
-                    return $this->backWithError('Nama tahap lama wajib diisi.');
+                $oldStage = trim((string) $request->input('old_stage', ''));
+                $newStage = trim((string) $request->input('new_stage', ''));
+                if ($oldStage === '' || $newStage === '') {
+                    return $this->backWithError('Nama tahap lama dan baru wajib diisi.');
                 }
-                $pos =$this->findStagePosition($stageItems,$oldStage);
+                $pos = $this->findStagePosition($stageItems, $oldStage);
                 if ($pos === null) {
                     return $this->backWithError('Tahap "' . $oldStage . '" tidak ditemukan.');
                 }
-                if (!$this->canMutateStage($workspace,$stageItems[$pos],$userId)) {
+                if (!$this->canMutateStage($workspace, $stageItems[$pos], $userId)) {
                     abort(403, 'Anda hanya dapat mengubah tahap pada project yang Anda kelola.');
                 }
-                $finalNewStage =$newStage !== '' ? $newStage :$oldStage;
-                if ($oldStage !==$finalNewStage && in_array($finalNewStage,$stages, true)) {
-                    return $this->backWithError('Tahap "' . $finalNewStage . '" sudah ada.');
+                if ($oldStage !== $newStage && in_array($newStage, $stages, true)) {
+                    return $this->backWithError('Tahap "' . $newStage . '" sudah ada.');
                 }
-                $stageItems[$pos]['name'] =$finalNewStage;
-                $stageItems[$pos]['description'] = $description !== null &&$description !== ''
+                // Ganti nama + deskripsi (dari form Edit tahap), pertahankan urutan (posisi) + pembuat.
+                // Gunakan fallback: jika newStage kosong/tidak valid,pertahankan nama lama
+                $finalNewStage = $request->filled('new_stage') && trim($request->input('new_stage')) !== ''
+                    ? $newStage
+                    : $oldStage;
+                $stageItems[$pos]['name'] = $finalNewStage;
+                $stageItems[$pos]['description'] = $description !== null && $description !== ''
                     ? (string) $description
                     : null;
                 $workspace->update(['stages' => array_values($stageItems)]);
                 $this->syncProgressColumn($workspace);
 
-                // Sinkronkan nama pada riwayat yang masih memakai nama lama.
+                // Sinkronkan stage_order/nama pada riwayat yang masih memakai nama lama.
                 ProgressHistory::where('workspace_id', $workspace->id)
                     ->where('stage', $oldStage)
-                    ->update(['stage' => $finalNewStage]);
+                    ->update(['stage' => $newStage]);
 
-                return $this->backWithSuccess('Nama tahap berhasil diubah menjadi "' . $finalNewStage . '".');
+                return $this->backWithSuccess('Nama tahap berhasil diubah menjadi "' . $newStage . '".');
 
             case 'delete':
-                $deleteStage = trim((string)$request->input('old_stage', ''));
+                $deleteStage = trim((string) $request->input('old_stage', ''));
                 if ($deleteStage === '') {
                     return $this->backWithError('Tahap yang akan dihapus wajib diisi.');
                 }
-                $pos =$this->findStagePosition($stageItems,$deleteStage);
+                $pos = $this->findStagePosition($stageItems, $deleteStage);
                 if ($pos === null) {
                     return $this->backWithError('Tahap "' . $deleteStage . '" tidak ditemukan.');
                 }
-                if (!$this->canMutateStage($workspace,$stageItems[$pos],$userId)) {
+                if (!$this->canMutateStage($workspace, $stageItems[$pos], $userId)) {
                     abort(403, 'Anda hanya dapat menghapus tahap pada project yang Anda kelola.');
                 }
-                unset($stageItems[$pos]);$stageItems = array_values($stageItems);$workspace->update(['stages' => $stageItems]);$this->syncProgressColumn($workspace);$this->handleCompletion($workspace,$workspace->currentProgress());
-                return $this->backWithSuccess('Tahap "' . $deleteStage . '" berhasil dihapus.');
-
-            case 'update_stage':
-            case 'toggle':
-                $stage = trim((string)$request->input('stage', ''));
-                if ($stage === '') {
-                    return $this->backWithError('Nama tahap wajib diisi.');
-                }
-                $pos =$this->findStagePosition($stageItems,$stage);
-                if ($pos === null) {
-                    return $this->backWithError('Tahap "' . $stage . '" tidak ditemukan.');
-                }
-
-                $rawCompleted =$request->input('is_completed', null);
-                if ($rawCompleted !== null) {
-                    if (is_string($rawCompleted)) {
-                        $isCompleted = in_array(strtolower($rawCompleted), ['1', 'true', 'on', 'yes'], true);
-                    } else {
-                        $isCompleted = (bool)$rawCompleted;
-                    }
-                } else {
-                    $isCompleted = !$stageItems[$pos]['is_completed'];
-                }
-
-                $note = trim((string) $request->input('description', ''));
-                if ($isCompleted && $note === '' && $action === 'update_stage') {
-                    return $this->backWithError('Deskripsi / catatan pengerjaan wajib diisi saat menandai tahap selesai.');
-                }
-
-                $stageItems[$pos]['is_completed'] =$isCompleted;
-                if ($note !== '') {
-                    $stageItems[$pos]['note'] = $note;
-                    $stageItems[$pos]['description'] = $note;
-                }
-                if ($isCompleted) {$stageItems[$pos]['completed_at'] = now()->toDateTimeString();$stageItems[$pos]['completed_by'] =$userId;
-                } else {
-                    $stageItems[$pos]['completed_at'] = null;
-                    $stageItems[$pos]['completed_by'] = null;
-                }
-
+                unset($stageItems[$pos]);
+                // Re-index otomatis: urutan tahap yang belak naik 1 (pekerjaan lama aman).
                 $workspace->update(['stages' => array_values($stageItems)]);
                 $this->syncProgressColumn($workspace);
-                $progress =$workspace->currentProgress();
-
-                ProgressHistory::create([
-                    'workspace_id' => $workspace->id,
-                    'stage' => $stage,
-                    'stage_order' => $pos + 1,                     'progress' =>$progress,
-                    'description' => $note !== '' ? $note : ($isCompleted ? 'Tahap ditandai selesai' : 'Tahap ditandai belum selesai'),
-                    'updated_by' => $userId,
-                ]);
-
-                $this->handleCompletion($workspace,$progress);
-                $statusLabel =$isCompleted ? 'selesai' : 'belum selesai';
-                return $this->backWithSuccess('Tahap "' . $stage . '" diperbarui menjadi ' . $statusLabel . ' (' .$progress . '%).');
+                return $this->backWithSuccess('Tahap "' . $deleteStage . '" berhasil dihapus.');
 
             case 'move_next':
+                // Tandai tahap berikutnya (yang belum dicentang) sebagai SELESAI.
+                // Progress dihitung murni dari JUMLAH CEKLIS (count-based),
+                // bukan dari nomor urut tahap.
                 $nextPos = null;
-                foreach ($stageItems as $i =>$item) {
+                foreach ($stageItems as $i => $item) {
                     if (empty($item['is_completed'])) {
-                        $nextPos =$i;
+                        $nextPos = $i;
                         break;
                     }
                 }
@@ -472,45 +456,39 @@ class WorkspaceController extends Controller
                     return $this->backWithError('Semua tahap sudah dinyatakan selesai.');
                 }
 
-                $nextStage = $stageItems[$nextPos]['name'];
-                $noteMove = trim((string) $request->input('description', ''));
+                $nextOrder = $nextPos + 1; // 1-based
+                $nextStage = $stages[$nextPos];
                 $stageItems[$nextPos]['is_completed'] = true;
-                if ($noteMove !== '') {
-                    $stageItems[$nextPos]['note'] = $noteMove;
-                }
-                $stageItems[$nextPos]['completed_at'] = now()->toDateTimeString();$stageItems[$nextPos]['completed_by'] =$userId;
-
-                $workspace->update(['stages' => array_values($stageItems)]);
+                $workspace->update(['stages' => $stageItems]);
                 $this->syncProgressColumn($workspace);
-                $progress =$workspace->currentProgress();
+                $progress = $workspace->currentProgress();
 
                 ProgressHistory::create([
                     'workspace_id' => $workspace->id,
                     'stage' => $nextStage,
-                    'stage_order' => $nextPos + 1,                     'progress' =>$progress,
-                    'description' => $noteMove !== '' ? $noteMove : 'Tahap "' . $nextStage . '" ditandai selesai',
+                    'stage_order' => $nextOrder,
+                    'progress' => $progress,
+                    'description' => $description,
                     'updated_by' => $userId,
                 ]);
 
-                $this->handleCompletion($workspace,$progress);
+                $this->handleCompletion($workspace, $progress);
                 return $this->backWithSuccess('Tahap "' . $nextStage . '" ditandai selesai (' . $progress . '%).');
 
             case 'note':
-                $stage = trim((string)$request->input('stage', ''));
-                $pos =$this->findStagePosition($stageItems,$stage);
-                if ($pos === null) {
+                // Simpan/ubah CATATAN pengerjaan tahap TANPA mengubah status
+                // is_completed. Berbeda dengan `select` yang men-toggle ceklis.
+                $stage = trim((string) $request->input('stage', ''));
+                $order = array_search($stage, $stages, true);
+                if ($order === false) {
                     return $this->backWithError('Tahap yang dipilih tidak valid.');
-                }
-
-                if ($description !== null && $description !== '') {$stageItems[$pos]['description'] =$description;
-                    $stageItems[$pos]['note'] =$description;
-                    $workspace->update(['stages' => array_values($stageItems)]);
                 }
 
                 ProgressHistory::create([
                     'workspace_id' => $workspace->id,
                     'stage' => $stage,
-                    'stage_order' => $pos + 1,                     'progress' =>$workspace->currentProgress(),
+                    'stage_order' => $order + 1, // 1-based
+                    'progress' => $workspace->currentProgress(),
                     'description' => $description,
                     'updated_by' => $userId,
                 ]);
@@ -519,47 +497,41 @@ class WorkspaceController extends Controller
 
             case 'select':
             default:
-                $stage = trim((string)$request->input('stage', ''));
-                if ($stage === '') {
+                // Freelancer memilih salah satu stage yang sudah ada.
+                // Aksi = TOGGLE ceklis: HANYA status tahap yang dipilih yang
+                // diubah (is_completed), tahap lain TIDAK disentuh sama sekali.
+                $stage = trim((string) $request->input('stage', ''));
+                $order = array_search($stage, $stages, true);
+                if ($order === false) {
                     return $this->backWithError('Tahap yang dipilih tidak valid.');
                 }
-                $pos =$this->findStagePosition($stageItems,$stage);
-                if ($pos === null) {
-                    return $this->backWithError('Tahap yang dipilih tidak valid.');
+
+                $selectedOrder = $order + 1; // 1-based
+                $currentlyCompleted = !empty($stageItems[$order]['is_completed']);
+                $stageItems[$order]['is_completed'] = !$currentlyCompleted;
+                // Simpan deskripsi pengerjaan bersamaan dengan perubahan status
+                if ($description !== null && $description !== '') {
+                    $stageItems[$order]['description'] = $description;
                 }
-
-                $currentlyCompleted = !empty($stageItems[$pos]['is_completed']);
-                $isCompleted = !$currentlyCompleted;
-                $stageItems[$pos]['is_completed'] =$isCompleted;
-
-                $noteSel = trim((string) $request->input('description', ''));
-                if ($noteSel !== '') {
-                    $stageItems[$pos]['description'] = $noteSel;
-                    $stageItems[$pos]['note'] = $noteSel;
-                }
-
-                if ($isCompleted) {$stageItems[$pos]['completed_at'] = now()->toDateTimeString();$stageItems[$pos]['completed_by'] =$userId;
-                } else {
-                    $stageItems[$pos]['completed_at'] = null;
-                    $stageItems[$pos]['completed_by'] = null;
-                }
-
-                $workspace->update(['stages' => array_values($stageItems)]);
+                $workspace->update(['stages' => $stageItems]);
                 $this->syncProgressColumn($workspace);
 
-                $progress =$workspace->currentProgress();
-                $verb =$currentlyCompleted ? 'dibatalkan (belum selesai)' : 'ditandai selesai';
+                // Persentase dihitung server-side dari JUMLAH CEKLIS (count-based);
+                // nilai `progress` dari browser TIDAK dipakai.
+                $progress = $workspace->currentProgress();
+                $verb = $currentlyCompleted ? 'dibatalkan (belum selesai)' : 'ditandai selesai';
 
                 ProgressHistory::create([
                     'workspace_id' => $workspace->id,
                     'stage' => $stage,
-                    'stage_order' => $pos + 1,                     'progress' =>$progress,
-                    'description' => $noteSel !== '' ? $noteSel : 'Tahap "' . $stage . '" ' . $verb,
+                    'stage_order' => $selectedOrder,
+                    'progress' => $progress,
+                    'description' => $description,
                     'updated_by' => $userId,
                 ]);
 
-                $this->handleCompletion($workspace,$progress);
-                return $this->backWithSuccess('Tahap "' . $stage . '" ' . $verb . ' (' .$progress . '%).');
+                $this->handleCompletion($workspace, $progress);
+                return $this->backWithSuccess('Tahap "' . $stage . '" ' . $verb . ' (' . $progress . '%).');
         }
     }
 
@@ -570,7 +542,7 @@ class WorkspaceController extends Controller
      */
     private function syncProgressColumn(Workspace $workspace): void
     {
-        $workspace->update(['progress' =>$workspace->currentProgress()]);
+        $workspace->update(['progress' => $workspace->currentProgress()]);
     }
 
     /**
@@ -579,11 +551,12 @@ class WorkspaceController extends Controller
      * memeriksa hasil pekerjaan.
      * Konfirmasi akhir tetap oleh perusahaan (tidak berubah).
      */
-    private function handleCompletion(Workspace $workspace, int$progress): void
+    private function handleCompletion(Workspace $workspace, int $progress): void
     {
         $restrictedStatuses = ['Selesai', 'Menunggu Pembayaran', 'Menunggu Verifikasi Admin'];
 
-        if ($progress >= 100 && !in_array($workspace->status, $restrictedStatuses, true)) {$workspace->update(['status' => 'Menunggu Review']);
+        if ($progress >= 100 && !in_array($workspace->status, $restrictedStatuses, true)) {
+            $workspace->update(['status' => 'Menunggu Review']);
 
             Message::create([
                 'workspace_id' => $workspace->id,
@@ -621,9 +594,27 @@ class WorkspaceController extends Controller
      */
     private function backWithSuccess(string $message): RedirectResponse
     {
-        return redirect()
+        $redirect = redirect()
             ->route($this->backToWorkspace(), request()->route('workspace'))
             ->with('success', $message);
+
+        // Aksi Company (tambah/ubah/hapus tahap) redirect kembali ke path yang
+        // sama, padahal formnya sudah sukses diproses → kirim penanda hapus
+        // draft supaya isinya tidak dipulihkan lagi sebagai "draft".
+        // Draft Freelancer tidak dipakai pada form-form ini.
+        if (Auth::check() && Auth::user()->role === 'company') {
+            $workspace = request()->route('workspace');
+            $workspaceId = $workspace instanceof Workspace ? $workspace->id : (int) $workspace;
+            $action = (string) request()->input('action', '');
+
+            if ($action === 'add') {
+                $redirect->with('draft_clear', 'co:ws-addstage:' . $workspaceId);
+            } elseif (in_array($action, ['rename', 'delete'], true)) {
+                $redirect->with('draft_clear_prefix', 'co:ws-stage-rename:' . $workspaceId . ':');
+            }
+        }
+
+        return $redirect;
     }
 
     /**
@@ -639,9 +630,9 @@ class WorkspaceController extends Controller
     /**
      * Cari posisi (index) sebuah tahap berdasarkan nama di daftar stage items.
      */
-    private function findStagePosition(array $stageItems, string$name): ?int
+    private function findStagePosition(array $stageItems, string $name): ?int
     {
-        foreach ($stageItems as $i =>$item) {
+        foreach ($stageItems as $i => $item) {
             if (($item['name'] ?? null) === $name) {
                 return $i;
             }
@@ -653,11 +644,11 @@ class WorkspaceController extends Controller
     /**
      * Apakah user yang login adalah pembuat tahap ini?
      */
-    private function userOwnsStage(array $stageItem, int$userId): bool
+    private function userOwnsStage(array $stageItem, int $userId): bool
     {
-        $creator =$stageItem['created_by'] ?? null;
+        $creator = $stageItem['created_by'] ?? null;
 
-        return $creator !== null && (int) $creator ===$userId;
+        return $creator !== null && (int) $creator === $userId;
     }
 
     /**
@@ -670,15 +661,15 @@ class WorkspaceController extends Controller
      * - Freelancer hanya boleh mengubah/menghapus tahap yang ia buat sendiri
      *   (perilaku lama dipertahankan).
      */
-    private function canMutateStage(Workspace $workspace, array $stageItem, int$userId): bool
+    private function canMutateStage(Workspace $workspace, array $stageItem, int $userId): bool
     {
-        $isCompanyOwner = (int) $workspace->company_id ===$userId;
+        $isCompanyOwner = (int) $workspace->company_id === $userId;
 
         if ($isCompanyOwner) {
             return true;
         }
 
-        return $this->userOwnsStage($stageItem,$userId);
+        return $this->userOwnsStage($stageItem, $userId);
     }
 
     /**
@@ -686,8 +677,9 @@ class WorkspaceController extends Controller
      */
     private function authorizeAccess(Workspace $workspace): void
     {
-        $user = Auth::user();$isCompany = (int) $workspace->company_id === (int)$user->id;
-        $isFreelancer = (int) $workspace->freelancer_id === (int)$user->id;
+        $user = Auth::user();
+        $isCompany = (int) $workspace->company_id === (int) $user->id;
+        $isFreelancer = (int) $workspace->freelancer_id === (int) $user->id;
 
         if (!$isCompany && !$isFreelancer) {
             abort(403, 'Anda tidak memiliki akses ke workspace ini.');

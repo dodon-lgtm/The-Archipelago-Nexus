@@ -64,7 +64,7 @@ class ForgotPasswordController extends Controller
             Mail::to($email)->send(new \App\Mail\PasswordResetOtpMail(
                 (string) $otp,
                 $user ? $user->name : 'Pengguna',
-                config('app.name', 'ApexForge')
+                config('app.name', 'Vexus')
             ));
         } catch (\Exception $e) {
             Log::error('OTP Email Gagal Kirim: ' . $e->getMessage());
@@ -274,7 +274,7 @@ class ForgotPasswordController extends Controller
             Mail::to($email)->send(new \App\Mail\PasswordResetOtpMail(
                 (string) $otp,
                 $user ? $user->name : 'Pengguna',
-                config('app.name', 'ApexForge')
+                config('app.name', 'Vexus')
             ));
         } catch (\Exception $e) {
             Log::error('OTP Resend Gagal: ' . $e->getMessage());

@@ -65,20 +65,18 @@ class Workspace extends Model
 
     /**
      * Daftar stage custom terurut untuk workspace ini (source of truth),
-     * dinormalisasi menjadi item bertipe object (NON-LINEAR / FLEKSIBEL):
+     * dinormalisasi menjadi item bertipe object:
      *
-     *    [
-     *      'name'        => string,
-     *      'description' => ?string,
-     *      'created_by'  => ?int,
-     *      'is_completed'=> bool,
-     *      'note'        => ?string  // catatan pengerjaan tahap ini (dari modal)
-     *      'completed_at'=> ?string  // ISO datetime
-     *      'completed_by'=> ?int
-     *    ]
+     *     [
+     *       'name'         => string,
+     *       'description'  => ?string,
+     *       'created_by'   => ?int (users.id pembuat tahap),
+     *       'is_completed' => bool (status ceklis; count-based progress),
+     *     ]
      *
-     * Entry lama yang masih berbentuk string polos atau tanpa flag
-     * is_completed otomatis dianggap belum selesai (backward-compatible).
+     * Entry lama yang masih berbentuk string polos otomatis dianggap
+     * dibuat oleh freelancer workspace ini (backward-compatible, data aman),
+     * dan `is_completed` di-default ke false bila flag belum pernah disimpan.
      */
     public function stageItems(): array
     {
@@ -90,9 +88,6 @@ class Workspace extends Model
                 'description' => null,
                 'created_by' => $this->freelancer_id ? (int) $this->freelancer_id : null,
                 'is_completed' => false,
-                'note' => null,
-                'completed_at' => null,
-                'completed_by' => null,
             ]];
         }
 
@@ -113,10 +108,7 @@ class Workspace extends Model
                     'created_by' => isset($entry['created_by']) && $entry['created_by'] !== null
                         ? (int) $entry['created_by']
                         : $defaultCreator,
-                    'is_completed' => (bool) ($entry['is_completed'] ?? false),
-                    'note' => isset($entry['note']) && $entry['note'] !== '' ? (string) $entry['note'] : null,
-                    'completed_at' => $entry['completed_at'] ?? null,
-                    'completed_by' => isset($entry['completed_by']) && $entry['completed_by'] !== null ? (int) $entry['completed_by'] : null,
+                    'is_completed' => !empty($entry['is_completed']),
                 ];
                 continue;
             }
@@ -130,9 +122,6 @@ class Workspace extends Model
                 'description' => null,
                 'created_by' => $defaultCreator,
                 'is_completed' => false,
-                'note' => null,
-                'completed_at' => null,
-                'completed_by' => null,
             ];
         }
 
@@ -142,9 +131,6 @@ class Workspace extends Model
                 'description' => null,
                 'created_by' => $defaultCreator,
                 'is_completed' => false,
-                'note' => null,
-                'completed_at' => null,
-                'completed_by' => null,
             ]];
         }
 
@@ -169,52 +155,61 @@ class Workspace extends Model
     }
 
     /**
-     * Jumlah tahap yang sudah berstatus Selesai (non-linear).
+     * Jumlah tahap yang sudah ditandai selesai (is_completed = true).
+     * Ini adalah dasar perhitungan progress COUNTS-BASED (bukan nomor urut).
      */
-    public function completedStagesCount(): int
+    public function completedStageCount(): int
     {
-        return collect($this->stageItems())->where('is_completed', true)->count();
+        $completed = 0;
+        foreach ($this->stageItems() as $item) {
+            if (!empty($item['is_completed'])) {
+                $completed++;
+            }
+        }
+
+        return $completed;
     }
 
     /**
-     * Hitung progress fleksibel / non-linear:
-     * Progress (%) = (Jumlah Tahap Selesai / Total Semua Tahap) * 100
+     * Hitung persentase progres murni dari JUMLAH CEKLIS yang selesai.
+     *
+     * Formula: round(COUNT(tahap_selesai) / COUNT(semua_tahap) * 100)
+     *
+     * Contoh: 7 tahap total, freelance mencentang tahap 1, 2, 3, dan 7
+     * (4 tahap selesai) → (4 / 7) * 100 = 57%.
+     *
+     * Tahap lain yang belum dicentang TIDAK ikut dianggap selesai dan
+     * TIDAK memengaruhi nilai ini — progres HANYA memperhitungkan jumlah
+     * item yang berstatus selesai.
      */
-    public function calculateFlexibleProgress(): int
+    public function calculateProgressCountBased(): int
     {
         $total = $this->totalStages();
         if ($total <= 0) {
             return 0;
         }
-        $completed = $this->completedStagesCount();
-        return (int) round(($completed / $total) * 100);
+
+        return (int) round(($this->completedStageCount() / $total) * 100);
     }
 
     /**
-     * Persentase progres saat ini (NON-LINEAR).
-     * Jika ada tahap yang sudah ditandai selesai, gunakan rumus fleksibel.
-     * Jika belum ada yang selesai tetapi ada riwayat linear lama, fallback ke legacy.
+     * Hitung persentase progres.
+     *
+     * @deprecated Pakai `currentProgress()` / `calculateProgressCountBased()`.
+     *             Param `$stageOrder` TIDAK dipakai lagi — progres murni
+     *             dihitung dari jumlah tahap selesai, bukan nomor urut.
+     */
+    public function calculateProgressForStage(int $stageOrder): int
+    {
+        return $this->calculateProgressCountBased();
+    }
+
+    /**
+     * Persentase progres saat ini (server-side, murni count-based).
      */
     public function currentProgress(): int
     {
-        $total = $this->totalStages();
-        if ($total <= 0) {
-            return 0;
-        }
-        $completed = $this->completedStagesCount();
-        if ($completed > 0) {
-            return $this->calculateFlexibleProgress();
-        }
-
-        // Fallback legacy untuk workspace lama yang belum migrasi ke flag is_completed
-        $latest = $this->relationLoaded('latestProgress') ? $this->latestProgress : $this->latestProgress()->first();
-        $order = $latest?->stage_order ? (int) $latest->stage_order : 0;
-        if ($order > 0) {
-            return (int) round(($order / $total) * 100);
-        }
-
-        // Belum ada progress sama sekali
-        return 0;
+        return $this->calculateProgressCountBased();
     }
 
     /**

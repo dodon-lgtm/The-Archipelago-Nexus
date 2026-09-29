@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     @include('partials.theme-boot')
     
-    <title>Edit Proyek - ApexForge Labs</title>
+    <title>Edit Proyek - Vexus</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -49,17 +49,17 @@
     </style>
 <style>
 
-/* ApexForge Labs — Unified UI System */
+/* Vexus — Unified UI System */
 :root{
-    --af-primary:#2563eb;
-    --af-primary-dark:#1d4ed8;
-    --af-primary-soft:#eff6ff;
-    --af-sky:#38bdf8;
-    --af-ink:#0f172a;
-    --af-muted:#64748b;
-    --af-border:#dbeafe;
-    --af-surface:#ffffff;
-    --af-page:#f6f9ff;
+    --vx-primary:#2563eb;
+    --vx-primary-dark:#1d4ed8;
+    --vx-primary-soft:#eff6ff;
+    --vx-sky:#38bdf8;
+    --vx-ink:#0f172a;
+    --vx-muted:#64748b;
+    --vx-border:#dbeafe;
+    --vx-surface:#ffffff;
+    --vx-page:#f6f9ff;
 }
 html{scroll-behavior:smooth}
 body{
@@ -67,7 +67,7 @@ body{
     background:
         radial-gradient(circle at 10% -10%,rgba(56,189,248,.10),transparent 30%),
         radial-gradient(circle at 100% 0%,rgba(37,99,235,.08),transparent 28%),
-        var(--af-page);
+        var(--vx-page);
 }
 ::selection{background:rgba(37,99,235,.18);color:#0f172a}
 ::-webkit-scrollbar{width:7px;height:7px}
@@ -76,7 +76,7 @@ body{
 ::-webkit-scrollbar-thumb:hover{background:rgba(37,99,235,.38)}
 
 input,select,textarea{
-    border-color:var(--af-border)!important;
+    border-color:var(--vx-border)!important;
     background:rgba(255,255,255,.92);
     transition:border-color .2s ease,box-shadow .2s ease,background .2s ease;
 }
@@ -202,7 +202,11 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                 <div class="glass-card rounded-3xl relative overflow-hidden dark:bg-slate-900 dark:border-slate-800">
                     <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 via-blue-600 to-blue-400"></div>
 
-                    <form method="POST" action="{{ route('company.projects.update', $project) }}" enctype="multipart/form-data" class="p-6 lg:p-8">
+                    {{-- Draft otomatis (localStorage, key co:project-edit:<id>): field yang
+                         dikunci (disabled) otomatis dilewati engine. --}}
+                    <form method="POST" action="{{ route('company.projects.update', $project) }}" enctype="multipart/form-data" class="p-6 lg:p-8"
+                        data-draft-form
+                        data-draft-key="co:project-edit:{{ $project->id }}">
                         @csrf
                         @method('PUT')
 
@@ -316,7 +320,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                         <div class="absolute inset-y-0 left-0 flex items-center pl-5 pointer-events-none">
                                             <span class="text-blue-400 font-bold text-sm dark:text-slate-400">Rp</span>
                                         </div>
-                                        <input type="hidden" name="budget" id="real_budget" value="{{ old('budget', $project->budget) }}">
+                                        <input type="hidden" name="budget" id="real_budget" value="{{ old('budget', $project->budget) }}" data-draft-include>
                                         <input type="text" id="display_budget" {{ $isLocked('budget') ? 'disabled' : '' }}
                                             class="w-full pl-12 pr-5 py-3.5 bg-blue-50/50 border @error('budget') border-blue-500 ring-2 ring-blue-500/20 @else border-blue-100 @enderror rounded-xl text-sm font-bold text-blue-950 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 focus:bg-white transition-all placeholder:text-blue-300 placeholder:font-medium dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:focus:bg-slate-800 dark:placeholder:text-slate-500 {{ $isLocked('budget') ? 'opacity-60 cursor-not-allowed' : '' }}"
                                             placeholder="5000000">
@@ -518,5 +522,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
             });
         });
     </script>
+@include('partials.form-draft-autosave')
+
 </body>
 </html>

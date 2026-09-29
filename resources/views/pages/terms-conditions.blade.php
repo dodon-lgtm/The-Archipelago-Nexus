@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @include('partials.theme-boot')
-    <title>Syarat & Ketentuan - ApexForge Labs</title>
+    <title>Syarat & Ketentuan - Vexus</title>
 
     {{-- Tailwind CSS --}}
     <script src="https://cdn.tailwindcss.com"></script>
@@ -46,7 +46,7 @@
                     <i class="fa-solid fa-satellite-dish text-sm"></i>
                 </div>
                 <span class="font-black text-lg text-blue-950 dark:text-white tracking-tight">
-                    ApexForge<span class="text-blue-600 dark:text-blue-400">Labs</span>
+                    Vexus
                 </span>
             </a>
             <a href="{{ url('/') }}"

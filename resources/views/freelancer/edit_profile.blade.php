@@ -20,7 +20,7 @@
         utility Bootstrap memakai !important (mis. .p-5 { padding: 3rem !important })
         sehingga selalu menang atas utility Tailwind dengan nama sama
         (.p-5 { padding: 1.25rem }) dan merusak layout sidebar
-        (card banner "ApexForge Labs" terpotong di sisi kanan karena padding
+        (card banner "Vexus" terpotong di sisi kanan karena padding
         sidebar menjadi 48px, bukan 20px).
         Halaman ini memakai Tailwind + custom CSS (di-scope .edit-profile-page),
         sama seperti halaman freelancer lain (dashboard, profil, dst).
@@ -385,7 +385,9 @@
                     </div>
                 @endif
 
-                <form action="{{ route('freelancer.profile.update') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('freelancer.profile.update') }}" method="POST" enctype="multipart/form-data"
+                    data-draft-form
+                    data-draft-key="fl:profile:{{ Auth::id() }}">
                     @csrf
 
                     <!-- FOTO PROFIL -->
@@ -574,5 +576,7 @@
         easing: 'ease-out-cubic'
     });
 </script>
+
+@include('partials.form-draft-autosave')
 </body>
 </html>

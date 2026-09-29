@@ -1,18 +1,47 @@
-APEXFORGE LABS PROJECT HISTORY, CURRENT STATE, IMPLEMENTED FEATURES,
+VEXUS PROJECT HISTORY, CURRENT STATE, IMPLEMENTED FEATURES,
 TOOLS, AND ROADMAP
 ============================================================
 
 Dokumen ini adalah handoff/context file untuk melanjutkan pengembangan
-proyek ApexForge Labs tanpa kehilangan arah dari pekerjaan sebelumnya.
+proyek Vexus tanpa kehilangan arah dari pekerjaan sebelumnya.
 
 ============================================================ 1.
 IDENTITAS PROYEK
 ============================================================
 
-Nama proyek: ApexForge Labs
+Nama proyek: Vexus
 
-Riwayat nama proyek: 1. FreelanceID 2. The Archipelago Nexus 3.
-ApexForge Labs (nama saat ini)
+Riwayat nama proyek: 1. FreelanceID 2. The Archipelago Nexus 3. ApexForge Labs
+4. Vexus (nama saat ini)
+
+Catatan rebrand Vexus (revisi terakhir): seluruh penyebutan brand
+"ApexForge Labs" / "ApexForge" sudah diganti menjadi "Vexus". Perubahan
+teknis yang menyertai rebrand:
+
+- config/apexforge.php -> config/vexus.php (key `vexus.manual_payment_destinations`,
+  env prefix APEXFORGE_* -> VEXUS_*)
+- namespace draft localStorage `apexforge.fl.draft.v1:` / `apexforge.co.draft.v1:`
+  -> `vexus.fl.draft.v1:` / `vexus.co.draft.v1:` (draft lama di browser tidak
+  ikut pindah, akan mulai kosong sekali setelah rebrand)
+- key tema lama localStorage `apexforge_theme` -> `vexus_theme`
+- aset logo public/images/nexus.jpg & nexus1.jpg -> vexus.jpg & vexus1.jpg
+- token CSS `--af-*` -> `--vx-*`, kelas/ID `af-confirm*` & `afConfirm*` ->
+  `vx-confirm*` & `vxConfirm*`, badge inisial topbar admin "AF" -> "VX"
+- email akun demo memakai domain @vexus.id, kontak Pusat Bantuan -> support@vexus.id
+- APP_NAME=Vexus, package.json & package-lock.json "name": "vexus"
+
+Yang SENGAJA belum diubah dan perlu keputusan/aksi manual:
+- DB_DATABASE=nexus di .env (agar data MySQL lokal tidak hilang). Jika ingin
+  ikut di-rename: rename database di MySQL lalu ubah .env.
+- Nama folder proyek di disk (The-Archipelago-Nexus) dan nama repo di GitHub.
+  Setelah folder/path berubah, jalankan ulang `php artisan ide-helper:meta`
+  agar .phpstorm.meta.php memakai path baru.
+- File generated (vendor, node_modules, storage/framework/views,
+  bootstrap/cache, public/build) berisi output lama; dibersihkan lewat
+  `php artisan config:clear`, `php artisan view:clear`, dan `npm run build`
+  bila perlu.
+- Teks brand yang tersimpan di DB (footer_settings) otomatis disinkronkan oleh
+  FooterSettingSeeder saat `php artisan db:seed` dijalankan.
 
 Jenis proyek: Aplikasi freelance marketplace Indonesia berbasis Laravel.
 
@@ -27,7 +56,7 @@ administrasi. - Sistem memiliki role user/freelancer/company/admin.
 UTAMA PROYEK
 ============================================================
 
-ApexForge Labs ditujukan sebagai platform freelance Indonesia yang
+Vexus ditujukan sebagai platform freelance Indonesia yang
 menghubungkan Company dengan Freelancer.
 
 Alur besar: Landing Page ↓ Register / Login ↓ Freelancer / Company ↓
@@ -450,7 +479,7 @@ STATUS ============================================================
 
 Status saat dokumen ini dibuat:
 
-PROJECT: ApexForge Labs
+PROJECT: Vexus
 
 Backend Laravel: AKTIF
 
@@ -558,7 +587,7 @@ PENTING UNTUK AI BERIKUTNYA
 18. Jangan mengubah file yang tidak berhubungan dengan phase.
 19. PROMPT.md adalah dokumentasi proyek, bukan tempat menyimpan prompt
     pengerjaan.
-20. Nama proyek saat ini adalah APEXFORGE LABS.
+20. Nama proyek saat ini adalah VEXUS.
 
 ============================================================ 19.
 CHECKPOINT ============================================================
@@ -570,5 +599,59 @@ Midtrans Backend Foundation STATUS: SELESAI STATUS GIT: SUDAH DI-PUSH
 NEXT CHECKPOINT:
 
 Midtrans Snap Token Backend STATUS: BELUM DIKERJAKAN
+
+============================================================ 20. AKUN DEMO
+(SEEDER) UNTUK TESTING
+============================================================
+
+Database development harus diisi seeder sebelum dipakai login. Jika tabel
+`users` kosong, SEMUA akun demo pasti gagal login dengan pesan "Email
+atau password salah." walau kode login benar (insiden yang pernah terjadi
+setelah `migrate:fresh` tanpa `--seed`).
+
+Perintah:
+
+php artisan db:seed
+
+atau sekaligus saat migrasi:
+
+php artisan migrate:fresh --seed
+
+Seeder bersifat idempotent (aman dijalankan berulang kali): AdminUserSeeder
+& UserRoleSeeder hanya membuat user bila email belum ada, sedangkan
+CompanyProjectSeeder memakai pola updateOrCreate.
+
+Akun demo yang tersedia:
+
+1. Admin
+   email: admin@vexus.id
+   password: admin123
+   seeder: AdminUserSeeder
+   dashboard: /admin/dashboard
+
+2. Company (sudah disetujui admin + company_profiles lengkap)
+   email: company@vexus.id
+   password: company123
+   seeder: UserRoleSeeder
+   dashboard: /company/dashboard
+
+3. Freelancer
+   email: freelancer@vexus.id
+   password: freelancer123
+   seeder: UserRoleSeeder
+   dashboard: /freelancer/dashboard
+
+4. Company demo data proyek (7 proyek, kategori, gambar storage)
+   email: nusantara@vexus.id
+   password: company123
+   seeder: CompanyProjectSeeder
+   dashboard: /company/dashboard
+
+Catatan login:
+- AuthController::login() menolak akun role company yang belum disetujui
+  admin (cek tabel company_account_requests, request_status = disetujui).
+- Seeder sudah membuat pengajuan tersebut berstatus "disetujui".
+- Regression test: tests/Feature/SeededAccountLoginTest.php (memastikan
+  keempat akun di atas selalu bisa login dan masuk dashboard per role).
 
 END OF PROJECT HANDOFF DOCUMENT

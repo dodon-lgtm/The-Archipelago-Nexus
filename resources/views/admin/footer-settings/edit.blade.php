@@ -37,7 +37,7 @@
                         <label class="text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1 block">Teks Hak Cipta</label>
                         <input type="text" name="copyright_text" value="{{ old('copyright_text', $setting->copyright_text) }}"
                             class="w-full rounded-xl border-blue-100 dark:border-slate-700 bg-[#f6f9ff] dark:bg-slate-800 px-4 py-2.5 text-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none"
-                            placeholder="© 2026 ApexForge Labs. Hak Cipta Dilindungi.">
+                            placeholder="© 2026 Vexus. Hak Cipta Dilindungi.">
                         @error('copyright_text')
                             <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
                         @enderror

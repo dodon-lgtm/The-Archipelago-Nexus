@@ -9,7 +9,7 @@
     {{-- Script Inisialisasi Dark Mode --}}
     
 
-    <title>Lamaran Saya | ApexForge Labs</title>
+    <title>Lamaran Saya | Vexus</title>
 
     @vite('resources/css/app.css')
 

@@ -20,23 +20,23 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
 
-        /* ApexForge Labs — Unified UI System Variables */
+        /* Vexus — Unified UI System Variables */
         :root {
-            --af-primary: #2563eb;
-            --af-primary-dark: #1d4ed8;
-            --af-primary-soft: #eff6ff;
-            --af-sky: #38bdf8;
-            --af-ink: #0f172a;
-            --af-muted: #64748b;
-            --af-border: #dbeafe;
-            --af-surface: #ffffff;
-            --af-page: #f6f9ff;
+            --vx-primary: #2563eb;
+            --vx-primary-dark: #1d4ed8;
+            --vx-primary-soft: #eff6ff;
+            --vx-sky: #38bdf8;
+            --vx-ink: #0f172a;
+            --vx-muted: #64748b;
+            --vx-border: #dbeafe;
+            --vx-surface: #ffffff;
+            --vx-page: #f6f9ff;
         }
 
         .dark {
-            --af-border: #334155;
-            --af-surface: #0f172a;
-            --af-page: #020617;
+            --vx-border: #334155;
+            --vx-surface: #0f172a;
+            --vx-page: #020617;
         }
 
         html {
@@ -181,7 +181,9 @@
                         </h2>
 
                         <form action="{{ route('freelancer.penawaran.store', $project) }}" method="POST"
-                            enctype="multipart/form-data">
+                            enctype="multipart/form-data"
+                            data-draft-form
+                            data-draft-key="fl:penawaran:{{ $project->id }}">
                             @csrf
 
                             <!-- Harga Penawaran -->
@@ -191,7 +193,7 @@
                                     Harga Penawaran
                                 </label>
 
-                                <input type="hidden" name="harga_penawaran" id="real_harga_penawaran">
+                                <input type="hidden" name="harga_penawaran" id="real_harga_penawaran" data-draft-include>
 
                                 <div class="relative">
                                     <div class="absolute inset-y-0 left-0 flex items-center pl-5 pointer-events-none">
@@ -380,6 +382,7 @@
             }
         });
     </script>
+    @include('partials.form-draft-autosave')
 </body>
 
 </html>

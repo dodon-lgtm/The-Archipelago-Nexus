@@ -1,5 +1,5 @@
 <?php
-$root = 'C:/xampp/htdocs/The-Archipelago-Nexus';
+$root = 'C:/xampp/htdocs/Vexus';
 
 echo "===== LOGIN 388-432 =====\n";
 $a = file($root . '/resources/views/auth/login.blade.php');

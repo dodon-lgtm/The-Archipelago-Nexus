@@ -98,6 +98,9 @@ $profile->company_name = $request->company_name;
                 ->with(
                     'success',
                     'Profil berhasil diperbarui.'
-                );
+                )
+                // Draft form edit profil (path berbeda, tapi halaman tujuan
+                // memuat engine) → penanda eksplisit agar pasti terhapus.
+                ->with('draft_clear', 'co:profile:' . Auth::id());
     }
 }

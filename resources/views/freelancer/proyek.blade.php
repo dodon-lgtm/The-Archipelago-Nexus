@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @include('partials.theme-boot')
-    <title>Proyek Terbaru - ApexForge Labs</title>
+    <title>Proyek Terbaru - Vexus</title>
     
     {{-- Dark Mode Script --}}
     
@@ -23,15 +23,15 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
         
         :root {
-            --af-primary: #2563eb;
-            --af-primary-dark: #1d4ed8;
-            --af-primary-soft: #eff6ff;
-            --af-sky: #38bdf8;
-            --af-ink: #0f172a;
-            --af-muted: #64748b;
-            --af-border: #dbeafe;
-            --af-surface: #ffffff;
-            --af-page: #f6f9ff;
+            --vx-primary: #2563eb;
+            --vx-primary-dark: #1d4ed8;
+            --vx-primary-soft: #eff6ff;
+            --vx-sky: #38bdf8;
+            --vx-ink: #0f172a;
+            --vx-muted: #64748b;
+            --vx-border: #dbeafe;
+            --vx-surface: #ffffff;
+            --vx-page: #f6f9ff;
         }
 
         html { scroll-behavior: smooth; }
@@ -40,7 +40,7 @@
             background:
                 radial-gradient(circle at 10% -10%, rgba(56, 189, 248, .10), transparent 30%),
                 radial-gradient(circle at 100% 0%, rgba(37, 99, 235, .08), transparent 28%),
-                var(--af-page);
+                var(--vx-page);
         }
 
         ::selection { background: rgba(37, 99, 235, .18); color: #0f172a; }
@@ -50,7 +50,7 @@
         ::-webkit-scrollbar-thumb:hover { background: rgba(37, 99, 235, .38); }
 
         input, select, textarea {
-            border-color: var(--af-border) !important;
+            border-color: var(--vx-border) !important;
             background: rgba(255, 255, 255, .92);
             transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
         }

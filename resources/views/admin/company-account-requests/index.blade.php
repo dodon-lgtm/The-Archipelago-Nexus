@@ -10,7 +10,7 @@
 
     {{-- Search & Filter --}}
     <div class="bg-white dark:bg-slate-900 rounded-2xl border border-blue-100 dark:border-slate-800 p-4 mb-4 shadow-sm">
-        <form method="GET" action="{{ url()->current() }}" class="flex flex-wrap gap-3 items-end">
+        <form method="GET" action="{{ url()->current() }}" data-live-filter class="flex flex-wrap gap-3 items-end">
             <div class="flex-1 min-w-[200px]">
                 <label class="text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-300 mb-1.5 block">
                     <i class="fa-solid fa-magnifying-glass mr-1 text-blue-400"></i> Cari Perusahaan
@@ -28,9 +28,6 @@
                 </select>
             </div>
             <div class="flex items-center gap-2 w-full sm:w-auto">
-                <button class="inline-flex items-center gap-1.5 px-5 py-2.5 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white rounded-xl text-sm font-semibold shadow-sm transition" type="submit">
-                    <i class="fa-solid fa-search text-xs"></i> Cari
-                </button>
                 <a href="{{ url()->current() }}"
                     class="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl text-sm font-semibold transition hover:bg-slate-200 dark:hover:bg-slate-700">
                     <i class="fa-solid fa-rotate-left text-xs"></i> Reset
@@ -39,7 +36,7 @@
         </form>
     </div>
 
-    <div class="bg-white rounded-2xl border border-blue-100 shadow-sm overflow-hidden">
+    <div class="bg-white rounded-2xl border border-blue-100 shadow-sm overflow-hidden" data-live-filter-results>
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead class="bg-[#f6f9ff] border-b border-blue-100">
@@ -121,5 +118,7 @@
         </div>
     </div>
 
-    <x-admin.pagination :paginator="$companyRequests" />
+    <div data-live-filter-results>
+        <x-admin.pagination :paginator="$companyRequests" />
+    </div>
 @endsection
