@@ -141,7 +141,7 @@ class CompanyRegistrationPendingInfoTest extends TestCase
 
         // Subjek memakai pola Pusat Bantuan + kategori akun existing.
         $this->assertStringContainsString(
-            '[Pusat Bantuan ApexForge Labs][' . HelpContactRequest::categoryLabel(HelpContactRequest::CATEGORY_AKUN) . '] Verifikasi Pendaftaran Akun Perusahaan',
+            '[Pusat Bantuan Vexus][' . HelpContactRequest::categoryLabel(HelpContactRequest::CATEGORY_AKUN) . '] Verifikasi Pendaftaran Akun Perusahaan',
             $decodedMailto
         );
 

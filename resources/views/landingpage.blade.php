@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @include('partials.theme-boot')
 
-    <title>ApexForge Labs — Marketplace Freelance Indonesia</title>
+    <title>Vexus — Marketplace Freelance Indonesia</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -24,10 +24,10 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
         :root {
-            --af-primary: #2563eb;
-            --af-primary-dark: #1d4ed8;
-            --af-sky: #38bdf8;
-            --af-page: #f6f9ff;
+            --vx-primary: #2563eb;
+            --vx-primary-dark: #1d4ed8;
+            --vx-sky: #38bdf8;
+            --vx-page: #f6f9ff;
         }
 
         html {
@@ -58,18 +58,18 @@
         }
     </style>
 
-    <!-- ApexForge UI -->
+    <!-- Vexus UI -->
     <style>
         :root {
-            --af-primary: #2563eb;
-            --af-primary-dark: #1d4ed8;
-            --af-primary-soft: #eff6ff;
-            --af-sky: #38bdf8;
-            --af-ink: #0f172a;
-            --af-muted: #64748b;
-            --af-border: #dbeafe;
-            --af-surface: #ffffff;
-            --af-page: #f6f9ff;
+            --vx-primary: #2563eb;
+            --vx-primary-dark: #1d4ed8;
+            --vx-primary-soft: #eff6ff;
+            --vx-sky: #38bdf8;
+            --vx-ink: #0f172a;
+            --vx-muted: #64748b;
+            --vx-border: #dbeafe;
+            --vx-surface: #ffffff;
+            --vx-page: #f6f9ff;
         }
 
         html {
@@ -90,7 +90,7 @@
                     rgba(37, 99, 235, .08),
                     transparent 28%
                 ),
-                var(--af-page);
+                var(--vx-page);
         }
 
         ::selection {
@@ -119,7 +119,7 @@
         input,
         select,
         textarea {
-            border-color: var(--af-border) !important;
+            border-color: var(--vx-border) !important;
             background: rgba(255, 255, 255, .92);
 
             transition:
@@ -261,10 +261,10 @@
             <!-- Brand -->
             <a href="{{ route('landing') }}" class="flex items-center gap-2.5 sm:gap-3 group">
                 <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl overflow-hidden ring-2 ring-blue-100 dark:ring-slate-700 group-hover:ring-blue-400 transition-all shadow-xs">
-                    <img src="{{ asset('images/nexus.jpg') }}" alt="ApexForge Labs" class="w-full h-full object-cover">
+                    <img src="{{ asset('images/vexus.jpg') }}" alt="Vexus" class="w-full h-full object-cover">
                 </div>
                 <span class="font-extrabold text-base sm:text-xl tracking-tight text-slate-900 dark:text-white group-hover:text-blue-600 transition">
-                    ApexForge Labs
+                    Vexus
                 </span>
             </a>
 
@@ -402,7 +402,7 @@
                     </h1>
 
                     <p class="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl font-medium">
-                        ApexForge Labs mempertemukan <strong>freelancer berbakat</strong> dengan
+                        Vexus mempertemukan <strong>freelancer berbakat</strong> dengan
                         <strong>perusahaan terpercaya</strong> untuk menggarap proyek digital secara transparan,
                         efisien, dan profesional.
                     </p>
@@ -975,7 +975,7 @@
 
                 <p class="text-blue-100 mt-4 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto">
                     Senang melihat Anda kembali di
-                    <strong class="text-white">ApexForge Labs</strong>.
+                    <strong class="text-white">Vexus</strong>.
                     Lanjutkan perjalanan Anda dan temukan peluang baru hari ini.
                 </p>
 
@@ -1013,7 +1013,7 @@
                 </h2>
 
                 <p class="text-blue-100 mt-4 text-sm sm:text-base leading-relaxed">
-                    Bergabunglah bersama ribuan talenta digital dan perusahaan di platform ApexForge Labs sekarang juga.
+                    Bergabunglah bersama ribuan talenta digital dan perusahaan di platform Vexus sekarang juga.
                 </p>
 
                 <div class="flex flex-wrap justify-center gap-4 mt-8">

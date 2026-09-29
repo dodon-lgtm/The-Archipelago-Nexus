@@ -163,7 +163,7 @@
                                 <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Rekening/Wallet Tujuan yang Dipakai</p>
                                 <div class="mt-2 bg-[#f6f9ff] rounded-xl p-4 border border-blue-100 space-y-2">
                                     <p class="text-xs font-bold text-slate-800 mb-1">
-                                        <i class="fa-solid fa-building-columns mr-1.5 text-brand"></i>{{ $destInfo['title'] ?? 'ApexForge Labs' }} — {{ $destInfo['label'] ?? '' }}
+                                        <i class="fa-solid fa-building-columns mr-1.5 text-brand"></i>{{ $destInfo['title'] ?? 'Vexus' }} — {{ $destInfo['label'] ?? '' }}
                                     </p>
                                     @foreach(($destInfo['rows'] ?? []) as $label => $value)
                                         <div class="flex items-center justify-between gap-4">

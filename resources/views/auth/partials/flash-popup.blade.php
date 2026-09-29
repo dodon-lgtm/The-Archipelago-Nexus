@@ -1,5 +1,5 @@
 {{-- ============================================================
-    ApexForge Labs — Flash Popup (success / error)
+    Vexus — Flash Popup (success / error)
     LOCAL komponenta auth — bukan sistem global project.
     Replace alert()/confirm() inline bar dengan popup modern.
     Responsive + dark mode + animasi masuk/keluar ringan.

@@ -176,7 +176,7 @@
                                         </div>
                                         <h3 class="font-bold text-slate-800 dark:text-slate-100 text-sm">Bayar Manual</h3>
                                         <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">
-                                            Transfer ke rekening/wallet ApexForge Labs, lalu kirim bukti pembayaran untuk diverifikasi Admin.
+                                            Transfer ke rekening/wallet Vexus, lalu kirim bukti pembayaran untuk diverifikasi Admin.
                                         </p>
 
                                         {{-- Draft otomatis (localStorage, key co:quota-payment:<payment id>). --}}
@@ -199,7 +199,7 @@
                                                                 <i class="fa-solid {{ $destination['icon'] ?? 'fa-money-bill-transfer' }}"></i>
                                                             </div>
                                                             <div>
-                                                                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{{ $destination['title'] ?? 'ApexForge Labs' }}</p>
+                                                                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{{ $destination['title'] ?? 'Vexus' }}</p>
                                                                 <h4 class="font-bold text-slate-800 dark:text-white text-xs">{{ $destination['label'] ?? 'Manual' }}</h4>
                                                             </div>
                                                         </div>
@@ -284,7 +284,7 @@
 
                                             <div class="flex items-start gap-3 px-4 py-3 bg-blue-50 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-800/60 rounded-xl text-xs text-slate-600 dark:text-slate-300">
                                                 <i class="fa-solid fa-shield-halved mt-0.5 text-brand"></i>
-                                                <span>Setelah dikirim, pembayaran berstatus <strong>Menunggu Verifikasi</strong>. Admin ApexForge Labs akan memverifikasi, lalu slot kuota tambahan aktif otomatis.</span>
+                                                <span>Setelah dikirim, pembayaran berstatus <strong>Menunggu Verifikasi</strong>. Admin Vexus akan memverifikasi, lalu slot kuota tambahan aktif otomatis.</span>
                                             </div>
 
                                             <button type="submit"

@@ -41,7 +41,7 @@
                 </h3>
                 <p class="mt-1 text-sm leading-6 text-slate-500 dark:text-slate-300">
                     Lengkapi formulir di bawah. Pesan akan dikirim langsung ke
-                    tim ApexForge Labs dan kami akan meninjau serta membalas melalui email Anda.
+                    tim Vexus dan kami akan meninjau serta membalas melalui email Anda.
                 </p>
             </div>
 
@@ -178,7 +178,7 @@
             <div class="mt-7 pt-6 border-t border-slate-100 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <p class="text-xs text-slate-400 dark:text-slate-400 flex items-center gap-1.5">
                     <i class="fa-solid fa-shield-halved text-blue-500 dark:text-blue-400"></i>
-                    Pesan hanya dibaca oleh tim ApexForge Labs.
+                    Pesan hanya dibaca oleh tim Vexus.
                 </p>
 
                 <button type="submit"

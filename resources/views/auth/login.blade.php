@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Masuk ke Akun - ApexForge Labs</title>
+    <title>Masuk ke Akun - Vexus</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -25,17 +25,17 @@
     </style>
 <style>
 
-/* ApexForge Labs — Unified UI System */
+/* Vexus — Unified UI System */
 :root{
-    --af-primary:#2563eb;
-    --af-primary-dark:#1d4ed8;
-    --af-primary-soft:#eff6ff;
-    --af-sky:#38bdf8;
-    --af-ink:#0f172a;
-    --af-muted:#64748b;
-    --af-border:#dbeafe;
-    --af-surface:#ffffff;
-    --af-page:#f6f9ff;
+    --vx-primary:#2563eb;
+    --vx-primary-dark:#1d4ed8;
+    --vx-primary-soft:#eff6ff;
+    --vx-sky:#38bdf8;
+    --vx-ink:#0f172a;
+    --vx-muted:#64748b;
+    --vx-border:#dbeafe;
+    --vx-surface:#ffffff;
+    --vx-page:#f6f9ff;
 }
 html{scroll-behavior:smooth}
 body{
@@ -43,7 +43,7 @@ body{
     background:
         radial-gradient(circle at 10% -10%,rgba(56,189,248,.10),transparent 30%),
         radial-gradient(circle at 100% 0%,rgba(37,99,235,.08),transparent 28%),
-        var(--af-page);
+        var(--vx-page);
 }
 ::selection{background:rgba(37,99,235,.18);color:#0f172a}
 ::-webkit-scrollbar{width:7px;height:7px}
@@ -52,7 +52,7 @@ body{
 ::-webkit-scrollbar-thumb:hover{background:rgba(37,99,235,.38)}
 
 input,select,textarea{
-    border-color:var(--af-border)!important;
+    border-color:var(--vx-border)!important;
     background:rgba(255,255,255,.92);
     transition:border-color .2s ease,box-shadow .2s ease,background .2s ease;
 }
@@ -125,10 +125,10 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                 <!-- Header Brand -->
                 <div class="flex items-center gap-3">
                     <div class="w-9 h-9 bg-slate-900 text-white rounded-xl flex items-center justify-center font-bold text-xs shadow-md shadow-slate-900/20 overflow-hidden ring-2 ring-slate-900/10">
-                        <img src="{{ asset('images/nexus.jpg') }}" alt="ApexForge Labs Logo" class="w-7 h-7 rounded-full object-cover">
+                        <img src="{{ asset('images/vexus.jpg') }}" alt="Vexus Logo" class="w-7 h-7 rounded-full object-cover">
                     </div>
                     <span class="font-extrabold text-base tracking-tight text-slate-900">
-                        ApexForge Labs
+                        Vexus
                     </span>
                 </div>
 
@@ -147,7 +147,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                         <br>
                         di 
                         <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
-                            ApexForge Labs
+                            Vexus
                         </span>
                     </h1>
 
@@ -208,13 +208,13 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
             <div class="text-center space-y-2 relative z-10">
                 <div class="w-14 h-14 bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl mx-auto flex items-center justify-center shadow-inner overflow-hidden">
                     <div class="w-9 h-9 bg-gradient-to-br from-slate-800 to-black rounded-xl shadow-md flex items-center justify-center overflow-hidden ring-1 ring-white/10">
-                        <img src="{{ asset('images/nexus.jpg') }}" alt="ApexForge Labs Logo" class="w-6 h-6 rounded-full object-cover">
+                        <img src="{{ asset('images/vexus.jpg') }}" alt="Vexus Logo" class="w-6 h-6 rounded-full object-cover">
                     </div>
                 </div>
 
                 <div>
                     <h2 class="font-extrabold text-base tracking-wide text-white">
-                       ApexForge <span class="text-blue-400">Labs</span>
+                       Vexus
                     </h2>
                     <p class="text-[11px] text-slate-400 font-medium mt-0.5">
                         Masuk ke akun untuk melanjutkan
@@ -250,10 +250,10 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                             \App\Http\Requests\HelpContactRequest::CATEGORY_AKUN
                         );
 
-                        $helpSubject = '[Pusat Bantuan ApexForge Labs][' . $helpCategoryLabel . '] Verifikasi Pendaftaran Akun Perusahaan';
+                        $helpSubject = '[Pusat Bantuan Vexus][' . $helpCategoryLabel . '] Verifikasi Pendaftaran Akun Perusahaan';
 
                         $helpMessage = implode("\n", [
-                            'Halo Tim ApexForge Labs,',
+                            'Halo Tim Vexus,',
                             '',
                             'Saya telah melakukan pendaftaran sebagai akun perusahaan dan ingin menanyakan status verifikasi akun saya.',
                             '',
@@ -451,7 +451,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                 Dengan masuk, Anda menyetujui
                 <a href="{{ route('syarat-ketentuan') }}" target="_blank" class="text-blue-400 hover:text-blue-300 underline font-medium">Syarat & Ketentuan</a>,
                 <a href="{{ route('kebijakan-privasi') }}" target="_blank" class="text-blue-400 hover:text-blue-300 underline font-medium">Kebijakan Privasi</a>,
-                dan <a href="{{ route('kebijakan-penggunaan') }}" target="_blank" class="text-blue-400 hover:text-blue-300 underline font-medium">Kebijakan Penggunaan</a> ApexForge Labs.
+                dan <a href="{{ route('kebijakan-penggunaan') }}" target="_blank" class="text-blue-400 hover:text-blue-300 underline font-medium">Kebijakan Penggunaan</a> Vexus.
             </div>
 
             <!-- REGISTER -->

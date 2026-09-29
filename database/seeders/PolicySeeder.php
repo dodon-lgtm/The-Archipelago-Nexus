@@ -21,7 +21,7 @@ class PolicySeeder extends Seeder
                 'version'   => '1.0',
                 'is_active' => true,
                 'content'   => implode("\n\n", [
-                    'ApexForge Labs menghargai dan melindungi privasi Anda. Data pribadi seperti nama, email, nomor telepon, dan informasi profil hanya digunakan untuk keperluan identifikasi, komunikasi terkait proyek, verifikasi akun, serta peningkatan kualitas layanan.',
+                    'Vexus menghargai dan melindungi privasi Anda. Data pribadi seperti nama, email, nomor telepon, dan informasi profil hanya digunakan untuk keperluan identifikasi, komunikasi terkait proyek, verifikasi akun, serta peningkatan kualitas layanan.',
                     'Kami tidak akan membagikan, menjual, atau menyewakan data pribadi Anda kepada pihak ketiga tanpa persetujuan, kecuali diwajibkan oleh hukum yang berlaku. Seluruh data disimpan secara aman dan hanya dapat diakses oleh pihak yang berwenang.',
                     'Anda berhak untuk memperbarui, memperbaiki, atau menghapus data pribadi Anda melalui fitur pengaturan profil. Dengan menggunakan platform ini, Anda menyetujui pemrosesan data sebagaimana dijelaskan dalam kebijakan ini.',
                 ]),
@@ -33,10 +33,10 @@ class PolicySeeder extends Seeder
                 'version'   => '1.0',
                 'is_active' => true,
                 'content'   => implode("\n\n", [
-                    'Dengan mendaftar dan menggunakan layanan ApexForge Labs, Anda menyatakan telah membaca, memahami, dan menyetujui Syarat & Ketentuan ini.',
+                    'Dengan mendaftar dan menggunakan layanan Vexus, Anda menyatakan telah membaca, memahami, dan menyetujui Syarat & Ketentuan ini.',
                     'Pengguna wajib memberikan informasi yang benar, akurat, dan tidak menyesatkan saat mendaftar. Setiap akun bersifat pribadi dan tidak boleh digunakan oleh pihak lain tanpa izin.',
                     'Dilarang menggunakan platform untuk aktivitas ilegal, penipuan, spam, penyebaran konten melanggar hukum, serta tindakan yang merugikan pengguna lain atau platform.',
-                    'ApexForge Labs berhak meninjau, menunda, atau menolak layanan apabila ditemukan indikasi pelanggaran atas ketentuan ini.',
+                    'Vexus berhak meninjau, menunda, atau menolak layanan apabila ditemukan indikasi pelanggaran atas ketentuan ini.',
                     'Ketentuan ini dapat diperbarui dari waktu ke waktu. Versi terbaru akan diberlakukan sejak tanggal efektif yang tercantum di dokumen ini.',
                 ]),
             ],
@@ -49,7 +49,7 @@ class PolicySeeder extends Seeder
                 'content'   => implode("\n\n", [
                     'Pengguna wajib memberikan informasi yang benar, akurat, dan tidak menyesatkan saat mendaftar atau menggunakan layanan. Setiap akun bersifat pribadi dan tidak boleh digunakan oleh pihak lain tanpa izin.',
                     'Dilarang menggunakan platform untuk aktivitas ilegal, penipuan, spam, penyebaran konten melanggar hukum, serta tindakan yang merugikan pengguna lain atau platform. Pelanggaran dapat berakibat pada pemblokiran atau penghapusan akun.',
-                    'Seluruh transaksi, negosiasi, dan interaksi antar pengguna dilakukan secara mandiri di dalam platform yang aman. ApexForge Labs berhak meninjau, menunda, atau menolak layanan apabila ditemukan indikasi pelanggaran atas kebijakan ini.',
+                    'Seluruh transaksi, negosiasi, dan interaksi antar pengguna dilakukan secara mandiri di dalam platform yang aman. Vexus berhak meninjau, menunda, atau menolak layanan apabila ditemukan indikasi pelanggaran atas kebijakan ini.',
                 ]),
             ],
         ];

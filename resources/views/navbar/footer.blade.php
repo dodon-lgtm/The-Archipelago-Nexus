@@ -1,4 +1,4 @@
-{{-- ApexForge Labs — Shared UI polish --}}
+{{-- Vexus — Shared UI polish --}}
 <footer class="w-full bg-white dark:bg-slate-900 border-t border-blue-50 dark:border-slate-800 relative overflow-hidden transition-colors duration-300">
 
     {{-- Futuristic Ambient Lighting on Footer --}}
@@ -18,7 +18,7 @@
                     </div>
 
                     <span class="font-black text-lg text-blue-950 dark:text-white tracking-tight">
-                        ApexForge<span class="text-blue-600 dark:text-blue-400">Labs</span>
+                        Vexus
                     </span>
                 </div>
 
@@ -131,7 +131,7 @@
         <div class="mt-12 pt-6 border-t border-blue-50 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-3 text-xs font-semibold text-blue-400 dark:text-slate-400 text-center sm:text-left">
 
             <p>
-                {{ $footerSettings->copyright_text ?: '© 2026 ApexForge Labs. Hak Cipta Dilindungi.' }}
+                {{ $footerSettings->copyright_text ?: '© 2026 Vexus. Hak Cipta Dilindungi.' }}
             </p>
 
             <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">

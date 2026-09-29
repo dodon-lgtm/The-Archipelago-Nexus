@@ -90,7 +90,7 @@ class FreelancerFormDraftAutosaveTest extends TestCase
         $response->assertSee('data-draft-key="fl:profile:' . $this->freelancer->id . '"', false);
         // Halaman Freelancer memakai namespace default → namespace Company
         // (dipakai halaman Company) tidak boleh muncul di sini.
-        $response->assertDontSee('apexforge.co.draft.v1', false);
+        $response->assertDontSee('vexus.co.draft.v1', false);
     }
 
     public function test_halaman_penawaran_memuat_draft_termasuk_hidden_harga(): void
@@ -161,7 +161,7 @@ class FreelancerFormDraftAutosaveTest extends TestCase
 
     /**
      * Sejak draft Company ditambahkan, halaman Company MEMANG memuat engine —
-     * tetapi dengan namespace localStorage terpisah (apexforge.co.draft.v1:)
+     * tetapi dengan namespace localStorage terpisah (vexus.co.draft.v1:)
      * dan key berawalan "co:". Namespace/key Freelancer tetap tidak boleh ikut.
      */
     public function test_halaman_workspace_company_memuat_engine_dengan_namespace_terpisah(): void
@@ -172,10 +172,10 @@ class FreelancerFormDraftAutosaveTest extends TestCase
         $response->assertOk();
 
         $response->assertSee('js/form-draft-autosave.js', false);
-        $response->assertSee('data-draft-namespace="apexforge.co.draft.v1:"', false);
+        $response->assertSee('data-draft-namespace="vexus.co.draft.v1:"', false);
 
         // Namespace & atribut draft yang khusus Freelancer tidak boleh muncul.
-        $response->assertDontSee('apexforge.fl.draft.v1', false);
+        $response->assertDontSee('vexus.fl.draft.v1', false);
         $response->assertDontSee('data-draft-key="fl:ws-addstage:' . $this->workspace->id . '"', false);
         $response->assertDontSee('data-draft-key="fl:ws-modal:' . $this->workspace->id . '"', false);
         $response->assertDontSee('data-draft-key="fl:ws-note:' . $this->workspace->id . '"', false);

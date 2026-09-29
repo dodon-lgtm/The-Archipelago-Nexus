@@ -18,7 +18,7 @@ use Tests\TestCase;
  *
  * Kontrak server-side yang dijaga di sini:
  *  - halaman Company memuat engine draft DENGAN namespace terpisah
- *    (data-draft-namespace="apexforge.co.draft.v1:") dan key berawalan "co:";
+ *    (data-draft-namespace="vexus.co.draft.v1:") dan key berawalan "co:";
  *  - form Company yang relevan (proyek, profil, laporan, ulasan, pembayaran,
  *    workspace) sudah ditandai data-draft-form + data-draft-key yang benar;
  *  - halaman Company tidak pernah memuat key/namespace milik Freelancer
@@ -35,10 +35,10 @@ class CompanyFormDraftAutosaveTest extends TestCase
     use RefreshDatabase;
 
     /** Namespace localStorage engine untuk halaman Company. */
-    private const CO_NS = 'apexforge.co.draft.v1:';
+    private const CO_NS = 'vexus.co.draft.v1:';
 
     /** Namespace localStorage engine untuk halaman Freelancer. */
-    private const FL_NS = 'apexforge.fl.draft.v1:';
+    private const FL_NS = 'vexus.fl.draft.v1:';
 
     private User $company;
     private User $freelancer;

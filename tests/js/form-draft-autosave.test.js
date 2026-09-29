@@ -24,7 +24,7 @@ const ENGINE_PATH = path.resolve(HERE, '..', '..', 'public', 'js', 'form-draft-a
 const ENGINE_SRC = fs.readFileSync(ENGINE_PATH, 'utf8');
 
 /** Namespace localStorage milik engine (lihat konstanta NS di engine). */
-const NS = 'apexforge.fl.draft.v1:';
+const NS = 'vexus.fl.draft.v1:';
 const INDEX_KEY = NS + '__index__';
 
 /** Jalankan engine di sandbox vm memakai DOM tiruan. */
@@ -448,7 +448,7 @@ describe('Lapisan storage (localStorage)', () => {
 
 
 describe('Namespace storage per role', () => {
-    const CO_NS = 'apexforge.co.draft.v1:';
+    const CO_NS = 'vexus.co.draft.v1:';
 
     /** Boot engine dengan penanda namespace pada <script> pemuat draft. */
     function bootWithNamespace(namespace) {
@@ -489,7 +489,7 @@ describe('Namespace storage per role', () => {
     });
 
     it('menambahkan tanda ":" & mengabaikan nilai namespace yang tidak valid', () => {
-        assert.equal(bootWithNamespace('apexforge.co.draft.v2').api._internals.NS, 'apexforge.co.draft.v2:');
+        assert.equal(bootWithNamespace('vexus.co.draft.v2').api._internals.NS, 'vexus.co.draft.v2:');
         assert.equal(bootWithNamespace('bad namespace!').api._internals.NS, NS);
         assert.equal(bootWithNamespace('').api._internals.NS, NS);
     });
@@ -734,7 +734,7 @@ describe('Perilaku engine saat halaman dibuka', () => {
  * perantara sekarang mendeklarasikan data-draft-keep-pending.
  */
 describe('Company: draft co:project-create bertahan lewat alur pembayaran kuota', () => {
-    const CO_NS = 'apexforge.co.draft.v1:';
+    const CO_NS = 'vexus.co.draft.v1:';
     const CO_INDEX = CO_NS + '__index__';
     const CREATE_PATH = '/company/projects/create';
     const GATEWAY_PATH = '/company/quota-payment/52';

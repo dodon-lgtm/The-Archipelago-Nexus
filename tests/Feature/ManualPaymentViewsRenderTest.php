@@ -138,7 +138,7 @@ class ManualPaymentViewsRenderTest extends TestCase
             'destination_info'     => [
                 'title' => 'BANK',
                 'label' => 'Transfer Bank',
-                'rows'  => ['Nama Bank' => 'Bank Central Asia', 'Nomor Rekening' => '1234567890', 'Atas Nama' => 'PT ApexForge Labs'],
+                'rows'  => ['Nama Bank' => 'Bank Central Asia', 'Nomor Rekening' => '1234567890', 'Atas Nama' => 'PT Vexus'],
             ],
             'status'               => 'waiting_verification',
         ]);

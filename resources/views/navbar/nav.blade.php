@@ -1,5 +1,5 @@
 {{-- =========================================================
-    APEXFORGE LABS — SHARED NAVBAR
+    VEXUS — SHARED NAVBAR
     Support: Guest, Freelancer, Company, Admin
 ========================================================= --}}
 

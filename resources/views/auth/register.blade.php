@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Daftar Akun - ApexForge Labs</title>
+    <title>Daftar Akun - Vexus</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -53,17 +53,17 @@
     </style>
 <style>
 
-/* ApexForge Labs — Unified UI System */
+/* Vexus — Unified UI System */
 :root{
-    --af-primary:#2563eb;
-    --af-primary-dark:#1d4ed8;
-    --af-primary-soft:#eff6ff;
-    --af-sky:#38bdf8;
-    --af-ink:#0f172a;
-    --af-muted:#64748b;
-    --af-border:#dbeafe;
-    --af-surface:#ffffff;
-    --af-page:#f6f9ff;
+    --vx-primary:#2563eb;
+    --vx-primary-dark:#1d4ed8;
+    --vx-primary-soft:#eff6ff;
+    --vx-sky:#38bdf8;
+    --vx-ink:#0f172a;
+    --vx-muted:#64748b;
+    --vx-border:#dbeafe;
+    --vx-surface:#ffffff;
+    --vx-page:#f6f9ff;
 }
 html{scroll-behavior:smooth}
 body{
@@ -71,7 +71,7 @@ body{
     background:
         radial-gradient(circle at 10% -10%,rgba(56,189,248,.10),transparent 30%),
         radial-gradient(circle at 100% 0%,rgba(37,99,235,.08),transparent 28%),
-        var(--af-page);
+        var(--vx-page);
 }
 ::selection{background:rgba(37,99,235,.18);color:#0f172a}
 ::-webkit-scrollbar{width:7px;height:7px}
@@ -80,7 +80,7 @@ body{
 ::-webkit-scrollbar-thumb:hover{background:rgba(37,99,235,.38)}
 
 input,select,textarea{
-    border-color:var(--af-border)!important;
+    border-color:var(--vx-border)!important;
     background:rgba(255,255,255,.92);
     transition:border-color .2s ease,box-shadow .2s ease,background .2s ease;
 }
@@ -153,10 +153,10 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                 <!-- Header Brand -->
                 <div class="flex items-center gap-3">
                     <div class="w-9 h-9 bg-slate-900 text-white rounded-xl flex items-center justify-center font-bold text-xs shadow-md shadow-slate-900/20 overflow-hidden ring-2 ring-slate-900/10">
-                        <img src="{{ asset('images/nexus.jpg') }}" alt="ApexForge Labs Logo" class="w-7 h-7 rounded-full object-cover">
+                        <img src="{{ asset('images/vexus.jpg') }}" alt="Vexus Logo" class="w-7 h-7 rounded-full object-cover">
                     </div>
                     <span class="font-extrabold text-base tracking-tight text-slate-900">
-                        ApexForge Labs
+                        Vexus
                     </span>
                 </div>
 
@@ -175,7 +175,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                         <br>
                         Proyek Impian Anda di
                         <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
-                            ApexForge Labs
+                            Vexus
                         </span>
                     </h1>
 
@@ -236,13 +236,13 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
             <div class="text-center space-y-2 relative z-10">
                 <div class="w-14 h-14 bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl mx-auto flex items-center justify-center shadow-inner overflow-hidden">
                     <div class="w-9 h-9 bg-gradient-to-br from-slate-800 to-black rounded-xl shadow-md flex items-center justify-center overflow-hidden ring-1 ring-white/10">
-                        <img src="{{ asset('images/nexus.jpg') }}" alt="ApexForge Labs Logo" class="w-6 h-6 rounded-full object-cover">
+                        <img src="{{ asset('images/vexus.jpg') }}" alt="Vexus Logo" class="w-6 h-6 rounded-full object-cover">
                     </div>
                 </div>
 
                 <div>
                     <h2 class="font-extrabold text-base tracking-wide text-white">
-                        ApexForge<span class="text-blue-400">Labs</span>
+                        Vexus
                     </h2>
                     <p class="text-[11px] text-slate-400 font-medium mt-0.5">
                         Buat akun baru untuk melanjutkan
@@ -431,7 +431,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                 Saya telah membaca dan menyetujui
                                 <button type="button" data-policy-modal="terms" aria-haspopup="dialog" aria-controls="policyModal"
                                     class="text-blue-400 hover:text-blue-300 underline font-medium cursor-pointer bg-transparent border-0 p-0 text-left align-baseline">
-                                    Syarat & Ketentuan ApexForge Labs
+                                    Syarat & Ketentuan Vexus
                                 </button>
                                 {{-- @if($termsPolicy) v{{ $termsPolicy->version }} (berlaku sejak {{ $termsPolicy->updated_at?->translatedFormat('d M Y') }}) @endif --}}
                                 <span class="text-slate-500">*</span>
@@ -458,7 +458,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                 Saya telah membaca dan memahami
                                 <button type="button" data-policy-modal="privacy" aria-haspopup="dialog" aria-controls="policyModal"
                                     class="text-blue-400 hover:text-blue-300 underline font-medium cursor-pointer bg-transparent border-0 p-0 text-left align-baseline">
-                                    Kebijakan Privasi ApexForge Labs
+                                    Kebijakan Privasi Vexus
                                 </button>
                                 {{-- @if($privacyPolicy) v{{ $privacyPolicy->version }} (berlaku sejak {{ $privacyPolicy->updated_at?->translatedFormat('d M Y') }}) @endif --}}
                                 <span class="text-slate-500">*</span>
@@ -486,7 +486,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                 Saya telah membaca dan menyetujui
                                 <button type="button" data-policy-modal="usage" aria-haspopup="dialog" aria-controls="policyModal"
                                     class="text-blue-400 hover:text-blue-300 underline font-medium cursor-pointer bg-transparent border-0 p-0 text-left align-baseline">
-                                    Kebijakan Penggunaan Platform ApexForge Labs
+                                    Kebijakan Penggunaan Platform Vexus
                                 </button>
                                 {{-- v{{ $usagePolicy->version }} (berlaku sejak {{ $usagePolicy->updated_at?->translatedFormat('d M Y') }}) --}}
                                 <span class="text-slate-500">*</span>
@@ -514,7 +514,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                 {{ old('marketing_accepted') ? 'checked' : '' }}
                             >
                             <label for="marketing_accepted" class="text-xs text-slate-300 cursor-pointer leading-relaxed">
-                                Saya ingin menerima informasi, pembaruan, dan penawaran dari ApexForge Labs.
+                                Saya ingin menerima informasi, pembaruan, dan penawaran dari Vexus.
                                 <span class="text-slate-500">(Opsional)</span>
                             </label>
                         </div>
@@ -626,15 +626,15 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
     @php
         $policyModalItems = [
             'terms' => [
-                'label'  => 'Syarat & Ketentuan ApexForge Labs',
+                'label'  => 'Syarat & Ketentuan Vexus',
                 'policy' => $termsPolicy ?? null,
             ],
             'privacy' => [
-                'label'  => 'Kebijakan Privasi ApexForge Labs',
+                'label'  => 'Kebijakan Privasi Vexus',
                 'policy' => $privacyPolicy ?? null,
             ],
             'usage' => [
-                'label'  => 'Kebijakan Penggunaan Platform ApexForge Labs',
+                'label'  => 'Kebijakan Penggunaan Platform Vexus',
                 'policy' => $usagePolicy ?? null,
             ],
         ];
@@ -650,7 +650,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                 <div class="flex items-start justify-between gap-3 px-4 sm:px-6 py-4 border-b border-slate-700/60">
                     <div class="min-w-0">
                         <h3 id="policyModalTitle" class="text-sm font-bold text-white leading-snug">Kebijakan</h3>
-                        <p class="text-[10px] text-slate-400 mt-0.5">ApexForge Labs</p>
+                        <p class="text-[10px] text-slate-400 mt-0.5">Vexus</p>
                     </div>
                     <button type="button" id="policyModalClose" aria-label="Tutup modal kebijakan"
                         class="shrink-0 w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-colors">

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pesan Baru dari Pusat Bantuan - ApexForge Labs</title>
+    <title>Pesan Baru dari Pusat Bantuan - Vexus</title>
 </head>
 
 <body style="margin:0;padding:0;background-color:#eff6ff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
@@ -23,7 +23,7 @@
                                 A
                             </div>
                             <h1 style="margin:0;font-size:22px;font-weight:800;color:#ffffff;letter-spacing:-0.02em;">
-                                ApexForge Labs
+                                Vexus
                             </h1>
                             <p style="margin:6px 0 0;font-size:12px;font-weight:700;color:#bfdbfe;text-transform:uppercase;letter-spacing:0.12em;">
                                 Pusat Bantuan
@@ -38,7 +38,7 @@
                                 PESAN BARU DARI PUSAT BANTUAN
                             </h2>
                             <p style="margin:8px 0 0;font-size:14px;line-height:1.6;color:#64748b;">
-                                Ada pesan baru masuk melalui formulir kontak ApexForge Labs.
+                                Ada pesan baru masuk melalui formulir kontak Vexus.
                                 Berikut rincian pesan dari pengguna.
                             </p>
                         </td>
@@ -102,7 +102,7 @@
                         <td style="padding:24px 32px 32px;">
                             <div style="border-top:1px solid #e2e8f0;padding-top:20px;text-align:center;">
                                 <p style="margin:0;font-size:12px;color:#64748b;line-height:1.7;">
-                                    Email ini dikirim otomatis oleh sistem Pusat Bantuan ApexForge Labs.
+                                    Email ini dikirim otomatis oleh sistem Pusat Bantuan Vexus.
                                 </p>
                                 <p style="margin:4px 0 0;font-size:12px;color:#64748b;line-height:1.7;">
                                     Tekan <strong>Reply</strong> untuk membalas pesan ini — balasan otomatis

@@ -170,7 +170,7 @@ class PaymentController extends Controller
         }
 
         $destinationInfo = [
-            'title' => $destination['title'] ?? 'ApexForge Labs',
+            'title' => $destination['title'] ?? 'Vexus',
             'label' => $destination['label'] ?? '',
             'rows'  => $destination['rows'] ?? [],
         ];
@@ -628,7 +628,7 @@ class PaymentController extends Controller
         }
 
         $destinationInfo = [
-            'title' => $destination['title'] ?? 'ApexForge Labs',
+            'title' => $destination['title'] ?? 'Vexus',
             'label' => $destination['label'] ?? '',
             'rows'  => $destination['rows'] ?? [],
         ];
@@ -944,13 +944,13 @@ class PaymentController extends Controller
     }
 
     /**
-     * Daftar rekening/wallet tujuan pembayaran manual milik platform ApexForge Labs.
-     * Data bersumber dari config/apexforge.php dan TIDAK berasal dari freelancer.
+     * Daftar rekening/wallet tujuan pembayaran manual milik platform Vexus.
+     * Data bersumber dari config/vexus.php dan TIDAK berasal dari freelancer.
 
      * @return array<string, array<string, mixed>>
      */
     private function manualPaymentDestinations(): array
     {
-        return (array) config('apexforge.manual_payment_destinations', []);
+        return (array) config('vexus.manual_payment_destinations', []);
     }
 }

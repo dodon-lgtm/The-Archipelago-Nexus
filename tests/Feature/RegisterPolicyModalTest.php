@@ -86,9 +86,9 @@ class RegisterPolicyModalTest extends TestCase
         $response->assertSee('Berlaku sejak:', false);
 
         // Label judul tiap policy tetap tampil sebagai trigger.
-        $response->assertSee('Syarat & Ketentuan ApexForge Labs', false);
-        $response->assertSee('Kebijakan Privasi ApexForge Labs', false);
-        $response->assertSee('Kebijakan Penggunaan Platform ApexForge Labs', false);
+        $response->assertSee('Syarat & Ketentuan Vexus', false);
+        $response->assertSee('Kebijakan Privasi Vexus', false);
+        $response->assertSee('Kebijakan Penggunaan Platform Vexus', false);
 
         // Checkbox consent tetap ada dan tetap required.
         foreach (['terms_accepted', 'privacy_accepted', 'usage_accepted'] as $field) {

@@ -8,8 +8,8 @@
  *
  * Isolasi antar role: tiap role memakai namespace localStorage sendiri lewat
  * atribut `data-draft-namespace` pada <script> pemuat (lihat partial di atas):
- *   - Freelancer : apexforge.fl.draft.v1:  (default, prefix key "fl:")
- *   - Company    : apexforge.co.draft.v1:  (prefix key "co:")
+ *   - Freelancer : vexus.fl.draft.v1:  (default, prefix key "fl:")
+ *   - Company    : vexus.co.draft.v1:  (prefix key "co:")
  * Jadi draft Company & Freelancer tidak saling menimpa walau engine-nya sama.
  *
  * Halaman Freelancer (form ber-atribut data-draft-form):
@@ -43,7 +43,7 @@
  *   7. data-draft-clear="fl:key"                       → elemen sukses; draft dengan key tsb dihapus
  *   8. data-draft-clear-prefix="fl:prefix:"            → hapus semua draft dengan awalan key tsb
  *   9. window.FormDraftAutosave.restoreForm(form)      → pulihkan draft secara manual (mis. saat modal dibuka)
- *  10. data-draft-namespace="apexforge.co.draft.v1:"   → pada <script> pemuat; ganti namespace storage (isolasi role)
+ *  10. data-draft-namespace="vexus.co.draft.v1:"   → pada <script> pemuat; ganti namespace storage (isolasi role)
  *  11. data-draft-keep-pending="co:project-create"      → pada halaman perantara (mis. gateway
  *      pembayaran kuota): key draft yang pending-nya TIDAK boleh dianggap "submit sukses"
  *      hanya karena user pindah halaman. Draft ikut dipertahankan.
@@ -68,7 +68,7 @@
     // Namespace default = Freelancer (draft lama tetap terbaca). Halaman
     // Company memakai namespace sendiri lewat atribut `data-draft-namespace`
     // pada <script> pemuat: lihat partials/form-draft-autosave.blade.php.
-    var DEFAULT_NS = 'apexforge.fl.draft.v1:';
+    var DEFAULT_NS = 'vexus.fl.draft.v1:';
     var NS = resolveNamespace();
     var INDEX_KEY = NS + '__index__';
     var SCHEMA = 1;
@@ -107,7 +107,7 @@
      * Namespace storage yang dipakai engine.
      *
      * Halaman Company memuat engine lewat partial dengan
-     * `data-draft-namespace="apexforge.co.draft.v1:"`, sehingga draft Company
+     * `data-draft-namespace="vexus.co.draft.v1:"`, sehingga draft Company
      * dan Freelancer tersimpan di namespace terpisah (tidak saling menimpa).
      * Atribut tidak ada / nilainya tidak valid → pakai namespace default.
      */
