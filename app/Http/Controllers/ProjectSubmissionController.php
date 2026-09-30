@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Workspace;
 use App\Models\Message;
+use App\Models\Payment;
 use App\Models\ProjectSubmission;
 use App\Models\SubmissionFile;
 use App\Models\ProgressHistory;
@@ -212,6 +213,23 @@ class ProjectSubmissionController extends Controller
                 ->with('error', 'Pembayaran untuk workspace ini belum lunas. Selesaikan pembayaran terlebih dahulu sebelum menerima hasil pekerjaan.');
         }
 
+        // GUARD (Hardening R-3): payment lama `paid` yang belum pernah ditahan hanya boleh
+        // ditahan otomatis bila nominal penerimaan freelancer valid. Bila
+        // freelancer_receive <= 0, hold() -> release() akan jatuh ke cabang REFUND penuh
+        // (freelancer tidak dibayar, fee platform tidak tercatat) padahal submission dan
+        // workspace sudah dinyatakan selesai. Tolak LEBIH AWAL: tanpa hold/release, tanpa
+        // perubahan submission/workspace, dan tanpa ledger baru.
+        if (
+            $workspacePayment
+            && $workspacePayment->status === 'paid'
+            && $workspacePayment->funds_status === Payment::FUNDS_NOT_APPLICABLE
+            && (float) $workspacePayment->freelancer_receive <= 0
+        ) {
+            return redirect()
+                ->route('company.workspaces.show', $workspace)
+                ->with('error', 'Pembayaran untuk workspace ini tidak dapat diproses otomatis karena nominal penerimaan freelancer tidak valid (Rp 0). Dana belum ditahan dan tidak ada dana yang dirilis. Pembayaran ini perlu ditangani melalui resolusi admin — silakan hubungi admin untuk penyelesaian.');
+        }
+
         DB::beginTransaction();
 
         try {
@@ -228,16 +246,36 @@ class ProjectSubmissionController extends Controller
             // RELEASE dana tertahan (escrow) — idempotent, hanya sekali.
             // Dana held/disputed menjadi released + ledger escrow_released + fee_earned.
             $payment = $workspace->payment;
-            if ($payment && $payment->status === 'paid' && $payment->isFundsHeld()) {
-                app(EscrowService::class)->release(
-                    payment: $payment,
-                    report: null,
-                    description: 'Dana proyek dirilis ke freelancer karena proyek selesai/disetujui.',
-                    createdBy: Auth::id(),
-                );
 
-                // Refresh agar funds_status/released_amount terbaru dipakai di pesan.
-                $payment->refresh();
+            if ($payment && $payment->status === 'paid') {
+                $escrowService = app(EscrowService::class);
+
+                // Payment lunas dari data lama (dibuat/verifikasi sebelum fitur escrow aktif)
+                // bisa berstatus funds_status = not_applicable. TAHAN dulu dananya agar tidak
+                // terjebak tanpa jalur rilis, lalu rilis seperti alur normal (idempotent:
+                // hold() no-op bila dana sudah held/disputed/resolved).
+                if ($payment->funds_status === Payment::FUNDS_NOT_APPLICABLE) {
+                    $escrowService->hold(
+                        payment: $payment,
+                        description: 'Dana proyek ditahan (escrow) sebelum hasil pekerjaan diterima.',
+                        createdBy: Auth::id(),
+                    );
+
+                    // hold() membaca ulang baris payment via lockForUpdate -> refresh state lokal.
+                    $payment->refresh();
+                }
+
+                if ($payment->isFundsHeld()) {
+                    $escrowService->release(
+                        payment: $payment,
+                        report: null,
+                        description: 'Dana proyek dirilis ke freelancer karena proyek selesai/disetujui.',
+                        createdBy: Auth::id(),
+                    );
+
+                    // Refresh agar funds_status/released_amount terbaru dipakai di pesan.
+                    $payment->refresh();
+                }
             }
 
             // Buat Progress History penyelesaian (100%)

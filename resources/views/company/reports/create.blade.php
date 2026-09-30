@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @include('partials.theme-boot')
-    <title>Buat Laporan - ApexForge Labs</title>
+    <title>Buat Laporan - Vexus</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -34,24 +34,24 @@
     
     <style>
         :root {
-            --af-primary: #2563eb;
-            --af-primary-dark: #1d4ed8;
-            --af-primary-soft: #eff6ff;
-            --af-sky: #38bdf8;
-            --af-page-light: #f8fafc;
-            --af-page-dark: #090d16;
+            --vx-primary: #2563eb;
+            --vx-primary-dark: #1d4ed8;
+            --vx-primary-soft: #eff6ff;
+            --vx-sky: #38bdf8;
+            --vx-page-light: #f8fafc;
+            --vx-page-dark: #090d16;
         }
 
         html { scroll-behavior: smooth; }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--af-page-light);
+            background-color: var(--vx-page-light);
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         .dark body {
-            background-color: var(--af-page-dark);
+            background-color: var(--vx-page-dark);
         }
 
         /* Custom Ambient Background Elements */

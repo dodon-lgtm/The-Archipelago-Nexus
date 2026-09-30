@@ -64,7 +64,7 @@
                             <p class="text-sm font-bold text-slate-800 mt-0.5">Rp {{ number_format($payment->amount, 0, ',', '.') }}</p>
                         </div>
                         <div>
-                            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Biaya Platform (5%)</p>
+                            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Biaya Platform{{ ($payment->platform_fee_rate !== null && $payment->platform_fee_rate !== '') ? ' (' . rtrim(rtrim(number_format((float) $payment->platform_fee_rate, 2, '.', ''), '0'), '.') . '%)' : '' }}</p>
                             <p class="text-sm font-semibold text-slate-700 mt-0.5">Rp {{ number_format($payment->platform_fee, 0, ',', '.') }}</p>
                         </div>
                         <div>
@@ -163,7 +163,7 @@
                                 <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Rekening/Wallet Tujuan yang Dipakai</p>
                                 <div class="mt-2 bg-[#f6f9ff] rounded-xl p-4 border border-blue-100 space-y-2">
                                     <p class="text-xs font-bold text-slate-800 mb-1">
-                                        <i class="fa-solid fa-building-columns mr-1.5 text-brand"></i>{{ $destInfo['title'] ?? 'ApexForge Labs' }} — {{ $destInfo['label'] ?? '' }}
+                                        <i class="fa-solid fa-building-columns mr-1.5 text-brand"></i>{{ $destInfo['title'] ?? 'Vexus' }} — {{ $destInfo['label'] ?? '' }}
                                     </p>
                                     @foreach(($destInfo['rows'] ?? []) as $label => $value)
                                         <div class="flex items-center justify-between gap-4">
@@ -202,8 +202,16 @@
             </div>
         @endif
 
-        {{-- Actions (Mencakup status pending, waiting_verification, & menunggu_verifikasi) --}}
-        @if(in_array(strtolower($payment->status), ['pending', 'waiting_verification', 'menunggu_verifikasi']))
+        {{-- Actions (M-1 Opsi B) — scope status DIPISAH per jenis payment:
+             • KUOTA     : pending & waiting_verification (perilaku existing)
+             • WORKSPACE : HANYA waiting_verification (company wajib sudah kirim bukti) --}}
+        @php
+            $paymentStatusLower = strtolower((string) $payment->status);
+            $canProcessPayment = $payment->isQuotaPayment()
+                ? in_array($paymentStatusLower, ['pending', 'waiting_verification', 'menunggu_verifikasi'], true)
+                : in_array($paymentStatusLower, ['waiting_verification', 'menunggu_verifikasi'], true);
+        @endphp
+        @if($canProcessPayment)
             <div class="bg-white border border-blue-100 rounded-2xl shadow-sm overflow-hidden">
                 <div class="px-6 py-5 border-b border-blue-50">
                     <h2 class="font-bold text-slate-800">Aksi Verifikasi</h2>
@@ -264,6 +272,26 @@
                     </form>
                 </div>
             </div>
+        @else
+            {{-- M-1 (Opsi B): payment PROYEK dengan status `pending` — bukti transfer belum
+                 dikirim company, jadi Admin belum boleh memverifikasi/menolak. Panel aksi
+                 disembunyikan; sebabnya dijelaskan agar tidak tampak "hilang begitu saja". --}}
+            @if(!$payment->isQuotaPayment() && $paymentStatusLower === 'pending')
+                <div class="bg-white border border-amber-200 rounded-2xl shadow-sm overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex items-start gap-3 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-700">
+                            <i class="fa-solid fa-clock mt-0.5"></i>
+                            <span>
+                                Aksi <span class="font-bold">Verifikasi</span> dan
+                                <span class="font-bold">Tolak</span> baru tersedia setelah
+                                perusahaan mengunggah bukti pembayaran (status berubah menjadi
+                                <span class="font-bold">Menunggu Verifikasi</span>). Pembayaran ini masih
+                                <span class="font-bold">pending</span> — dana belum dibayarkan sehingga belum ada yang dapat diverifikasi.
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            @endif
         @endif
 
         {{-- Info jika sudah diverifikasi --}}

@@ -9,7 +9,7 @@
     {{-- Script Inisialisasi Dark Mode --}}
     
 
-    <title>Proyek Tersimpan | ApexForge Labs</title>
+    <title>Proyek Tersimpan | Vexus</title>
 
     @vite('resources/css/app.css')
 

@@ -55,7 +55,10 @@ class ManualPaymentDemoTest extends TestCase
         return $company;
     }
 
-    /** Payment proyek pending + workspace milik company. */
+    /**
+     * Payment proyek pending + workspace milik company (model fee REVISI #5:
+     * $amount = nilai pekerjaan, fee 5% ditambahkan di atas).
+     */
     private function createPendingWorkspacePayment(float $amount = 1000000.00): array
     {
         $company    = $this->approvedCompany('PT Pemilik Workspace');
@@ -69,15 +72,16 @@ class ManualPaymentDemoTest extends TestCase
             'status'        => 'Menunggu Pembayaran',
         ]);
 
-        $platformFee       = round($amount * 5 / 100, 2);
-        $freelancerReceive = round($amount - $platformFee, 2);
+        $freelancerReceive = round($amount, 2);
+        $platformFee       = round($freelancerReceive * 5 / 100, 2);
+        $total             = round($freelancerReceive + $platformFee, 2);
 
         $payment = Payment::create([
             'workspace_id'       => $workspace->id,
             'company_id'         => $company->id,
             'freelancer_id'      => $freelancer->id,
             'invoice_number'     => 'INV-' . now()->format('Ymd') . '-' . uniqid(),
-            'amount'             => $amount,
+            'amount'             => $total,
             'platform_fee'       => $platformFee,
             'platform_fee_rate'  => 5.00,
             'freelancer_receive' => $freelancerReceive,
@@ -126,7 +130,7 @@ class ManualPaymentDemoTest extends TestCase
         // Nominal tetap dari DATABASE, tidak dari request.
         $payment->refresh();
         $this->assertEquals('paid', $payment->status);
-        $this->assertEquals(1000000.00, (float) $payment->amount);
+        $this->assertEquals(1050000.00, (float) $payment->amount);
 
         // Escrow ditahan SEKALI; belum ada income platform.
         $this->assertSame(1, WalletLedger::where('type', WalletLedger::TYPE_ESCROW_HELD)->count());

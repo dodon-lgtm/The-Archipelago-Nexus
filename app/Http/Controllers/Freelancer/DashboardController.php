@@ -8,6 +8,7 @@ use App\Models\Message;
 use App\Models\Notification;
 use App\Models\Project;
 use App\Models\Penawaran;
+use App\Models\Workspace;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
@@ -59,6 +60,34 @@ class DashboardController extends Controller
         // freelancer membuka room chat di halaman Workspace.
         $unreadMessagesCount = Message::unreadIncomingFor((int) Auth::id())->count();
 
+        // ── Pekerjaan Aktif (ringkasan workspace freelancer) ────────────────
+        // Sumber data & status memakai sistem existing (project_workspaces).
+        // Ownership: HANYA workspace milik freelancer yang login.
+        // Status 'Selesai' dikecualikan karena bukan pekerjaan aktif lagi.
+        // Urutan: prioritas tindakan freelancer (terlambat & revisi lebih dulu),
+        // lalu aktivitas terbaru. Progress & tahap dihitung dari method model
+        // existing (currentProgress/currentStage/completedStageCount), bukan
+        // perhitungan manual di view.
+        $activeWorkspaces = Workspace::with(['project', 'company'])
+            ->where('freelancer_id', Auth::id())
+            ->where('status', '!=', 'Selesai')
+            ->orderByRaw("CASE status
+                WHEN 'Melewati Batas Waktu' THEN 0
+                WHEN 'Menunggu Revisi' THEN 1
+                WHEN 'Sedang Dikerjakan' THEN 2
+                WHEN 'Menunggu Review' THEN 3
+                WHEN 'Menunggu Verifikasi Admin' THEN 4
+                WHEN 'Menunggu Pembayaran' THEN 5
+                ELSE 6
+            END")
+            ->orderByDesc('updated_at')
+            ->take(3)
+            ->get();
+
+        $activeWorkspacesCount = Workspace::where('freelancer_id', Auth::id())
+            ->where('status', '!=', 'Selesai')
+            ->count();
+
         return view('freelancer.dashboard', compact(
             'projects',
             'categories',
@@ -67,7 +96,9 @@ class DashboardController extends Controller
             'latestApplications',
             'lamaranCount',
             'savedCount',
-            'unreadMessagesCount'
+            'unreadMessagesCount',
+            'activeWorkspaces',
+            'activeWorkspacesCount'
         ));
     }
 }

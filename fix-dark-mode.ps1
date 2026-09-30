@@ -1,4 +1,4 @@
-$file = "c:\xampp\htdocs\The-Archipelago-Nexus\resources\views\help\index.blade.php"
+$file = "c:\xampp\htdocs\Vexus\resources\views\help\index.blade.php"
 $content = Get-Content $file -Raw
 
 # FAQ item container - add dark mode classes

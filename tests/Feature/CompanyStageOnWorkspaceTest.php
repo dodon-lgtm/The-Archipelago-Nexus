@@ -243,6 +243,18 @@ class CompanyStageOnWorkspaceTest extends TestCase
                 'new_stage' => 'UI Design',
             ]);
 
+        // Freelancer menandai tahap tersebut selesai (cek list) -> progres count-based 1/2.
+        $this->actingAs($this->freelancer)
+            ->post("/freelancer/workspaces/{$workspace->id}/progress", [
+                'action' => 'select',
+                'stage' => 'UI Design',
+                'description' => 'Tahap UI Design selesai.',
+            ]);
+
+        $workspace->refresh();
+        $this->assertSame(1, $workspace->completedStageCount());
+        $this->assertSame(50, $workspace->currentProgress());
+
         $this->actingAs($this->company)
             ->post("/company/workspaces/{$workspace->id}/progress", [
                 'action' => 'add',
@@ -256,8 +268,16 @@ class CompanyStageOnWorkspaceTest extends TestCase
         $this->assertSame('UI Design', $names[1]);
         $this->assertSame('Integrasi Pembayaran', $names[2]);
 
-                $this->assertSame(3, $workspace->totalStages());
-        $this->assertSame(100, $workspace->calculateProgressForStage(3));
+        $this->assertSame(3, $workspace->totalStages());
+
+        // Progress production sekarang COUNT-BASED: round(jumlah ceklis / total tahap * 100).
+        // calculateProgressForStage() sudah deprecated (mengabaikan argumen urutan), sehingga
+        // assertion lama "calculateProgressForStage(3) === 100" tidak lagi valid.
+        // Progres lama tetap aman: ceklis 'UI Design' tidak hilang, hanya penyebutnya bertambah
+        // (1 dari 3 tahap) => 33%, BUKAN 100%.
+        $this->assertSame(1, $workspace->completedStageCount());
+        $this->assertSame(33, $workspace->currentProgress());
+        $this->assertSame($workspace->currentProgress(), $workspace->calculateProgressCountBased());
     }
 
     /**
@@ -293,8 +313,12 @@ class CompanyStageOnWorkspaceTest extends TestCase
         ]);
 
         // Persyaratan: workspace baru WAJIB 0%, bukan 100%.
+        // Production memakai progress COUNT-BASED: round(jumlah ceklis selesai / total tahap * 100).
+        // `calculateProgressForStage()` sudah deprecated (mengabaikan argumen urutan), jadi
+        // assertion-nya diganti ke API count-based yang benar.
         $this->assertSame(0, $workspace->currentProgress());
-        $this->assertSame(0, $workspace->calculateProgressForStage(0));
+        $this->assertSame(0, $workspace->completedStageCount());
+        $this->assertSame(0, $workspace->calculateProgressCountBased());
         $this->assertSame(5, $workspace->totalStages());
 
         // Halaman detail (Company) harus merender progress bar di 0% pada server-side.
@@ -305,9 +329,35 @@ class CompanyStageOnWorkspaceTest extends TestCase
         // (Jika $progressValue pernah jadi 100, assertion ini gagal karena lebar jadi 'width: 100%'.)
         $response->assertSee('style="width: 0%"', false);
 
-        // "Naik sesuai jumlah tahap pengerjaan": stage ke-3 dari 5 = 60%;
-        // stage terakhir (ke-5) = 100%.
-        $this->assertSame(60, $workspace->calculateProgressForStage(3));
-        $this->assertSame(100, $workspace->calculateProgressForStage(5));
+        // "Naik sesuai jumlah tahap pengerjaan" — dihitung COUNT-BASED (jumlah ceklis),
+        // bukan nomor urut tahap: 3 dari 5 tahap dicentang = 60%, semua 5 = 100%.
+        // (Assertion lama memakai calculateProgressForStage(3)/(5) yang sudah deprecated.)
+        $freelancerProgressUrl = "/freelancer/workspaces/{$workspace->id}/progress";
+
+        foreach (['Analisis Kebutuhan', 'Desain', 'Backend'] as $stage) {
+            $this->actingAs($this->freelancer)
+                ->post($freelancerProgressUrl, [
+                    'action' => 'select',
+                    'stage' => $stage,
+                ]);
+        }
+
+        $workspace->refresh();
+        $this->assertSame(3, $workspace->completedStageCount());
+        $this->assertSame(60, $workspace->currentProgress());
+        $this->assertSame(60, (int) $workspace->progress); // kolom progress ikut disinkronkan
+
+        foreach (['Frontend', 'Testing'] as $stage) {
+            $this->actingAs($this->freelancer)
+                ->post($freelancerProgressUrl, [
+                    'action' => 'select',
+                    'stage' => $stage,
+                ]);
+        }
+
+        $workspace->refresh();
+        $this->assertSame(5, $workspace->completedStageCount());
+        $this->assertSame(100, $workspace->currentProgress());
+        $this->assertSame(100, (int) $workspace->progress);
     }
 }

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @include('partials.theme-boot')
-    <title>@yield('title', 'Admin Panel') - ApexForge Labs</title>
+    <title>@yield('title', 'Admin Panel') - Vexus</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = tailwind.config || {};
@@ -87,9 +87,9 @@
             </button>
             <div class="flex items-center gap-2">
                 <div class="w-7 h-7 rounded-lg overflow-hidden bg-blue-600 flex items-center justify-center text-white text-xs font-black shadow-sm">
-                    AF
+                    VX
                 </div>
-                <span class="font-extrabold text-sm tracking-tight text-slate-900 dark:text-white">ApexForge <span class="text-blue-600 dark:text-blue-400">Admin</span></span>
+                <span class="font-extrabold text-sm tracking-tight text-slate-900 dark:text-white">Vexus <span class="text-blue-600 dark:text-blue-400">Admin</span></span>
             </div>
         </div>
 
@@ -111,10 +111,10 @@
             <div class="sidebar-logo-wrapper h-16 px-5 flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80 shrink-0">
                 <div class="flex items-center gap-3 overflow-hidden">
                     <div class="sidebar-logo-circle w-9 h-9 rounded-xl overflow-hidden shrink-0 border border-slate-200 dark:border-slate-700 shadow-sm bg-blue-600 flex items-center justify-center text-white font-black text-sm">
-                        <img src="{{ asset('images/nexus.jpg') }}" alt="Logo" class="w-full h-full object-cover" onerror="this.remove()">
+                        <img src="{{ asset('images/vexus.jpg') }}" alt="Logo" class="w-full h-full object-cover" onerror="this.remove()">
                     </div>
                     <div class="sidebar-logo-text truncate">
-                        <h2 class="font-extrabold text-sm tracking-tight text-slate-900 dark:text-white leading-tight">ApexForge</h2>
+                        <h2 class="font-extrabold text-sm tracking-tight text-slate-900 dark:text-white leading-tight">Vexus</h2>
                         <span class="text-[10px] font-bold text-blue-600 dark:text-blue-400 tracking-wider uppercase">Control Center</span>
                     </div>
                 </div>
@@ -314,7 +314,7 @@
                     </div>
                     <div class="min-w-0 flex-1">
                         <p class="text-xs font-bold text-slate-900 dark:text-white truncate">Sistem Aktif</p>
-                        <p class="text-[10px] font-semibold text-slate-500 dark:text-slate-400 truncate">ApexForge Admin v2.0</p>
+                        <p class="text-[10px] font-semibold text-slate-500 dark:text-slate-400 truncate">Vexus Admin v2.0</p>
                     </div>
                     <span class="shrink-0 w-2 h-2 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true"></span>
                 </div>
@@ -492,10 +492,10 @@
 
     </div>
 
-    {{-- REUSABLE CONFIRMATION MODAL (Dual Support: adminConfirm & afConfirm) --}}
-    <div id="afConfirmOverlay" class="fixed inset-0 z-[9999] hidden items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4">
+    {{-- REUSABLE CONFIRMATION MODAL (Dual Support: adminConfirm & vxConfirm) --}}
+    <div id="vxConfirmOverlay" class="fixed inset-0 z-[9999] hidden items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4">
         <div class="w-full max-w-sm bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl p-6 relative">
-            <button type="button" id="afConfirmClose" class="absolute top-3.5 right-3.5 w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-white transition-colors">
+            <button type="button" id="vxConfirmClose" class="absolute top-3.5 right-3.5 w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-white transition-colors">
                 <i class="fa-solid fa-xmark"></i>
             </button>
 
@@ -504,14 +504,14 @@
                     <i class="fa-solid fa-triangle-exclamation"></i>
                 </span>
                 <div class="min-w-0 flex-1">
-                    <h3 id="afConfirmTitle" class="text-sm font-bold text-slate-900 dark:text-white">Konfirmasi Aksi</h3>
-                    <p id="afConfirmMessage" class="mt-1 text-xs text-slate-500 dark:text-slate-400 leading-relaxed break-words"></p>
+                    <h3 id="vxConfirmTitle" class="text-sm font-bold text-slate-900 dark:text-white">Konfirmasi Aksi</h3>
+                    <p id="vxConfirmMessage" class="mt-1 text-xs text-slate-500 dark:text-slate-400 leading-relaxed break-words"></p>
                 </div>
             </div>
 
             <div class="mt-5 grid grid-cols-2 gap-2.5">
-                <button type="button" id="afConfirmCancel" class="px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">Batal</button>
-                <button type="button" id="afConfirmOk" class="px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 transition-colors">Ya, Lanjutkan</button>
+                <button type="button" id="vxConfirmCancel" class="px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">Batal</button>
+                <button type="button" id="vxConfirmOk" class="px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 transition-colors">Ya, Lanjutkan</button>
             </div>
         </div>
     </div>
@@ -550,11 +550,11 @@
         });
 
         (function() {
-            const overlay = document.getElementById('afConfirmOverlay');
-            const messageEl = document.getElementById('afConfirmMessage');
-            const cancelBtn = document.getElementById('afConfirmCancel');
-            const okBtn = document.getElementById('afConfirmOk');
-            const closeBtn = document.getElementById('afConfirmClose');
+            const overlay = document.getElementById('vxConfirmOverlay');
+            const messageEl = document.getElementById('vxConfirmMessage');
+            const cancelBtn = document.getElementById('vxConfirmCancel');
+            const okBtn = document.getElementById('vxConfirmOk');
+            const closeBtn = document.getElementById('vxConfirmClose');
             let pendingForm = null;
 
             const iconWrap = overlay ? overlay.querySelector('span > i.fa-triangle-exclamation') : null;
@@ -566,8 +566,8 @@
                 // GUARD: requestSubmit() memicu ulang event submit sehingga
                 // adminConfirm() terpanggil kedua kali. Di pemanggilan kedua
                 // ini kita lepas guard-nya dan izinkan form benar-benar submit.
-                if (form && form.dataset && form.dataset.afConfirmed === '1') {
-                    delete form.dataset.afConfirmed;
+                if (form && form.dataset && form.dataset.vxConfirmed === '1') {
+                    delete form.dataset.vxConfirmed;
                     return true;
                 }
 
@@ -575,7 +575,7 @@
                 messageEl.textContent = msg || 'Apakah Anda yakin ingin melanjutkan tindakan ini?';
 
                 const danger = !!options.danger;
-                overlay.classList.toggle('af-danger', danger);
+                overlay.classList.toggle('vx-danger', danger);
 
                 if (iconBox) {
                     ['bg-amber-50', 'dark:bg-amber-950/50', 'text-amber-600', 'dark:text-amber-400']
@@ -602,7 +602,7 @@
             }
 
             window.adminConfirm = openModal;
-            window.afConfirm = openModal;
+            window.vxConfirm = openModal;
             window.adminConfirmClose = closeModal;
 
             if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
@@ -615,7 +615,7 @@
                     okBtn.disabled = true;
                     okBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i>Memproses...';
                     closeModal();
-                    if (form.dataset) form.dataset.afConfirmed = '1';
+                    if (form.dataset) form.dataset.vxConfirmed = '1';
                     if (typeof form.requestSubmit === 'function') {
                         form.requestSubmit();
                     } else {

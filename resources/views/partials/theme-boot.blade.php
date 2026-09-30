@@ -6,7 +6,7 @@
     var stored = localStorage.getItem(key);
 
     if (userId && stored !== 'dark' && stored !== 'light') {
-        var legacy = localStorage.getItem('theme') || localStorage.getItem('apexforge_theme');
+        var legacy = localStorage.getItem('theme') || localStorage.getItem('vexus_theme');
         if (legacy === 'dark' || legacy === 'light') {
             localStorage.setItem(key, legacy);
             stored = legacy;

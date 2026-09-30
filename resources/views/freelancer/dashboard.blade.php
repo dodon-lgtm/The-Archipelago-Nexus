@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @include('partials.theme-boot')
-    <title>Dashboard - ApexForge Labs</title>
+    <title>Dashboard - Vexus</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -99,17 +99,17 @@
             background: linear-gradient(180deg, #06b6d4, #2563eb);
         }
 
-        /* ApexForge Labs — Unified UI System */
+        /* Vexus — Unified UI System */
         :root {
-            --af-primary: #2563eb;
-            --af-primary-dark: #1d4ed8;
-            --af-primary-soft: #eff6ff;
-            --af-sky: #38bdf8;
-            --af-ink: #0f172a;
-            --af-muted: #64748b;
-            --af-border: #dbeafe;
-            --af-surface: #ffffff;
-            --af-page: #f6f9ff;
+            --vx-primary: #2563eb;
+            --vx-primary-dark: #1d4ed8;
+            --vx-primary-soft: #eff6ff;
+            --vx-sky: #38bdf8;
+            --vx-ink: #0f172a;
+            --vx-muted: #64748b;
+            --vx-border: #dbeafe;
+            --vx-surface: #ffffff;
+            --vx-page: #f6f9ff;
         }
         html { scroll-behavior: smooth; }
         body {
@@ -117,7 +117,7 @@
             background:
                 radial-gradient(circle at 10% -10%, rgba(56,189,248,.10), transparent 30%),
                 radial-gradient(circle at 100% 0%, rgba(37,99,235,.08), transparent 28%),
-                var(--af-page);
+                var(--vx-page);
         }
         ::selection { background: rgba(37,99,235,.18); color: #0f172a; }
         ::-webkit-scrollbar { width: 7px; height: 7px; }
@@ -126,7 +126,7 @@
         ::-webkit-scrollbar-thumb:hover { background: rgba(37,99,235,.38); }
 
         input, select, textarea {
-            border-color: var(--af-border) !important;
+            border-color: var(--vx-border) !important;
             background: rgba(255,255,255,.92);
             transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
         }
@@ -272,6 +272,108 @@
                     </a>
                 </div>
 
+            </div>
+
+            {{-- Pekerjaan Aktif (ringkasan workspace freelancer) --}}
+            <div class="reveal reveal-5 mb-10">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-black text-slate-800 dark:text-white flex items-center gap-3">
+                        <span class="section-accent h-6"></span>
+                        Pekerjaan Aktif
+                        @if (($activeWorkspacesCount ?? 0) > 0)
+                            <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-blue-50 dark:bg-slate-800 text-blue-700 dark:text-blue-300 border border-blue-100 dark:border-slate-700">{{ $activeWorkspacesCount }}</span>
+                        @endif
+                    </h2>
+                    <a href="{{ route('freelancer.workspaces.index') }}" class="text-blue-600 dark:text-blue-400 font-semibold text-sm hover:text-blue-700 dark:hover:text-blue-400 transition flex items-center gap-1 group">
+                        Lihat Semua <i class="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+
+                @if (($activeWorkspaces ?? collect())->isEmpty())
+                    {{-- Empty state: belum ada pekerjaan berjalan --}}
+                    <div class="bg-white dark:bg-slate-900 border border-dashed border-blue-200 dark:border-slate-700 rounded-2xl p-8 text-center transition-colors duration-300">
+                        <div class="w-14 h-14 mx-auto mb-3 rounded-xl bg-blue-50 dark:bg-slate-800 flex items-center justify-center">
+                            <i class="fa-solid fa-briefcase text-blue-500 dark:text-blue-400 text-xl"></i>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-800 dark:text-white">Belum ada pekerjaan aktif</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                            Pekerjaan akan muncul di sini setelah perusahaan memilih penawaran Anda.
+                        </p>
+                        <a href="{{ route('freelancer.proyek') }}" class="btn-shimmer inline-block mt-4 text-xs font-bold text-blue-700 dark:text-slate-300 px-5 py-2.5 rounded-lg bg-blue-50 dark:bg-slate-800 hover:bg-blue-600 dark:hover:bg-slate-800 hover:text-white dark:hover:text-blue-400 transition-colors duration-300">
+                            Cari Proyek
+                        </a>
+                    </div>
+                @else
+                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+                        @foreach ($activeWorkspaces as $activeWorkspace)
+                            @php
+                                $wsStatus    = (string) $activeWorkspace->status;
+                                $wsProgress  = $activeWorkspace->currentProgress();
+                                $wsCompleted = $activeWorkspace->completedStageCount();
+                                $wsTotal     = $activeWorkspace->totalStages();
+                                $wsStage     = $activeWorkspace->currentStage();
+                                $wsIsOverdue = $wsStatus === 'Melewati Batas Waktu';
+                                $wsStatusStyle = match ($wsStatus) {
+                                    'Sedang Dikerjakan'         => 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-slate-800 dark:text-blue-300 dark:border-slate-700',
+                                    'Menunggu Review'           => 'bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-slate-800 dark:text-indigo-300 dark:border-slate-700',
+                                    'Menunggu Revisi'           => 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-slate-800 dark:text-amber-300 dark:border-slate-700',
+                                    'Menunggu Pembayaran'       => 'bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700',
+                                    'Menunggu Verifikasi Admin' => 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-slate-800 dark:text-purple-300 dark:border-slate-700',
+                                    'Melewati Batas Waktu'      => 'bg-red-50 text-red-700 border-red-200 dark:bg-slate-800 dark:text-red-300 dark:border-slate-700',
+                                    'Selesai'                   => 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-slate-800 dark:text-emerald-300 dark:border-slate-700',
+                                    default                     => 'bg-slate-50 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700',
+                                };
+                                $wsBarStyle = $wsIsOverdue ? 'from-red-500 to-rose-400' : 'from-blue-600 to-indigo-500';
+                            @endphp
+                            <div class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl p-4 shadow-sm flex flex-col gap-3 transition-colors duration-300">
+                                <div class="flex items-start justify-between gap-2">
+                                    <h3 class="text-sm font-bold text-slate-800 dark:text-white line-clamp-2">
+                                        {{ $activeWorkspace->project->project_name ?? 'Proyek' }}
+                                    </h3>
+                                    <span class="text-[10px] font-bold px-2.5 py-1 rounded-full border shrink-0 {{ $wsStatusStyle }}">
+                                        {{ $wsStatus }}
+                                    </span>
+                                </div>
+
+                                <div class="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
+                                    <i class="fa-regular fa-building text-[10px]"></i>
+                                    <span class="truncate">{{ $activeWorkspace->company->name ?? '-' }}</span>
+                                </div>
+
+                                @if ($activeWorkspace->project?->deadline)
+                                    <div class="flex flex-wrap items-center gap-1.5 text-[11px] {{ $wsIsOverdue ? 'text-red-600 dark:text-red-400 font-bold' : 'text-slate-500 dark:text-slate-400' }}">
+                                        <i class="fa-regular fa-clock text-[10px]"></i>
+                                        <span>Deadline: {{ \Carbon\Carbon::parse($activeWorkspace->project->deadline)->isoFormat('D MMM YYYY') }}</span>
+                                        @if ($wsIsOverdue)
+                                            <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-red-100 dark:bg-red-900/30 border border-red-200 dark:border-red-800/40 text-[9px] font-black uppercase tracking-wide">
+                                                <i class="fa-solid fa-triangle-exclamation text-[8px]"></i> Terlambat
+                                            </span>
+                                        @endif
+                                    </div>
+                                @endif
+
+                                <div class="space-y-1.5">
+                                    <div class="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
+                                        <span>Progress</span>
+                                        <span class="font-bold text-blue-600 dark:text-blue-400">{{ $wsProgress }}%</span>
+                                    </div>
+                                    <div class="w-full bg-blue-50 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
+                                        <div class="h-full rounded-full bg-gradient-to-r {{ $wsBarStyle }} transition-all" style="width: {{ $wsProgress }}%"></div>
+                                    </div>
+                                    <div class="flex items-center justify-between gap-2 text-[10px] text-slate-400 dark:text-slate-500">
+                                        <span class="truncate">{{ $wsStage ? 'Tahap: ' . $wsStage : 'Belum ada tahap aktif' }}</span>
+                                        <span class="shrink-0">{{ $wsCompleted }}/{{ $wsTotal }} tahap</span>
+                                    </div>
+                                </div>
+
+                                <a href="{{ route('freelancer.workspaces.show', $activeWorkspace) }}"
+                                    class="btn-shimmer mt-auto block text-center text-xs font-bold text-white py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 transition-colors duration-300">
+                                    <i class="fa-solid fa-briefcase text-[10px] mr-1.5"></i>Lihat Pekerjaan
+                                </a>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
             </div>
 
             {{-- GRID UTAMA: KIRI (Proyek) & KANAN (Lamaran) --}}

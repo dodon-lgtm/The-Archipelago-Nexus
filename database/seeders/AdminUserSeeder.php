@@ -11,7 +11,7 @@ class AdminUserSeeder extends Seeder
 {
     public function run(): void
     {
-        $email = 'admin@archipelagonexus.com';
+        $email = 'admin@vexus.id';
         $email = Str::lower(trim($email));
 
         $existing = User::query()->where('email', $email)->exists();

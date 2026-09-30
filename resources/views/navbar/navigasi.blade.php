@@ -1,4 +1,4 @@
-{{-- ApexForge Labs — Shared UI --}}
+{{-- Vexus — Shared UI --}}
 
 {{-- TOMBOL HAMBURGER MOBILE (FIXED & HIGH Z-INDEX) --}}
 <button type="button" id="mobileSidebarToggleBtn"
@@ -31,7 +31,7 @@
             </div>
             <div
                 class="relative w-10 h-10 rounded-full overflow-hidden border-2 border-white dark:border-slate-800 shadow-sm">
-                <img src="{{ asset('images/nexus.jpg') }}" alt="ApexForge Labs Logo" class="w-full h-full object-cover">
+                <img src="{{ asset('images/vexus.jpg') }}" alt="Vexus Logo" class="w-full h-full object-cover">
             </div>
         </div>
 
@@ -39,8 +39,7 @@
         <div class="sidebar-logo-text ml-3 transition-all duration-300 overflow-hidden">
             <h2
                 class="font-black text-[13px] leading-tight text-blue-950 dark:text-white whitespace-nowrap tracking-tight">
-                ApexForge<br>
-                <span class="text-blue-600 dark:text-blue-400">Labs</span>
+                Vexus
             </h2>
         </div>
 
@@ -383,13 +382,13 @@
 
             <div class="relative z-10">
                 <h3 class="font-black text-sm whitespace-nowrap tracking-wide">
-                    ApexForge Labs
+                    Vexus
                 </h3>
                 <p class="text-[11px] mt-1 text-blue-100 font-medium">
                     Marketplace Freelance Indonesia
                 </p>
                 <div class="mt-4 text-[10px] text-blue-200/80 font-bold uppercase tracking-widest">
-                    © 2026 ApexForge Labs
+                    © 2026 Vexus
                 </div>
             </div>
         </div>

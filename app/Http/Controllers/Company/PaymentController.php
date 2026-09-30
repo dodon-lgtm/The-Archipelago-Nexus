@@ -9,6 +9,7 @@ use App\Models\Message;
 use App\Models\User;
 use App\Services\AdminWalletService;
 use App\Services\EscrowService;
+use App\Services\InvoiceNumberService;
 use App\Services\NotificationService;
 use App\Services\ProfileCompletionService;
 use App\Services\ProjectQuotaService;
@@ -169,7 +170,7 @@ class PaymentController extends Controller
         }
 
         $destinationInfo = [
-            'title' => $destination['title'] ?? 'ApexForge Labs',
+            'title' => $destination['title'] ?? 'Vexus',
             'label' => $destination['label'] ?? '',
             'rows'  => $destination['rows'] ?? [],
         ];
@@ -477,19 +478,22 @@ class PaymentController extends Controller
 
             // Price berubah atau tidak ada pending payment → buat payment BARU.
             // Payment lama (amount berbeda) tetap immutable di DB.
-            $seq = (int) (Payment::max('id') ?? 0) + 1;
-            $invoiceNumber = 'INV-QOT-' . now()->format('Ymd') . '-' . str_pad($seq, 4, '0', STR_PAD_LEFT);
-
-            return Payment::create([
-                'company_id'     => $userId,
-                'freelancer_id'  => null,
-                'workspace_id'   => null,
-                'invoice_number' => $invoiceNumber,
-                'amount'         => $currentPrice,
-                'payment_type'   => Payment::PAYMENT_TYPE_QUOTA,
-                'status'         => 'pending',
-                'payment_method' => 'Midtrans',
-            ]);
+            // Nomor invoice berasal dari sequence TERPISAH (scope=quota) —
+            // bukan Payment::max('id') lagi, sehingga tidak terpengaruh penghapusan
+            // baris payment, invoice legacy, maupun sequence workspace.
+            return InvoiceNumberService::createWithRetry(
+                scope: InvoiceNumberService::SCOPE_QUOTA,
+                persist: fn (string $invoiceNumber): Payment => Payment::create([
+                    'company_id'     => $userId,
+                    'freelancer_id'  => null,
+                    'workspace_id'   => null,
+                    'invoice_number' => $invoiceNumber,
+                    'amount'         => $currentPrice,
+                    'payment_type'   => Payment::PAYMENT_TYPE_QUOTA,
+                    'status'         => 'pending',
+                    'payment_method' => 'Midtrans',
+                ]),
+            );
         });
     }
 
@@ -624,7 +628,7 @@ class PaymentController extends Controller
         }
 
         $destinationInfo = [
-            'title' => $destination['title'] ?? 'ApexForge Labs',
+            'title' => $destination['title'] ?? 'Vexus',
             'label' => $destination['label'] ?? '',
             'rows'  => $destination['rows'] ?? [],
         ];
@@ -940,13 +944,13 @@ class PaymentController extends Controller
     }
 
     /**
-     * Daftar rekening/wallet tujuan pembayaran manual milik platform ApexForge Labs.
-     * Data bersumber dari config/apexforge.php dan TIDAK berasal dari freelancer.
+     * Daftar rekening/wallet tujuan pembayaran manual milik platform Vexus.
+     * Data bersumber dari config/vexus.php dan TIDAK berasal dari freelancer.
 
      * @return array<string, array<string, mixed>>
      */
     private function manualPaymentDestinations(): array
     {
-        return (array) config('apexforge.manual_payment_destinations', []);
+        return (array) config('vexus.manual_payment_destinations', []);
     }
 }

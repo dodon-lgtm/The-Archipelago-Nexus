@@ -7,8 +7,8 @@
 
     Isolasi antar role memakai namespace localStorage terpisah lewat atribut
     data-draft-namespace pada tag <script>:
-      - freelancer : apexforge.fl.draft.v1:  (default engine, key "fl:")
-      - company    : apexforge.co.draft.v1:  (key "co:")
+      - freelancer : vexus.fl.draft.v1:  (default engine, key "fl:")
+      - company    : vexus.co.draft.v1:  (key "co:")
     Jadi draft Company tidak pernah menimpa / muncul di halaman Freelancer.
 
     Kontrak atribut pada Blade (lihat komentar di public/js/form-draft-autosave.js):
@@ -32,7 +32,7 @@
     <script src="{{ asset('js/form-draft-autosave.js') }}" defer></script>
 @elseif (auth()->check() && auth()->user()->role === 'company')
     {{-- Namespace Company terpisah dari Freelancer (lihat docblock engine). --}}
-    <script src="{{ asset('js/form-draft-autosave.js') }}" data-draft-namespace="apexforge.co.draft.v1:" defer></script>
+    <script src="{{ asset('js/form-draft-autosave.js') }}" data-draft-namespace="vexus.co.draft.v1:" defer></script>
 @endif
 
 @php

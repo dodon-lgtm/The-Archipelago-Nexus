@@ -26,6 +26,11 @@ class CompanyPaymentFlowTest extends TestCase
         config(['services.midtrans.server_key' => 'SB-Mid-server-TESTKEY123']);
     }
 
+    /**
+     * Payment pending dengan model fee REVISI #5:
+     *   $amount = NILAI PEKERJAAN (accepted offer), fee 5% DITAMBAHKAN DI ATAS.
+     *   payments.amount = total dibayar company; freelancer_receive = nilai pekerjaan.
+     */
     private function createPendingPayment(float $amount = 1000000.00): array
     {
         $company    = User::factory()->create(['role' => 'company']);
@@ -41,16 +46,18 @@ class CompanyPaymentFlowTest extends TestCase
             'status'        => 'Sedang Dikerjakan',
         ]);
 
-        $platformFee       = round($amount * 5 / 100, 2);
-        $freelancerReceive = round($amount - $platformFee, 2);
+        $freelancerReceive = round($amount, 2);
+        $platformFee       = round($freelancerReceive * 5 / 100, 2);
+        $total             = round($freelancerReceive + $platformFee, 2);
 
         $payment = Payment::create([
             'workspace_id'       => $workspace->id,
             'company_id'         => $company->id,
             'freelancer_id'      => $freelancer->id,
             'invoice_number'     => 'INV-' . now()->format('Ymd') . '-' . uniqid(),
-            'amount'             => $amount,
+            'amount'             => $total,
             'platform_fee'       => $platformFee,
+            'platform_fee_rate'  => 5.00,
             'freelancer_receive' => $freelancerReceive,
             'status'             => 'pending',
         ]);
@@ -64,13 +71,13 @@ class CompanyPaymentFlowTest extends TestCase
 
         $signature = hash(
             'sha512',
-            $payment->invoice_number . '200' . '1000000.00' . 'SB-Mid-server-TESTKEY123'
+            $payment->invoice_number . '200' . '1050000.00' . 'SB-Mid-server-TESTKEY123'
         );
 
         $response = $this->postJson('/api/midtrans/notification', [
             'order_id'           => $payment->invoice_number,
             'status_code'        => '200',
-            'gross_amount'       => '1000000.00',
+            'gross_amount'       => '1050000.00',
             'signature_key'      => $signature,
             'transaction_status' => 'settlement',
             'payment_type'       => 'qris',
@@ -89,7 +96,7 @@ class CompanyPaymentFlowTest extends TestCase
         $this->assertEquals(1, WalletLedger::where('type', WalletLedger::TYPE_ESCROW_HELD)->count());
         $held = WalletLedger::where('type', WalletLedger::TYPE_ESCROW_HELD)->first();
         $this->assertEquals('debit', $held->direction);
-        $this->assertEquals(1000000.0, (float) $held->amount);
+        $this->assertEquals(1050000.0, (float) $held->amount);
         $this->assertEquals($payment->company_id, $held->user_id);
 
         // Belum ada dana dirilis / fee dicatat sebelum pekerjaan selesai.
@@ -104,7 +111,7 @@ class CompanyPaymentFlowTest extends TestCase
         $payload = [
             'order_id'           => $payment->invoice_number,
             'status_code'        => '200',
-            'gross_amount'       => '500000.00',
+            'gross_amount'       => '525000.00',
             'transaction_status' => 'settlement',
         ];
         $payload['signature_key'] = hash(

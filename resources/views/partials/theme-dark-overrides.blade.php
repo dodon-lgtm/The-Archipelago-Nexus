@@ -1,17 +1,17 @@
 <style>
     /* =========================================================
-       APEXFORGE LABS — DARK MODE OVERRIDES (ADMIN)
+       VEXUS — DARK MODE OVERRIDES (ADMIN)
        Partial ini hanya di-include oleh layouts/admin.blade.php,
        sehingga selector html.dark di bawah ini aman (tidak
        memengaruhi halaman freelancer/company/landing).
        ========================================================= */
     html.dark {
-        --af-page: #0f172a;
-        --af-surface: #1e293b;
-        --af-ink: #f8fafc;
-        --af-muted: #94a3b8;
-        --af-border: #334155;
-        --af-primary-soft: #1e293b;
+        --vx-page: #0f172a;
+        --vx-surface: #1e293b;
+        --vx-ink: #f8fafc;
+        --vx-muted: #94a3b8;
+        --vx-border: #334155;
+        --vx-primary-soft: #1e293b;
         color-scheme: dark;
     }
 

@@ -196,24 +196,24 @@
         }
     </style>
     <style>
-        /* ApexForge Labs â€” Unified UI System */
+        /* Vexus â€” Unified UI System */
         :root {
-            --af-primary: #2563eb;
-            --af-primary-dark: #1d4ed8;
-            --af-primary-soft: #eff6ff;
-            --af-sky: #38bdf8;
-            --af-ink: #0f172a;
-            --af-muted: #64748b;
-            --af-border: #dbeafe;
-            --af-surface: #ffffff;
-            --af-page: #f6f9ff;
+            --vx-primary: #2563eb;
+            --vx-primary-dark: #1d4ed8;
+            --vx-primary-soft: #eff6ff;
+            --vx-sky: #38bdf8;
+            --vx-ink: #0f172a;
+            --vx-muted: #64748b;
+            --vx-border: #dbeafe;
+            --vx-surface: #ffffff;
+            --vx-page: #f6f9ff;
         }
 
         /* Perbaikan CSS Dark Mode */
         .dark {
-            --af-page: #0f172a;
-            --af-surface: #0f172a;
-            --af-border: #334155;
+            --vx-page: #0f172a;
+            --vx-surface: #0f172a;
+            --vx-border: #334155;
         }
 
         .dark input, 
@@ -241,7 +241,7 @@
             background:
                 radial-gradient(circle at 10% -10%, rgba(56, 189, 248, .10), transparent 30%),
                 radial-gradient(circle at 100% 0%, rgba(37, 99, 235, .08), transparent 28%),
-                var(--af-page);
+                var(--vx-page);
         }
 
         ::selection {
@@ -270,7 +270,7 @@
         input,
         select,
         textarea {
-            border-color: var(--af-border) !important;
+            border-color: var(--vx-border) !important;
             background: rgba(255, 255, 255, .92);
             transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
         }
@@ -415,6 +415,29 @@
                             <i class="fa-solid fa-xmark text-sm"></i>
                         </div>
                         <div class="pt-1.5 font-bold text-blue-950 dark:text-white text-sm">{{ session('error') }}</div>
+                    </div>
+                @endif
+
+                {{-- Validation Errors (mis. form progress / tahap pengerjaan).
+                     Sebelumnya halaman ini tidak menampilkan $errors sama sekali,
+                     sehingga kegagalan validasi terlihat seperti "tidak terjadi apa-apa". --}}
+                @if ($errors->any())
+                    <div class="mb-8 overflow-hidden relative bg-white dark:bg-slate-900 border-2 border-blue-600 p-4 rounded-2xl shadow-[0_0_20px_rgba(59,130,246,0.15)]">
+                        <div class="flex items-start gap-4">
+                            <div class="w-8 h-8 rounded-full bg-blue-100 dark:bg-slate-800 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-slate-700 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-triangle-exclamation text-sm"></i>
+                            </div>
+                            <div class="pt-0.5 min-w-0">
+                                <p class="font-bold text-blue-950 dark:text-white text-sm mb-1">
+                                    Perubahan tidak dapat diproses
+                                </p>
+                                <ul class="list-disc list-inside space-y-0.5 text-[12px] font-medium text-blue-900/80 dark:text-slate-300">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 @endif
 
@@ -999,11 +1022,11 @@
                                             <span class="text-xs font-bold text-blue-950 dark:text-white bg-blue-50 dark:bg-slate-800 px-2 py-0.5 rounded">{{ $payment->invoice_number }}</span>
                                         </div>
                                         <div class="flex items-center justify-between">
-                                            <p class="text-[10px] font-black text-blue-400 dark:text-slate-400 uppercase tracking-widest">Total</p>
-                                            <span class="text-sm font-bold text-blue-900 dark:text-white">Rp {{ number_format($payment->amount, 0, ',', '.') }}</span>
+                                            <p class="text-[10px] font-black text-blue-400 dark:text-slate-400 uppercase tracking-widest">Nilai Pekerjaan</p>
+                                            <span class="text-sm font-bold text-blue-900 dark:text-white">Rp {{ number_format($payment->freelancer_receive, 0, ',', '.') }}</span>
                                         </div>
                                         <div class="flex items-center justify-between">
-                                            <p class="text-[10px] font-black text-blue-400 dark:text-slate-400 uppercase tracking-widest">Biaya Platform (5%)</p>
+                                            <p class="text-[10px] font-black text-blue-400 dark:text-slate-400 uppercase tracking-widest">Biaya Platform{{ ($payment->platform_fee_rate !== null && $payment->platform_fee_rate !== '') ? ' (' . rtrim(rtrim(number_format((float) $payment->platform_fee_rate, 2, '.', ''), '0'), '.') . '%)' : '' }}</p>
                                             <span class="text-xs font-bold text-blue-500 dark:text-blue-400">Rp {{ number_format($payment->platform_fee, 0, ',', '.') }}</span>
                                         </div>
                                         <div class="flex items-center justify-between pt-3 border-t border-blue-100/50 dark:border-slate-800">

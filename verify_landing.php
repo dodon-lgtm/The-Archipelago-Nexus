@@ -1,5 +1,5 @@
 <?php
-$f = 'c:/xampp/htdocs/The-Archipelago-Nexus/resources/views/landingpage.blade.php';
+$f = 'c:/xampp/htdocs/Vexus/resources/views/landingpage.blade.php';
 $c = file_get_contents($f);
 echo "Size: " . strlen($c) . " bytes\n";
 echo "First 100 chars: " . substr($c, 0, 100) . "\n";
@@ -17,7 +17,7 @@ echo "Contains Auth::user(): " . (strpos($c, 'Auth::user()') !== false ? 'YES' :
 echo "Contains @auth: " . (strpos($c, '@auth') !== false ? 'YES' : 'NO') . "\n";
 echo "Contains @endauth: " . (strpos($c, '@endauth') !== false ? 'YES' : 'NO') . "\n";
 echo "Contains 2026: " . (strpos($c, '2026') !== false ? 'YES' : 'NO') . "\n";
-echo "Contains images/nexus.jpg: " . (strpos($c, 'images/nexus.jpg') !== false ? 'YES' : 'NO') . "\n";
+echo "Contains images/vexus.jpg: " . (strpos($c, 'images/vexus.jpg') !== false ? 'YES' : 'NO') . "\n";
 echo "Contains images/gedung.jpg: " . (strpos($c, 'images/gedung.jpg') !== false ? 'YES' : 'NO') . "\n";
 echo "Contains images/beranda.png: " . (strpos($c, 'images/beranda.png') !== false ? 'YES' : 'NO') . "\n";
 echo "Contains images/image.png: " . (strpos($c, 'images/image.png') !== false ? 'YES' : 'NO') . "\n";

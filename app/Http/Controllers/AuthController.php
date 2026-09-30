@@ -59,7 +59,43 @@ class AuthController extends Controller
             $policies = collect();
         }
 
-        return view('auth.login', compact('policies'));
+        // =========================================================
+        // INFORMASI PENDAFTARAN AKUN PERUSAHAAN YANG MASIH MENUNGGU
+        // =========================================================
+        // Session hanya menyimpan identifier (email) dari pendaftaran
+        // company terakhir di browser ini. Status sebenarnya SELALU
+        // diverifikasi ke tabel company_account_requests, sehingga kartu
+        // pending otomatis hilang setelah Admin menyetujui / menolak.
+        //
+        // Tidak ada endpoint publik maupun query parameter email, jadi
+        // status pendaftaran company tidak dapat dicek oleh orang lain
+        // hanya dengan mengetahui alamat email.
+        //
+        // Bungkus try/catch agar halaman login tetap tampil walau
+        // database belum siap (pola yang sama dengan pengambilan $policies).
+        $pendingCompanyRequest = null;
+
+        try {
+            $pendingCompanyEmail = $request->session()->get('pending_company_email');
+
+            if ($pendingCompanyEmail) {
+                $pendingCompanyRequest = \App\Models\CompanyAccountRequest::query()
+                    ->where('company_email', $pendingCompanyEmail)
+                    ->where('request_status', 'menunggu')
+                    ->latest()
+                    ->first();
+
+                // Identifier dibersihkan bila sudah tidak ada permintaan
+                // berstatus "menunggu" (sudah disetujui / ditolak / hilang).
+                if (!$pendingCompanyRequest) {
+                    $request->session()->forget('pending_company_email');
+                }
+            }
+        } catch (\Throwable $e) {
+            $pendingCompanyRequest = null;
+        }
+
+        return view('auth.login', compact('policies', 'pendingCompanyRequest'));
     }
 
 

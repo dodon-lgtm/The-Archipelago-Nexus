@@ -117,7 +117,7 @@
                 <tr>
                     <td style="width:55%;">
                         <div class="brand">
-                            ApexForge Labs
+                            Vexus
                             <small>Freelance Marketplace Indonesia</small>
                         </div>
                     </td>
@@ -218,14 +218,14 @@
             <table cellpadding="0" cellspacing="0">
                 <tr>
                     <td style="width:45%; vertical-align:bottom;">
-                        Dokumen ini dihasilkan otomatis oleh sistem ApexForge Labs.<br>
+                        Dokumen ini dihasilkan otomatis oleh sistem Vexus.<br>
                         Berlaku sebagai laporan administratif pembayaran platform.
                     </td>
                     <td style="width:20%;"></td>
                     <td class="ttd" style="width:35%;">
                         Mengetahui,<br>
-                        ApexForge Administrator<br>
-                        <div style="margin-top:34px; border-top:1px solid #94a3b8; padding-top:5px;">{{ $filterCompany && isset($filterCompany->name) ? $filterCompany->name : 'ApexForge Admin' }}</div>
+                        Vexus Administrator<br>
+                        <div style="margin-top:34px; border-top:1px solid #94a3b8; padding-top:5px;">{{ $filterCompany && isset($filterCompany->name) ? $filterCompany->name : 'Vexus Admin' }}</div>
                     </td>
                 </tr>
             </table>

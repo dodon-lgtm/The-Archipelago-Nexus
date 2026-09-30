@@ -33,7 +33,7 @@ class HelpContactMail extends Mailable
     {
         $category = $this->data['category_label'] ?? 'Masalah Lainnya';
 
-        return $this->subject('[Pusat Bantuan ApexForge Labs][' . $category . '] ' . $this->data['subject'])
+        return $this->subject('[Pusat Bantuan Vexus][' . $category . '] ' . $this->data['subject'])
             ->replyTo($this->data['email'], $this->data['name'])
             ->view('emails.help-contact');
     }

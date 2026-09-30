@@ -12,6 +12,7 @@ use App\Models\Penawaran;
 use App\Models\ProgressHistory;
 use App\Models\Project;
 use App\Models\Workspace;
+use App\Services\InvoiceNumberService;
 use App\Services\NotificationService;
 use App\Services\ProfileCompletionService;
 use App\Services\ProjectQuotaService;
@@ -523,25 +524,19 @@ class ProjectController extends Controller
 
 // Hitung biaya pembayaran berdasarkan harga penawaran
             // Rate fee platform dari Financial Settings; di-snapshot ke payment.
-            $amount = (float) $penawaran->harga_penawaran;
+            // REVISI #5 — nilai pekerjaan = hasil negosiasi/accepted offer, dibayar PENUH ke freelancer.
+            // Fee platform DITAMBAHKAN DI ATAS nilai pekerjaan (ditanggung company),
+            // sehingga: amount = total dibayar company, freelancer_receive = nilai pekerjaan.
+            $freelancerReceive = (float) $penawaran->harga_penawaran;
             $platformFeeRate = (float) \App\Models\FinancialSetting::getSettings()->projectFeeRate();
-            $platformFee = round($amount * $platformFeeRate / 100, 2);
-            $freelancerReceive = $amount - $platformFee;
+            $platformFee = round($freelancerReceive * $platformFeeRate / 100, 2);
+            $amount = round($freelancerReceive + $platformFee, 2);
 
-            // Generate invoice number unik per tanggal
-            $date = now()->format('Ymd');
-            $lastInvoice = Payment::whereDate('created_at', now()->toDateString())
-                ->orderBy('id', 'desc')
-                ->first();
-
-            if ($lastInvoice) {
-                $lastNumber = (int) substr($lastInvoice->invoice_number, -4);
-                $newNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
-            } else {
-                $newNumber = '0001';
-            }
-
-            $invoiceNumber = 'INV-' . $date . '-' . $newNumber;
+            // Nomor invoice dialokasikan InvoiceNumberService (scope=workspace) DI DALAM
+            // transaksi ini, bersama pembuatan Payment di bawah:
+            //   - sequence terpisah dari quota (tidak lagi tercampur),
+            //   - race-safe (row lock pada invoice_sequences),
+            //   - tidak memakai baris payment terakhir + substr(-4) / max(id) lagi.
 
             // Buat Workspace untuk project dengan status Menunggu Pembayaran
             // `stages` diinisialisasi sejak awal agar workspace memiliki daftar tahap yang valid.
@@ -555,18 +550,26 @@ class ProjectController extends Controller
                 'stages' => $this->workspaceStageSnapshot($project),
             ]);
 
-            // Buat record Payment awal dengan status pending
-            Payment::create([
-                'workspace_id' => $workspace->id,
-                'company_id' => Auth::id(),
-                'freelancer_id' => $penawaran->freelancer_id,
-                'invoice_number' => $invoiceNumber,
-                'amount' => $amount,
-                'platform_fee' => $platformFee,
-                'platform_fee_rate' => $platformFeeRate,
-                'freelancer_receive' => $freelancerReceive,
-                'status' => 'pending',
-            ]);
+            // Buat record Payment awal dengan status pending.
+            // `createWithRetry` mengalokasikan nomor invoice di dalam transaksi yang sama
+            // (backstop UNIQUE payments.invoice_number dengan retry maksimal 1x).
+            $payment = InvoiceNumberService::createWithRetry(
+                scope: InvoiceNumberService::SCOPE_WORKSPACE,
+                persist: fn (string $invoiceNumber): Payment => Payment::create([
+                    'workspace_id' => $workspace->id,
+                    'company_id' => Auth::id(),
+                    'freelancer_id' => $penawaran->freelancer_id,
+                    'invoice_number' => $invoiceNumber,
+                    'amount' => $amount,
+                    'platform_fee' => $platformFee,
+                    'platform_fee_rate' => $platformFeeRate,
+                    'freelancer_receive' => $freelancerReceive,
+                    'status' => 'pending',
+                ]),
+            );
+
+            // Nomor invoice yang BENAR-BENAR tersimpan (dipakai untuk system message di bawah).
+            $invoiceNumber = $payment->invoice_number;
 
             // Buat Progress History pertama (tanda "freelancer dipilih").
             // stage_order = 0 => pekerjaan BELUM dimulai => progress 0%.

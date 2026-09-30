@@ -89,16 +89,21 @@ class AdminWalletFlowTest extends TestCase
             'status'        => 'Sedang Dikerjakan',
         ]);
 
-        // Freelancer punya pendapatan paid Rp 100.000 (fee platform di luar nilai ini).
+        // Freelancer punya pendapatan job Rp 100.000 (fee 5% DITAMBAHKAN DI ATAS,
+        // ditanggung company) dan dananya SUDAH dirilis -> masuk saldo tersedia.
         Payment::create([
             'workspace_id'       => $workspace->id,
             'company_id'         => $company->id,
             'freelancer_id'      => $freelancer->id,
             'invoice_number'     => 'INV-TEST-WD-0001',
-            'amount'             => 105263.16,
-            'platform_fee'       => 5263.16,
+            'amount'             => 105000.00,   // 100.000 + fee 5.000
+            'platform_fee'       => 5000.00,
+            'platform_fee_rate'  => 5.00,
             'freelancer_receive' => 100000.00,
             'status'             => 'paid',
+            'funds_status'       => Payment::FUNDS_RELEASED,
+            'released_amount'    => 100000.00,
+            'released_at'        => now(),
             'verified_at'        => now(),
         ]);
 
