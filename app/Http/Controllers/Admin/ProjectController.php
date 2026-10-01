@@ -13,7 +13,10 @@ class ProjectController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = Project::with(['owner', 'category']);
+        $query = Project::with(['owner', 'category', 'workspace'])
+            ->withCount(['penawarans as penawaran_diterima_count' => function ($q) {
+                $q->where('status', 'Diterima');
+            }]);
 
         // Search by project name
         if ($search = $request->input('search')) {
@@ -59,6 +62,16 @@ class ProjectController extends Controller
 
     public function destroy(Project $project): RedirectResponse
     {
+        // BACKEND SOURCE OF TRUTH:
+        // Penentu boleh/tidaknya project dihapus adalah apakah project SUDAH
+        // memiliki freelancer yang DITERIMA/DIPILIH — status project ('open'/'closed'/'archived') TIDAK relevan.
+        // Pengecekan juga melindungi akses langsung lewat URL/request.
+        if ($project->hasAssignedFreelancer()) {
+            return redirect()
+                ->route('admin.projects.show', $project)
+                ->with('error', 'Proyek tidak dapat dihapus karena freelancer sudah diterima.');
+        }
+
         $project->delete();
 
         return redirect()

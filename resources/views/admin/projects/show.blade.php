@@ -191,11 +191,28 @@
                     </div>
                     <h3 class="font-bold text-red-600 text-sm">Zona Berbahaya</h3>
                 </div>
-                <p class="text-xs text-slate-500 mb-4 ml-9">Menghapus proyek bersifat permanen dan tidak dapat dibatalkan.</p>
-                <form method="POST" action="{{ route('admin.projects.destroy', $project) }}" onsubmit="return adminConfirm('Yakin ingin menghapus?', this)">
-                    @csrf @method('DELETE')
-                    <button type="submit" class="w-full px-4 py-2.5 bg-red-500 hover:bg-red-600 active:bg-red-700 text-white rounded-xl text-sm font-semibold shadow-sm transition"><i class="fa-solid fa-trash-can mr-1.5"></i> Hapus Proyek</button>
-                </form>
+
+                @if ($project->hasAssignedFreelancer())
+                    <div class="flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 mb-3">
+                        <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-user-lock text-sm"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-amber-700">Proyek tidak dapat dihapus</p>
+                            <p class="text-xs text-amber-600/90 mt-0.5">Proyek tidak dapat dihapus karena freelancer sudah diterima.</p>
+                        </div>
+                    </div>
+                    <button type="button" disabled
+                        class="w-full px-4 py-2.5 bg-slate-100 text-slate-400 rounded-xl text-sm font-semibold cursor-not-allowed">
+                        <i class="fa-solid fa-trash-can mr-1.5"></i> Hapus Proyek
+                    </button>
+                @else
+                    <p class="text-xs text-slate-500 mb-4 ml-9">Menghapus proyek bersifat permanen dan tidak dapat dibatalkan.</p>
+                    <form method="POST" action="{{ route('admin.projects.destroy', $project) }}" onsubmit="return adminConfirm('Yakin ingin menghapus?', this)">
+                        @csrf @method('DELETE')
+                        <button type="submit" class="w-full px-4 py-2.5 bg-red-500 hover:bg-red-600 active:bg-red-700 text-white rounded-xl text-sm font-semibold shadow-sm transition"><i class="fa-solid fa-trash-can mr-1.5"></i> Hapus Proyek</button>
+                    </form>
+                @endif
             </div>
         </div>
     </div>
