@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 
 <head>
@@ -852,8 +852,7 @@
                     {{-- HUBUNGI KAMI VIA EMAIL --}}
                     <div class="shrink-0">
                         <button type="button" id="toggleContactForm"
-                            class="w-full lg:w-auto inline-flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-white dark:bg-slate-800 dark:text-blue-300 font-extrabold shadow-lg hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
-                            <i class="fa-solid fa-envelope text-2xl"></i>
+class="w-full lg:w-auto inline-flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-blue-700 hover:bg-blue-800 text-white dark:bg-blue-600 dark:hover:bg-blue-500 font-extrabold shadow-lg shadow-blue-700/30 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-700/40 transition-all duration-300"                            <i class="fa-solid fa-envelope text-2xl"></i>
 
                             <span>
                                 Hubungi Kami via Email
@@ -876,127 +875,7 @@
 
 
 
-    {{-- =========================================================
-        FOOTER
-    ========================================================== --}}
-    <footer class="bg-slate-950 text-white">
-
-        <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-12">
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
-
-                {{-- BRAND --}}
-                <div>
-
-                    <div class="flex items-center gap-3 mb-5">
-
-                        <div
-                            class="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
-                            <span class="font-black text-lg">
-                                A
-                            </span>
-                        </div>
-
-                        <div>
-                            <h3 class="font-black text-lg">
-                                ApexForge Labs
-                            </h3>
-
-                            <p class="text-xs text-slate-400">
-                                Pusat Bantuan
-                            </p>
-                        </div>
-
-                    </div>
-
-
-                    <p class="text-sm text-slate-400 leading-7 max-w-md">
-                        Pusat Bantuan ApexForge Labs menyediakan informasi dan
-                        panduan untuk membantu pengguna memahami berbagai fitur
-                        serta proses yang tersedia di platform.
-                    </p>
-
-                </div>
-
-
-                {{-- NAVIGASI --}}
-                <div>
-
-                    <h3 class="font-bold text-white mb-5">
-                        Navigasi
-                    </h3>
-
-                    <div class="space-y-3 text-sm">
-
-                        <a href="{{ url('/') }}" class="block text-slate-400 hover:text-white transition-colors">
-                            Beranda
-                        </a>
-
-                        <a href="#akun" class="block text-slate-400 hover:text-white transition-colors">
-                            Akun
-                        </a>
-
-                        <a href="#proyek" class="block text-slate-400 hover:text-white transition-colors">
-                            Proyek
-                        </a>
-
-                        <a href="#pembayaran" class="block text-slate-400 hover:text-white transition-colors">
-                            Pembayaran
-                        </a>
-
-                        <a href="#keamanan" class="block text-slate-400 hover:text-white transition-colors">
-                            Keamanan
-                        </a>
-
-                    </div>
-
-                </div>
-
-
-                {{-- BANTUAN --}}
-                <div>
-
-                    <h3 class="font-bold text-white mb-5">
-                        Butuh Bantuan?
-                    </h3>
-
-                    <p class="text-sm text-slate-400 leading-7 mb-5">
-                        Belum menemukan jawaban yang kamu cari?
-                        Hubungi tim kami untuk mendapatkan bantuan lebih lanjut.
-                    </p>
-
-
-                    {{-- HUBUNGI VIA EMAIL --}}
-                    <a href="#hubungi-kami" id="footerContactLink"
-                        class="inline-flex items-center gap-2 text-sm font-bold text-white hover:text-blue-400 dark:hover:text-blue-300 transition-colors">
-                        <i class="fa-solid fa-envelope text-lg"></i>
-                        Hubungi via Email
-                    </a>
-
-                </div>
-
-            </div>
-
-
-            {{-- COPYRIGHT --}}
-            <div
-                class="mt-10 pt-7 border-t border-white/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-
-                <p class="text-xs text-slate-500 dark:text-slate-400">
-                    © {{ date('Y') }} ApexForge Labs. All rights reserved.
-                </p>
-
-                <p class="text-xs text-slate-500 dark:text-slate-400">
-                    Pusat Bantuan
-                </p>
-
-            </div>
-
-        </div>
-
-    </footer>
-
-
+    
 
     {{-- =========================================================
         FAQ JAVASCRIPT

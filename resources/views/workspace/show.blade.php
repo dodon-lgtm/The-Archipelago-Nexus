@@ -1010,7 +1010,7 @@
                                         </div>
                                     @endif
 
-                                    @if ($workspace->status === 'Selesai')
+                                    @if (strtolower($workspace->status) === 'selesai')
                                         <div class="pt-2">
                                             @if ($workspace->rating)
                                                 <div class="bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-800 rounded-2xl p-5 text-center shadow-inner">
@@ -1018,7 +1018,7 @@
                                                     <div class="flex justify-center gap-1.5 text-blue-500 dark:text-blue-400 text-lg mb-3 drop-shadow-[0_0_8px_rgba(59,130,246,0.4)]">
                                                         @for ($i = 1; $i <= 5; $i++)
                                                             <i
-                                                                class="fa-{{ $i <= $workspace->rating->score ? 'solid' : 'regular' }} fa-star"></i>
+                                                                class="fa-{{ $i <= $workspace->rating->rating ? 'solid' : 'regular' }} fa-star"></i>
                                                         @endfor
                                                     </div>
                                                     @if ($workspace->rating->review)
@@ -1135,8 +1135,10 @@
             </form>
 
             <div class="w-full h-px bg-slate-200 dark:bg-slate-700 my-4"></div>
+            </div><!-- /.Scrollable Body — penutup asli ikut terkomentar di blok KELOLA TAHAP (L1179),
+                         sehingga #ratingModal ikut bersarang di dalam #progressModal yang hidden -->
 
-            <!-- KELOLA TAHAP -->
+            {{-- <!-- KELOLA TAHAP -->
             <div class="space-y-3">
                 <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5 mb-2">
                     <i class="fa-solid fa-pen-to-square"></i> Modifikasi Tahap
@@ -1177,7 +1179,7 @@
             </div>
 
         </div>
-        
+         --}}
         <!-- Scripts -->
         <script>
             const STAGE_LIST = @json($stages);
@@ -1210,93 +1212,161 @@
 </div>
 
     {{-- MODAL RATING & ULASAN (Company Only) --}}
-    @if (auth()->user()->role === 'company' && $workspace->status === 'Selesai')
-        <div id="ratingModal" class="hidden modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-blue-950/40 backdrop-blur-md p-4">
-            <div class="modal-panel bg-white dark:bg-slate-900 rounded-3xl shadow-[0_20px_50px_rgba(30,58,138,0.2)] w-full max-w-md overflow-hidden border border-blue-100 dark:border-slate-800">
-                <div class="relative px-6 py-7 bg-gradient-to-br from-blue-700 via-blue-600 to-blue-500 overflow-hidden">
-                    <div class="absolute inset-0 modal-header-pattern opacity-50"></div>
-                    <div class="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
-                    <div class="absolute -bottom-12 -left-8 w-28 h-28 bg-white/10 rounded-full blur-xl"></div>
-                    <div class="relative flex items-center justify-between">
-                        <div class="flex items-center gap-4">
-                            <div
-                                class="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-inner">
-                                <i class="fa-solid fa-ranking-star text-white text-lg"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-black text-white text-base tracking-tight">Beri Rating & Ulasan</h3>
-                                <p class="text-[10px] font-bold tracking-widest uppercase text-blue-200 mt-0.5">Bagikan pengalaman Anda</p>
-                            </div>
+@if (auth()->user()->role === 'company' && strtolower($workspace->status) === 'selesai')
+    <style>
+        .modal-star-btn {
+            color: #cbd5e1; /* slate-300 */
+            font-size: 1.75rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+            transition: color 0.2s ease, transform 0.15s ease;
+        }
+        .modal-star-btn:hover,
+        .modal-star-btn.active {
+            color: #f59e0b !important; /* amber-500 */
+        }
+        .modal-star-btn.pop {
+            animation: starPop 0.25s ease-out;
+        }
+        @keyframes starPop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+    </style>
+
+    <div id="ratingModal" class="hidden modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-blue-950/40 backdrop-blur-md p-4">
+        <div class="modal-panel bg-white dark:bg-slate-900 rounded-3xl shadow-[0_20px_50px_rgba(30,58,138,0.2)] w-full max-w-md overflow-hidden border border-blue-100 dark:border-slate-800">
+            <div class="relative px-6 py-7 bg-gradient-to-br from-blue-700 via-blue-600 to-blue-500 overflow-hidden">
+                <div class="absolute inset-0 modal-header-pattern opacity-50"></div>
+                <div class="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
+                <div class="absolute -bottom-12 -left-8 w-28 h-28 bg-white/10 rounded-full blur-xl"></div>
+                <div class="relative flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-inner">
+                            <i class="fa-solid fa-ranking-star text-white text-lg"></i>
                         </div>
-                        <button type="button"
-                            onclick="document.getElementById('ratingModal').classList.add('hidden')"
-                            class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors">
-                            <i class="fa-solid fa-xmark text-white text-sm"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <form method="POST" action="{{ route('company.client.review.store', $workspace->project_id) }}" class="p-6 space-y-6 bg-white dark:bg-slate-900">
-                    @csrf
-                    <div class="bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-800 rounded-2xl p-5 text-center shadow-inner">
-                        <label class="block text-[10px] font-black text-blue-500 dark:text-blue-400 uppercase tracking-widest mb-3">Pilih Rating</label>
-                        <input type="hidden" name="rating" id="ratingInput" value="5">
-                        <div class="flex justify-center gap-2 mb-3" id="starRating">
-                            @for ($i = 1; $i <= 5; $i++)
-                                <button type="button" class="star-btn active" data-value="{{ $i }}"
-                                    onclick="setRating({{ $i }})">
-                                    <i class="fa-solid fa-star"></i>
-                                </button>
-                            @endfor
+                        <div>
+                            <h3 class="font-black text-white text-base tracking-tight">Beri Rating & Ulasan</h3>
+                            <p class="text-[10px] font-bold tracking-widest uppercase text-blue-200 mt-0.5">Bagikan pengalaman Anda</p>
                         </div>
-                        <span class="inline-block px-3 py-1 bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest shadow-sm" id="ratingLabel">5 - Sempurna</span>
                     </div>
-
-                    <div>
-                        <label class="block text-[10px] font-black text-blue-500 dark:text-blue-400 uppercase tracking-widest mb-2">Ulasan / Testimoni</label>
-                        <textarea name="review" rows="3" maxlength="500" id="reviewText"
-                            oninput="document.getElementById('reviewCount').textContent = this.value.length"
-                            class="w-full px-4 py-3 bg-blue-50/50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-xl text-sm font-medium text-blue-900 dark:text-white dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white dark:focus:bg-slate-800 transition-all resize-none"
-                            placeholder="Tulis ulasan kinerja freelancer ini..."></textarea>
-                        <p class="text-[9px] font-black text-blue-300 dark:text-slate-400 mt-1.5 text-right"><span id="reviewCount">0</span>/500</p>
-                    </div>
-
-                    <button type="submit"
-                        class="btn-shimmer w-full py-3.5 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition shadow-[0_5px_15px_rgba(37,99,235,0.3)]">
-                        Kirim Ulasan
+                    <button type="button"
+                        onclick="document.getElementById('ratingModal').classList.add('hidden')"
+                        class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors">
+                        <i class="fa-solid fa-xmark text-white text-sm"></i>
                     </button>
-                </form>
+                </div>
             </div>
 
-            <script>
-                const ratingLabels = {
-                    1: '1 - Buruk',
-                    2: '2 - Kurang',
-                    3: '3 - Cukup',
-                    4: '4 - Sangat Baik',
-                    5: '5 - Sempurna'
-                };
+            {{-- Pastikan nama route & parameter sesuai dengan web.php Anda --}}
+            <form method="POST" action="{{ route('company.workspaces.review.store', $workspace) }}" class="p-6 space-y-6 bg-white dark:bg-slate-900">
+                @csrf
+                <div class="bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-800 rounded-2xl p-5 text-center shadow-inner">
+                    <label class="block text-[10px] font-black text-blue-500 dark:text-blue-400 uppercase tracking-widest mb-3">Pilih Rating</label>
+                    <input type="hidden" name="rating" id="ratingInput" value="5">
+                    
+                    <div class="flex justify-center gap-2 mb-3" id="starRating">
+                        @for ($i = 1; $i <= 5; $i++)
+                            <button type="button" class="modal-star-btn active" data-value="{{ $i }}"
+                                onclick="setRating({{ $i }})">
+                                <i class="fa-solid fa-star pointer-events-none"></i>
+                            </button>
+                        @endfor
+                    </div>
+                    
+                    <span class="inline-block px-3 py-1 bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest shadow-sm" id="ratingLabel">5 - Sempurna</span>
+                </div>
 
-                function setRating(v) {
-                    document.getElementById('ratingInput').value = v;
-                    document.getElementById('ratingLabel').textContent = ratingLabels[v];
-                    document.querySelectorAll('#starRating .star-btn').forEach((btn, idx) => {
-                        if (idx < v) {
-                            btn.classList.add('active');
-                        } else {
-                            btn.classList.remove('active');
-                        }
-                    });
-                    const clicked = document.querySelector('#starRating .star-btn[data-value="' + v + '"]');
-                    if (clicked) {
-                        clicked.classList.remove('pop');
-                        void clicked.offsetWidth;
-                        clicked.classList.add('pop');
-                    }
-                }
-            </script>
+                <div>
+                    <label class="block text-[10px] font-black text-blue-500 dark:text-blue-400 uppercase tracking-widest mb-2">Ulasan / Testimoni</label>
+                    <textarea name="review" rows="3" maxlength="500" id="reviewText"
+                        oninput="document.getElementById('reviewCount').textContent = this.value.length"
+                        class="w-full px-4 py-3 bg-blue-50/50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-xl text-sm font-medium text-blue-900 dark:text-white dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white dark:focus:bg-slate-800 transition-all resize-none"
+                        placeholder="Tulis ulasan kinerja freelancer ini..."></textarea>
+                    <p class="text-[9px] font-black text-blue-300 dark:text-slate-400 mt-1.5 text-right"><span id="reviewCount">0</span>/500</p>
+                </div>
+
+                <button type="submit"
+                    class="w-full py-3.5 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition shadow-[0_5px_15px_rgba(37,99,235,0.3)]">
+                    Kirim Ulasan
+                </button>
+            </form>
         </div>
-    @endif
+    </div>
+
+    <script>
+        (function () {
+            'use strict';
+
+            var ratingLabels = {
+                1: '1 - Buruk',
+                2: '2 - Kurang',
+                3: '3 - Cukup',
+                4: '4 - Sangat Baik',
+                5: '5 - Sempurna'
+            };
+
+            // amber-500 — warna bintang aktif. Dipasang via style inline +
+            // !important agar SELALU menang atas konflik CSS lain
+            // (.star-btn.active, dark mode, utility Tailwind, dsb).
+            var ACTIVE_COLOR = '#f59e0b';
+
+            function starButtons() {
+                return document.querySelectorAll('#starRating .modal-star-btn');
+            }
+
+            function setRating(value) {
+                var v = parseInt(value, 10);
+                if (!ratingLabels[v]) return;
+
+                var input = document.getElementById('ratingInput');
+                var label = document.getElementById('ratingLabel');
+                if (input) input.value = v;
+                if (label) label.textContent = ratingLabels[v];
+
+                starButtons().forEach(function (btn, idx) {
+                    var on = idx < v;
+                    btn.classList.toggle('active', on);
+
+                    if (on) {
+                        // Bintang aktif: warna dipaku inline (!important).
+                        btn.style.setProperty('color', ACTIVE_COLOR, 'important');
+                    } else {
+                        // Bintang non-aktif: bersihkan inline style agar warna
+                        // default (#cbd5e1) dan efek :hover CSS kembali bekerja.
+                        btn.style.removeProperty('color');
+                    }
+                });
+
+                var clicked = document.querySelector('#starRating .modal-star-btn[data-value="' + v + '"]');
+                if (clicked) {
+                    clicked.classList.remove('pop');
+                    void clicked.offsetWidth; // paksa reflow agar animasi pop restart
+                    clicked.classList.add('pop');
+                }
+            }
+
+            // WAJIB: inline onclick="setRating(n)" membutuhkan fungsi GLOBAL.
+            // Bind eksplisit ke window supaya tidak kena Uncaught ReferenceError
+            // akibat scope/closure/wrapper script mana pun.
+            window.setRating = setRating;
+
+            // Cadangan (belt & suspenders): delegasi klik di container bintang.
+            // Klik tetap terproses walau inline handler tidak tereksekusi.
+            var starContainer = document.getElementById('starRating');
+            if (starContainer) {
+                starContainer.addEventListener('click', function (e) {
+                    var btn = e.target.closest ? e.target.closest('.modal-star-btn') : null;
+                    if (btn && starContainer.contains(btn)) {
+                        setRating(btn.getAttribute('data-value'));
+                    }
+                });
+            }
+        })();
+    </script>
+@endif
 
     {{-- Delete Stage Confirmation Modal --}}
     <div id="deleteStageModal" class="fixed inset-0 z-[250] flex items-center justify-center bg-black/60 hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm">

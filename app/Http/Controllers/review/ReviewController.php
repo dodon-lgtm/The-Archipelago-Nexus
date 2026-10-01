@@ -65,4 +65,49 @@ public function create($projectId)
 
         return back()->with('success', 'Ulasan dan rating berhasil dikirim.');
     }
+
+    /**
+     * Simpan ulasan berbasis WORKSPACE — dipakai modal "Beri Rating & Ulasan"
+     * pada halaman detail workspace (resources/views/workspace/show.blade.php).
+     *
+     * Latar belakang: modal mengirim ID workspace. Route client.review.store
+     * berbasis {project} sehingga ID workspace masuk ke slot project dan
+     * Project::findOrFail() melempar 404 NotFound. Method ini menerima
+     * workspace secara langsung + guard kepemilikan company.
+     */
+    public function storeForWorkspace(Request $request, Workspace $workspace)
+    {
+        // Hanya company pemilik workspace yang boleh memberi rating.
+        if ((int) $workspace->company_id !== (int) Auth::id()) {
+            abort(403, 'Anda tidak memiliki akses untuk memberi rating pada workspace ini.');
+        }
+
+        $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+            'review' => 'nullable|string|max:1000',
+        ]);
+
+        if (!$workspace->freelancer_id) {
+            return back()->with('error', 'Freelancer tidak ditemukan pada workspace ini.');
+        }
+
+        // Cegah review ganda untuk workspace yang sama.
+        $existingReview = Review::where('workspace_id', $workspace->id)->first();
+        if ($existingReview) {
+            return back()->with('error', 'Anda sudah memberikan ulasan untuk workspace ini.');
+        }
+
+        Review::create([
+            'workspace_id'  => $workspace->id,
+            'project_id'    => $workspace->project_id,
+            'client_id'     => Auth::id(),
+            'freelancer_id' => $workspace->freelancer_id,
+            'rating'        => (int) $request->rating,
+            'review'        => $request->review,
+        ]);
+
+        return redirect()
+            ->route('company.workspaces.show', $workspace)
+            ->with('success', 'Ulasan dan rating berhasil dikirim.');
+    }
 }
