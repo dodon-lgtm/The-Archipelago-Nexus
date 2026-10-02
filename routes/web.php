@@ -179,6 +179,11 @@ Route::middleware(['auth', 'ensureCompanyAdminOrAbort'])->prefix('company')->nam
 
     Route::get('/client/project/{project}/review', [ReviewController::class, 'create'])->name('client.review.create');
     Route::post('/client/project/{project}/review', [ReviewController::class, 'store'])->name('client.review.store');
+
+    // Review berbasis WORKSPACE — dipakai modal "Beri Rating & Ulasan" pada
+    // halaman detail workspace. Route client.review.store berbasis {project}
+    // dan TIDAK cocok menerima ID workspace (menyebabkan 404 Project::findOrFail).
+    Route::post('/workspaces/{workspace}/review', [ReviewController::class, 'storeForWorkspace'])->name('workspaces.review.store');
     Route::post('/projects/{project}/penawaran/{penawaran}/select', [CompanyProjectController::class, 'selectFreelancer'])->name('projects.penawaran.select');
 
     Route::get('/workspaces', [WorkspaceController::class, 'companyIndex'])->name('workspaces.index');
@@ -248,6 +253,18 @@ Route::middleware(['auth', 'ensureAdmin'])->prefix('admin')->name('admin.')->gro
     Route::post('/reports/{report}/update-status', [AdminReportController::class, 'updateStatus'])->name('reports.update-status');
     Route::post('/reports/{report}/destroy-project', [AdminReportController::class, 'destroyProject'])->name('reports.destroy-project');
     Route::post('/reports/{report}/destroy-penawaran', [AdminReportController::class, 'destroyPenawaran'])->name('reports.destroy-penawaran');
+
+    // Terima Laporan Keterlambatan: laporan dinyatakan valid -> status 'ditangani'.
+    // Tidak menyentuh dana & tidak mengubah workspace/project.
+    Route::post('/reports/{report}/accept', [AdminReportController::class, 'acceptReport'])->name('reports.accept');
+
+    // Resolusi dana dispute (escrow): release / refund / split.
+    // Method + validasi (ReportResolutionRequest) + EscrowService sudah tersedia;
+    // route ini yang sebelumnya belum terdaftar sehingga blade show.blade.php
+    // melempar RouteNotFoundException.
+    Route::post('/reports/{report}/release-funds', [AdminReportController::class, 'releaseFunds'])->name('reports.release-funds');
+    Route::post('/reports/{report}/refund-funds', [AdminReportController::class, 'refundFunds'])->name('reports.refund-funds');
+    Route::post('/reports/{report}/split-funds', [AdminReportController::class, 'splitFunds'])->name('reports.split-funds');
 
     Route::get('/company-account-requests', [CompanyAccountRequestAdminController::class, 'index'])->name('company-account-requests.index');
     Route::get('/company-account-requests/{request}', [CompanyAccountRequestAdminController::class, 'show'])->name('company-account-requests.show');

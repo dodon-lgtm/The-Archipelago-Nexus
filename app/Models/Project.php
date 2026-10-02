@@ -226,5 +226,39 @@ class Project extends Model
     {
         return $this->update(['status' => self::STATUS_CLOSED]);
     }
-    
+
+    /**
+     * Apakah project sudah memiliki freelancer yang DITERIMA/DIPILIH?
+     *
+     * Penentu boleh/tidaknya dihapus: freelancer sudah diterima/dipilih
+     * (penawaran 'Diterima' / workspace ada). Status project TIDAK
+     * berpengaruh — project dengan kondisi ini tidak boleh dihapus admin.
+     *
+     * Relasi yang sudah di-eager-load (workspace / penawarans) atau agregat
+     * `penawaran_diterima_count` (dari withCount) digunakan terlebih dahulu
+     * agar tidak memicu query tambahan per baris (N+1).
+     */
+    public function hasAssignedFreelancer(): bool
+    {
+        if ($this->relationLoaded('workspace')) {
+            $hasWorkspace = (bool) $this->workspace;
+        } else {
+            $hasWorkspace = $this->workspace()->exists();
+        }
+
+        if ($hasWorkspace) {
+            return true;
+        }
+
+        // Agregat dari withCount(['penawarans as penawaran_diterima_count' => ...])
+        if (isset($this->penawaran_diterima_count)) {
+            return (int) $this->penawaran_diterima_count > 0;
+        }
+
+        if ($this->relationLoaded('penawarans')) {
+            return $this->penawarans->contains('status', 'Diterima');
+        }
+
+        return $this->penawarans()->where('status', 'Diterima')->exists();
+    }
 }

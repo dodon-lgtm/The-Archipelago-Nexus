@@ -110,10 +110,18 @@
                             <td class="px-5 py-4 text-right">
                                 <div class="flex flex-wrap items-center justify-end gap-2">
                                     <a href="{{ route('admin.projects.show', $project) }}" class="px-3 py-1.5 text-xs font-semibold bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg transition">Detail</a>
-                                    <form method="POST" action="{{ route('admin.projects.destroy', $project) }}" onsubmit="return adminConfirm('Hapus proyek {{ $project->project_name }}?', this)" class="inline">
-                                        @csrf @method('DELETE')
-                                        <button type="submit" class="px-3 py-1.5 text-xs font-semibold bg-red-50 text-red-600 hover:bg-red-100 active:bg-red-200 rounded-lg transition">Hapus</button>
-                                    </form>
+                                    @if ($project->hasAssignedFreelancer())
+                                        <button type="button" disabled
+                                            title="Proyek tidak dapat dihapus karena freelancer sudah diterima."
+                                            class="px-3 py-1.5 text-xs font-semibold bg-slate-100 text-slate-400 border border-slate-200 rounded-lg cursor-not-allowed">
+                                            <i class="fa-solid fa-trash-can mr-1"></i>Hapus
+                                        </button>
+                                    @else
+                                        <form method="POST" action="{{ route('admin.projects.destroy', $project) }}" onsubmit="return adminConfirm('Hapus proyek {{ $project->project_name }}?', this)" class="inline">
+                                            @csrf @method('DELETE')
+                                            <button type="submit" class="px-3 py-1.5 text-xs font-semibold bg-red-50 text-red-600 hover:bg-red-100 active:bg-red-200 rounded-lg transition">Hapus</button>
+                                        </form>
+                                    @endif
                                 </div>
                             </td>
                         </tr>

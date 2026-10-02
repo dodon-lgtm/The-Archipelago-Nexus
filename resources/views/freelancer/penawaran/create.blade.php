@@ -209,9 +209,10 @@
                                     class="block text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-2">
                                     Estimasi Pengerjaan (Hari)
                                 </label>
-                                <input type="number" name="estimasi_hari"
+                                <input type="number" name="estimasi_hari" id="estimasi_hari" min="1" step="1" inputmode="numeric"
                                     class="w-full bg-blue-50/50 dark:bg-slate-950/60 border border-blue-100 dark:border-slate-800 rounded-xl px-5 py-3.5 text-sm font-bold text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 dark:focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:focus:ring-blue-500/20"
                                     placeholder="Misal : 14" required>
+                                    @error('estimasi_hari') <p class="text-xs text-red-500 dark:text-red-400 mt-1">{{ $message }}</p> @enderror
                             </div>
 
                             <!-- Pesan -->
@@ -347,6 +348,35 @@
                         this.value = '';
                     }
                 });
+            }
+        });
+    </script>
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const estimasiInput = document.getElementById('estimasi_hari');
+
+            if (estimasiInput) {
+                const setEstimasiValidity = () => {
+                    const v = estimasiInput.value.trim();
+
+                    if (v === '') {
+                        estimasiInput.setCustomValidity('Estimasi pengerjaan wajib diisi.');
+                    } else {
+                        const num = Number(v);
+
+                        if (!Number.isInteger(num)) {
+                            estimasiInput.setCustomValidity('Estimasi pengerjaan harus berupa bilangan bulat positif.');
+                        } else if (num < 1) {
+                            estimasiInput.setCustomValidity('Estimasi pengerjaan minimal 1 hari.');
+                        } else {
+                            estimasiInput.setCustomValidity('');
+                        }
+                    }
+                };
+
+                estimasiInput.addEventListener('input', setEstimasiValidity);
+                estimasiInput.addEventListener('change', setEstimasiValidity);
+                estimasiInput.addEventListener('invalid', setEstimasiValidity);
             }
         });
     </script>

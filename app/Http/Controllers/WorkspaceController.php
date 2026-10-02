@@ -378,8 +378,11 @@ class WorkspaceController extends Controller
                 if ($oldStage !== $newStage && in_array($newStage, $stages, true)) {
                     return $this->backWithError('Tahap "' . $newStage . '" sudah ada.');
                 }
-                // Ganti nama, pertahankan urutan (posisi) + pembuat/deskripsi.
+                // Ganti nama + deskripsi (dari form Edit tahap), pertahankan urutan (posisi) + pembuat.
                 $stageItems[$pos]['name'] = $newStage;
+                $stageItems[$pos]['description'] = $description !== null && $description !== ''
+                    ? (string) $description
+                    : null;
                 $workspace->update(['stages' => array_values($stageItems)]);
 
                 // Sinkronkan stage_order/nama pada riwayat yang masih memakai nama lama.
