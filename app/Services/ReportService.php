@@ -80,6 +80,11 @@ class ReportService
             // 6. Notifikasi admin hanya untuk report yang benar-benar baru.
             $this->notifyAdmins($report);
 
+            // 6b. Alur "Laporkan Keterlambatan" (kategori 'keterlambatan'):
+            //     beri tahu freelancer bahwa keterlambatannya dilaporkan &
+            //     sedang ditinjau Admin.
+            $this->notifyReportedFreelancerOnDelay($report);
+
             return $report;
         });
     }
@@ -507,6 +512,44 @@ case Report::TARGET_WEBSITE:
             message: $message,
             redirect: $redirect,
             senderId: Auth::id(),
+            projectId: $report->project_id,
+            metadata: ['report_id' => $report->id],
+        );
+    }
+
+    /**
+     * Alur "Laporkan Keterlambatan" (Company → Admin):
+     * Beri tahu freelancer yang dilaporkan bahwa keterlambatan penyelesaian
+     * proyeknya telah dilaporkan & sedang ditinjau Admin.
+     *
+     * Hanya kategori 'keterlambatan' yang memicu notifikasi ini — kategori
+     * baru yang dipakai khusus oleh tombol "Laporkan Keterlambatan", sehingga
+     * alur laporan lain (penipuan, hasil tidak sesuai, dll) tidak berubah.
+     */
+    protected function notifyReportedFreelancerOnDelay(Report $report): void
+    {
+        if ($report->category !== Report::CATEGORY_KETERLAMBATAN) {
+            return;
+        }
+
+        if (!$report->reported_user_id || !$report->workspace_id) {
+            return;
+        }
+
+        $workspace = Workspace::with('project')->find($report->workspace_id);
+        $projectName = $report->project?->project_name
+            ?? ($workspace?->project->project_name ?? '');
+
+        NotificationService::sendTo(
+            user:    (int) $report->reported_user_id,
+            type:    'report.delay_submitted',
+            title:   'Keterlambatan Dilaporkan',
+            message: 'Company melaporkan keterlambatan penyelesaian proyek "'
+                . $projectName . '". Laporan sedang ditinjau oleh Admin. '
+                . 'Silakan segera selesaikan pekerjaan Anda.',
+            redirect: $workspace ? route('freelancer.workspaces.show', $workspace) : null,
+            senderId: $report->reporter_id,
+            workspaceId: $report->workspace_id,
             projectId: $report->project_id,
             metadata: ['report_id' => $report->id],
         );

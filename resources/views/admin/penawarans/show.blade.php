@@ -48,7 +48,15 @@
                 <h3 class="font-bold text-slate-800 mb-3">Freelancer</h3>
                 <div class="flex items-center gap-3 mb-3">
                     <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-lg font-bold">{{ strtoupper(substr($penawaran->freelancer->name ?? '?', 0, 1)) }}</div>
-                    <div><p class="font-bold text-slate-800">{{ $penawaran->freelancer->name ?? '—' }}</p><p class="text-xs text-slate-500">{{ $penawaran->freelancer->email ?? '—' }}</p></div>
+                    <div>
+                        @if ($penawaran->freelancer)
+                            <a href="{{ route('admin.users.show', $penawaran->freelancer) }}"
+                                class="font-bold text-slate-800 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition">{{ $penawaran->freelancer->name ?? '—' }}</a>
+                        @else
+                            <p class="font-bold text-slate-800 dark:text-white">{{ $penawaran->freelancer->name ?? '—' }}</p>
+                        @endif
+                        <p class="text-xs text-slate-500 dark:text-slate-400">{{ $penawaran->freelancer->email ?? '—' }}</p>
+                    </div>
                 </div>
             </div>
             <div class="bg-white rounded-2xl border border-blue-100 shadow-sm p-5">

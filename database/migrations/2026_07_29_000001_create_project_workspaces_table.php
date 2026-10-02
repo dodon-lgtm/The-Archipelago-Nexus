@@ -24,10 +24,19 @@ return new class extends Migration
                 ->constrained('users')
                 ->cascadeOnDelete();
 
+            // Superset final dari seluruh migrasi ALTER ENUM berikutnya
+            // (2026_08_10, 2026_09_11, 2027_02_01, 2027_02_02 — rename status
+            // 'Terlambat' menjadi 'Melewati Batas Waktu') agar
+            // fresh install di driver lain (mis. SQLite untuk test in-memory)
+            // memiliki CHECK constraint yang sama lengkapnya.
             $table->enum('status', [
                 'Sedang Dikerjakan',
+                'Menunggu Review',
                 'Menunggu Revisi',
+                'Menunggu Pembayaran',
+                'Menunggu Verifikasi Admin',
                 'Selesai',
+                'Melewati Batas Waktu',
             ])->default('Sedang Dikerjakan');
 
             $table->timestamps();

@@ -2,6 +2,8 @@
 
 require_once __DIR__.'/../app/helpers.php';
 
+use App\Console\Commands\MarkOverdueWorkspaces;
+use App\Console\Commands\SendProjectDeadlineNotifications;
 use App\Http\Middleware\EnsureAdmin;
 use App\Http\Middleware\EnsureCompanyAdminOrAbort;
 use App\Http\Middleware\EnsureProfileComplete;
@@ -11,6 +13,10 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 
 return Application::configure(basePath: dirname(__DIR__))
+    ->withCommands([
+        MarkOverdueWorkspaces::class,
+        SendProjectDeadlineNotifications::class,
+    ])
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
         api: __DIR__.'/../routes/api.php',
@@ -18,6 +24,13 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+
+        // Percayai reverse proxy (ngrok tunnel untuk pembayaran Midtrans, load balancer).
+        // Tanpa ini, route()/url() menghasilkan URL http:// di halaman HTTPS →
+        // Mixed Content memblokir fetch (Snap quota payment, notifikasi) dan
+        // notification_url webhook menjadi http://.
+        // CATATAN PRODUCTION: ganti '*' dengan IP load balancer/proxy yang dikenal.
+        $middleware->trustProxies(at: '*');
 
         $middleware->alias([
             'ensureAdmin' => EnsureAdmin::class,

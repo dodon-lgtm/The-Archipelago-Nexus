@@ -7,39 +7,62 @@
       data-peer-type       = 'company' | 'freelancer'
 ========================================================= --}}
 
-<div id="negotiationModal" class="hidden fixed inset-0 z-[120] bg-black/50 backdrop-blur-sm items-center justify-center p-4 sm:p-6">
-    <div class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-2xl shadow-2xl border border-blue-100 dark:border-slate-800 overflow-hidden flex flex-col max-h-[90vh]">
+<div id="negotiationModal" class="hidden fixed inset-0 z-[120] bg-black/50 backdrop-blur-sm items-center justify-center p-3 sm:p-6">
+    <div class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-2xl shadow-2xl border border-blue-100 dark:border-slate-800 overflow-hidden flex flex-col max-h-[88vh] sm:max-h-[84vh] h-[min(88vh,640px)]">
 
-        {{-- Header --}}
-        <div class="px-5 py-4 border-b border-blue-100 dark:border-slate-800 bg-gradient-to-r from-blue-600/10 via-transparent to-transparent flex items-center justify-between gap-3">
-            <div class="flex items-center gap-3 min-w-0">
-                <div id="negoPeerAvatar" class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-blue-500 text-white flex items-center justify-center shrink-0 shadow-[0_4px_12px_rgba(59,130,246,0.3)]">
+        {{-- Header (stabil, tidak ikut scroll chat) --}}
+        <div class="shrink-0 px-4 py-3 border-b border-blue-100 dark:border-slate-800 bg-gradient-to-r from-blue-600/10 via-transparent to-transparent flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2.5 min-w-0">
+                <div id="negoPeerAvatar" class="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-600 to-blue-500 text-white flex items-center justify-center shrink-0 shadow-[0_4px_12px_rgba(59,130,246,0.3)]">
                     <i class="fa-solid fa-user text-sm"></i>
                 </div>
                 <div class="min-w-0">
-                    <h3 class="text-sm font-black text-slate-800 dark:text-white flex items-center gap-1.5">
-                        <i class="fa-regular fa-comments text-blue-500"></i> Negosiasi
+                    <h3 class="text-[13px] font-black text-slate-800 dark:text-white flex items-center gap-1.5 leading-none">
+                        <i class="fa-regular fa-comments text-blue-500 text-xs"></i> Negosiasi
                     </h3>
-                    <p id="negoProjectTitle" class="text-[11px] text-slate-500 dark:text-slate-400 truncate font-semibold">Proyek</p>
-                    <p class="text-[10px] text-blue-500 dark:text-blue-400 font-bold truncate">dengan <span id="negoPeerName">-</span></p>
+                    <p id="negoProjectTitle" class="text-[11px] text-slate-500 dark:text-slate-400 truncate font-semibold leading-tight">Proyek</p>
+                    <p class="text-[10px] text-blue-500 dark:text-blue-400 font-bold truncate leading-tight">dengan <span id="negoPeerName">-</span></p>
                 </div>
             </div>
-            <button type="button" id="negoCloseBtn" class="w-8 h-8 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-white flex items-center justify-center shrink-0 transition-colors">
-                <i class="fa-solid fa-xmark text-lg"></i>
+            <button type="button" id="negoCloseBtn" class="w-7 h-7 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-white flex items-center justify-center shrink-0 transition-colors">
+                <i class="fa-solid fa-xmark text-base"></i>
             </button>
         </div>
 
-        {{-- Harga berjalan --}}
-        <div class="px-5 py-2 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2">
-            <p id="negoCurrentPrice" class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">Harga saat ini: -</p>
-            <p id="negoCurrentDays" class="text-[11px] font-bold text-blue-600 dark:text-blue-400">Estimasi: -</p>
+        {{-- Harga berjalan (stabil) --}}
+        <div class="shrink-0 px-4 py-1.5 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2">
+            <p id="negoCurrentPrice" class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 leading-none">Harga saat ini: -</p>
+            <p id="negoCurrentDays" class="text-[11px] font-bold text-blue-600 dark:text-blue-400 leading-none">Estimasi: -</p>
         </div>
 
-        {{-- Body Chat --}}
-        <div id="negotiationMessages" class="flex-1 overflow-y-auto px-4 py-4 bg-slate-50/50 dark:bg-slate-950/40 min-h-[240px]"></div>
+        {{-- Banner: Negosiasi Dikunci / Deal (compact, stabil di atas chat, max 38% tinggi modal) --}}
+        <div id="negoLockedBanner" class="hidden shrink-0 px-3 py-2 bg-amber-50 dark:bg-amber-950/30 border-b border-amber-200 dark:border-amber-800/40 max-h-[38%] overflow-y-auto">
+            <div class="flex items-start gap-2">
+                <div class="w-6 h-6 rounded-lg bg-amber-500 text-white flex items-center justify-center shrink-0 mt-0.5">
+                    <i class="fa-solid fa-lock text-[11px]"></i>
+                </div>
+                <div class="min-w-0 flex-1">
+                    <p class="text-[11px] font-extrabold text-amber-800 dark:text-amber-200 flex flex-wrap items-center gap-1.5 leading-none">
+                        <span id="negoLockedTitle">Negosiasi Selesai / Dikunci</span>
+                        <span id="negoLockedBadge" class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 text-[9px] font-bold border border-amber-200 dark:border-amber-800 leading-none">Deal</span>
+                    </p>
+                    <p id="negoLockedDesc" class="text-[10px] leading-snug text-amber-700 dark:text-amber-300/90 mt-1 line-clamp-2">Negosiasi sudah selesai. Riwayat tetap tersimpan (read-only). Lanjutkan di Workspace.</p>
+                    <div id="negoDealSummary" class="mt-2 hidden rounded-lg bg-white dark:bg-slate-900 border border-amber-200 dark:border-amber-800/50 p-2"></div>
+                    <div id="negoWorkspaceLinkWrap" class="mt-2 hidden flex flex-wrap items-center gap-2">
+                        <a id="negoWorkspaceLink" href="#" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-[11px] font-bold transition shadow-sm leading-none">
+                            <i class="fa-solid fa-external-link-alt text-[10px]"></i> Buka Workspace
+                        </a>
+                        <span class="text-[10px] text-slate-500 dark:text-slate-400">Chat pengerjaan di Workspace</span>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        {{-- Footer Form --}}
-        <div class="border-t border-slate-100 dark:border-slate-800 p-4 bg-white dark:bg-slate-900">
+        {{-- Body Chat (flex-1, scroll internal, min tinggi agar beberapa pesan terakhir terlihat) --}}
+        <div id="negotiationMessages" class="flex-1 overflow-y-auto overscroll-contain px-3 sm:px-4 py-3 bg-slate-50/50 dark:bg-slate-950/40 min-h-[180px] sm:min-h-[220px]"></div>
+
+        {{-- Footer Form (composer) - stabil di bawah, tidak ikut scroll chat --}}
+        <div id="negoComposer" class="shrink-0 border-t border-slate-100 dark:border-slate-800 p-3 bg-white dark:bg-slate-900">
             <div class="grid grid-cols-2 gap-2 mb-2" id="negoOfferInputs">
                 <div class="relative">
                     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-emerald-500">
@@ -86,6 +109,31 @@
         const div = document.createElement('div');
         div.textContent = String(str ?? '');
         return div.innerHTML;
+    }
+
+    // Hanya menerima angka; tampil dengan pemisah ribuan id-ID (1.000.000).
+    // Nilai yang dikirim ke backend tetap angka bersih (digit saja).
+    function formatRibuan(value) {
+        const digits = String(value ?? '').replace(/[^\d]/g, '').replace(/^0+(?=\d)/, '');
+        return digits === '' ? '' : Number(digits).toLocaleString('id-ID');
+    }
+
+    function initPriceFormatter() {
+        const priceEl = document.getElementById('negoProposedPrice');
+        if (!priceEl || priceEl.dataset.ribuanBound === '1') return;
+        priceEl.dataset.ribuanBound = '1';
+        priceEl.addEventListener('input', function () {
+            const cursorAtEnd = this.selectionStart === this.value.length;
+            const formatted = formatRibuan(this.value);
+            if (formatted !== this.value) {
+                this.value = formatted;
+                if (cursorAtEnd) this.setSelectionRange(this.value.length, this.value.length);
+            }
+        });
+        // Pengaman terakhir sebelum kirim: pastikan isinya angka berformat.
+        priceEl.addEventListener('blur', function () {
+            this.value = formatRibuan(this.value);
+        });
     }
 
     function offerCard(msg) {
@@ -151,6 +199,71 @@
         if (box) box.scrollTop = box.scrollHeight;
     }
 
+    let currentIsLocked = false;
+
+    function applyLockedState(isLocked, dealSummary, workspaceUrl) {
+        currentIsLocked = !!isLocked;
+        const banner = document.getElementById('negoLockedBanner');
+        const composer = document.getElementById('negoComposer');
+        const summaryEl = document.getElementById('negoDealSummary');
+        const wsWrap = document.getElementById('negoWorkspaceLinkWrap');
+        const wsLink = document.getElementById('negoWorkspaceLink');
+        const titleEl = document.getElementById('negoLockedTitle');
+        const badgeEl = document.getElementById('negoLockedBadge');
+        const descEl = document.getElementById('negoLockedDesc');
+
+        if (isLocked) {
+            banner.classList.remove('hidden');
+            composer.classList.add('hidden');
+            // Ringkasan deal
+            if (dealSummary) {
+                const isWinner = !!dealSummary.is_winner;
+                const statusLabel = esc(dealSummary.status || 'Selesai');
+                const harga = formatRp(dealSummary.harga_deal) || '-';
+                const estimasi = dealSummary.estimasi_hari ? esc(dealSummary.estimasi_hari) + ' hari' : '-';
+                const selectedAt = dealSummary.selected_at ? esc(dealSummary.selected_at) : '-';
+                const freelancerName = esc(dealSummary.freelancer_name || '-');
+                const projectName = esc(dealSummary.project_name || '-');
+                titleEl.textContent = isWinner ? 'Deal — Negosiasi Selesai' : 'Negosiasi Dikunci';
+                badgeEl.textContent = isWinner ? 'Deal / Selesai' : 'Dikunci';
+                badgeEl.className = isWinner
+                    ? 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold border border-emerald-200 dark:border-emerald-800'
+                    : 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 text-[10px] font-bold border border-amber-200 dark:border-amber-800';
+                descEl.textContent = isWinner
+                    ? 'Freelancer telah dipilih. Negosiasi dikunci (read-only). Riwayat tetap tersimpan. Lanjutkan komunikasi pengerjaan di Workspace.'
+                    : 'Penawaran ini sudah tidak aktif (ditolak / workspace telah dibuat). Riwayat tetap dapat dibaca. Lanjutkan di Workspace jika Anda freelancer terpilih.';
+                summaryEl.classList.remove('hidden');
+                // Compact layout: Project & Freelancer full-width, 4 field lain 2 kolom agar hemat tinggi (35-40% target)
+                summaryEl.innerHTML =
+                    '<div class="flex items-center gap-1.5 text-[10px] font-bold text-slate-700 dark:text-slate-200 leading-none"><i class="fa-solid fa-circle-info text-blue-500 text-[11px]"></i> Ringkasan Deal</div>' +
+                    '<div class="mt-1.5 grid grid-cols-1 gap-1 text-[10px]">' +
+                        '<div class="flex justify-between gap-2 leading-tight"><span class="text-slate-500 dark:text-slate-400 shrink-0">Project</span><span class="font-bold text-slate-800 dark:text-white text-right truncate">' + projectName + '</span></div>' +
+                        '<div class="flex justify-between gap-2 leading-tight"><span class="text-slate-500 dark:text-slate-400 shrink-0">Freelancer</span><span class="font-bold text-slate-800 dark:text-white text-right truncate">' + freelancerName + '</span></div>' +
+                    '</div>' +
+                    '<div class="mt-1.5 grid grid-cols-2 gap-1.5 text-[10px]">' +
+                        '<div class="rounded-md bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 px-2 py-1.5"><div class="text-[9px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide leading-none">Harga Deal</div><div class="font-extrabold text-emerald-600 dark:text-emerald-400 leading-tight truncate">' + esc(harga) + '</div></div>' +
+                        '<div class="rounded-md bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 px-2 py-1.5"><div class="text-[9px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide leading-none">Estimasi</div><div class="font-bold text-slate-800 dark:text-white leading-tight truncate">' + estimasi + '</div></div>' +
+                        '<div class="rounded-md bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 px-2 py-1.5"><div class="text-[9px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide leading-none">Status</div><div class="font-bold leading-tight truncate ' + (isWinner ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400') + '">' + statusLabel + '</div></div>' +
+                        '<div class="rounded-md bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 px-2 py-1.5"><div class="text-[9px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide leading-none">Dipilih</div><div class="font-semibold text-slate-600 dark:text-slate-300 leading-tight truncate">' + selectedAt + '</div></div>' +
+                    '</div>';
+            } else {
+                summaryEl.classList.add('hidden');
+                summaryEl.innerHTML = '';
+            }
+            if (workspaceUrl) {
+                wsWrap.classList.remove('hidden');
+                wsLink.href = workspaceUrl;
+            } else {
+                wsWrap.classList.add('hidden');
+            }
+        } else {
+            banner.classList.add('hidden');
+            composer.classList.remove('hidden');
+            summaryEl.classList.add('hidden');
+            wsWrap.classList.add('hidden');
+        }
+    }
+
     function loadMessages() {
         messagesLoaded = false;
         const box = document.getElementById('negotiationMessages');
@@ -168,16 +281,33 @@
             document.getElementById('negoCurrentPrice').textContent = price ? 'Harga saat ini: ' + price : 'Harga saat ini: -';
             document.getElementById('negoCurrentDays').textContent = days ? 'Estimasi: ' + days + ' hari' : 'Estimasi: -';
 
+            // Terapkan status dikunci / ringkasan deal dari server
+            applyLockedState(!!data.is_locked, data.deal_summary || null, data.workspace_url || null);
+
             if (msgs.length === 0) {
                 box.innerHTML = '<div class="flex flex-col items-center justify-center py-10 text-slate-400 text-center">' +
                     '<i class="fa-regular fa-comments text-3xl mb-2"></i>' +
                     '<p class="text-xs font-semibold">Belum ada pesan</p>' +
-                    '<p class="text-[11px] mt-1">Mulai negosiasi dengan mengirim pesan pertama.</p></div>';
+                    '<p class="text-[11px] mt-1">' + (data.is_locked ? 'Riwayat negosiasi tetap tersimpan (read-only).' : 'Mulai negosiasi dengan mengirim pesan pertama.') + '</p></div>';
             } else {
-                box.innerHTML = msgs.map(buildBubble).join('');
+                // Jika dikunci, sembunyikan tombol Setuju/Tolak di dalam offerCard (sudah pending check), tapi juga pastikan tidak ada action button yang tampil
+                let html = msgs.map(buildBubble).join('');
+                if (data.is_locked) {
+                    // Hapus tombol accept/reject dari HTML jika ada (defense in depth: backend juga menolak)
+                    html = html.replace(/data-nego-accept="[^"]*"/g, 'data-nego-locked="1"').replace(/data-nego-reject="[^"]*"/g, 'data-nego-locked="1"');
+                    // Sembunyikan container aksi yang mengandung button Setuju/Tolak (fallback sederhana)
+                    html = html.replace(/<div class="flex flex-wrap items-center gap-2 mt-3">[\s\S]*?Tolak<\/button><\/div>/g, '');
+                }
+                box.innerHTML = html;
             }
             messagesLoaded = true;
             scrollToBottom();
+
+            // Percakapan sudah dibuka → server menandai notifikasi terkait
+            // sebagai read. Hilangkan badge unread untuk penawaran ini di
+            // halaman agar konsisten dengan database.
+            document.querySelectorAll('[data-nego-unread="' + currentPenawaranId + '"]')
+                .forEach(function (badgeEl) { badgeEl.remove(); });
         })
         .catch(err => {
             box.innerHTML = '<div class="text-center py-10 text-red-500 text-xs">' + esc(err.message || 'Terjadi kesalahan') + '</div>';
@@ -195,6 +325,7 @@
         document.getElementById('negoProposedPrice').value = '';
         document.getElementById('negoProposedDays').value = '';
         document.getElementById('negoOfferInputs').style.display = (CURRENT_ROLE === 'company') ? 'grid' : 'none';
+        initPriceFormatter();
         modal.classList.remove('hidden');
         modal.classList.add('flex');
         document.body.style.overflow = 'hidden';
@@ -209,6 +340,10 @@
     }
 
     function sendMessage() {
+        if (currentIsLocked) {
+            showToast('Negosiasi sudah dikunci. Lanjutkan di Workspace.', 'error');
+            return;
+        }
         const messageInput = document.getElementById('negoMessage');
         const priceInput = document.getElementById('negoProposedPrice');
         const daysInput = document.getElementById('negoProposedDays');
@@ -245,6 +380,12 @@
         .then(r => r.json().then(d => ({ ok: r.ok, data: d })))
         .then(({ ok, data }) => {
             if (!ok) {
+                // Jika backend mengembalikan 423 locked, tampilkan banner locked dan reload
+                if (data && data.is_locked) {
+                    showToast(data.message || 'Negosiasi sudah dikunci.', 'error');
+                    loadMessages();
+                    throw new Error(data.message || 'Negosiasi dikunci');
+                }
                 const errs = data.errors ? Object.values(data.errors).flat().join(', ') : (data.message || 'Gagal mengirim pesan');
                 throw new Error(errs);
             }
@@ -256,7 +397,7 @@
             priceInput.value = '';
             daysInput.value = '';
         })
-        .catch(err => alert(err.message))
+        .catch(err => showToast(err.message, 'error'))
         .finally(() => {
             sendBtn.disabled = false;
             sendBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Kirim';
@@ -264,6 +405,10 @@
     }
 
     function respondOffer(action, id) {
+        if (currentIsLocked) {
+            showToast('Negosiasi sudah dikunci. Tidak dapat memproses tawaran.', 'error');
+            return;
+        }
         fetch('/negotiations/' + currentPenawaranId + '/' + id + '/' + action, {
             method: 'POST',
             headers: {
@@ -275,12 +420,17 @@
         .then(r => r.json().then(d => ({ ok: r.ok, data: d })))
         .then(({ ok, data }) => {
             if (!ok) {
+                if (data && data.is_locked) {
+                    showToast(data.message || 'Negosiasi sudah dikunci.', 'error');
+                    loadMessages();
+                    throw new Error(data.message || 'Negosiasi dikunci');
+                }
                 const errs = data.errors ? Object.values(data.errors).flat().join(', ') : (data.message || 'Gagal memproses tawaran');
                 throw new Error(errs);
             }
             loadMessages();
         })
-        .catch(err => alert(err.message));
+        .catch(err => showToast(err.message, 'error'));
     }
 
     document.addEventListener('click', function (e) {

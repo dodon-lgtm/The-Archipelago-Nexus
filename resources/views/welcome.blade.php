@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    @include('partials.theme-boot')
     <title>{{ config('app.name', 'ApexForge Labs') }}</title>
     <style>
 /* ApexForge Labs — Unified UI System */
@@ -223,3 +224,4 @@ a.button:hover{transform:translateY(-1px);filter:brightness(1.02)}
 </body>
 </html>
 
+{{-- naga --}}

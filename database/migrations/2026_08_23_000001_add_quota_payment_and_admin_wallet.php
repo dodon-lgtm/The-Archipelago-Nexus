@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -16,6 +16,15 @@ return new class extends Migration
 {
     public function up(): void
     {
+// GUARD URUTAN: pada fresh install (SQLite/test), tabel wallet_ledger &
+// withdrawals belum ada di titik ini (dibuat oleh 2026_09_22 / 2026_09_30).
+// Persiapan kolom platform dilakukan IDEMPOTENT oleh migrasi
+// 2026_10_06_000002_prepare_platform_wallet_columns yang berjalan setelah
+// semua tabel tersedia. DB yang sudah Ran tidak terpengaruh.
+        if (!Schema::hasTable('wallet_ledger') || !Schema::hasTable('withdrawals')) {
+            return;
+        }
+
         $this->preparePayments();
         $this->prepareWalletLedger();
     }

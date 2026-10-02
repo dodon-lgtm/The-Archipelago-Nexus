@@ -17,7 +17,10 @@
                 <dl class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                     <div class="md:col-span-2">
                         <dt class="text-xs text-slate-500 font-semibold">Nama Perusahaan</dt>
-                        <dd class="font-semibold text-slate-800 mt-1">{{ $companyRequest->company_name }}</dd>
+                        <dd class="font-semibold text-slate-800 mt-1">
+                            <a href="{{ route('admin.users.index', ['search' => $companyRequest->company_email]) }}"
+                                class="hover:text-blue-600 hover:underline transition">{{ $companyRequest->company_name }}</a>
+                        </dd>
                     </div>
                     <div>
                         <dt class="text-xs text-slate-500 font-semibold">Nama Penanggung Jawab</dt>
@@ -74,7 +77,8 @@
             @if($companyRequest->request_status==='menunggu')
                 <div class="bg-white rounded-2xl border border-blue-100 shadow-sm p-5">
                     <h3 class="font-bold text-emerald-600 text-sm mb-3"><i class="fa-solid fa-check mr-1"></i> Setujui Permintaan</h3>
-                    <form method="POST" action="{{ route('admin.company-account-requests.approve', ['companyRequest' => $companyRequest->id]) }}">
+                    <form method="POST" action="{{ route('admin.company-account-requests.approve', ['companyRequest' => $companyRequest->id]) }}"
+                          onsubmit="return adminConfirm('Setujui permintaan akun perusahaan {{ $companyRequest->company_name }}?', this, { confirmText: 'Ya, Setujui' })">
                         @csrf
                         <div class="mb-3">
                             <label class="text-xs font-semibold text-slate-600 mb-1 block">Catatan (opsional)</label>
@@ -86,7 +90,8 @@
 
                 <div class="bg-white rounded-2xl border border-red-200 shadow-sm p-5">
                     <h3 class="font-bold text-red-600 text-sm mb-3"><i class="fa-solid fa-xmark mr-1"></i> Tolak Permintaan</h3>
-                    <form method="POST" action="{{ route('admin.company-account-requests.reject', ['companyRequest' => $companyRequest->id]) }}">
+                    <form method="POST" action="{{ route('admin.company-account-requests.reject', ['companyRequest' => $companyRequest->id]) }}"
+                          onsubmit="return adminConfirm('Tolak permintaan akun perusahaan {{ $companyRequest->company_name }}? Aksi ini tidak dapat dibatalkan.', this, { danger: true, confirmText: 'Ya, Tolak' })">
                         @csrf
                         <div class="mb-3">
                             <label class="text-xs font-semibold text-slate-600 mb-1 block">Alasan Penolakan <span class="text-red-500">*</span></label>

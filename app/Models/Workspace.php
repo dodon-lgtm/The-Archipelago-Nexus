@@ -15,6 +15,7 @@ class Workspace extends Model
         'company_id',
         'freelancer_id',
         'status',
+        'overdue_previous_status',
         'stages',
     ];
 

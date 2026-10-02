@@ -4,15 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @include('partials.theme-boot')
 
     {{-- Script Inisialisasi Dark Mode --}}
-    <script>
-        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    </script>
+    
 
     <title>Proyek Tersimpan | ApexForge Labs</title>
 
@@ -368,7 +363,7 @@
                 @endif
 
                 {{-- Footer --}}
-                @include('navbar.footer')
+              
 
             </main>
         </div>

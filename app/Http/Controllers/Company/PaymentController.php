@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 
 class PaymentController extends Controller
 {
@@ -43,6 +44,8 @@ class PaymentController extends Controller
         // Halaman Payment Gate menjadi gerbang pembayaran resmi.
         // Seluruh status payment (pending / waiting_verification / paid / rejected)
         // ditangani langsung di dalam view gateway.
+        $workspace->load(['project', 'freelancer', 'company']);
+
         return view('company.payments.gateway', compact('workspace', 'payment'));
     }
 
@@ -71,7 +74,9 @@ class PaymentController extends Controller
                 ->with('error', 'Data pembayaran tidak ditemukan.');
         }
 
-        return view('company.payments.upload', compact('workspace', 'payment'));
+        $destinations = $this->manualPaymentDestinations();
+
+        return view('company.payments.upload', compact('workspace', 'payment', 'destinations'));
     }
 
     /**
@@ -116,6 +121,12 @@ class PaymentController extends Controller
 
         $request->validate([
             'payment_method' => ['required', 'string', 'in:Transfer Bank,QRIS,E-Wallet'],
+            'destination_source' => ['required', 'string', 'in:' . implode(',', array_keys($this->manualPaymentDestinations()))],
+            'sender_name' => ['required', 'string', 'max:191'],
+            'sender_bank' => ['required', 'string', 'max:191'],
+            'sender_account_number' => ['nullable', 'string', 'max:191'],
+            'payment_date' => ['required', 'date', 'before_or_equal:today'],
+            'paid_amount' => ['required', 'numeric', 'min:0'],
             'payment_proof' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:10240'], // 10 MB
             'company_note' => ['nullable', 'string', 'max:2000'],
         ], [
@@ -123,7 +134,45 @@ class PaymentController extends Controller
             'payment_proof.required' => 'Bukti pembayaran wajib diupload.',
             'payment_proof.mimes' => 'Bukti pembayaran harus berupa file: jpg, jpeg, png, atau pdf.',
             'payment_proof.max' => 'Ukuran file maksimal 10 MB.',
+            'destination_source.required' => 'Rekening/wallet tujuan pembayaran wajib dipilih.',
+            'destination_source.in' => 'Rekening/wallet tujuan pembayaran tidak valid.',
+            'sender_name.required' => 'Nama pengirim wajib diisi.',
+            'sender_bank.required' => 'Bank/Wallet pengirim wajib diisi.',
+            'payment_date.required' => 'Tanggal pembayaran wajib diisi.',
+            'payment_date.date' => 'Format tanggal pembayaran tidak valid.',
+            'payment_date.before_or_equal' => 'Tanggal pembayaran tidak boleh melebihi hari ini.',
+            'paid_amount.required' => 'Jumlah yang dibayar wajib diisi.',
+            'paid_amount.numeric' => 'Jumlah yang dibayar harus berupa angka.',
+            'paid_amount.min' => 'Jumlah yang dibayar tidak boleh kurang dari 0.',
         ]);
+
+        // Nominal pembayaran TIDAK dapat diubah: harus sama persis dengan
+        // total tagihan yang ditetapkan sistem (dibaca dari database.bukan input browser).
+        $expectedAmount = (float) $payment->amount;
+
+        if (round((float) $request->paid_amount, 2) !== round($expectedAmount, 2)) {
+            return redirect()
+                ->back()
+                ->withErrors(['paid_amount' => 'Jumlah yang dibayar harus sesuai dengan total tagihan: Rp ' . number_format($expectedAmount, 0, ',', '.') . '.'])
+                ->withInput($request->except(['payment_proof']));
+        }
+
+        // Snapshot rekening/wallet tujuan yang dipakai Company (milik platform).
+        $destinations = $this->manualPaymentDestinations();
+        $destination = $destinations[$request->destination_source] ?? null;
+
+        if ($destination === null) {
+            return redirect()
+                ->back()
+                ->withErrors(['destination_source' => 'Rekening/wallet tujuan pembayaran tidak valid.'])
+                ->withInput($request->except(['payment_proof']));
+        }
+
+        $destinationInfo = [
+            'title' => $destination['title'] ?? 'ApexForge Labs',
+            'label' => $destination['label'] ?? '',
+            'rows'  => $destination['rows'] ?? [],
+        ];
 
         // Hapus file bukti pembayaran lama jika ada (untuk re-upload)
         if ($payment->payment_proof) {
@@ -134,9 +183,16 @@ class PaymentController extends Controller
         $filePath = $request->file('payment_proof')
             ->store('payment-proofs', 'public');
 
-        // Update payment
+        // Update payment — data konfirmasi pembayaran manual disimpan agar
+        // dapat dilihat Admin saat verifikasi (workflow verifikasi tetap sama).
         $payment->update([
             'payment_method' => $request->payment_method,
+            'sender_name' => $request->sender_name,
+            'sender_bank' => $request->sender_bank,
+            'sender_account_number' => $request->filled('sender_account_number') ? $request->sender_account_number : null,
+            'payment_date' => $request->payment_date,
+            'paid_amount' => $request->paid_amount,
+            'destination_info' => $destinationInfo,
             'payment_proof' => $filePath,
             'company_note' => $request->company_note,
             'status' => 'waiting_verification',
@@ -371,10 +427,6 @@ class PaymentController extends Controller
             'message' => 'Pembayaran berhasil dikonfirmasi. Workspace telah dibuka.',
         ]);
     }
-        public function gateway(Workspace $workspace)
-{
-    return view('company.payments.gateway', compact('workspace'));
-}
 
     /* ─── QUOTA PAYMENT (Project Slot — Rp10.000/slot via Midtrans) ─────
     | Dipakai ulang sistem Payment + Midtrans + wallet_ledger yang existing.
@@ -394,65 +446,269 @@ class PaymentController extends Controller
             'can_create'      => $quotaService->canCreateProject($userId),
             'used_slots'      => $quotaService->usedSlots($userId),
             'available_slots' => $quotaService->availableSlots($userId),
-            'free_quota'      => ProjectQuotaService::FREE_QUOTA_PER_MONTH,
+            'free_quota'      => $quotaService->freeQuota(),
             'paid_slots'      => $quotaService->paidSlotsThisMonth($userId),
         ]);
     }
 
     /**
-     * Buat Payment kuota (invoice INV-QOT-...) + Snap token.
-     * Amount selalu Rp10.000 dari konstanta server (AdminWalletService::QUOTA_PRICE).
-     * Idempotent: jika sudah ada payment quota status=pending untuk company ini,
-     * pakai payment lama, hanya generate token baru.
+     * Pastikan ada TEPAT SATU Payment kuota aktif (pending/waiting_verification)
+     * untuk company. Idempotent — reuse payment pending yang ada JIKA amount-nya
+     * SESUAI dengan Financial Settings saat ini. Jika price berubah, buat payment
+     * BARU dengan amount terbaru (payment lama tetap immutable).
      */
-    public function createQuotaMidtransTransaction(Request $request)
+    public static function ensurePendingQuotaPayment(int $userId): Payment
     {
-        $userId = Auth::id();
-        $quotaService = new ProjectQuotaService();
+        return DB::transaction(function () use ($userId) {
+            $currentPrice = AdminWalletService::quotaPrice();
 
-        // Server-side re-check: hanya boleht membuat jika kuota sudah penuh
-        if ($quotaService->canCreateProject($userId)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Kuota proyek belum penuh, tidak perlu membayar.',
-            ], 422);
-        }
-
-                // Cek apakah sudah ada pending quota payment (anti double payment).
-        // Transaksi DB HANYA untuk tulis database — panggilan API Midtrans
-        // dilakukan DI LUAR agar tidak ada exception HTML 500 saat Midtrans gagal.
-        $payment = DB::transaction(function () use ($userId) {
             $existing = Payment::where('company_id', $userId)
                 ->where('payment_type', Payment::PAYMENT_TYPE_QUOTA)
                 ->whereIn('status', ['pending', 'waiting_verification'])
-                ->latest()
+                ->latest('id')
                 ->first();
 
-            if ($existing) {
+            if ($existing && (float) $existing->amount === (float) $currentPrice) {
                 return $existing;
             }
 
+            // Price berubah atau tidak ada pending payment → buat payment BARU.
+            // Payment lama (amount berbeda) tetap immutable di DB.
             $seq = (int) (Payment::max('id') ?? 0) + 1;
             $invoiceNumber = 'INV-QOT-' . now()->format('Ymd') . '-' . str_pad($seq, 4, '0', STR_PAD_LEFT);
 
             return Payment::create([
-                'company_id'    => $userId,
-                'freelancer_id' => null,
-                'workspace_id'  => null,
+                'company_id'     => $userId,
+                'freelancer_id'  => null,
+                'workspace_id'   => null,
                 'invoice_number' => $invoiceNumber,
-                'amount'         => AdminWalletService::QUOTA_PRICE,
+                'amount'         => $currentPrice,
                 'payment_type'   => Payment::PAYMENT_TYPE_QUOTA,
                 'status'         => 'pending',
                 'payment_method' => 'Midtrans',
             ]);
         });
+    }
+
+    /**
+     * Titik masuk tombol "Bayar Rp10.000" pada modal kuota: pastikan payment
+     * pending ada, lalu arahkan ke halaman GATEWAY pembayaran kuota.
+     * TIDAK melakukan pembayaran otomatis di sini.
+     */
+    public function startQuotaPayment(): RedirectResponse
+    {
+        $payment = static::ensurePendingQuotaPayment((int) Auth::id());
+
+        return redirect()->route('company.quota.payment.show', $payment);
+    }
+
+    /**
+     * Halaman GATEWAY pembayaran kuota — konsisten dengan gateway pembayaran
+     * proyek (company/payments/gateway.blade.php).
+     */
+    public function showQuotaGateway(Payment $payment): View
+    {
+        // Ownership: hanya company pemilik payment & hanya type quota.
+        abort_unless(
+            (int) $payment->company_id === (int) Auth::id()
+                && $payment->payment_type === Payment::PAYMENT_TYPE_QUOTA,
+            403
+        );
+
+        $quotaService = new ProjectQuotaService();
+
+        return view('company.payments.quota-gateway', [
+            'payment' => $payment,
+            'quota'   => [
+                'used_slots'      => $quotaService->usedSlots(Auth::id()),
+                'available_slots' => $quotaService->availableSlots(Auth::id()),
+                'free_quota'      => $quotaService->freeQuota(),
+                'paid_slots'      => $quotaService->paidSlotsThisMonth(Auth::id()),
+                'can_create'      => $quotaService->canCreateProject(Auth::id()),
+            ],
+            'price'   => (int) round($payment->amount), // server-side truth
+            // Rekening/wallet tujuan pembayaran manual milik platform (server-side).
+            'destinations' => $this->manualPaymentDestinations(),
+        ]);
+    }
+
+    /**
+     * Company mengirim DETAIL PEMBAYARAN MANUAL untuk transaksi kuota proyek:
+     * nama/bank/nomor pengirim, tanggal, nominal, catatan, dan bukti transfer.
+     *
+     * Konsisten dengan uploadProof milik pembayaran proyek:
+     *   - Ownership: hanya company pemilik payment kuota (company_id = user login).
+     *   - Hanya payment pending/rejected yang dapat mengirim (idempotent).
+     *   - Nominal dibandingkan dengan amount di DATABASE — input browser diabaikan.
+     *   - Tujuan pembayaran di-snapshot dari config server (bukan input client).
+     *   - Bukti pembayaran wajib (jpg/jpeg/png/pdf, maks 10MB).
+     *   - Setelah dikirim: status waiting_verification → diverifikasi Admin
+     *     melalui workflow verifikasi kuota yang sudah ada (Admin satu-satunya
+     *     pihak yang dapat mengubah status menjadi paid).
+     */
+    public function uploadQuotaProof(Request $request, Payment $payment): RedirectResponse
+    {
+        // 1. Ownership: hanya company pemilik payment kuota.
+        abort_unless(
+            (int) $payment->company_id === (int) Auth::id()
+                && $payment->payment_type === Payment::PAYMENT_TYPE_QUOTA,
+            403
+        );
+
+        // 2. Hanya payment pending/rejected yang boleh mengirim detail pembayaran.
+        if (!in_array($payment->status, ['pending', 'rejected'], true)) {
+            return redirect()
+                ->route('company.quota.payment.show', $payment)
+                ->with('error', 'Pembayaran ini tidak dapat dikirim ulang.');
+        }
+
+        // 3. Kelengkapan profil company (konsisten dengan pembayaran proyek).
+        $completionService = app(ProfileCompletionService::class);
+        if (!$completionService->isComplete(Auth::user())) {
+            return redirect()
+                ->route('company.profile')
+                ->with('error', 'Profil Anda belum lengkap. Silakan lengkapi minimal 80% profil terlebih dahulu agar dapat mengirim bukti pembayaran.');
+        }
+
+        $destinations = $this->manualPaymentDestinations();
+
+        $request->validate([
+            'payment_method' => ['required', 'string', 'in:Transfer Bank,QRIS,E-Wallet'],
+            'destination_source' => ['required', 'string', 'in:' . implode(',', array_keys($destinations))],
+            'sender_name' => ['required', 'string', 'max:191'],
+            'sender_bank' => ['required', 'string', 'max:191'],
+            'sender_account_number' => ['nullable', 'string', 'max:191'],
+            'payment_date' => ['required', 'date', 'before_or_equal:today'],
+            'paid_amount' => ['required', 'numeric', 'min:0'],
+            'payment_proof' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:10240'], // 10 MB
+            'company_note' => ['nullable', 'string', 'max:2000'],
+        ], [
+            'payment_method.required' => 'Metode pembayaran wajib dipilih.',
+            'payment_proof.required' => 'Bukti pembayaran wajib diupload.',
+            'payment_proof.mimes' => 'Bukti pembayaran harus berupa file: jpg, jpeg, png, atau pdf.',
+            'payment_proof.max' => 'Ukuran file maksimal 10 MB.',
+            'destination_source.required' => 'Rekening/wallet tujuan pembayaran wajib dipilih.',
+            'destination_source.in' => 'Rekening/wallet tujuan pembayaran tidak valid.',
+            'sender_name.required' => 'Nama pengirim wajib diisi.',
+            'sender_bank.required' => 'Bank/Wallet pengirim wajib diisi.',
+            'payment_date.required' => 'Tanggal pembayaran wajib diisi.',
+            'payment_date.date' => 'Format tanggal pembayaran tidak valid.',
+            'payment_date.before_or_equal' => 'Tanggal pembayaran tidak boleh melebihi hari ini.',
+            'paid_amount.required' => 'Jumlah yang dibayar wajib diisi.',
+            'paid_amount.numeric' => 'Jumlah yang dibayar harus berupa angka.',
+            'paid_amount.min' => 'Jumlah yang dibayar tidak boleh kurang dari 0.',
+        ]);
+
+        // 4. Nominal pembayaran TIDAK dapat diubah — harus sama dengan
+        //    total tagihan kuota yang ditetapkan sistem (dari database).
+        $expectedAmount = (float) $payment->amount;
+
+        if (round((float) $request->paid_amount, 2) !== round($expectedAmount, 2)) {
+            return redirect()
+                ->back()
+                ->withErrors(['paid_amount' => 'Jumlah yang dibayar harus sesuai dengan total tagihan: Rp ' . number_format($expectedAmount, 0, ',', '.') . '.'])
+                ->withInput($request->except(['payment_proof']));
+        }
+
+        // 5. Snapshot rekening/wallet tujuan yang dipakai (milik platform).
+        $destination = $destinations[$request->destination_source] ?? null;
+
+        if ($destination === null) {
+            return redirect()
+                ->back()
+                ->withErrors(['destination_source' => 'Rekening/wallet tujuan pembayaran tidak valid.'])
+                ->withInput($request->except(['payment_proof']));
+        }
+
+        $destinationInfo = [
+            'title' => $destination['title'] ?? 'ApexForge Labs',
+            'label' => $destination['label'] ?? '',
+            'rows'  => $destination['rows'] ?? [],
+        ];
+
+        // 6. Hapus bukti lama (re-upload setelah ditolak), simpan bukti baru.
+        if ($payment->payment_proof) {
+            Storage::disk('public')->delete($payment->payment_proof);
+        }
+
+        $filePath = $request->file('payment_proof')
+            ->store('payment-proofs', 'public');
+
+        // 7. Simpan detail pembayaran manual — status menunggu verifikasi Admin
+        //    (workflow verifikasi kuota yang sudah ada tidak diubah).
+        $payment->update([
+            'payment_method' => $request->payment_method,
+            'sender_name' => $request->sender_name,
+            'sender_bank' => $request->sender_bank,
+            'sender_account_number' => $request->filled('sender_account_number') ? $request->sender_account_number : null,
+            'payment_date' => $request->payment_date,
+            'paid_amount' => $request->paid_amount,
+            'destination_info' => $destinationInfo,
+            'payment_proof' => $filePath,
+            'company_note' => $request->company_note,
+            'status' => 'waiting_verification',
+        ]);
+
+        // 8. Notifikasi Admin — pembayaran kuota menunggu verifikasi
+        //    (pola yang sama dengan pembayaran proyek).
+        $admins = User::where('role', 'admin')->get();
+        foreach ($admins as $admin) {
+            NotificationService::sendTo(
+                user: $admin->id,
+                type: 'payment.waiting',
+                title: 'Pembayaran Kuota Perlu Diverifikasi',
+                message: 'Perusahaan "' . (Auth::user()->companyProfile->company_name ?? Auth::user()->name) . '" telah mengirim bukti pembayaran kuota proyek (invoice ' . $payment->invoice_number . '). Silakan lakukan verifikasi.',
+                redirect: route('admin.payments.show', $payment),
+                senderId: Auth::id(),
+                paymentId: $payment->id,
+            );
+        }
+
+        return redirect()
+            ->route('company.quota.payment.show', $payment)
+            ->with('success', 'Bukti pembayaran kuota berhasil dikirim. Menunggu verifikasi admin.');
+    }
+
+    /**
+     * Buat Snap token Midtrans untuk payment kuota TERTENTU.
+     * Order ID unik per attempt; amount dari database (bukan browser).
+     */
+    public function createQuotaTransaction(Request $request, Payment $payment)
+    {
+        abort_unless(
+            (int) $payment->company_id === (int) Auth::id()
+                && $payment->payment_type === Payment::PAYMENT_TYPE_QUOTA,
+            403
+        );
+
+        // Idempotensi: payment lunas tidak boleh dibayar lagi.
+        if ($payment->status === 'paid') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Pembayaran ini sudah lunas.',
+            ], 422);
+        }
+
+        if (!$payment->amount || (float) $payment->amount <= 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Nominal pembayaran tidak valid.',
+            ], 422);
+        }
 
         // Panggilan API Midtrans dibungkus try/catch — endpoint AJAX wajib
         // SELALU mengembalikan JSON, baik sukses maupun gagal.
         try {
             $midtransService = app(\App\Services\MidtransService::class);
             $orderId   = $midtransService->buildOrderId($payment);
-            $snapToken = $midtransService->createSnapToken($payment);
+            $snapToken = $midtransService->createSnapToken($payment, null, $orderId);
+
+            \App\Models\MidtransAttempt::create([
+                'payment_id'   => $payment->id,
+                'order_id'     => $orderId,
+                'status'       => 'pending',
+                'raw_response' => [],
+            ]);
         } catch (\Throwable $e) {
             Log::error('Gagal membuat Snap token kuota: ' . $e->getMessage());
 
@@ -462,75 +718,229 @@ class PaymentController extends Controller
             ], 502);
         }
 
-                \App\Models\MidtransAttempt::create([
-            'payment_id'  => $payment->id,
-            'order_id'    => $orderId,
-            'status'      => 'pending',
-            'raw_response' => [],
-        ]);
-
         return response()->json([
-            'success'         => true,
-            'payment_id'      => $payment->id,
-            'invoice_number'  => $payment->invoice_number,
-            'amount'          => (int) $payment->amount,
-            'snap_token'      => $snapToken,
-            'order_id'        => $orderId,
+            'success'        => true,
+            'payment_id'     => $payment->id,
+            'invoice_number' => $payment->invoice_number,
+            'amount'         => (int) $payment->amount,
+            'snap_token'     => $snapToken,
+            'order_id'       => $orderId,
         ]);
     }
 
     /**
-     * Konfirmasi sementara quota payment (untuk testing / PAYMENT_TEMPORARY_CONFIRMATION).
-     * Tanpa escrow / workspace — hanya mark 'paid' + catat income Admin Wallet (idempotent).
+     * Cek & sinkronkan status pembayaran kuota LANGSUNG ke API Midtrans
+     * (server-to-server via order_id attempt — BUKAN percaya browser).
+     *
+     * Memeriksa SELURUH attempt milik payment (terbaru → terlama) sehingga
+     * settlement pada attempt lama tidak terlewat saat user klik "Bayar
+     * Sekarang" lagi. Webhook tetap sumber konfirmasi utama; endpoint ini
+     * mempercepat UI dan menjadi fallback bila webhook tertunda.
+     *
+     * Response:
+     *   status : status payment aplikasi (pending/paid/rejected/...)
+     *   detail : not_found | pending | unknown | settled (informasi UX saja)
+     * Tidak ada jalur "mark paid tanpa bukti Midtrans" di sini.
      */
-    public function confirmQuotaPayment(Request $request)
+    public function quotaPaymentStatus(Payment $payment)
     {
-                $paymentId = $request->input('payment_id');
-        $payment = Payment::where('id', $paymentId)
-            ->where('company_id', Auth::id())
-            ->where('payment_type', Payment::PAYMENT_TYPE_QUOTA)
-            ->first();
+        abort_unless(
+            (int) $payment->company_id === (int) Auth::id()
+                && $payment->payment_type === Payment::PAYMENT_TYPE_QUOTA,
+            403
+        );
 
-        // Endpoint AJAX wajib JSON — jangan gunakan firstOrFail() yang
-        // me-render halaman HTML 404.
-        if (!$payment) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Payment kuota tidak ditemukan.',
-            ], 404);
-        }
+        $payment->refresh();
 
-        // Idempotency: jika sudah paid, jangan proses ulang
         if ($payment->status === 'paid') {
             return response()->json([
                 'success' => true,
-                'message' => 'Pembayaran kuota sudah selesai sebelumnya.',
+                'status'  => 'paid',
+                'detail'  => 'settled',
+            ]);
+        }
+
+        /** @var \Illuminate\Support\Collection<int, \App\Models\MidtransAttempt> $attempts */
+        $attempts = \App\Models\MidtransAttempt::where('payment_id', $payment->id)
+            ->latest()
+            ->get();
+
+        if ($attempts->isEmpty()) {
+            return response()->json([
+                'success' => true,
+                'status'  => $payment->status,
+                'detail'  => 'not_created',
+            ]);
+        }
+
+        $sawPending = false;
+        $sawNotFound = false;
+        $sawError = false;
+
+        foreach ($attempts as $attempt) {
+            try {
+                $response = app(\App\Services\MidtransService::class)->getTransactionStatus($attempt->order_id);
+            } catch (\Throwable $e) {
+                // Transaksi belum ditemukan Midtrans / gangguan → coba attempt lain.
+                Log::info('Quota status check inconclusive: ' . $e->getMessage());
+
+                if (str_contains($e->getMessage(), '404')) {
+                    $sawNotFound = true;
+                } else {
+                    $sawError = true;
+                }
+
+                continue;
+            }
+
+            $arr = json_decode(json_encode($response), true);
+
+            $transactionStatus = $arr['transaction_status'] ?? null;
+            $fraudStatus       = $arr['fraud_status'] ?? null;
+            $transactionId     = $arr['transaction_id'] ?? null;
+            $paymentType       = $arr['payment_type'] ?? null;
+
+            // Mapping identik dengan MidtransWebhookController.
+            $targetStatus = match ($transactionStatus) {
+                'settlement'                          => 'paid',
+                'capture'                             => ($fraudStatus === 'accept' || empty($fraudStatus)) ? 'paid' : 'rejected',
+                'deny', 'cancel', 'expire', 'failure' => 'rejected',
+                default                               => null, // pending dll — biarkan
+            };
+
+            if ($targetStatus === null) {
+                if ($transactionStatus === 'pending') {
+                    $sawPending = true; // transaksi ADA di Midtrans, belum settlement
+                }
+
+                continue;
+            }
+
+            if ($targetStatus === $payment->status) {
+                return response()->json([
+                    'success' => true,
+                    'status'  => $payment->status,
+                    'detail'  => 'settled',
+                ]);
+            }
+
+            try {
+                DB::transaction(function () use ($payment, $attempt, $targetStatus, $transactionId, $paymentType, $arr) {
+                    // Re-read + lock untuk idempotency ketat (race vs webhook).
+                    $fresh = Payment::whereKey($payment->id)->lockForUpdate()->first();
+
+                    if ($fresh->status !== 'paid') {
+                        $fresh->update([
+                            'status'                  => $targetStatus,
+                            'midtrans_transaction_id' => $transactionId ?: $fresh->midtrans_transaction_id,
+                            'midtrans_payment_type'   => $paymentType ?: $fresh->midtrans_payment_type,
+                            'midtrans_response'       => $arr,
+                            'verified_at'             => $targetStatus === 'paid' ? now() : $fresh->verified_at,
+                        ]);
+
+                        if ($targetStatus === 'paid') {
+                            // Income Admin Wallet — idempotent (unique payment_id+type).
+                            AdminWalletService::recordProjectQuotaIncome($fresh, Auth::id());
+                        }
+                    }
+
+                    $attempt->update([
+                        'status'       => $targetStatus,
+                        'raw_response' => $arr,
+                    ]);
+                });
+            } catch (\Throwable $e) {
+                Log::error('Gagal sinkron status kuota: ' . $e->getMessage());
+
+                return response()->json(['success' => false, 'message' => 'Gagal sinkronisasi status.'], 500);
+            }
+
+            return response()->json([
+                'success' => true,
+                'status'  => $targetStatus,
+                'detail'  => 'settled',
+            ]);
+        }
+
+        // Tidak ada attempt yang konklusif — susun detail informatif (UX saja).
+        $detail = match (true) {
+            $sawPending              => 'pending',    // transaksi ADA tapi belum settlement
+            $sawNotFound && !$sawError => 'not_found', // transaksi belum terbentuk di Midtrans
+            default                  => 'unknown',    // gangguan API — status belum diketahui
+        };
+
+        return response()->json(['success' => true, 'status' => $payment->status, 'detail' => $detail]);
+    }
+
+    /* ─── MANUAL / DEMO PAYMENT (KUOTA) ─────────────────────────────
+    | Konfirmasi pembayaran kuota TANPA Midtrans/ngrok/webhook — khusus
+    | mode demo/testing (config services.midtrans.temporary_confirmation).
+    |
+    | Keamanan (identik dengan confirmPayment milik workspace):
+    |   - Wajib authenticated + pemilik payment (company_id = user login).
+    |   - Nominal SELALU dari DATABASE ($payment->amount) — input browser diabaikan.
+    |   - Idempotent: payment paid tidak diproses ulang.
+    |   - Income Admin Wallet dicatat SEKALI (unique payment_id+type pada wallet_ledger).
+    */
+    public function confirmQuotaPayment(Payment $payment)
+    {
+        // 1. Flag demo harus aktif
+        if (!(bool) config('services.midtrans.temporary_confirmation', false)) {
+            abort(404, 'Manual payment confirmation tidak aktif.');
+        }
+
+        // 2. Authorization: hanya company pemilik payment & hanya type quota
+        abort_unless(
+            (int) $payment->company_id === (int) Auth::id()
+                && $payment->payment_type === Payment::PAYMENT_TYPE_QUOTA,
+            403
+        );
+
+        // 3. Idempotensi: payment lunas tidak diproses ulang
+        if ($payment->status === 'paid') {
+            return response()->json([
+                'success' => true,
+                'status'  => 'paid',
+                'message' => 'Pembayaran sudah selesai sebelumnya.',
             ]);
         }
 
         try {
             DB::transaction(function () use ($payment) {
+                // Status paid — nominal tetap dari database (bukan request).
                 $payment->update([
-                    'status'        => 'paid',
-                    'payment_method' => $payment->payment_method ?? 'Midtrans',
-                    'verified_at'   => $payment->verified_at ?? now(),
+                    'status'      => 'paid',
+                    'verified_by' => Auth::id(),
+                    'verified_at' => now(),
                 ]);
 
-                // Catat income ke Admin Wallet (idempotent)
+                // Income Admin Wallet — idempotent (unique payment_id+type).
                 AdminWalletService::recordProjectQuotaIncome($payment, Auth::id());
             });
-        } catch (\Exception $e) {
-            Log::error('Temporary quota payment confirmation failed: ' . $e->getMessage());
+        } catch (\Throwable $e) {
+            Log::error('Manual quota confirmation gagal: ' . $e->getMessage());
 
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal mengonfirmasi pembayaran kuota: ' . $e->getMessage(),
+                'message' => 'Gagal mengonfirmasi pembayaran.',
             ], 500);
         }
 
         return response()->json([
             'success' => true,
-            'message' => 'Pembayaran kuota berhasil dikonfirmasi. Slot proyek Anda telah ditambah.',
+            'status'  => 'paid',
+            'message' => 'Pembayaran berhasil dikonfirmasi. Slot proyek Anda telah ditambah.',
         ]);
+    }
+
+    /**
+     * Daftar rekening/wallet tujuan pembayaran manual milik platform ApexForge Labs.
+     * Data bersumber dari config/apexforge.php dan TIDAK berasal dari freelancer.
+
+     * @return array<string, array<string, mixed>>
+     */
+    private function manualPaymentDestinations(): array
+    {
+        return (array) config('apexforge.manual_payment_destinations', []);
     }
 }

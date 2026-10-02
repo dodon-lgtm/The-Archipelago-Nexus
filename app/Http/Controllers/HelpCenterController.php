@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\HelpContactRequest;
+use App\Mail\HelpContactMail;
 use App\Models\Report;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class HelpCenterController extends Controller
 {
@@ -16,62 +18,94 @@ class HelpCenterController extends Controller
     {
         $faqs = $this->getFaqs();
         $categories = $this->getCategories();
+        $contactCategories = HelpContactRequest::categoriesWithLabels();
 
-        return view('help.index', compact('faqs', 'categories'));
+        return view('help.index', compact('faqs', 'categories', 'contactCategories'));
     }
 
     /**
      * Store contact form submission (public).
-     * Stores as a website report in the reports table.
+     *
+     * Validates the form, keeps a legacy website-report record (best-effort,
+     * only for logged-in users), then sends the message to the ApexForge Labs
+     * help inbox via Laravel Mail. On failure it shows a safe generic message
+     * without leaking SMTP details.
      */
-    public function storeContact(Request $request)
+    public function storeContact(HelpContactRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name'    => 'required|string|max:255',
-            'email'   => 'required|email|max:255',
-            'subject' => 'required|string|max:255',
-            'message' => 'required|string|max:5000',
-        ], [
-            'name.required'    => 'Nama wajib diisi.',
-            'email.required'   => 'Email wajib diisi.',
-            'email.email'      => 'Format email tidak valid.',
-            'subject.required' => 'Subjek wajib diisi.',
-            'message.required' => 'Pesan wajib diisi.',
-        ]);
+        $data = $request->validated();
+        $user = $request->user();
 
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'errors'  => $validator->errors(),
-            ], 422);
-        }
+        $roleLabel = $this->roleLabel($user?->role);
 
-        try {
-            DB::transaction(function () use ($request) {
+        // Best-effort: simpan rekam jejak sebagai laporan website di panel admin.
+        // Tidak memblokir fitur utama (pengiriman email) bila penyimpanan gagal.
+        if ($user) {
+            try {
                 Report::create([
-                    'reporter_id'      => null,
+                    'reporter_id'      => $user->id,
                     'reported_user_id' => null,
                     'project_id'       => null,
                     'penawaran_id'     => null,
                     'workspace_id'     => null,
+                    'payment_id'       => null,
                     'target'           => Report::TARGET_WEBSITE,
-                    'subject'          => $request->subject,
-                    'description'      => "Nama: {$request->name}\nEmail: {$request->email}\n\n{$request->message}",
-                    'category'         => Report::CATEGORY_UMUM,
+                    'subject'          => $data['subject'],
+                    'description'      => sprintf(
+                        "Nama: %s\nEmail: %s\nRole: %s\nKategori: %s\n\n%s",
+                        $data['name'],
+                        $data['email'],
+                        $roleLabel ?? '-',
+                        HelpContactRequest::categoryLabel($data['category']),
+                        $data['message']
+                    ),
+                    'category'         => $data['category'],
                     'status'           => Report::STATUS_MENUNGGU,
                 ]);
-            });
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Pesan Anda telah terkirim. Tim kami akan menghubungi Anda secepat mungkin.',
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan. Silakan coba lagi nanti.',
-            ], 500);
+            } catch (\Throwable $e) {
+                Log::warning('Pusat Bantuan: gagal menyimpan laporan website: ' . $e->getMessage());
+            }
         }
+
+        // Fitur utama: kirim email ke inbox Pusat Bantuan ApexForge Labs.
+        try {
+            Mail::to(config('mail.help_to'))
+                ->send(new HelpContactMail([
+                    'name'           => $data['name'],
+                    'email'          => $data['email'],
+                    'role_label'     => $roleLabel ?? 'Pengunjung',
+                    'category'       => $data['category'],
+                    'category_label' => HelpContactRequest::categoryLabel($data['category']),
+                    'subject'        => $data['subject'],
+                    'message'        => $data['message'],
+                    'sent_at'        => now()
+                        ->timezone('Asia/Jakarta')
+                        ->locale('id')
+                        ->translatedFormat('l, d F Y H:i') . ' WIB',
+                ]));
+        } catch (\Throwable $e) {
+            Log::error('Pusat Bantuan: gagal mengirim email: ' . $e->getMessage());
+
+            return redirect()->back()
+                ->with('error', 'Pesan gagal dikirim. Silakan coba lagi beberapa saat kemudian.')
+                ->withInput();
+        }
+
+        return redirect()->back()
+            ->with('success', 'Pesan berhasil dikirim. Tim ApexForge Labs akan meninjau pesan Anda.');
+    }
+
+    /**
+     * Label role untuk tampilan form & isi email.
+     */
+    private function roleLabel(?string $role): ?string
+    {
+        return match ($role) {
+            'freelancer' => 'Freelancer',
+            'company'    => 'Company',
+            'admin'      => 'Admin',
+            default      => null,
+        };
     }
 
     /**

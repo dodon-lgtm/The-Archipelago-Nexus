@@ -13,6 +13,12 @@ class PolicyController extends Controller
      */
     public function index()
     {
+        // Pastikan dokumen kebijakan bawaan selalu tersedia (idempotent),
+        // agar halaman tidak error saat tabel masih kosong (seeder belum dijalankan).
+        if (Policy::count() === 0) {
+            (new \Database\Seeders\PolicySeeder())->run();
+        }
+
         $policies = Policy::orderBy('id')->get();
 
         return view('admin.policies.index', compact('policies'));

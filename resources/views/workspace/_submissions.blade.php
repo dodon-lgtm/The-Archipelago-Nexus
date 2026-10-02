@@ -207,105 +207,116 @@
 {{-- ============================================================
      MODAL UPLOAD HASIL PEKERJAAN (Freelancer) - 4 Kategori File
 ============================================================ --}}
-<div id="uploadModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-xl mx-4 overflow-auto max-h-[90vh]">
-        <div class="px-6 py-5 border-b border-blue-50 dark:border-slate-800 flex items-center justify-between sticky top-0 bg-white dark:bg-slate-900 z-10">
-            <h3 class="font-bold text-slate-800 dark:text-white">Upload Hasil Pekerjaan</h3>
+<div id="uploadModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm transition-opacity">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-xl mx-4 overflow-auto max-h-[90vh] border border-slate-100 dark:border-slate-800">
+        
+        {{-- Header Modal --}}
+        <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between sticky top-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur z-10">
+            <h3 class="font-bold text-lg text-slate-800 dark:text-white">Upload Hasil Pekerjaan</h3>
             <button type="button" onclick="document.getElementById('uploadModal').classList.add('hidden')"
-                class="w-8 h-8 rounded-full bg-blue-50 dark:bg-slate-800 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-700 transition">
-                <i class="fa-solid fa-xmark text-slate-500 dark:text-slate-400"></i>
+                class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors group">
+                <i class="fa-solid fa-xmark text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-white transition-colors"></i>
             </button>
         </div>
+        
+        {{-- Form Content --}}
         <form method="POST" action="{{ route('freelancer.workspaces.submissions.store', $workspace) }}"
             enctype="multipart/form-data" class="p-6 space-y-5">
             @csrf
 
+            {{-- Input Judul --}}
             <div>
-                <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Judul Pekerjaan <span class="text-red-500">*</span></label>
+                <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                    Judul Pekerjaan <span class="text-red-500">*</span>
+                </label>
                 <input type="text" name="title" required maxlength="255"
                     placeholder="Contoh: Final Design Dashboard"
-                    class="w-full px-4 py-2.5 bg-[#f6f9ff] dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-xl text-sm dark:text-white dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                    class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 dark:focus:ring-blue-500/50 transition-all">
             </div>
 
+            {{-- Input Deskripsi --}}
             <div>
-                <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Deskripsi</label>
-                <textarea name="description" rows="2" maxlength="2000" placeholder="Jelaskan hasil pekerjaan yang dikirim..."
-                    class="w-full px-4 py-2.5 bg-[#f6f9ff] dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-xl text-sm dark:text-white dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-brand/30 resize-none"></textarea>
+                <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Deskripsi</label>
+                <textarea name="description" rows="3" maxlength="2000" placeholder="Jelaskan hasil pekerjaan yang dikirim..."
+                    class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 dark:focus:ring-blue-500/50 resize-none transition-all"></textarea>
             </div>
 
-            <div class="border-t border-blue-50 dark:border-slate-800 pt-2">
-                <p class="text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Upload File <span class="text-red-500">*</span></p>
-                <p class="text-[10px] text-slate-400 mb-3">Minimal 1 file dari salah satu kategori di bawah ini.</p>
+            {{-- Divider Upload --}}
+            <div class="border-t border-slate-100 dark:border-slate-800 pt-4 mt-2">
+                <p class="text-sm font-semibold text-slate-800 dark:text-white mb-1">Pilih File <span class="text-red-500">*</span></p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Minimal upload 1 file dari salah satu kategori di bawah ini.</p>
             </div>
 
             {{-- SECTION 1: GAMBAR --}}
-            <div class="bg-pink-50/40 dark:bg-pink-900/20 border border-pink-200 dark:border-pink-900 rounded-xl p-4 space-y-2">
-                <div class="flex items-center gap-2 mb-2">
-                    <div class="w-7 h-7 rounded-lg bg-pink-100 dark:bg-pink-900/40 flex items-center justify-center text-pink-500 dark:text-pink-400">
+            <div class="bg-pink-50/50 dark:bg-pink-500/10 border border-pink-100 dark:border-pink-500/20 rounded-xl p-4 space-y-3 transition-colors hover:border-pink-200 dark:hover:border-pink-500/40">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-lg bg-pink-100 dark:bg-pink-500/20 flex items-center justify-center text-pink-600 dark:text-pink-400 shadow-sm">
                         <i class="fa-solid fa-image text-sm"></i>
                     </div>
                     <div>
-                        <h4 class="text-xs font-bold text-slate-700 dark:text-white">Gambar</h4>
-                        <p class="text-[9px] text-slate-400">jpg, jpeg, png, webp &middot; Maks 10 MB/file</p>
+                        <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200">Gambar</h4>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400">jpg, jpeg, png, webp &middot; Maks 10 MB/file</p>
                     </div>
                 </div>
                 <input type="file" name="images[]" multiple accept=".jpg,.jpeg,.png,.webp"
-                    class="w-full text-xs bg-white dark:bg-slate-800 border border-pink-200 dark:border-pink-900 rounded-lg px-3 py-2 dark:text-white file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-pink-500 file:text-white hover:file:bg-pink-600 transition cursor-pointer">
+                    class="w-full text-xs bg-white dark:bg-slate-900 border border-pink-100 dark:border-pink-500/30 rounded-lg px-3 py-2 text-slate-700 dark:text-slate-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-[11px] file:font-semibold file:bg-pink-500 file:text-white hover:file:bg-pink-600 dark:hover:file:bg-pink-400 transition-all cursor-pointer">
             </div>
 
             {{-- SECTION 2: VIDEO --}}
-            <div class="bg-purple-50/40 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-900 rounded-xl p-4 space-y-2">
-                <div class="flex items-center gap-2 mb-2">
-                    <div class="w-7 h-7 rounded-lg bg-purple-100 dark:bg-purple-900/40 flex items-center justify-center text-purple-500 dark:text-purple-400">
+            <div class="bg-purple-50/50 dark:bg-purple-500/10 border border-purple-100 dark:border-purple-500/20 rounded-xl p-4 space-y-3 transition-colors hover:border-purple-200 dark:hover:border-purple-500/40">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-lg bg-purple-100 dark:bg-purple-500/20 flex items-center justify-center text-purple-600 dark:text-purple-400 shadow-sm">
                         <i class="fa-solid fa-video text-sm"></i>
                     </div>
                     <div>
-                        <h4 class="text-xs font-bold text-slate-700 dark:text-white">Video</h4>
-                        <p class="text-[9px] text-slate-400">mp4, mov, avi, mkv &middot; Maks 100 MB/file</p>
+                        <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200">Video</h4>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400">mp4, mov, avi, mkv &middot; Maks 100 MB/file</p>
                     </div>
                 </div>
                 <input type="file" name="videos[]" multiple accept=".mp4,.mov,.avi,.mkv"
-                    class="w-full text-xs bg-white dark:bg-slate-800 border border-purple-200 dark:border-purple-900 rounded-lg px-3 py-2 dark:text-white file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-purple-500 file:text-white hover:file:bg-purple-600 transition cursor-pointer">
+                    class="w-full text-xs bg-white dark:bg-slate-900 border border-purple-100 dark:border-purple-500/30 rounded-lg px-3 py-2 text-slate-700 dark:text-slate-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-[11px] file:font-semibold file:bg-purple-500 file:text-white hover:file:bg-purple-600 dark:hover:file:bg-purple-400 transition-all cursor-pointer">
             </div>
 
             {{-- SECTION 3: DOKUMEN --}}
-            <div class="bg-blue-50/40 dark:bg-slate-800/40 border border-blue-200 dark:border-slate-700 rounded-xl p-4 space-y-2">
-                <div class="flex items-center gap-2 mb-2">
-                    <div class="w-7 h-7 rounded-lg bg-blue-100 dark:bg-slate-800 flex items-center justify-center text-blue-500 dark:text-blue-400">
+            <div class="bg-blue-50/50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 rounded-xl p-4 space-y-3 transition-colors hover:border-blue-200 dark:hover:border-blue-500/40">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-lg bg-blue-100 dark:bg-blue-500/20 flex items-center justify-center text-blue-600 dark:text-blue-400 shadow-sm">
                         <i class="fa-solid fa-file-lines text-sm"></i>
                     </div>
                     <div>
-                        <h4 class="text-xs font-bold text-slate-700 dark:text-white">Dokumen</h4>
-                        <p class="text-[9px] text-slate-400">pdf, doc, docx &middot; Maks 20 MB/file</p>
+                        <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200">Dokumen</h4>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400">pdf, doc, docx &middot; Maks 20 MB/file</p>
                     </div>
                 </div>
                 <input type="file" name="documents[]" multiple accept=".pdf,.doc,.docx"
-                    class="w-full text-xs bg-white dark:bg-slate-800 border border-blue-200 dark:border-slate-700 rounded-lg px-3 py-2 dark:text-white file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-600 transition cursor-pointer">
+                    class="w-full text-xs bg-white dark:bg-slate-900 border border-blue-100 dark:border-blue-500/30 rounded-lg px-3 py-2 text-slate-700 dark:text-slate-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-[11px] file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-600 dark:hover:file:bg-blue-400 transition-all cursor-pointer">
             </div>
 
             {{-- SECTION 4: SOURCE CODE / ARSIP --}}
-            <div class="bg-amber-50/40 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-900 rounded-xl p-4 space-y-2">
-                <div class="flex items-center gap-2 mb-2">
-                    <div class="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center text-amber-500 dark:text-amber-400">
+            <div class="bg-amber-50/50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 rounded-xl p-4 space-y-3 transition-colors hover:border-amber-200 dark:hover:border-amber-500/40">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-lg bg-amber-100 dark:bg-amber-500/20 flex items-center justify-center text-amber-600 dark:text-amber-400 shadow-sm">
                         <i class="fa-solid fa-file-zipper text-sm"></i>
                     </div>
                     <div>
-                        <h4 class="text-xs font-bold text-slate-700 dark:text-white">Source Code / Arsip</h4>
-                        <p class="text-[9px] text-slate-400">zip, rar, 7z &middot; Maks 100 MB/file</p>
+                        <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200">Source Code / Arsip</h4>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400">zip, rar, 7z &middot; Maks 100 MB/file</p>
                     </div>
                 </div>
                 <input type="file" name="archives[]" multiple accept=".zip,.rar,.7z"
-                    class="w-full text-xs bg-white dark:bg-slate-800 border border-amber-200 dark:border-amber-900 rounded-lg px-3 py-2 dark:text-white file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-amber-500 file:text-white hover:file:bg-amber-600 transition cursor-pointer">
+                    class="w-full text-xs bg-white dark:bg-slate-900 border border-amber-100 dark:border-amber-500/30 rounded-lg px-3 py-2 text-slate-700 dark:text-slate-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-[11px] file:font-semibold file:bg-amber-500 file:text-white hover:file:bg-amber-600 dark:hover:file:bg-amber-400 transition-all cursor-pointer">
             </div>
 
-            <button type="submit"
-                class="w-full py-2.5 bg-brand text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition flex items-center justify-center gap-2">
-                <i class="fa-solid fa-upload"></i> Kirim Hasil Pekerjaan
-            </button>
+            {{-- TOMBOL SUBMIT YG DIPEROLEH (Lebih Tegas) --}}
+            <div class="pt-2">
+                <button type="submit"
+                    class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-blue-500/30 dark:shadow-blue-900/40 transition-all duration-200 flex items-center justify-center gap-2 focus:ring-4 focus:ring-blue-500/50 focus:outline-none transform hover:-translate-y-0.5">
+                    <i class="fa-solid fa-upload"></i> Kirim Hasil Pekerjaan
+                </button>
+            </div>
         </form>
     </div>
 </div>
-
 {{-- ============================================================
      MODAL TERIMA (Company)
 ============================================================ --}}

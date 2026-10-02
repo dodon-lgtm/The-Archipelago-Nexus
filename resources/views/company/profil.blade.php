@@ -1,923 +1,450 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="h-full bg-[#f6f9ff] dark:bg-slate-950">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @include('partials.theme-boot')
+    <title>Profil Perusahaan | ApexForge Labs</title>
 
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        @auth
-            const profileThemeUserId = "{{ Auth::id() }}";
-        @else
-            const profileThemeUserId = 'guest';
-        @endauth
-        const profileThemeKey = 'theme_user_' + profileThemeUserId;
-        if (localStorage.getItem(profileThemeKey) === 'dark') {
-            document.documentElement.classList.add('dark');
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif']
+                    },
+                    colors: {
+                        brand: {
+                            DEFAULT: '#2563EB',
+                            dark: '#1D4ED8',
+                            light: '#EFF6FF',
+                        },
+                        surface: '#F8FAFC'
+                    }
+                }
+            }
         }
     </script>
 
-    <title>Profil Perusahaan - Ultra Modern Dashboard</title>
+    <style>
+        /* =========================================
+        ENTRANCE ANIMATIONS & EFFECTS
+        ========================================= */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(18px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .reveal { opacity: 0; animation: fadeInUp .65s cubic-bezier(.16,1,.3,1) forwards; }
+        .reveal-1 { animation-delay: .05s; }
+        .reveal-2 { animation-delay: .1s; }
+        .reveal-3 { animation-delay: .15s; }
 
-    {{-- Tailwind CSS (CDN) + darkMode class — dipakai navbar & sistem dark mode --}}
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = tailwind.config || {};
-        tailwind.config.darkMode = 'class';
-    </script>
+        @keyframes meshGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .animate-mesh { background-size: 200% 200%; animation: meshGradient 12s ease infinite; }
 
-    <!-- Bootstrap 5.3 & Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <!-- FontAwesome (dipakai navbar shared) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <!-- Google Fonts: Plus Jakarta Sans -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- AOS Animation Library CSS -->
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+        /* =========================================
+        CARD & HOVER EFFECTS
+        ========================================= */
+        .modern-row { transition: all .3s cubic-bezier(.16,1,.3,1); }
+        .modern-row:hover { transform: translateY(-2px); box-shadow: 0 12px 30px -10px rgba(37,99,235,0.12); }
+        .dark .modern-row:hover { box-shadow: 0 12px 30px -10px rgba(0,0,0,0.6); }
 
-<style>
-    :root {
-        --primary-color: #0284c7;
-        --primary-gradient: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%);
-        --accent-gradient: linear-gradient(135deg, #059669 100%, #34d399 0%);
-        --bg-color: #f0f9ff;
-        --card-bg: rgba(255, 255, 255, 0.85);
-        --text-main: #0f172a;
-        --text-muted: #64748b;
-        --border-color: rgba(186, 230, 253, 0.6);
-    }
+        /* SHIMMER BUTTON */
+        .btn-shimmer { position: relative; overflow: hidden; isolation: isolate; }
+        .btn-shimmer::after {
+            content: '';
+            position: absolute; top: 0; left: -100%;
+            width: 60%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,.3), transparent);
+            transform: skewX(-20deg);
+            transition: left .7s ease;
+        }
+        .btn-shimmer:hover::after { left: 150%; }
 
-    body {
-        background-color: var(--bg-color);
-        background-image: 
-            radial-gradient(at 0% 0%, rgba(2, 132, 199, 0.06) 0px, transparent 50%),
-            radial-gradient(at 100% 100%, rgba(56, 189, 248, 0.05) 0px, transparent 50%);
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        color: var(--text-main);
-        overflow-x: hidden;
-    }
-
-    .container {
-        max-width: 1200px;
-        margin-top: 40px;
-        margin-bottom: 80px;
-    }
-
-    /* Page Header */
-    .page-title {
-        font-size: 34px;
-        font-weight: 800;
-        color: var(--text-main);
-        letter-spacing: -1px;
-    }
-
-    .page-subtitle {
-        color: var(--text-muted);
-        font-size: 15px;
-        margin-bottom: 30px;
-    }
-
-    /* Back Button */
-    .btn-back {
-        background: rgba(255, 255, 255, 0.8);
-        backdrop-filter: blur(8px);
-        border: 1px solid var(--border-color);
-        color: var(--text-muted);
-        border-radius: 14px;
-        padding: 9px 22px;
-        font-weight: 600;
-        font-size: 13px;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        text-decoration: none;
-    }
-
-    .btn-back:hover {
-        background: #ffffff;
-        color: var(--text-main);
-        transform: translateX(-4px);
-        border-color: #7dd3fc;
-    }
-
-    /* Profile Top Banner Card */
-    .profile-card {
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(12px);
-        border-radius: 32px;
-        border: 1px solid var(--border-color);
-        overflow: hidden;
-        box-shadow: 0 15px 35px -5px rgba(2, 132, 199, 0.04);
-        margin-bottom: 28px;
-    }
-
-    .profile-header {
-        background: linear-gradient(135deg, rgba(224, 242, 254, 0.8) 0%, rgba(186, 230, 253, 0.4) 100%);
-        padding: 45px;
-        position: relative;
-    }
-
-    .company-logo {
-        width: 140px;
-        height: 140px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 5px solid white;
-        box-shadow: 0 12px 30px rgba(2, 132, 199, 0.2);
-        transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
-    .company-logo:hover {
-        transform: scale(1.05) rotate(2deg);
-    }
-
-    .company-name {
-        font-size: 32px;
-        font-weight: 800;
-        color: var(--text-main);
-        letter-spacing: -0.5px;
-        margin-bottom: 6px;
-    }
-
-    .company-type {
-        background: var(--primary-gradient);
-        color: white;
-        padding: 7px 18px;
-        border-radius: 50px;
-        font-size: 12px;
-        font-weight: 700;
-        letter-spacing: 0.8px;
-        text-transform: uppercase;
-        display: inline-block;
-        box-shadow: 0 6px 15px rgba(2, 132, 199, 0.3);
-        margin-bottom: 14px;
-    }
-
-    .info {
-        color: var(--text-muted);
-        font-size: 14px;
-        margin-top: 6px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-weight: 500;
-    }
-
-    .info i {
-        color: var(--primary-color);
-        width: 18px;
-        text-align: center;
-    }
-
-    .edit-btn {
-        background: var(--primary-gradient);
-        border: none;
-        color: white;
-        border-radius: 16px;
-        padding: 12px 28px;
-        font-weight: 700;
-        font-size: 14px;
-        box-shadow: 0 8px 20px rgba(2, 132, 199, 0.3);
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        text-decoration: none;
-        display: inline-block;
-    }
-
-    .edit-btn:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 12px 25px rgba(2, 132, 199, 0.45);
-        color: white;
-    }
-
-    .rate-badge-top {
-        font-size: 14px;
-        font-weight: 700;
-        color: var(--text-muted);
-        background: rgba(255, 255, 255, 0.7);
-        padding: 8px 16px;
-        border-radius: 12px;
-        display: inline-block;
-        border: 1px solid var(--border-color);
-        margin-bottom: 15px;
-    }
-
-    /* Modern Glassmorphism Stat Cards */
-    .stat-card {
-        background: var(--card-bg);
-        backdrop-filter: blur(12px);
-        border-radius: 24px;
-        border: 1px solid var(--border-color);
-        padding: 26px 20px;
-        text-align: center;
-        box-shadow: 0 10px 30px -5px rgba(2, 132, 199, 0.04);
-        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        position: relative;
-        overflow: hidden;
-        height: 100%;
-    }
-
-    .stat-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 4px;
-        background: var(--primary-gradient);
-        opacity: 0.8;
-    }
-
-    .stat-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 20px 40px -10px rgba(2, 132, 199, 0.15);
-        border-color: rgba(2, 132, 199, 0.4);
-        background: #ffffff;
-    }
-
-    .stat-icon {
-        width: 52px;
-        height: 52px;
-        background: rgba(2, 132, 199, 0.08);
-        color: var(--primary-color);
-        border-radius: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 22px;
-        margin: 0 auto 16px auto;
-        transition: transform 0.3s ease;
-    }
-
-    .stat-card:hover .stat-icon {
-        transform: scale(1.1) rotate(5deg);
-        background: var(--primary-gradient);
-        color: white;
-    }
-
-    .stat-card h3 {
-        font-size: 26px;
-        font-weight: 800;
-        color: var(--text-main);
-        margin-bottom: 6px;
-        letter-spacing: -0.5px;
-    }
-
-    .stat-card span {
-        color: var(--text-muted);
-        font-size: 11px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        display: block;
-    }
-
-    /* Content Cards */
-    .content-card {
-        background: var(--card-bg);
-        backdrop-filter: blur(12px);
-        border-radius: 28px;
-        border: 1px solid var(--border-color);
-        box-shadow: 0 10px 30px -5px rgba(2, 132, 199, 0.03);
-        padding: 32px;
-        height: 100%;
-        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .content-card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 20px 40px -10px rgba(2, 132, 199, 0.12);
-        border-color: rgba(2, 132, 199, 0.3);
-    }
-
-    .section-title {
-        font-size: 18px;
-        font-weight: 700;
-        color: var(--text-main);
-        margin-bottom: 20px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .section-title i {
-        color: var(--primary-color);
-    }
-
-    .table td, .table th {
-        padding: 14px 12px;
-        background: transparent !important;
-        border-color: var(--border-color) !important;
-        color: var(--text-main);
-    }
-
-    .table th {
-        width: 160px;
-        font-weight: 600;
-        color: var(--text-muted);
-    }
-
-    .website-btn {
-        background: var(--primary-gradient);
-        border: none;
-        padding: 12px 25px;
-        border-radius: 14px;
-        font-weight: 700;
-        box-shadow: 0 6px 15px rgba(2, 132, 199, 0.25);
-        transition: all 0.3s ease;
-    }
-
-    .website-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 20px rgba(2, 132, 199, 0.35);
-    }
-
-    /* Smooth Animated Progress Bar */
-    .progress {
-        height: 14px;
-        border-radius: 20px;
-        background-color: rgba(224, 242, 254, 0.8);
-        overflow: hidden;
-        padding: 2px;
-    }
-
-    .progress-bar {
-        border-radius: 20px;
-        background: var(--primary-gradient);
-        transition: width 1.5s cubic-bezier(0.1, 1, 0.1, 1);
-    }
-</style>
-<style>
-
-/* ApexForge Labs — Unified UI System */
-:root{
-    --af-primary:#2563eb;
-    --af-primary-dark:#1d4ed8;
-    --af-primary-soft:#eff6ff;
-    --af-sky:#38bdf8;
-    --af-ink:#0f172a;
-    --af-muted:#64748b;
-    --af-border:#dbeafe;
-    --af-surface:#ffffff;
-    --af-page:#f6f9ff;
-}
-html{scroll-behavior:smooth}
-body{
-    font-family:'Plus Jakarta Sans',sans-serif;
-    background:
-        radial-gradient(circle at 10% -10%,rgba(56,189,248,.10),transparent 30%),
-        radial-gradient(circle at 100% 0%,rgba(37,99,235,.08),transparent 28%),
-        var(--af-page);
-}
-::selection{background:rgba(37,99,235,.18);color:#0f172a}
-::-webkit-scrollbar{width:7px;height:7px}
-::-webkit-scrollbar-track{background:rgba(241,245,249,.7)}
-::-webkit-scrollbar-thumb{background:rgba(37,99,235,.22);border-radius:999px}
-::-webkit-scrollbar-thumb:hover{background:rgba(37,99,235,.38)}
-
-input,select,textarea{
-    border-color:var(--af-border)!important;
-    background:rgba(255,255,255,.92);
-    transition:border-color .2s ease,box-shadow .2s ease,background .2s ease;
-}
-input:focus,select:focus,textarea:focus{
-    border-color:rgba(37,99,235,.55)!important;
-    box-shadow:0 0 0 4px rgba(37,99,235,.09)!important;
-    outline:none!important;
-}
-button,a,[role="button"]{transition:all .2s ease}
-button:focus-visible,a:focus-visible,[role="button"]:focus-visible{
-    outline:2px solid rgba(37,99,235,.55);
-    outline-offset:2px;
-}
-table{border-collapse:separate;border-spacing:0}
-thead th{
-    background:rgba(239,246,255,.72)!important;
-    color:#334155;
-    font-weight:700;
-}
-tbody tr{transition:background .18s ease}
-tbody tr:hover{background:rgba(239,246,255,.48)}
-[class*="bg-blue-600"]{
-    box-shadow:0 8px 22px -12px rgba(37,99,235,.72);
-}
-[class*="bg-blue-600"]:hover{
-    box-shadow:0 12px 28px -12px rgba(37,99,235,.78);
-    transform:translateY(-1px);
-}
-.glass-panel,.glass-card,.glass-surface{
-    background:rgba(255,255,255,.72);
-    border:1px solid rgba(219,234,254,.85);
-    backdrop-filter:blur(18px);
-    -webkit-backdrop-filter:blur(18px);
-    box-shadow:0 18px 50px -32px rgba(30,64,175,.32);
-}
-.apex-page-glow{
-    position:fixed;inset:auto -10rem -12rem auto;width:28rem;height:28rem;
-    background:rgba(56,189,248,.09);filter:blur(70px);border-radius:999px;
-    pointer-events:none;z-index:-1;
-}
-@media (max-width:767px){
-    main{padding-left:1rem!important;padding-right:1rem!important}
-    table{min-width:680px}
-    .overflow-x-auto{-webkit-overflow-scrolling:touch}
-}
-@media (prefers-reduced-motion:reduce){
-    *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
-}
-
-/* ================= DARK MODE PROFIL COMPANY ================= */
-/* Mengikuti sistem dark mode aplikasi: class .dark pada <html> (key theme_user_{id}). */
-.dark{
-    --af-page:#020617;
-    --af-surface:#0f172a;
-    --af-ink:#f1f5f9;
-    --af-muted:#94a3b8;
-    --af-border:#1e293b;
-    --bg-color:#020617;
-    --card-bg:rgba(15,23,42,.85);
-    --text-main:#f1f5f9;
-    --text-muted:#94a3b8;
-    --border-color:rgba(51,65,85,.6);
-}
-.dark body{
-    background-color:#020617;
-}
-.dark .page-title{
-    color:#f1f5f9;
-}
-.dark .page-subtitle{
-    color:#94a3b8;
-}
-.dark .profile-card,
-.dark .content-card{
-    background:rgba(15,23,42,.9);
-    border-color:rgba(51,65,85,.7);
-    box-shadow:0 15px 35px -5px rgba(0,0,0,.4);
-}
-.dark .profile-header{
-    background:linear-gradient(135deg,rgba(30,41,59,.85) 0%,rgba(15,23,42,.55) 100%);
-}
-.dark .company-logo{
-    border-color:#1e293b;
-    background:#0f172a;
-}
-.dark .company-name{
-    color:#f8fafc;
-}
-.dark .company-type{
-    color:#94a3b8;
-}
-.dark .info{
-    color:#cbd5e1;
-}
-.dark .rate-badge-top{
-    background:rgba(15,23,42,.85);
-    border-color:rgba(51,65,85,.7);
-    color:#cbd5e1;
-}
-.dark .btn-back{
-    background:rgba(15,23,42,.85);
-    border-color:rgba(51,65,85,.7);
-    color:#cbd5e1;
-}
-.dark .btn-back:hover{
-    background:#1e293b;
-    color:#fff;
-    border-color:rgba(125,211,252,.5);
-}
-.dark .stat-card{
-    background:rgba(15,23,42,.85);
-    border-color:rgba(51,65,85,.6);
-}
-.dark .stat-card:hover{
-    background:#1e293b;
-    border-color:rgba(2,132,199,.35);
-}
-.dark .stat-card h3{
-    color:#f1f5f9;
-}
-.dark .stat-card span{
-    color:#94a3b8;
-}
-.dark .edit-btn{
-    background:rgba(15,23,42,.85);
-    border-color:rgba(51,65,85,.7);
-    color:#cbd5e1;
-}
-.dark .edit-btn:hover{
-    background:#1e293b;
-    color:#fff;
-}
-.dark .alert-light{
-    background-color:rgba(30,41,59,.7)!important;
-    border-color:rgba(51,65,85,.7)!important;
-    color:#cbd5e1!important;
-}
-.dark .stat-value{
-    color:#f1f5f9;
-}
-.dark .stat-label{
-    color:#94a3b8;
-}
-.dark .section-title{
-    color:#f8fafc;
-}
-.dark .table td,
-.dark .table th{
-    color:#e2e8f0;
-    border-color:rgba(51,65,85,.6)!important;
-}
-.dark .table-striped tbody tr:nth-of-type(odd){
-    background-color:rgba(30,41,59,.4);
-}
-.dark .progress{
-    background-color:#1e293b;
-}
-.dark .alert-danger{
-    background-color:rgba(127,29,29,.55)!important;
-    border-color:rgba(127,29,29,.8)!important;
-    color:#fecaca!important;
-}
-.dark .alert-success{
-    background-color:rgba(6,78,59,.55)!important;
-    border-color:rgba(6,78,59,.8)!important;
-    color:#a7f3d0!important;
-}
-.dark .alert-warning{
-    background-color:rgba(113,63,18,.55)!important;
-    border-color:rgba(113,63,18,.8)!important;
-    color:#fde68a!important;
-}
-.dark .bg-light{
-    background-color:#1e293b!important;
-}
-.dark .text-dark{
-    color:#f1f5f9!important;
-}
-.dark .text-muted{
-    color:#94a3b8!important;
-}
-.dark .text-secondary{
-    color:#94a3b8!important;
-}
-.dark .text-success{
-    color:#6ee7b7!important;
-}
-.dark .text-warning{
-    color:#fcd34d!important;
-}
-.dark hr{
-    border-color:rgba(51,65,85,.6)!important;
-}
-.dark .form-control,
-.dark .form-select,
-.dark .form-textarea{
-    background-color:#0f172a!important;
-    color:#e2e8f0!important;
-    border-color:rgba(51,65,85,.7)!important;
-}
-.dark .form-control::placeholder{
-    color:#64748b;
-}
-
-</style>
+        /* CUSTOM SCROLLBAR */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .dark ::-webkit-scrollbar-track { background: #0f172a; }
+        .dark ::-webkit-scrollbar-thumb { background: #334155; }
+        .dark ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    </style>
 </head>
 
-<body class="bg-[#f6f9ff] dark:bg-slate-950 text-slate-800 dark:text-white antialiased flex transition-colors duration-300">
+<body class="bg-surface dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex font-sans antialiased selection:bg-brand selection:text-white transition-colors duration-300">
 
-{{-- SIDEBAR COMPANY (sama dengan halaman Company lain) --}}
+    <div class="flex h-screen w-full overflow-hidden">
 
-{{-- AREA KANAN --}}
-<div class="flex-1 flex flex-col min-w-0">
+        {{-- Sidebar Perusahaan --}}
+        @include('navbar.navigasi')
 
-    {{-- TOP NAVBAR COMPANY (sama dengan halaman Company lain) --}}
-    <div class="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-b border-blue-100/80 dark:border-slate-800 shadow-xs">
-        @include('navbar.nav')
-    </div>
+        {{-- Main Content Container --}}
+        <div class="flex-1 flex flex-col min-h-screen w-full overflow-hidden">
 
-    <main class="flex-1 px-4 sm:px-6 lg:px-8 py-8">
-        <div class="max-w-7xl mx-auto">
+            {{-- Top Navbar --}}
+            <div class="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-100 dark:border-slate-800/80">
+                @include('navbar.nav')
+            </div>
 
-@php
-    // Inisialisasi variabel internal tanpa menggunakan external helper function
-    $user = Auth::user();
-    $profileData = $profile ?? ($companyProfile ?? null);
+            <main class="flex-1 w-full overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6">
 
-    $missingFields = [];
-    if (!$user->name) $missingFields[] = 'Nama Lengkap';
-    if (!$user->email) $missingFields[] = 'Email';
-    if (!($user->phone ?? null) && !($profileData->phone ?? null)) $missingFields[] = 'Nomor Telepon';
-    if (!($profileData->location ?? null)) $missingFields[] = 'Lokasi';
-    if (!($profileData->company_name ?? null)) $missingFields[] = 'Nama Perusahaan';
+                @php
+                    // Inisialisasi variabel internal tanpa menggunakan external helper function
+                    $user = Auth::user();
+                    $profileData = $profile ?? ($companyProfile ?? null);
 
-    $totalFieldsCount = 5;
-    $filledFieldsCount = $totalFieldsCount - count($missingFields);
-    $completionPercentage = round(($filledFieldsCount / $totalFieldsCount) * 100);
-    $isComplete = $completionPercentage >= 80;
-@endphp
+                    $missingFields = [];
+                    if (!$user->name) $missingFields[] = 'Nama Lengkap';
+                    if (!$user->email) $missingFields[] = 'Email';
+                    if (!($user->phone ?? null) && !($profileData->phone ?? null)) $missingFields[] = 'Nomor Telepon';
+                    if (!($profileData->location ?? null)) $missingFields[] = 'Lokasi';
+                    if (!($profileData->company_name ?? null)) $missingFields[] = 'Nama Perusahaan';
 
-<div class="container">
-
-    <!-- Flash Message -->
-    @if(session('error'))
-        <div class="alert alert-danger border-0 shadow-sm rounded-4 mb-4 dark:bg-rose-950/40 dark:text-rose-100 dark:border-rose-900" role="alert" data-aos="fade-down" data-aos-duration="500">
-            <div class="d-flex align-items-start gap-2">
-                <i class="bi bi-exclamation-triangle-fill fs-5 mt-1"></i>
-                <div>
-                    <strong class="d-block mb-1">Perhatian</strong>
-                    <span class="d-block">{{ session('error') }}</span>
-                    @if(count($missingFields) > 0)
-                        <div class="mt-2 small">
-                            <span class="fw-bold d-block mb-1">Field wajib yang masih kosong:</span>
-                            <ul class="mb-0 ps-3">
-                                @foreach($missingFields as $field)
-                                    <li>{{ $field }}</li>
-                                @endforeach
-                            </ul>
+                    $totalFieldsCount = 5;
+                    $filledFieldsCount = $totalFieldsCount - count($missingFields);
+                    $completionPercentage = round(($filledFieldsCount / $totalFieldsCount) * 100);
+                    $isComplete = $completionPercentage >= 80;
+                @endphp
+                {{-- =================================================
+                    FLASH MESSAGES
+                ================================================= --}}
+                @if(session('error'))
+                    <div class="reveal reveal-1 flex items-start gap-3 px-5 py-4 bg-rose-50/95 dark:bg-rose-950/50 backdrop-blur-md border border-rose-200 dark:border-rose-800/60 text-rose-800 dark:text-rose-300 text-sm font-medium rounded-2xl shadow-lg shadow-rose-500/5">
+                        <div class="w-9 h-9 rounded-xl bg-rose-500 text-white flex items-center justify-center shrink-0 shadow-sm shadow-rose-500/30">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
                         </div>
-                    @endif
-                </div>
-            </div>
-        </div>
-    @endif
-
-    @if(session('success'))
-        <div class="alert alert-success border-0 shadow-sm rounded-4 mb-4 dark:bg-emerald-950/40 dark:text-emerald-100 dark:border-emerald-900" role="alert" data-aos="fade-down" data-aos-duration="500">
-            <div class="d-flex align-items-center gap-2">
-                <i class="bi bi-check-circle-fill fs-5"></i>
-                <span>{{ session('success') }}</span>
-            </div>
-        </div>
-    @endif
-
-    <!-- Tombol Kembali ke Dashboard -->
-    <div class="mb-4" data-aos="fade-down" data-aos-duration="600">
-        <a href="{{ route('company.dashboard') }}" class="btn btn-back dark:bg-slate-800 dark:text-slate-200 dark:border-slate-600">
-            <i class="bi bi-arrow-left"></i> Kembali ke Dashboard
-        </a>
-    </div>
-
-    <!-- Header Title -->
-    <div class="mb-4" data-aos="fade-up" data-aos-duration="800">
-        <h1 class="page-title dark:text-white">Profil Perusahaan</h1>
-        <p class="page-subtitle dark:text-slate-400">Kelola informasi perusahaan Anda agar freelancer semakin percaya dan tertarik bergabung.</p>
-    </div>
-
-    <!-- MAIN PROFILE CARD -->
-    <div class="profile-card dark:bg-slate-900/80 dark:border-slate-800" data-aos="fade-up" data-aos-duration="1000">
-        <div class="profile-header dark:bg-slate-800/60">
-            <div class="row align-items-center">
-                <!-- LOGO PERUSAHAAN -->
-                <div class="col-lg-2 text-center mb-4 mb-lg-0">
-                    @if(isset($profileData->company_logo) && $profileData->company_logo)
-                        <img src="{{ asset('storage/'.$profileData->company_logo) }}" class="company-logo" alt="Logo Perusahaan">
-                    @else
-                        <img src="{{ asset('images/company.png') }}" class="company-logo" alt="Logo Perusahaan" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($profileData->company_name ?? 'Company') }}&background=0284c7&color=fff&size=140';">
-                    @endif
-                </div>
-
-                <!-- DETAIL PERUSAHAAN -->
-                <div class="col-lg-7 text-center text-lg-start">
-                    <h2 class="company-name">{{ $profileData->company_name ?? 'Nama Perusahaan' }}</h2>
-                    <div>
-                        <span class="company-type">
-                            <i class="bi bi-patch-check-fill me-1"></i> Client Terverifikasi
-                        </span>
-                    </div>
-
-                    <div class="info justify-content-center justify-content-lg-start">
-                        <i class="bi bi-geo-alt-fill"></i>
-                        <span>{{ $profileData->location ?? 'Belum mengisi lokasi' }}</span>
-                    </div>
-                    <div class="info justify-content-center justify-content-lg-start">
-                        <i class="bi bi-envelope-fill"></i>
-                        <span>{{ Auth::user()->email }}</span>
-                    </div>
-                    <div class="info justify-content-center justify-content-lg-start">
-                        <i class="bi bi-telephone-fill"></i>
-                        <span>{{ $profileData->phone ?? 'Belum mengisi nomor telepon' }}</span>
-                    </div>
-                    <div class="info justify-content-center justify-content-lg-start">
-                        <i class="bi bi-calendar-event-fill"></i>
-                        <span>Bergabung sejak {{ Auth::user()->created_at->translatedFormat('d F Y') }}</span>
-                    </div>
-                </div>
-
-                <!-- BIDANG & TOMBOL EDIT -->
-                <div class="col-lg-3 text-center text-lg-end mt-4 mt-lg-0">
-                    <div class="rate-badge-top">
-                        <i class="bi bi-briefcase me-1 text-primary"></i> {{ $profileData->industry ?? 'Bidang Usaha' }}
-                    </div>
-                    <br>
-                    <a href="{{ route('company.profile.edit') }}" class="edit-btn">
-                        <i class="bi bi-pencil-square me-2"></i> Edit Profil
-                    </a>
-                </div>
-            </div> <!-- Close row -->
-        </div> <!-- Close profile-header -->
-    </div> <!-- Close profile-card -->
-
-    <!-- KARTU STATISTIK SPESIFIK & MODERN -->
-    <div class="row g-4 mb-4" data-aos="fade-up" data-aos-duration="900">
-        <div class="col-md-3 col-6">
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="bi bi-folder2-open"></i>
-                </div>
-                <h3>{{ $totalProjects ?? 0 }}</h3>
-                <span>Project Dibuka</span>
-            </div>
-        </div>
-        <div class="col-md-3 col-6">
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="bi bi-check2-circle"></i>
-                </div>
-                <h3>{{ $completedProjects ?? 0 }}</h3>
-                <span>Project Selesai</span>
-            </div>
-        </div>
-        <div class="col-md-3 col-6">
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="bi bi-cash-stack"></i>
-                </div>
-                <h3>{{ $paymentRate ?? '100%' }}</h3>
-                <span>Ketepatan Bayar</span>
-            </div>
-        </div>
-        <div class="col-md-3 col-6">
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="bi bi-shield-check"></i>
-                </div>
-                <h3>{{ $successRate ?? '0%' }}</h3>
-                <span>Keberhasilan</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- TENTANG PERUSAHAAN -->
-    <div class="row mt-4" data-aos="fade-up" data-aos-duration="1000">
-        <div class="col-lg-12 mb-4">
-            <div class="content-card">
-                <div class="section-title">
-                    <i class="bi bi-building"></i> Tentang Perusahaan
-                </div>
-                @if(isset($profileData->description) && $profileData->description)
-                    <p class="text-secondary lh-lg fs-6 mb-0">{{ $profileData->description }}</p>
-                @else
-                    <div class="alert alert-light border fst-italic text-muted mb-0">
-                        Belum ada deskripsi perusahaan yang ditambahkan.
-                    </div>
-                @endif
-            </div>
-        </div>
-    </div>
-
-    <!-- INFORMASI DETAIL & WEBSITE -->
-    <div class="row g-4" data-aos="fade-up" data-aos-duration="1000">
-        <!-- Informasi Perusahaan -->
-        <div class="col-lg-6">
-            <div class="content-card">
-                <div class="section-title">
-                    <i class="bi bi-info-circle-fill"></i> Informasi Detail Perusahaan
-                </div>
-                <table class="table table-borderless align-middle mb-0">
-                    <tr>
-                        <th>Nama</th>
-                        <td><strong>{{ $profileData->company_name ?? '-' }}</strong></td>
-                    </tr>
-                    <tr>
-                        <th>Bidang</th>
-                        <td><strong>{{ $profileData->industry ?? '-' }}</strong></td>
-                    </tr>
-                    <tr>
-                        <th>Lokasi</th>
-                        <td><strong>{{ $profileData->location ?? '-' }}</strong></td>
-                    </tr>
-                    <tr>
-                        <th>Email</th>
-                        <td><strong>{{ Auth::user()->email }}</strong></td>
-                    </tr>
-                    <tr>
-                        <th>Telepon</th>
-                        <td><strong>{{ $profileData->phone ?? '-' }}</strong></td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-
-        <!-- Website & Atribut Tambahan -->
-        <div class="col-lg-6">
-            <div class="content-card">
-                <div class="section-title">
-                    <i class="bi bi-globe2"></i> Website & Atribut
-                </div>
-
-                @if(isset($profileData->website) && $profileData->website)
-                    <div class="mb-3">
-                        <a href="{{ \Illuminate\Support\Str::startsWith($profileData->website, ['http://', 'https://']) ? $profileData->website : 'https://' . $profileData->website }}" target="_blank" class="btn btn-primary website-btn w-100 text-white text-center">
-                            <i class="bi bi-box-arrow-up-right me-2"></i> Kunjungi Website Resmi
-                        </a>
-                    </div>
-                    <div class="p-3 bg-light rounded-3 text-muted small text-break border">
-                        <i class="bi bi-link-45deg me-1"></i> {{ $profileData->website }}
-                    </div>
-                @else
-                    <div class="alert alert-warning border-0 shadow-sm mb-4 dark:bg-amber-950/40 dark:text-amber-100 dark:border-amber-900">
-                        <i class="bi bi-exclamation-circle me-2"></i> Website perusahaan belum ditambahkan.
-                    </div>
-                @endif
-
-                <hr class="my-4" style="border-color: var(--border-color);">
-
-                <div class="row g-3">
-                    <div class="col-6">
-                        <span class="d-block text-muted small mb-1 fw-semibold dark:text-slate-400">Bidang Usaha</span>
-                        @if(isset($profileData->industry) && $profileData->industry)
-                            <span class="badge bg-primary px-3 py-2 rounded-pill fw-semibold" style="background: var(--primary-gradient) !important;">
-                                {{ $profileData->industry }}
-                            </span>
-                        @else
-                            <span class="text-muted fst-italic small dark:text-slate-400">Belum diisi</span>
-                        @endif
-                    </div>
-                    <div class="col-6">
-                        <span class="d-block text-muted small mb-1 fw-semibold dark:text-slate-400">Tanggal Bergabung</span>
-                        <strong class="text-dark small dark:text-white"><i class="bi bi-calendar-event me-1 text-primary"></i> {{ Auth::user()->created_at->format('d M Y') }}</strong>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- PROGRESS KELENGKAPAN PROFIL -->
-    <div class="row mt-4" data-aos="fade-up" data-aos-duration="1000">
-        <div class="col-lg-12">
-            <div class="content-card dark:bg-slate-900/80 dark:border-slate-800">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="section-title mb-0 dark:text-white">
-                        <i class="bi bi-bar-chart-line"></i> Progress Kelengkapan Profil
-                    </h4>
-                    <h3 class="fw-extrabold mb-0" style="color: #0284c7 !important;">{{ $completionPercentage }}%</h3>
-                </div>
-
-                <div class="progress mb-4 shadow-inner">
-                    <div class="progress-bar progress-bar-striped progress-bar-animated" style="width:{{ $completionPercentage }}%"></div>
-                </div>
-
-                @if($isComplete)
-                    <div class="alert alert-success border-0 shadow-sm rounded-4 mb-0 dark:bg-emerald-950/40 dark:text-emerald-100 dark:border-emerald-900">
-                        <i class="bi bi-check-circle-fill me-2"></i> Profil Anda sudah lengkap. Anda dapat menggunakan semua fitur aplikasi.
-                    </div>
-                @else
-                    <div class="alert alert-warning border-0 shadow-sm rounded-4 mb-3 dark:bg-amber-950/40 dark:text-amber-100 dark:border-amber-900">
-                        <i class="bi bi-exclamation-circle-fill me-2"></i> Lengkapi minimal 80% profil untuk membuat proyek, memilih freelancer, dan fitur lainnya.
-                    </div>
-                @endif
-
-                <div class="row g-3 text-sm mt-1">
-                    @php
-                        $fields = [
-                            ['key' => 'name', 'label' => 'Nama Lengkap', 'check' => Auth::user()->name],
-                            ['key' => 'email', 'label' => 'Email', 'check' => Auth::user()->email],
-                            ['key' => 'phone', 'label' => 'Nomor Telepon', 'check' => Auth::user()->phone ?? ($profileData->phone ?? null)],
-                            ['key' => 'location', 'label' => 'Lokasi', 'check' => $profileData->location ?? null],
-                            ['key' => 'company_name', 'label' => 'Nama Perusahaan', 'check' => $profileData->company_name ?? null],
-                        ];
-                    @endphp
-                    @foreach($fields as $field)
-                        <div class="col-6 col-md-2">
-                            @if($field['check'])
-                                <span class="text-success fw-bold"><i class="bi bi-check-circle-fill me-1"></i> {{ $field['label'] }}</span>
-                            @else
-                                <span class="text-muted"><i class="bi bi-circle me-1"></i> {{ $field['label'] }}</span>
+                        <div class="min-w-0">
+                            <p class="text-xs font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wide">Perhatian</p>
+                            <p class="mt-0.5">{{ session('error') }}</p>
+                            @if(count($missingFields) > 0)
+                                <ul class="mt-2 space-y-1 list-disc list-inside text-xs">
+                                    @foreach($missingFields as $field)
+                                        <li>{{ $field }}</li>
+                                    @endforeach
+                                </ul>
                             @endif
                         </div>
-                    @endforeach
+                    </div>
+                @endif
+
+                @if(session('success'))
+                    <div class="reveal reveal-1 flex items-center gap-3 px-5 py-4 bg-emerald-50/95 dark:bg-emerald-950/50 backdrop-blur-md border border-emerald-200 dark:border-emerald-800/60 text-emerald-800 dark:text-emerald-300 text-sm font-medium rounded-2xl shadow-lg shadow-emerald-500/5">
+                        <div class="w-9 h-9 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-sm shadow-emerald-500/30">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <p class="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wide">Berhasil</p>
+                            <span class="block truncate">{{ session('success') }}</span>
+                        </div>
+                    </div>
+                @endif
+
+                {{-- Back Link --}}
+                <div class="reveal reveal-1">
+                    <a href="{{ route('company.dashboard') }}"
+                       class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors group">
+                        <i class="fa fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+                        Kembali ke Dashboard
+                    </a>
                 </div>
-            </div>
+
+
+                {{-- =================================================
+                    HERO HEADER
+                ================================================= --}}
+                <div class="reveal reveal-1 relative overflow-hidden rounded-3xl shadow-xl shadow-blue-600/10 border border-blue-500/20 dark:border-blue-500/30 w-full">
+                    <div class="absolute inset-0 animate-mesh bg-gradient-to-r from-blue-700 via-brand to-blue-600 dark:from-slate-900 dark:via-blue-900 dark:to-slate-900"></div>
+                    <div class="absolute -top-20 -right-20 w-72 h-72 bg-white/10 dark:bg-blue-500/10 rounded-full blur-2xl pointer-events-none"></div>
+                    <div class="absolute -bottom-24 -left-20 w-80 h-80 bg-blue-400/20 dark:bg-indigo-500/10 rounded-full blur-2xl pointer-events-none"></div>
+                    <div class="absolute inset-0 opacity-[0.08] dark:opacity-[0.12] pointer-events-none"
+                        style="background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 20px 20px;"></div>
+
+                    <div class="relative p-6 sm:p-8 lg:p-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                        <div class="flex items-center gap-4 sm:gap-6 min-w-0">
+                            <div class="relative shrink-0">
+                                @if(isset($profileData->company_logo) && $profileData->company_logo)
+                                    <img src="{{ asset('storage/'.$profileData->company_logo) }}"
+                                         alt="Logo Perusahaan"
+                                         class="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl object-cover bg-white ring-4 ring-white/25 shadow-xl">
+                                @else
+                                    <img src="{{ asset('images/company.png') }}"
+                                         alt="Logo Perusahaan"
+                                         class="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl object-cover bg-white ring-4 ring-white/25 shadow-xl"
+                                         onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($profileData->company_name ?? 'Company') }}&background=2563eb&color=fff&size=112';">
+                                @endif
+                                <span class="absolute -bottom-1.5 -right-1.5 flex h-5 w-5">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-5 w-5 bg-emerald-500 border-2 border-white/90 dark:border-slate-900"></span>
+                                </span>
+                            </div>
+
+                            <div class="min-w-0 space-y-2">
+                                <div class="inline-flex items-center gap-2 bg-white/10 dark:bg-white/5 backdrop-blur-md px-3.5 py-1.5 rounded-full text-white text-xs font-semibold ring-1 ring-white/20 shadow-inner">
+                                    <i class="fa-solid fa-circle-check text-xs text-emerald-300"></i>
+                                    Client Terverifikasi
+                                </div>
+                                <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight truncate">
+                                    {{ $profileData->company_name ?? 'Nama Perusahaan' }}
+                                </h1>
+                                <div class="flex flex-wrap gap-x-4 gap-y-1.5 text-blue-100/90 dark:text-slate-300 text-xs sm:text-sm font-medium">
+                                    <span class="inline-flex items-center gap-1.5">
+                                        <i class="fa-solid fa-location-dot text-blue-200 dark:text-blue-300"></i>
+                                        {{ $profileData->location ?? 'Belum mengisi lokasi' }}
+                                    </span>
+                                    <span class="inline-flex items-center gap-1.5">
+                                        <i class="fa-solid fa-envelope text-blue-200 dark:text-blue-300"></i>
+                                        {{ Auth::user()->email }}
+                                    </span>
+                                    <span class="inline-flex items-center gap-1.5">
+                                        <i class="fa-solid fa-phone text-blue-200 dark:text-blue-300"></i>
+                                        {{ $profileData->phone ?? 'Belum mengisi nomor telepon' }}
+                                    </span>
+                                    <span class="inline-flex items-center gap-1.5">
+                                        <i class="fa-regular fa-calendar-days text-blue-200 dark:text-blue-300"></i>
+                                        Bergabung sejak {{ Auth::user()->created_at->translatedFormat('d F Y') }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-3 shrink-0">
+                            <span class="inline-flex items-center gap-2 bg-white/10 dark:bg-white/5 backdrop-blur-md px-4 py-3 rounded-2xl text-white text-sm font-bold ring-1 ring-white/20 shadow-inner">
+                                <i class="fa-solid fa-briefcase text-xs text-blue-200 dark:text-blue-300"></i>
+                                {{ $profileData->industry ?? 'Bidang Usaha' }}
+                            </span>
+                            <a href="{{ route('company.profile.edit') }}"
+                               class="btn-shimmer inline-flex items-center gap-2 bg-white dark:bg-slate-900 text-brand dark:text-blue-400 hover:bg-[#f6f9ff] dark:hover:bg-slate-800 border border-transparent dark:border-slate-800 px-5 py-3 rounded-2xl text-sm font-bold shadow-lg shadow-black/5 transition">
+                                <i class="fa-solid fa-pen-to-square text-xs"></i>
+                                <span>Edit Profil</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- =================================================
+                    STAT METRICS
+                ================================================= --}}
+                <div class="reveal reveal-2 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5">
+
+                    {{-- Card: Project Dibuka --}}
+                    <div class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl shadow-sm p-4 sm:p-5 transition-colors duration-300">
+                        <div class="flex items-center gap-3">
+                            <div class="w-11 h-11 rounded-xl bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-folder-open text-blue-600 dark:text-blue-300 text-lg"></i>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <p class="text-xs text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider">Project Dibuka</p>
+                                <h3 class="text-lg sm:text-xl font-black text-slate-800 dark:text-white tracking-tight leading-tight">{{ $totalProjects ?? 0 }}</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Card: Project Selesai --}}
+                    <div class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl shadow-sm p-4 sm:p-5 transition-colors duration-300">
+                        <div class="flex items-center gap-3">
+                            <div class="w-11 h-11 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-check-circle text-emerald-600 dark:text-emerald-300 text-lg"></i>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <p class="text-xs text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider">Project Selesai</p>
+                                <h3 class="text-lg sm:text-xl font-black text-slate-800 dark:text-white tracking-tight leading-tight">{{ $completedProjects ?? 0 }}</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Card: Ketepatan Bayar --}}
+                    <div class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl shadow-sm p-4 sm:p-5 transition-colors duration-300">
+                        <div class="flex items-center gap-3">
+                            <div class="w-11 h-11 rounded-xl bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-cash-stack text-amber-600 dark:text-amber-300 text-lg"></i>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <p class="text-xs text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider">Ketepatan Bayar</p>
+                                <h3 class="text-lg sm:text-xl font-black text-slate-800 dark:text-white tracking-tight leading-tight">{{ $paymentRate ?? '100%' }}</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Card: Keberhasilan --}}
+                    <div class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl shadow-sm p-4 sm:p-5 transition-colors duration-300">
+                        <div class="flex items-center gap-3">
+                            <div class="w-11 h-11 rounded-xl bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-shield-check text-indigo-600 dark:text-indigo-300 text-lg"></i>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <p class="text-xs text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider">Keberhasilan</p>
+                                <h3 class="text-lg sm:text-xl font-black text-slate-800 dark:text-white tracking-tight leading-tight">{{ $successRate ?? '0%' }}</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                {{-- =================================================
+                    TENTANG PERUSAHAAN
+                ================================================= --}}
+                <div class="reveal reveal-2 bg-white dark:bg-slate-900 border border-blue-100/80 dark:border-slate-800 rounded-2xl shadow-sm p-5 sm:p-6 transition-colors duration-300">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-building text-blue-600 dark:text-blue-400"></i>
+                        Tentang Perusahaan
+                    </h3>
+                    @if(isset($profileData->description) && $profileData->description)
+                        <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">{{ $profileData->description }}</p>
+                    @else
+                        <div class="border border-dashed border-blue-100 dark:border-slate-700 rounded-xl p-5 text-center text-slate-400 dark:text-slate-400 text-xs font-medium">
+                            <i class="fa-regular fa-note-sticky text-lg mb-1 block text-slate-300 dark:text-slate-600"></i>
+                            Belum ada deskripsi perusahaan yang ditambahkan.
+                        </div>
+                    @endif
+                </div>
+
+                {{-- =================================================
+                    INFORMASI DETAIL & WEBSITE
+                ================================================= --}}
+                <div class="reveal reveal-3 grid grid-cols-1 lg:grid-cols-2 gap-5">
+
+                    {{-- Informasi Perusahaan --}}
+                    <div class="bg-white dark:bg-slate-900 border border-blue-100/80 dark:border-slate-800 rounded-2xl shadow-sm p-5 sm:p-6 transition-colors duration-300">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400 mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-info text-blue-600 dark:text-blue-400"></i>
+                            Informasi Detail Perusahaan
+                        </h3>
+                        <dl class="divide-y divide-blue-50 dark:divide-slate-800">
+                            <div class="flex items-start justify-between gap-3 py-3">
+                                <dt class="text-xs font-semibold text-slate-500 dark:text-slate-400">Nama</dt>
+                                <dd class="text-sm font-bold text-slate-800 dark:text-white text-right">{{ $profileData->company_name ?? '-' }}</dd>
+                            </div>
+                            <div class="flex items-start justify-between gap-3 py-3">
+                                <dt class="text-xs font-semibold text-slate-500 dark:text-slate-400">Bidang</dt>
+                                <dd class="text-sm font-bold text-slate-800 dark:text-white text-right">{{ $profileData->industry ?? '-' }}</dd>
+                            </div>
+                            <div class="flex items-start justify-between gap-3 py-3">
+                                <dt class="text-xs font-semibold text-slate-500 dark:text-slate-400">Lokasi</dt>
+                                <dd class="text-sm font-bold text-slate-800 dark:text-white text-right">{{ $profileData->location ?? '-' }}</dd>
+                            </div>
+                            <div class="flex items-start justify-between gap-3 py-3">
+                                <dt class="text-xs font-semibold text-slate-500 dark:text-slate-400">Email</dt>
+                                <dd class="text-sm font-bold text-slate-800 dark:text-white text-right break-all">{{ Auth::user()->email }}</dd>
+                            </div>
+                            <div class="flex items-start justify-between gap-3 py-3">
+                                <dt class="text-xs font-semibold text-slate-500 dark:text-slate-400">Telepon</dt>
+                                <dd class="text-sm font-bold text-slate-800 dark:text-white text-right">{{ $profileData->phone ?? '-' }}</dd>
+                            </div>
+                        </dl>
+                    </div>
+
+                    {{-- Website & Atribut Tambahan --}}
+                    <div class="bg-white dark:bg-slate-900 border border-blue-100/80 dark:border-slate-800 rounded-2xl shadow-sm p-5 sm:p-6 transition-colors duration-300">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400 mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-globe text-blue-600 dark:text-blue-400"></i>
+                            Website &amp; Atribut
+                        </h3>
+
+                        @if(isset($profileData->website) && $profileData->website)
+                            <a href="{{ \Illuminate\Support\Str::startsWith($profileData->website, ['http://', 'https://']) ? $profileData->website : 'https://' . $profileData->website }}" target="_blank"
+                               class="btn-shimmer w-full inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-xl text-xs font-bold transition shadow-sm mb-3">
+                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                                Kunjungi Website Resmi
+                            </a>
+                            <div class="p-3 bg-blue-50/60 dark:bg-slate-800 rounded-xl text-slate-500 dark:text-slate-400 text-xs font-medium break-all border border-blue-100/80 dark:border-slate-700">
+                                <i class="fa-solid fa-link text-blue-500 dark:text-blue-400 mr-1.5"></i>
+                                {{ $profileData->website }}
+                            </div>
+                        @else
+                            <div class="border border-dashed border-blue-100 dark:border-slate-700 rounded-xl p-4 text-center text-slate-400 dark:text-slate-400 text-xs font-medium mb-4">
+                                <i class="fa-solid fa-globe text-lg mb-1 block text-slate-300 dark:text-slate-600"></i>
+                                Website perusahaan belum ditambahkan.
+                            </div>
+                        @endif
+
+                        <div class="mt-5 pt-5 border-t border-blue-50 dark:border-slate-800 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">Bidang Usaha</span>
+                                @if(isset($profileData->industry) && $profileData->industry)
+                                    <span class="inline-flex items-center px-3 py-1.5 bg-blue-50/80 dark:bg-slate-800 border border-blue-100 dark:border-slate-800 text-blue-700 dark:text-blue-400 text-xs font-semibold rounded-full">
+                                        <i class="fa-solid fa-briefcase text-[10px] mr-1.5"></i>
+                                        {{ $profileData->industry }}
+                                    </span>
+                                @else
+                                    <span class="text-xs italic text-slate-400 dark:text-slate-500">Belum diisi</span>
+                                @endif
+                            </div>
+                            <div>
+                                <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">Tanggal Bergabung</span>
+                                <p class="text-sm font-bold text-slate-800 dark:text-white">
+                                    <i class="fa-regular fa-calendar text-blue-500 dark:text-blue-400 mr-1.5"></i>
+                                    {{ Auth::user()->created_at->format('d M Y') }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                {{-- =================================================
+                    PROGRESS KELENGKAPAN PROFIL
+                ================================================= --}}
+                <div class="reveal reveal-3 bg-white dark:bg-slate-900 border border-blue-100/80 dark:border-slate-800 rounded-2xl shadow-sm p-5 sm:p-6 transition-colors duration-300">
+                    <div class="flex items-center justify-between gap-4 mb-4">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400 flex items-center gap-2">
+                            <i class="fa-solid fa-chart-line text-blue-600 dark:text-blue-400"></i>
+                            Progress Kelengkapan Profil
+                        </h3>
+                        <span class="text-lg font-black text-brand dark:text-blue-400">{{ $completionPercentage }}%</span>
+                    </div>
+
+                    <div class="h-2.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden mb-5">
+                        <div class="h-full bg-gradient-to-r from-blue-600 to-sky-400 rounded-full transition-all duration-500"
+                             style="width: {{ $completionPercentage }}%"></div>
+                    </div>
+
+                    @if($isComplete)
+                        <div class="flex items-center gap-3 px-4 py-3 bg-emerald-50/90 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900 text-emerald-700 dark:text-emerald-300 text-sm font-medium rounded-xl mb-4">
+                            <i class="fa-solid fa-circle-check text-emerald-500 dark:text-emerald-400"></i>
+                            Profil Anda sudah lengkap. Anda dapat menggunakan semua fitur aplikasi.
+                        </div>
+                    @else
+                        <div class="flex items-center gap-3 px-4 py-3 bg-amber-50/90 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900 text-amber-700 dark:text-amber-300 text-sm font-medium rounded-xl mb-4">
+                            <i class="fa-solid fa-circle-exclamation text-amber-500 dark:text-amber-400"></i>
+                            Lengkapi minimal 80% profil untuk membuat proyek, memilih freelancer, dan fitur lainnya.
+                        </div>
+                    @endif
+
+                    @php
+                        $fields = [
+                            ['label' => 'Nama Lengkap', 'check' => Auth::user()->name],
+                            ['label' => 'Email', 'check' => Auth::user()->email],
+                            ['label' => 'Nomor Telepon', 'check' => Auth::user()->phone ?? ($profileData->phone ?? null)],
+                            ['label' => 'Lokasi', 'check' => $profileData->location ?? null],
+                            ['label' => 'Nama Perusahaan', 'check' => $profileData->company_name ?? null],
+                        ];
+                    @endphp
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-2.5 text-xs font-semibold">
+                        @foreach($fields as $field)
+                            <div class="inline-flex items-center gap-1.5 {{ $field['check'] ? 'text-emerald-600 dark:text-emerald-300' : 'text-slate-400 dark:text-slate-400' }}">
+                                <i class="{{ $field['check'] ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle' }}"></i>
+                                {{ $field['label'] }}
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                {{-- Footer --}}
+
+            </main>
         </div>
     </div>
 
-            </div>{{-- /.container --}}
-        </main>
-    </div>{{-- /.area kanan --}}
-</div>{{-- /.layout --}}
-
-<!-- Bootstrap JS Bundle -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<!-- AOS Animation Library JS -->
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-<script>
-  // Inisialisasi library AOS untuk animasi scroll yang smooth
-  AOS.init({
-    once: true, 
-    offset: 50,  
-    easing: 'ease-out-cubic'
-  });
-</script>
 </body>
 </html>

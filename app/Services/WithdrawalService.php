@@ -22,6 +22,48 @@ use Illuminate\Validation\ValidationException;
  */
 class WithdrawalService
 {
+    // ────────────────────────────────────────────────────────────
+    // PROVIDER FEE (terpusat di config/withdrawal.php)
+    // ----------------------------------------------------------------
+    // Fee provider adalah BIAYA EKSTERNAL provider pembayaran — berbeda
+    // dari platform fee 5% freelancer. Hanya dipakai penarikan ADMIN.
+    // Semua angka WAJIB dibaca lewat helper ini, dilarang hardcode.
+    // ────────────────────────────────────────────────────────────
+
+    /** Daftar metode provider yang valid dari config. */
+    public static function providerMethods(): array
+    {
+        return array_keys(config('withdrawal.providers', []));
+    }
+
+    public static function providerLabel(string $method): string
+    {
+        return config("withdrawal.providers.{$method}.label", ucfirst($method));
+    }
+
+    /**
+     * Hitung fee provider untuk sebuah metode & nominal.
+     * Hasil dibulatkan ke rupiah penuh.
+     */
+    public static function calculateProviderFee(string $method, float $amount): float
+    {
+        $fee = config("withdrawal.providers.{$method}.fee");
+
+        if (!is_array($fee) || $amount <= 0) {
+            return 0.0;
+        }
+
+        if (($fee['type'] ?? '') === 'fixed') {
+            return round((float) ($fee['amount'] ?? 0), 2);
+        }
+
+        if (($fee['type'] ?? '') === 'percent') {
+            return round($amount * ((float) ($fee['amount'] ?? 0)) / 100, 2);
+        }
+
+        return 0.0;
+    }
+
     /**
      * Buat pengajuan penarikan baru.
      *
@@ -29,8 +71,9 @@ class WithdrawalService
      * (status "berhasil" + paid_at diisi saat itu juga). Akibatnya saldo
      * tersedia freelancer langsung berkurang sesuai nominal penarikan.
      *
-     * Pajak admin 5% dihitung DI SINI (backend) dan disimpan ke kolom
-     * `fee` serta `net_amount` agar konsisten di seluruh tampilan.
+     * Fee withdrawal platform dihitung DI SINI (backend) dari Financial Settings
+     * dan disimpan (snapshot) ke kolom `fee`, `fee_rate`, serta `net_amount`
+     * agar konsisten di seluruh tampilan.
      *
      * @param  array  $data  Data yang sudah lolos WithdrawalStoreRequest
      * @return Withdrawal
@@ -51,9 +94,11 @@ class WithdrawalService
                 ]);
             }
 
-            // Pajak admin 5% dihitung dari nominal penarikan (sekali saja).
+            // Fee withdrawal dihitung dari rate Financial Settings (sekali saja saat dibuat),
+            // dan di-snapshot ke kolom fee_rate agar transaksi lama tidak berubah.
             $amount    = (float) $data['amount'];
-            $fee       = round($amount * Withdrawal::TAX_RATE, 2);
+            $feeRate   = (float) \App\Models\FinancialSetting::getSettings()->withdrawalFeeRate();
+            $fee       = round($amount * $feeRate / 100, 2);
             $netAmount = round($amount - $fee, 2);
 
             $withdrawal = Withdrawal::create([
@@ -61,6 +106,7 @@ class WithdrawalService
                 'user_id'         => $userId,
                 'amount'          => $amount,
                 'fee'             => $fee,
+                'fee_rate'        => $feeRate,
                 'net_amount'      => $netAmount,
                 'method'          => $data['method'],
                 'bank_name'       => $data['bank_name'],
@@ -81,7 +127,7 @@ class WithdrawalService
                 title: 'Penarikan Dana Berhasil',
                 message: 'Penarikan ' . $withdrawal->withdrawal_code
                     . ' sebesar Rp ' . number_format($amount, 0, ',', '.')
-                    . ' berhasil dicairkan (simulasi). Pajak admin 5% sebesar Rp '
+                    . ' berhasil dicairkan (simulasi). Fee admin sebesar Rp '
                     . number_format($fee, 0, ',', '.')
                     . ' dipotong, dan Rp ' . number_format($netAmount, 0, ',', '.')
                     . ' diterima ke ' . $withdrawal->bank_name
@@ -195,8 +241,15 @@ class WithdrawalService
      */
     public function availableBalance(int $userId): float
     {
+        // Hanya dana escrow yang sudah resolved (released / released_partial)
+        // boleh dicairkan. Payment paid dengan funds_status held/disputed
+        // masih tertahan di escrow dan TIDAK boleh masuk saldo tersedia.
         $totalEarned = (float) \App\Models\Payment::where('freelancer_id', $userId)
             ->where('status', 'paid')
+            ->whereIn('funds_status', [
+                \App\Models\Payment::FUNDS_RELEASED,
+                \App\Models\Payment::FUNDS_RELEASED_PARTIAL,
+            ])
             ->sum('freelancer_receive');
 
         $reserved = (float) Withdrawal::forUser($userId)->active()->sum('amount');

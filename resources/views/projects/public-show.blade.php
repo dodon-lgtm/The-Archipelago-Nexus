@@ -3,21 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @include('partials.theme-boot')
     <title>{{ $project->project_name }} - ApexForge Labs</title>
 
     {{-- =========================================================
         DARK MODE
     ========================================================== --}}
-    <script>
-        (function() {
-            const savedTheme = localStorage.getItem('apexforge_theme') || localStorage.getItem('theme') || localStorage.getItem('color-theme');
-            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-            }
-        })();
-    </script>
+    
 
     {{-- =========================================================
         TAILWIND
@@ -357,8 +349,7 @@
 
             const isDark = html.classList.contains('dark');
 
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
-            localStorage.setItem('apexforge_theme', isDark ? 'dark' : 'light');
+            localStorage.setItem('theme_user_', isDark ? 'dark' : 'light');
 
             if (icon) {
                 icon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';

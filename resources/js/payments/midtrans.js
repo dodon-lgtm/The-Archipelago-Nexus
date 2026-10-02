@@ -8,7 +8,7 @@ function showMidtransError(message) {
         errorEl.textContent = message || 'Terjadi kesalahan saat menghubungi layanan pembayaran Midtrans.';
         errorEl.classList.remove('hidden');
     } else {
-        alert(message || 'Terjadi kesalahan saat menghubungi layanan pembayaran Midtrans.');
+        showToast(message || 'Terjadi kesalahan saat menghubungi layanan pembayaran Midtrans.', 'error');
     }
 }
 
@@ -91,7 +91,7 @@ function handlePayWithMidtrans() {
                     confirmPayment(workspaceId)
                         .then((confirmData) => {
                             if (confirmData.success) {
-                                alert('Pembayaran berhasil dikonfirmasi.');
+                                showToast('Pembayaran berhasil dikonfirmasi.', 'success');
                                 window.location.href = confirmData.redirect_url
                                     || ('/company/workspaces/' + workspaceId);
                             } else {
@@ -110,10 +110,10 @@ function handlePayWithMidtrans() {
                         });
                 },
                 onPending: function(result) {
-                    alert('Pembayaran tertunda. Silakan selesaikan pembayaran Anda.');
+                    showToast('Pembayaran tertunda. Silakan selesaikan pembayaran Anda.', 'warning');
                 },
                 onError: function(result) {
-                    alert('Pembayaran gagal.');
+                    showToast('Pembayaran gagal.', 'error');
                 },
                 onClose: function() {
                     console.log('Popup Snap ditutup.');

@@ -82,8 +82,15 @@ class WithdrawalStoreRequest extends FormRequest
      */
     public function availableBalance(): float
     {
+        // Hanya dana escrow yang sudah resolved (released / released_partial)
+        // boleh dicairkan. Payment paid dengan funds_status held/disputed
+        // masih tertahan di escrow dan TIDAK boleh masuk saldo tersedia.
         $totalEarned = (float) Payment::where('freelancer_id', Auth::id())
             ->where('status', 'paid')
+            ->whereIn('funds_status', [
+                Payment::FUNDS_RELEASED,
+                Payment::FUNDS_RELEASED_PARTIAL,
+            ])
             ->sum('freelancer_receive');
 
         $reserved = (float) Withdrawal::forUser(Auth::id())

@@ -3,8 +3,57 @@
     Support: Guest, Freelancer, Company, Admin
 ========================================================= --}}
 
+@auth
+@if(Auth::user()->role === 'company')
+{{-- MOBILE HEADER COMPANY MINIMALIS (< md) --}}
+<header class="flex md:hidden h-14 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-b border-blue-100 dark:border-slate-800 px-3 items-center justify-between sticky top-0 z-40 shadow-sm">
+    <a href="{{ url('/') }}" class="text-base font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-blue-500 tracking-tight">LABS</a>
+    <div class="flex items-center gap-2">
+        <div class="relative">
+            <button id="notificationButtonMobile" aria-label="Notifikasi" class="relative w-8 h-8 rounded-xl border border-blue-100 dark:border-slate-700 flex items-center justify-center text-blue-600">
+                <i class="fa-regular fa-bell text-sm"></i>
+                <span id="notificationBadgeMobile" class="absolute -top-1 -right-1 min-w-[16px] h-[16px] rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center px-1 hidden"></span>
+            </button>
+            <div id="notificationDropdownMobile" class="hidden absolute right-0 mt-3 w-[min(340px,calc(100vw-1rem))] bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl rounded-2xl border border-blue-100 dark:border-slate-800 shadow-[0_20px_50px_-10px_rgba(30,58,138,0.2)] overflow-hidden z-[100]">
+                <div class="p-4 border-b border-blue-50/50 dark:border-slate-800 flex items-center justify-between">
+                    <h3 class="font-black text-xs text-blue-950 dark:text-white">Notifikasi</h3>
+                    <button id="markAllReadBtnMobile" class="text-[10px] text-blue-500 font-bold">Tandai dibaca</button>
+                </div>
+                <div id="notificationListMobile" class="max-h-[320px] overflow-y-auto">
+                    <div class="p-6 text-center text-xs text-slate-400">Tidak ada notifikasi</div>
+                </div>
+            </div>
+        </div>
+        <div class="relative">
+            <button id="userButtonMobile" aria-label="Profil" class="w-8 h-8 rounded-lg overflow-hidden bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white">
+                @if(Auth::user()->companyProfile && Auth::user()->companyProfile->company_logo)
+                    <img src="{{ asset('storage/' . Auth::user()->companyProfile->company_logo) }}" class="w-full h-full object-cover">
+                @else
+                    <i class="fa-solid fa-user text-xs"></i>
+                @endif
+            </button>
+            <div id="userDropdownMobile" class="hidden absolute right-0 mt-3 w-64 bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl rounded-2xl border border-blue-100 dark:border-slate-800 shadow-[0_20px_50px_-10px_rgba(30,58,138,0.2)] overflow-hidden z-[100]">
+                <div class="p-4 border-b border-blue-50 dark:border-slate-800">
+                    <h2 class="font-black text-sm text-blue-950 dark:text-white">{{ Auth::user()->companyProfile->company_name ?? Auth::user()->name }}</h2>
+                    <p class="text-[11px] text-blue-500/70 truncate">{{ Auth::user()->email }}</p>
+                </div>
+                <div class="p-2 space-y-1">
+                    <a href="{{ route('company.profile') }}" class="flex items-center gap-2 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-blue-50">Profil Perusahaan</a>
+                    <a href="{{ route('company.projects.create') }}" class="flex items-center gap-2 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-blue-50">Tambah Proyek</a>
+                    <a href="#" id="btnBukaPengaturanMobile" class="flex items-center gap-2 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-blue-50">Pengaturan</a>
+                </div>
+                <div class="p-2 border-t border-blue-50 dark:border-slate-800">
+                    <form action="{{ url('/logout') }}" method="POST">@csrf<button type="submit" class="w-full text-left px-3 py-2.5 rounded-xl text-xs font-bold text-red-600 hover:bg-red-50">Logout</button></form>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+@endif
+@endauth
+
 <header id="mainHeader"
-    class="h-16 bg-white/90 dark:bg-slate-900/90 backdrop-blur-3xl border-b border-blue-100 dark:border-slate-800 px-6 flex items-center justify-between sticky top-0 z-40 shadow-[0_10px_30px_-15px_rgba(59,130,246,0.1)] transition-colors duration-300">
+    class="h-16 bg-white/90 dark:bg-slate-900/90 backdrop-blur-3xl border-b border-blue-100 dark:border-slate-800 pl-16 pr-4 lg:px-6 items-center justify-between sticky top-0 z-40 shadow-[0_10px_30px_-15px_rgba(59,130,246,0.1)] transition-colors duration-300 @auth @if(Auth::user()->role === 'company') hidden md:flex @else flex @endif @else flex @endauth">
 
     <!-- LEFT -->
     <div class="flex items-center gap-8">
@@ -130,7 +179,7 @@
 
                 <!-- NOTIFICATION DROPDOWN -->
                 <div id="notificationDropdown"
-                    class="hidden absolute right-0 mt-4 w-[380px] bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl rounded-[1.5rem] border border-blue-100 dark:border-slate-800 shadow-[0_20px_50px_-10px_rgba(30,58,138,0.15)] overflow-hidden z-[100] transform transition-all">
+                    class="hidden absolute right-0 mt-4 w-[min(380px,calc(100vw-1.5rem))] bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl rounded-[1.5rem] border border-blue-100 dark:border-slate-800 shadow-[0_20px_50px_-10px_rgba(30,58,138,0.15)] overflow-hidden z-[100] transform transition-all">
                     <div class="p-5 border-b border-blue-50/50 dark:border-slate-800 flex items-center justify-between bg-gradient-to-b from-blue-50/30 dark:from-slate-800/50 to-transparent">
                         <h3 class="font-black text-sm text-blue-950 dark:text-white tracking-wide">Notifikasi Sistem</h3>
                         <button id="markAllReadBtn" class="text-[11px] text-blue-500 font-bold hover:text-blue-700 dark:hover:text-blue-400 transition-colors">Tandai semua dibaca</button>
@@ -150,7 +199,7 @@
             <div class="relative">
                 <button id="userButton" class="flex items-center gap-3 border border-transparent hover:border-blue-100 dark:hover:border-slate-800 hover:bg-blue-50/50 dark:hover:bg-slate-800/50 rounded-2xl px-2 py-1.5 transition-all duration-300 group">
                     <div class="text-right hidden sm:block pr-1">
-                        <h2 class="text-[13px] font-black text-blue-950 dark:text-white leading-tight">{{ Auth::user()->name }}</h2>
+                        <h2 class="text-[13px] font-black text-blue-950 dark:text-white leading-tight">{{ Auth::user()->companyProfile->company_name ?? Auth::user()->name }}</h2>
                         <p class="text-[10px] font-bold tracking-widest uppercase text-blue-400 dark:text-slate-400">{{ ucfirst(Auth::user()->role) }}</p>
                     </div>
                     <div class="w-10 h-10 rounded-[0.9rem] overflow-hidden bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white shrink-0 shadow-[0_4px_15px_rgba(59,130,246,0.3)] group-hover:scale-105 transition-transform">
@@ -169,7 +218,7 @@
                     class="hidden absolute right-0 mt-4 w-72 bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl rounded-[1.5rem] border border-blue-100 dark:border-slate-800 shadow-[0_20px_50px_-10px_rgba(30,58,138,0.15)] overflow-hidden z-[100]">
                     
                     <div class="p-6 border-b border-blue-50/50 dark:border-slate-800 bg-gradient-to-b from-blue-50/50 dark:from-slate-800/50 to-transparent">
-                        <h2 class="font-black text-blue-950 dark:text-white tracking-tight">{{ Auth::user()->name }}</h2>
+                        <h2 class="font-black text-blue-950 dark:text-white tracking-tight">{{ Auth::user()->companyProfile->company_name ?? Auth::user()->name }}</h2>
                         <p class="text-xs font-semibold text-blue-500/70 truncate">{{ Auth::user()->email }}</p>
                     </div>
 
@@ -654,50 +703,65 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // ============= DARK MODE INITIALIZER & TOGGLE =============
+    // ============= THEME TOGGLE =============
     const darkModeToggle = document.getElementById('darkModeToggle');
     const htmlElement = document.documentElement;
-    
-    const currentUserId = "{{ Auth::id() }}";
-    const storageKey = 'theme_user_' + currentUserId;
-
-    if (localStorage.getItem(storageKey) === 'dark') {
-        htmlElement.classList.add('dark');
-        if (darkModeToggle) darkModeToggle.checked = true;
-    } else {
-        htmlElement.classList.remove('dark');
-        if (darkModeToggle) darkModeToggle.checked = false;
-    }
+    const storageKey = 'theme_user_{{ Auth::id() }}';
 
     if (darkModeToggle) {
+        darkModeToggle.checked = htmlElement.classList.contains('dark');
         darkModeToggle.addEventListener('change', () => {
-            if (darkModeToggle.checked) {
-                htmlElement.classList.add('dark');
-                localStorage.setItem(storageKey, 'dark');
-            } else {
-                htmlElement.classList.remove('dark');
-                localStorage.setItem(storageKey, 'light');
-            }
+            const isDark = darkModeToggle.checked;
+            htmlElement.classList.toggle('dark', isDark);
+            localStorage.setItem(storageKey, isDark ? 'dark' : 'light');
         });
     }
 
     // ============= USER DROPDOWN =============
     const userButton = document.getElementById('userButton');
     const userDropdown = document.getElementById('userDropdown');
+    const userButtonMobile = document.getElementById('userButtonMobile');
+    const userDropdownMobile = document.getElementById('userDropdownMobile');
 
     if (userButton && userDropdown) {
         userButton.addEventListener('click', function (e) {
             e.stopPropagation();
             userDropdown.classList.toggle('hidden');
+            if(userDropdownMobile) userDropdownMobile.classList.add('hidden');
 
             const notifDropdown = document.getElementById('notificationDropdown');
             if (notifDropdown) notifDropdown.classList.add('hidden');
+            const notifDropdownMobile = document.getElementById('notificationDropdownMobile');
+            if(notifDropdownMobile) notifDropdownMobile.classList.add('hidden');
+        });
+    }
+    if (userButtonMobile && userDropdownMobile) {
+        userButtonMobile.addEventListener('click', function (e) {
+            e.stopPropagation();
+            userDropdownMobile.classList.toggle('hidden');
+            if(userDropdown) userDropdown.classList.add('hidden');
+            const notifDropdownMobile = document.getElementById('notificationDropdownMobile');
+            if(notifDropdownMobile) notifDropdownMobile.classList.add('hidden');
+            const notifDropdown = document.getElementById('notificationDropdown');
+            if(notifDropdown) notifDropdown.classList.add('hidden');
+        });
+    }
+    // ============= MODAL SETTINGS =============
+    const modalSettings = document.getElementById('modalSettings');
+
+    // Pengaturan dari mobile dropdown
+    const btnBukaPengaturanMobile = document.getElementById('btnBukaPengaturanMobile');
+    if(btnBukaPengaturanMobile && modalSettings){
+        btnBukaPengaturanMobile.addEventListener('click', (e)=>{
+            e.preventDefault();
+            modalSettings.classList.remove('hidden');
+            if(userDropdownMobile) userDropdownMobile.classList.add('hidden');
+            if(userDropdown) userDropdown.classList.add('hidden');
         });
     }
 
     // ============= MODAL SETTINGS =============
     const btnPengaturan = document.getElementById('btnBukaPengaturan');
-    const modalSettings = document.getElementById('modalSettings');
     const closeBtn = document.getElementById('closeModalSettings');
     const closeBtnMobile = document.getElementById('closeModalSettingsMobile');
 
@@ -809,7 +873,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const currentPassword = document.getElementById('currentPassword').value.trim();
 
             if (!currentPassword) {
-                showNavbarNotification('error', 'Password saat ini wajib diisi.');
+                showToast('Password saat ini wajib diisi.', 'error');
                 return;
             }
 
@@ -840,7 +904,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             } catch (error) {
                 console.error('Verify error:', error);
-                showNavbarNotification('error', error.message);
+                showToast(error.message, 'error');
             } finally {
                 btnNextStep.disabled = false;
                 btnNextStep.textContent = 'Lanjutkan';
@@ -855,17 +919,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const confirmPassword = document.getElementById('confirmPassword').value;
 
             if (!newPassword || !confirmPassword) {
-                showNavbarNotification('error', 'Semua kolom password baru wajib diisi.');
+                showToast('Semua kolom password baru wajib diisi.', 'error');
                 return;
             }
 
             if (newPassword.length < 8) {
-                showNavbarNotification('error', 'Password baru minimal 8 karakter.');
+                showToast('Password baru minimal 8 karakter.', 'error');
                 return;
             }
 
             if (newPassword !== confirmPassword) {
-                showNavbarNotification('error', 'Konfirmasi password tidak cocok.');
+                showToast('Konfirmasi password tidak cocok.', 'error');
                 return;
             }
 
@@ -892,12 +956,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     throw new Error(updateData.message || 'Gagal memperbarui password.');
                 }
 
-                showNavbarNotification('success', 'Password berhasil diperbarui!');
+                showToast('Password berhasil diperbarui!', 'success');
                 tutupModalUbahPassword();
 
             } catch (error) {
                 console.error('Password update error:', error);
-                showNavbarNotification('error', error.message);
+                showToast(error.message, 'error');
             } finally {
                 btnSimpanPassword.disabled = false;
                 btnSimpanPassword.textContent = 'Simpan Password';
@@ -938,14 +1002,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const notifList = document.getElementById('notificationList');
     const notifBadge = document.getElementById('notificationBadge');
     const markAllBtn = document.getElementById('markAllReadBtn');
+    const notifButtonMobile = document.getElementById('notificationButtonMobile');
+    const notifDropdownMobile = document.getElementById('notificationDropdownMobile');
+    const notifListMobile = document.getElementById('notificationListMobile');
+    const notifBadgeMobile = document.getElementById('notificationBadgeMobile');
 
     if (notifButton && notifDropdown) {
         notifButton.addEventListener('click', (e) => {
             e.stopPropagation();
             notifDropdown.classList.toggle('hidden');
+            if(notifDropdownMobile) notifDropdownMobile.classList.add('hidden');
 
             if (!notifDropdown.classList.contains('hidden')) {
                 if (userDropdown) userDropdown.classList.add('hidden');
+                if (userDropdownMobile) userDropdownMobile.classList.add('hidden');
+                fetchNotifications();
+            }
+        });
+    }
+    if (notifButtonMobile && notifDropdownMobile) {
+        notifButtonMobile.addEventListener('click', (e) => {
+            e.stopPropagation();
+            notifDropdownMobile.classList.toggle('hidden');
+            if(notifDropdown) notifDropdown.classList.add('hidden');
+
+            if (!notifDropdownMobile.classList.contains('hidden')) {
+                if (userDropdown) userDropdown.classList.add('hidden');
+                if (userDropdownMobile) userDropdownMobile.classList.add('hidden');
                 fetchNotifications();
             }
         });
@@ -955,20 +1038,85 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('click', () => {
         if (userDropdown) userDropdown.classList.add('hidden');
         if (notifDropdown) notifDropdown.classList.add('hidden');
+        const userDropdownMobileEl = document.getElementById('userDropdownMobile');
+        if (userDropdownMobileEl) userDropdownMobileEl.classList.add('hidden');
+        if (notifDropdownMobile) notifDropdownMobile.classList.add('hidden');
     });
 
+    // ── Web Audio API untuk badge polling (fallback jika toast tidak bunyi) ──
+    let badgeAudioCtx = null;
+    let badgeAudioUnlocked = false;
+    let badgeLastUnread = null;
+    let badgeIsFirst = true;
+    function getBadgeAudioCtx() {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return null;
+        if (!badgeAudioCtx) { try { badgeAudioCtx = new AC(); } catch (e) { return null; } }
+        return badgeAudioCtx;
+    }
+    function unlockBadgeAudio() {
+        badgeAudioUnlocked = true;
+        const c = getBadgeAudioCtx();
+        if (c && c.state === 'suspended') { try { c.resume(); } catch (e) {} }
+    }
+    ['click','keydown','touchstart'].forEach(ev => document.addEventListener(ev, unlockBadgeAudio, { once:true, passive:true }));
+    function playBadgeTing() {
+        try {
+            if (typeof window.__playNotificationTing === 'function') {
+                window.__playNotificationTing();
+                return;
+            }
+            const AC = window.AudioContext || window.webkitAudioContext;
+            if (!AC) return;
+            const ctx = getBadgeAudioCtx();
+            if (!ctx) return;
+            if (ctx.state === 'suspended' && !badgeAudioUnlocked) return;
+            if (ctx.state === 'suspended') { try { ctx.resume(); } catch(e){ return; } if (ctx.state === 'suspended') return; }
+            const now = ctx.currentTime;
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            const filt = ctx.createBiquadFilter();
+            filt.type='lowpass'; filt.frequency.value=3200;
+            osc.type='sine';
+            osc.frequency.setValueAtTime(880, now);
+            osc.frequency.exponentialRampToValueAtTime(1320, now+0.09);
+            osc.connect(filt); filt.connect(gain); gain.connect(ctx.destination);
+            gain.gain.setValueAtTime(0, now);
+            gain.gain.linearRampToValueAtTime(0.16, now+0.012);
+            gain.gain.exponentialRampToValueAtTime(0.001, now+0.36);
+            osc.start(now); osc.stop(now+0.4);
+            window.__lastNotificationSoundAt = Date.now();
+        } catch(e) {}
+    }
+
     function updateBadge(count) {
-        if (!notifBadge) return;
         count = parseInt(count) || 0;
 
-        if (count > 0) {
-            notifBadge.textContent = count > 99 ? '99+' : count;
-            notifBadge.classList.remove('scale-0');
-            notifBadge.classList.add('scale-100');
-        } else {
-            notifBadge.classList.remove('scale-100');
-            notifBadge.classList.add('scale-0');
+        // Bunyi hanya jika benar-benar ada kenaikan unread (bukan load awal / refresh)
+        const prev = badgeLastUnread;
+        const shouldPlay = !badgeIsFirst && prev !== null && count > prev && count > 0;
+        // Hindari dobel jika toast sudah bunyi <1 detik yang lalu
+        if (shouldPlay) {
+            const lastTing = window.__lastNotificationSoundAt || 0;
+            if (Date.now() - lastTing > 900) playBadgeTing();
         }
+
+        [notifBadge, notifBadgeMobile].forEach(function(b){
+            if(!b) return;
+            if (count > 0) {
+                b.textContent = count > 99 ? '99+' : count;
+                b.classList.remove('scale-0','hidden');
+                b.classList.add('scale-100');
+            } else {
+                b.classList.remove('scale-100');
+                b.classList.add('scale-0');
+                // untuk mobile yang pakai hidden
+                if(b.id==='notificationBadgeMobile') b.classList.add('hidden');
+            }
+        });
+
+        badgeLastUnread = count;
+        badgeIsFirst = false;
     }
 
     function fetchNotifications() {
@@ -988,10 +1136,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderNotifications(notifications) {
-        if (!notifList) return;
+        const lists = [notifList, notifListMobile].filter(Boolean);
+        if (lists.length===0) return;
 
         if (!notifications || notifications.length === 0) {
-            notifList.innerHTML = `
+            const emptyHtml = `
                 <div class="p-8 text-center text-sm text-blue-300 dark:text-slate-500 font-semibold">
                     <div class="w-12 h-12 rounded-full bg-blue-50 dark:bg-slate-800 flex items-center justify-center mx-auto mb-3 text-blue-400 dark:text-slate-400">
                         <i class="fa-regular fa-bell-slash text-xl"></i>
@@ -999,6 +1148,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     Sistem bersih. Tidak ada notifikasi.
                 </div>
             `;
+            lists.forEach(l=> l.innerHTML = emptyHtml);
             return;
         }
 
@@ -1059,7 +1209,9 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         });
 
-        notifList.innerHTML = html;
+        lists.forEach(l=> l.innerHTML = html);
+        // Jika ada list mobile terpisah, isi juga
+        if(notifListMobile && notifListMobile !== notifList) notifListMobile.innerHTML = html;
 
         document.querySelectorAll('.notification-item').forEach(item => {
             item.addEventListener('click', function () {
@@ -1079,11 +1231,20 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .then(res => res.ok ? res.json() : Promise.reject('Failed'))
         .then(data => {
+            // Badge diupdate dari unread_count aktual di database, bukan count--.
+            if (typeof data.unread_count !== 'undefined') {
+                updateBadge(data.unread_count);
+            }
             if (data.redirect_url) window.location.href = data.redirect_url;
             else if (redirectUrl) window.location.href = redirectUrl;
             else fetchNotifications();
         })
-        .catch(err => console.error('Mark read error:', err));
+        .catch(err => {
+            console.error('Mark read error:', err);
+            // UX redirect tetap dijaga, tapi notifikasi tetap unread di server.
+            if (redirectUrl) window.location.href = redirectUrl;
+            else fetchNotifications();
+        });
     }
 
     if (markAllBtn) {
@@ -1105,6 +1266,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             })
             .catch(err => console.error('Mark all read error:', err));
+        });
+    }
+    const markAllBtnMobile = document.getElementById('markAllReadBtnMobile');
+    if (markAllBtnMobile) {
+        markAllBtnMobile.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if(markAllBtn) markAllBtn.click();
+            else {
+                fetch('{{ route("notifications.mark-all-read") }}', {
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Content-Type': 'application/json', 'Accept': 'application/json' }
+                }).then(res=>res.ok?res.json():Promise.reject('Failed')).then(data=>{ if(data.success){ updateBadge(0); fetchNotifications(); } }).catch(err=>console.error(err));
+            }
         });
     }
 
@@ -1137,7 +1311,11 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(res => res.ok ? res.json() : Promise.reject('Failed'))
         .then(data => updateBadge(data.unread_count || 0))
         .catch(() => {});
-    }, 60000);
+    }, 18000);
 });
 </script>
 @endauth
+
+<script src="{{ asset('js/toast.js') }}" defer></script>
+@include('partials.flash-toast')
+@include('partials.notification-toasts')

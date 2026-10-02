@@ -7,6 +7,7 @@ use App\Models\Message;
 use App\Models\Notification;
 use App\Models\ProgressHistory;
 use App\Services\NotificationService;
+use App\Services\OverdueWorkspaceService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -22,18 +23,42 @@ class WorkspaceController extends Controller
 
     /**
      * Daftar workspace (freelancer), lengkap dengan status red-dot per workspace
-     * berdasarkan notifikasi unread milik user saat ini.
+     * berdasarkan notifikasi unread milik user saat ini & FILTER pencarian/status.
      */
-    public function freelancerIndex(): View
+    public function freelancerIndex(Request $request): View
     {
-        $workspaces = Workspace::with([
+        // Proses pengecekan deadline saat halaman dibuka/di-refresh, tanpa
+        // bergantung pada scheduler / `php artisan schedule:work`.
+        OverdueWorkspaceService::process();
+
+        $search = trim((string) $request->query('search', ''));
+        $statusFilter = $request->query('status');
+
+        $query = Workspace::with([
             'project',
             'company',
             'latestProgress',
         ])
-            ->where('freelancer_id', Auth::id())
-            ->latest()
-            ->paginate(10);
+            ->where('freelancer_id', Auth::id());
+
+        // Filter berdasarkan status
+        if ($statusFilter && $statusFilter !== 'all' && $statusFilter !== '') {
+            $query->where('status', $statusFilter);
+        }
+
+        // Filter berdasarkan kata kunci pencarian (nama proyek / nama perusahaan)
+        if ($search !== '') {
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('project', function ($p) use ($search) {
+                    $p->where('project_name', 'like', "%{$search}%");
+                })
+                ->orWhereHas('company', function ($c) use ($search) {
+                    $c->where('name', 'like', "%{$search}%");
+                });
+            });
+        }
+
+        $workspaces = $query->latest()->paginate(10)->withQueryString();
 
         $unreadByWorkspace = $this->unreadCountForUser($workspaces, Auth::id());
 
@@ -43,28 +68,80 @@ class WorkspaceController extends Controller
     /**
      * Daftar workspace (company), lengkap dengan status red-dot per workspace
      * berdasarkan notifikasi unread milik user saat ini.
+     * + FILTER PROJECT OTOMATIS: chip diambil dari project yang sudah memiliki Workspace milik company login.
      */
-    public function companyIndex(): View
+    public function companyIndex(Request $request): View
     {
-        $workspaces = Workspace::with([
+        // Proses pengecekan deadline saat halaman dibuka/di-refresh, tanpa
+        // bergantung pada scheduler / `php artisan schedule:work`.
+        OverdueWorkspaceService::process();
+
+        $projectFilter = $request->query('project');
+        $search = trim((string) $request->query('search', ''));
+        $statusFilter = $request->query('status');
+
+        // Sumber filter: distinct project_id dari workspace milik company ini saja
+        $projectIds = Workspace::where('company_id', Auth::id())
+            ->distinct()
+            ->pluck('project_id')
+            ->filter()
+            ->values();
+
+        $filterProjects = collect();
+        if ($projectIds->isNotEmpty()) {
+            $filterProjects = \App\Models\Project::whereIn('id', $projectIds)
+                ->where('user_id', Auth::id())
+                ->orderBy('project_name')
+                ->get(['id', 'project_name']);
+        }
+
+        // Validasi filter: hanya izinkan project milik company yang memang ada di filterProjects
+        $validIds = $filterProjects->pluck('id')->map(fn($v) => (string) $v)->all();
+        if ($projectFilter && $projectFilter !== 'all' && $projectFilter !== '' && !in_array((string) $projectFilter, $validIds, true)) {
+            $projectFilter = 'all';
+        }
+
+        $validStatuses = ['Sedang Dikerjakan','Menunggu Review','Menunggu Revisi','Menunggu Pembayaran','Menunggu Verifikasi Admin','Selesai','Melewati Batas Waktu'];
+        if ($statusFilter && $statusFilter !== 'all' && $statusFilter !== '' && !in_array($statusFilter, $validStatuses, true)) {
+            $statusFilter = 'all';
+        }
+
+        $query = Workspace::with([
             'project',
             'freelancer',
             'latestProgress',
         ])
-            ->where('company_id', Auth::id())
-            ->latest()
-            ->paginate(10);
+            ->where('company_id', Auth::id());
+
+        if ($projectFilter && $projectFilter !== 'all' && $projectFilter !== '') {
+            $query->where('project_id', $projectFilter);
+        }
+
+        if ($statusFilter && $statusFilter !== 'all' && $statusFilter !== '') {
+            $query->where('status', $statusFilter);
+        }
+
+        if ($search !== '') {
+            $query->whereHas('project', function($q) use ($search) {
+                $q->where('project_name', 'like', "%{$search}%");
+            });
+        }
+
+        $workspaces = $query->latest()->paginate(10)->withQueryString();
 
         $unreadByWorkspace = $this->unreadCountForUser($workspaces, Auth::id());
 
-        return view('workspace.company-index', compact('workspaces', 'unreadByWorkspace'));
+        $activeProject = ($projectFilter && $projectFilter !== '' ) ? (string) $projectFilter : 'all';
+        $activeStatus = ($statusFilter && $statusFilter !== '' ) ? (string) $statusFilter : 'all';
+
+        return view('workspace.company-index', compact('workspaces', 'unreadByWorkspace', 'filterProjects', 'activeProject', 'activeStatus', 'search'));
     }
 
     /**
      * Hitung jumlah notifikasi unread per workspace untuk user tertentu.
      * Dipetakan array: [workspace_id => jumlah]. Tidak memicu N+1.
      */
-private function unreadCountForUser(LengthAwarePaginator $workspaces, int $userId): array
+    private function unreadCountForUser(LengthAwarePaginator $workspaces, int $userId): array
     {
         $ids = collect($workspaces->items())->pluck('id')->filter()->values()->all();
         if (empty($ids)) {
@@ -98,6 +175,20 @@ private function unreadCountForUser(LengthAwarePaginator $workspaces, int $userI
                 'is_read' => true,
                 'read_at' => now(),
             ]);
+
+        // Tandai semua pesan chat dalam room ini yang BUKAN dikirim oleh
+        // user yang sedang login sebagai terbaca, sehingga indikator
+        // "Pesan Baru" di dashboard freelancer ter-update secara akurat.
+        Message::markAsReadForUser((int) $workspace->id, (int) Auth::id());
+
+        // Proses pengecekan deadline saat halaman dibuka/di-refresh, tanpa
+        // bergantung pada scheduler / `php artisan schedule:work`. Diletakkan
+        // SETELAH penandaan notifikasi read agar notifikasi overdue yang baru
+        // dibuat tidak ikut tertandai read (perilaku sama seperti command
+        // `workspaces:mark-overdue`), lalu segarkan data workspace supaya
+        // status yang dirender selalu mutakhir.
+        OverdueWorkspaceService::process();
+        $workspace->refresh();
 
         $workspace->load([
             'project',
@@ -281,8 +372,8 @@ private function unreadCountForUser(LengthAwarePaginator $workspaces, int $userI
                 if ($pos === null) {
                     return $this->backWithError('Tahap "' . $oldStage . '" tidak ditemukan.');
                 }
-                if (!$this->userOwnsStage($stageItems[$pos], $userId)) {
-                    abort(403, 'Anda hanya dapat mengubah tahap yang Anda buat sendiri.');
+                if (!$this->canMutateStage($workspace, $stageItems[$pos], $userId)) {
+                    abort(403, 'Anda hanya dapat mengubah tahap pada project yang Anda kelola.');
                 }
                 if ($oldStage !== $newStage && in_array($newStage, $stages, true)) {
                     return $this->backWithError('Tahap "' . $newStage . '" sudah ada.');
@@ -307,8 +398,8 @@ private function unreadCountForUser(LengthAwarePaginator $workspaces, int $userI
                 if ($pos === null) {
                     return $this->backWithError('Tahap "' . $deleteStage . '" tidak ditemukan.');
                 }
-                if (!$this->userOwnsStage($stageItems[$pos], $userId)) {
-                    abort(403, 'Anda hanya dapat menghapus tahap yang Anda buat sendiri.');
+                if (!$this->canMutateStage($workspace, $stageItems[$pos], $userId)) {
+                    abort(403, 'Anda hanya dapat menghapus tahap pada project yang Anda kelola.');
                 }
                 unset($stageItems[$pos]);
                 // Re-index otomatis: urutan tahap yang belak naik 1 (pekerjaan lama aman).
@@ -456,6 +547,27 @@ private function unreadCountForUser(LengthAwarePaginator $workspaces, int $userI
     }
 
     /**
+     * Otorisasi mutasi tahap pada workspace ini (REVISI Tahap Pengerjaan).
+     *
+     * Kebijakan (keep existing behavior untuk freelancer):
+     * - Company PEMILIK workspace (company_id === user) boleh mengubah/menghapus
+     *   SEMUA tahap pada project miliknya (full CRUD atas workflow project).
+     *   Akses lintas-company tetap diblokir oleh `authorizeAccess()`.
+     * - Freelancer hanya boleh mengubah/menghapus tahap yang ia buat sendiri
+     *   (perilaku lama dipertahankan).
+     */
+    private function canMutateStage(Workspace $workspace, array $stageItem, int $userId): bool
+    {
+        $isCompanyOwner = (int) $workspace->company_id === $userId;
+
+        if ($isCompanyOwner) {
+            return true;
+        }
+
+        return $this->userOwnsStage($stageItem, $userId);
+    }
+
+    /**
      * Otorisasi akses workspace.
      */
     private function authorizeAccess(Workspace $workspace): void
@@ -469,4 +581,3 @@ private function unreadCountForUser(LengthAwarePaginator $workspaces, int $userI
         }
     }
 }
-

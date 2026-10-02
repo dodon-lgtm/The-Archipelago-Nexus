@@ -15,8 +15,15 @@
             <div class="bg-white rounded-2xl border border-blue-100 shadow-sm p-6">
                 <div class="flex items-start justify-between mb-4">
 <div>
-                        <h2 class="text-xl font-bold text-slate-800">{{ $report->subject }}</h2>
-                        <p class="text-sm text-slate-500 mt-1">Laporan #{{ $report->id }} oleh {{ $report->reporter->name ?? '—' }}</p>
+                        <h2 class="text-xl font-bold text-slate-800 dark:text-white">{{ $report->subject }}</h2>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Laporan #{{ $report->id }} oleh
+                            @if ($report->reporter)
+                                <a href="{{ route('admin.users.show', $report->reporter) }}"
+                                    class="font-semibold text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 transition">{{ $report->reporter->name ?? '—' }}</a>
+                            @else
+                                <span>—</span>
+                            @endif
+                        </p>
                         <div class="flex items-center gap-2 mt-2 flex-wrap">
                             <span class="text-xs px-2.5 py-1 rounded-full font-semibold bg-blue-50 text-slate-600">{{ \App\Models\Report::categoryLabel($report->category) }}</span>
                             <span class="text-xs px-2.5 py-1 rounded-full font-semibold bg-blue-50 text-blue-700 border border-blue-100">

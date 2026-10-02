@@ -3,21 +3,6 @@
 @section('title', 'Detail Penarikan Dana')
 @section('breadcrumb', 'Detail Penarikan Dana')
 
-@push('styles')
-    <script>
-        if (localStorage.getItem('theme') === 'dark') {
-            document.documentElement.classList.add('dark');
-        }
-    </script>
-    <script>
-        tailwind.config = tailwind.config || {};
-        tailwind.config.darkMode = 'class';
-    </script>
-    <style>
-        html.dark body { background: #020617; color: #f1f5f9; }
-    </style>
-@endpush
-
 @section('content')
     <div class="max-w-4xl mx-auto space-y-6">
 
@@ -28,18 +13,7 @@
             <span class="text-slate-600 dark:text-slate-300 font-medium">{{ $withdrawal->withdrawal_code }}</span>
         </div>
 
-        {{-- Alert Notifikasi --}}
-        @if(session('success'))
-            <div class="flex items-center gap-3 px-4 py-3 bg-emerald-50 dark:bg-emerald-900/40 border border-emerald-200 dark:border-emerald-900 text-emerald-700 dark:text-emerald-300 rounded-xl text-sm font-medium">
-                <i class="fa-solid fa-check-circle"></i> {{ session('success') }}
-            </div>
-        @endif
-
-        @if(session('error'))
-            <div class="flex items-center gap-3 px-4 py-3 bg-red-50 dark:bg-red-900/40 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-300 rounded-xl text-sm font-medium">
-                <i class="fa-solid fa-xmark-circle"></i> {{ session('error') }}
-            </div>
-        @endif
+        {{-- Alert Notifikasi (flash ditangani layout) --}}
 
         {{-- Card: Info Penarikan --}}
         <div class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
@@ -60,7 +34,12 @@
                         </div>
                         <div>
                             <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Freelancer</p>
-                            <p class="text-sm font-semibold text-slate-700 dark:text-slate-200 mt-0.5">{{ $withdrawal->user->name ?? '-' }}</p>
+                            @if ($withdrawal->user)
+                                <a href="{{ route('admin.users.show', $withdrawal->user) }}"
+                                    class="text-sm font-semibold text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 transition mt-0.5 inline-block">{{ $withdrawal->user->name ?? '-' }}</a>
+                            @else
+                                <p class="text-sm font-semibold text-slate-700 dark:text-slate-200 mt-0.5">-</p>
+                            @endif
                             <p class="text-xs text-slate-400 mt-0.5">{{ $withdrawal->user->email ?? '-' }}</p>
                         </div>
                         <div>
@@ -87,7 +66,7 @@
                                 <span class="font-semibold text-slate-700 dark:text-white">Rp {{ number_format($withdrawal->amount, 0, ',', '.') }}</span>
                             </div>
                             <div class="flex items-center justify-between text-xs">
-                                <span class="text-slate-500 dark:text-slate-400">Pajak Admin 5%</span>
+                                <span class="text-slate-500 dark:text-slate-400">Fee Withdrawal (Admin)</span>
                                 <span class="font-semibold text-red-500 dark:text-red-400">-Rp {{ number_format($withdrawal->fee, 0, ',', '.') }}</span>
                             </div>
                             <div class="flex items-center justify-between text-xs border-t border-blue-100 dark:border-slate-700 pt-2">

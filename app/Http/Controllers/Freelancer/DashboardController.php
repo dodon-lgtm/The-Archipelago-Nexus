@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Freelancer;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Message;
+use App\Models\Notification;
 use App\Models\Project;
 use App\Models\Penawaran;
 use Illuminate\Http\Request;
@@ -51,6 +53,12 @@ class DashboardController extends Controller
 
         $savedCount = \App\Models\SavedProject::where('freelancer_id', Auth::id())->count();
 
+        // Indikator "Pesan Baru": total pesan masuk (chat dari lawan bicara,
+        // bukan pesan sistem) pada seluruh workspace milik freelancer yang
+        // belum dibaca. Kolom is_read pada tabel `messages` diisi true saat
+        // freelancer membuka room chat di halaman Workspace.
+        $unreadMessagesCount = Message::unreadIncomingFor((int) Auth::id())->count();
+
         return view('freelancer.dashboard', compact(
             'projects',
             'categories',
@@ -58,7 +66,8 @@ class DashboardController extends Controller
             'categoryId',
             'latestApplications',
             'lamaranCount',
-            'savedCount'
+            'savedCount',
+            'unreadMessagesCount'
         ));
     }
 }

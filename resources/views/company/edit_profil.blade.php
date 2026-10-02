@@ -3,12 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    @include('partials.theme-boot')
 
-    <script>
-        if (localStorage.getItem('theme') === 'dark') {
-            document.documentElement.classList.add('dark');
-        }
-    </script>
+    
 
     <title>Edit Profil Perusahaan - Ultra Modern</title>
 
@@ -207,6 +204,38 @@
         background: #bae6fd;
         transform: scale(1.02);
     }
+
+
+    html.dark body {
+        --bg-color: #0f172a;
+        --card-bg: rgba(15, 23, 42, 0.88);
+        --text-main: #f8fafc;
+        --text-muted: #94a3b8;
+        --border-color: rgba(51, 65, 85, 0.9);
+        background-color: #0f172a !important;
+        color: #f8fafc;
+    }
+    html.dark .card,
+    html.dark .review-card {
+        background: #1e293b !important;
+        color: #f8fafc;
+        border-color: #334155 !important;
+    }
+    html.dark .card-header {
+        background: linear-gradient(135deg, rgba(30, 41, 59, .96) 0%, rgba(15, 23, 42, .96) 100%) !important;
+        color: #f8fafc;
+        border-color: #334155;
+    }
+    html.dark .form-control,
+    html.dark .form-select,
+    html.dark textarea,
+    html.dark input,
+    html.dark select {
+        background-color: #0f172a !important;
+        color: #f8fafc !important;
+        border-color: #334155 !important;
+    }
+    html.dark .text-muted { color: #94a3b8 !important; }
 </style>
 <style>
 

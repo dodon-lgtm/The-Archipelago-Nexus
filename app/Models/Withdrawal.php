@@ -16,7 +16,13 @@ class Withdrawal extends Model
     public const METHOD_BANK = 'bank';
     public const METHOD_EWALLET = 'ewallet';
 
-    /** Pajak admin yang dipotong dari setiap penarikan (5%). */
+    /** Jenis penarikan: freelancer (flow existing) atau admin (saldo platform). */
+    public const TYPE_FREELANCER = 'freelancer';
+    public const TYPE_ADMIN = 'admin';
+
+    /** FEE withdrawal (komisi platform) yang dipotong dari penarikan — fallback lama 5%.
+     *  Source of truth saat ini adalah FinancialSetting::withdrawal_fee_rate;
+     *  konstanta ini hanya fallback backward compatibility bila settings tidak tersedia. */
     public const TAX_RATE = 0.05;
 
     public const ACTIVE_STATUSES = [
@@ -26,9 +32,11 @@ class Withdrawal extends Model
 
     protected $fillable = [
         'withdrawal_code',
+        'withdrawal_type',
         'user_id',
         'amount',
         'fee',
+        'fee_rate',
         'net_amount',
         'method',
         'bank_name',
@@ -44,6 +52,7 @@ class Withdrawal extends Model
     protected $casts = [
         'amount' => 'decimal:2',
         'fee' => 'decimal:2',
+        'fee_rate' => 'decimal:2',
         'net_amount' => 'decimal:2',
         'processed_at' => 'datetime',
         'paid_at' => 'datetime',
@@ -69,6 +78,32 @@ class Withdrawal extends Model
     public function scopeActive(Builder $query): Builder
     {
         return $query->whereIn('status', self::ACTIVE_STATUSES);
+    }
+
+    public function scopeOfType(Builder $query, string $type): Builder
+    {
+        return $query->where('withdrawal_type', $type);
+    }
+
+    public function isFreelancer(): bool
+    {
+        return $this->withdrawal_type === self::TYPE_FREELANCER;
+    }
+
+    /**
+     * Nomor rekening termasking untuk tampilan history (******7890).
+     */
+    public function getMaskedAccountNumberAttribute(): string
+    {
+        $number = (string) $this->account_number;
+
+        if ($number === '') {
+            return '-';
+        }
+
+        $tail = substr($number, -4);
+
+        return str_repeat('*', max(0, strlen($number) - 4)) . $tail;
     }
 
     public function getStatusLabelAttribute(): string

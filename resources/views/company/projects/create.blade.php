@@ -3,24 +3,20 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script>
-        if (localStorage.getItem('theme') === 'dark') {
-            document.documentElement.classList.add('dark');
-        }
-    </script>
+    @include('partials.theme-boot')
+    
     <title>Buat Proyek Baru - ApexForge Labs</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = tailwind.config || {};
-                tailwind.config.darkMode = 'class';
+        tailwind.config.darkMode = 'class';
     </script>
 
     {{-- Midtrans Snap SDK --}}
     <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.client_key') }}"></script>
 
-    
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
 
@@ -56,7 +52,6 @@
         }
     </style>
     <style>
-
 /* ApexForge Labs — Unified UI System */
 :root{
     --af-primary:#2563eb;
@@ -152,7 +147,6 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 @media (prefers-reduced-motion:reduce){
     *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
 }
-
     </style>
 </head>
 <body class="bg-white text-blue-950 min-h-screen flex relative antialiased dark:bg-slate-900 dark:text-white transition-colors duration-300">
@@ -325,7 +319,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                 {{-- Deadline --}}
                                 <div>
                                     <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2 dark:text-blue-400">Deadline <span class="text-blue-500">*</span></label>
-                                    <input type="date" name="deadline" value="{{ old('deadline') }}"
+                                    <input type="date" name="deadline" value="{{ old('deadline') }}" min="{{ date('Y-m-d') }}"
                                         class="w-full px-5 py-3.5 bg-blue-50/50 border @error('deadline') border-blue-500 ring-2 ring-blue-500/20 @else border-blue-100 @enderror rounded-xl text-sm font-bold text-blue-950 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 focus:bg-white transition-all cursor-pointer dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:focus:bg-slate-800" required>
                                     @error('deadline')
                                         <p class="text-[10px] font-bold tracking-wide text-blue-600 mt-1.5 dark:text-blue-400">{{ $message }}</p>
@@ -378,8 +372,112 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                             </div>
                         </div>
 
+                        {{-- SECTION 3.5: TAHAP PENGERJAAN (REVISI) --}}
+                        <div class="mb-8">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center shrink-0 shadow-sm dark:bg-slate-800 dark:text-blue-400 dark:border-slate-800">
+                                    <i class="fa-solid fa-list-check"></i>
+                                </div>
+                                <div>
+                                    <h2 class="text-sm font-black text-blue-950 tracking-tight dark:text-white">Tahap Pengerjaan</h2>
+                                    <p class="text-[10px] font-bold text-blue-400 uppercase tracking-widest mt-0.5 dark:text-slate-400">Susun alur pengerjaan proyek Anda sebelum dipublikasikan</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-blue-50/40 border border-blue-100 dark:bg-slate-800/40 dark:border-slate-800 rounded-2xl p-4">
+                                <div id="projectStageList" class="space-y-2.5">
+                                    @php
+                                        $defaultStages = ['Brief & Analisis', 'Pengerjaan', 'Revisi', 'Finalisasi'];
+                                        $seedStages = old('stage_name') ?? $defaultStages;
+                                    @endphp
+                                    @foreach ($seedStages as $seedIndex => $seedStage)
+                                        <div class="stage-row flex items-start gap-2 bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-xl p-3 shadow-sm">
+                                            <div class="stage-order-badge flex flex-col gap-1 mt-1 shrink-0">
+                                                <button type="button" onclick="moveStageRow(this, -1)" title="Naik"
+                                                    class="w-6 h-5 flex items-center justify-center text-[9px] text-blue-500 dark:text-blue-400 bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded hover:bg-blue-100">&#9650;</button>
+                                                <button type="button" onclick="moveStageRow(this, 1)" title="Turun"
+                                                    class="w-6 h-5 flex items-center justify-center text-[9px] text-blue-500 dark:text-blue-400 bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded hover:bg-blue-100">&#9660;</button>
+                                            </div>
+                                            <div class="flex-1 space-y-2">
+                                                <input type="text" name="stage_name[]" maxlength="255"
+                                                    placeholder="Nama tahap..." value="{{ is_array($seedStage) ? ($seedStage['name'] ?? '') : $seedStage }}"
+                                                    class="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-lg text-sm font-bold text-blue-950 dark:text-white placeholder:text-blue-300 dark:placeholder:text-slate-500 focus:outline-none focus:border-blue-400">
+                                                <textarea name="stage_desc[]" rows="1" maxlength="2000" placeholder="Deskripsi (opsional)"
+                                                    class="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-lg text-xs font-medium text-blue-900 dark:text-white placeholder:text-blue-300 dark:placeholder:text-slate-500 focus:outline-none resize-none">{{ is_array($seedStage) ? ($seedStage['description'] ?? '') : '' }}</textarea>
+                                            </div>
+                                            <button type="button" onclick="removeStageRow(this)" title="Hapus tahap"
+                                                class="mt-1 w-7 h-7 flex items-center justify-center shrink-0 text-blue-400 dark:text-slate-500 bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-lg hover:text-red-500">
+                                                <i class="fa-solid fa-xmark"></i>
+                                            </button>
+                                        </div>
+                                    @endforeach
+                                </div>
+
+                                <button type="button" onclick="addStageRow()"
+                                    class="mt-3 w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-900 border border-dashed border-blue-300 dark:border-slate-700 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-slate-800 rounded-xl text-sm font-bold transition">
+                                    <i class="fa-solid fa-plus"></i> Tambah Tahap
+                                </button>
+                                <p class="text-[10px] font-bold text-blue-400 dark:text-slate-500 mt-2">
+                                    Urutan mengikuti daftar di atas. Tahap terakhir dianggap sebagai finalisasi berproduk (100%).
+                                </p>
+                            </div>
+                        </div>
+
                         {{-- DIVIDER --}}
                         <div class="h-px w-full bg-gradient-to-r from-transparent via-blue-100 dark:via-slate-800 to-transparent mb-8"></div>
+
+                        {{-- QUOTA INDICATOR --}}
+                        <div class="mb-6">
+                            <div class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
+                                <div class="flex items-start justify-between gap-4 mb-4">
+                                    <div>
+                                        <h3 class="font-bold text-slate-800 dark:text-white text-sm">Kuota Proyek Bulan Ini</h3>
+                                        <p class="text-[10px] font-bold text-blue-400 uppercase tracking-widest mt-0.5 dark:text-slate-400">
+                                            {{ $quotaData['used_slots'] ?? 0 }} / {{ $quotaData['free_quota'] ?? 3 }} tersisa
+                                        </p>
+                                    </div>
+                                    <div class="flex items-center gap-2 shrink-0">
+                                        <span class="text-lg font-extrabold {{ ($quotaData['remaining'] ?? ($quotaData['free_quota'] ?? 3) - ($quotaData['used_slots'] ?? 0)) > 0 ? 'text-emerald-600' : 'text-red-500' }}">
+                                            {{ max(0, ($quotaData['available_slots'] ?? ($quotaData['free_quota'] ?? 3)) - ($quotaData['used_slots'] ?? 0)) }}
+                                        </span>
+                                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Slot</span>
+                                    </div>
+                                </div>
+                                
+                                {{-- Progress Bar --}}
+                                <div class="mb-3">
+                                    <div class="w-full h-2.5 bg-blue-50 dark:bg-slate-800 rounded-full overflow-hidden">
+                                        @php
+                                            $used = $quotaData['used_slots'] ?? 0;
+                                            $limit = $quotaData['free_quota'] ?? 3;
+                                            $available = $quotaData['available_slots'] ?? $limit;
+                                            $percentage = $available > 0 ? min(100, round(($used / $available) * 100)) : 100;
+                                            $isExhausted = ($available - $used) <= 0;
+                                        @endphp
+                                        <div class="h-full {{ $isExhausted ? 'bg-red-500' : 'bg-gradient-to-r from-blue-500 to-blue-600' }} rounded-full transition-all duration-500"
+                                             style="width: {{ $percentage }}%;"
+                                             role="progressbar"
+                                             aria-valuenow="{{ $percentage }}"
+                                             aria-valuemin="0"
+                                             aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs">
+                                    <p class="text-slate-500 dark:text-slate-400">
+                                        {{ $used }} proyek sudah digunakan
+                                    </p>
+                                    <p class="text-slate-500 dark:text-slate-400">
+                                        Kuota gratis direset setiap awal bulan.
+                                    </p>
+                                    @if($isExhausted)
+                                    <p class="text-red-500 font-semibold">
+                                        Kuota gratis habis. Proyek tambahan: Rp {{ number_format($quotaData['quota_price'], 0, ',', '.') }}
+                                    </p>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
 
                         {{-- SECTION 4: STATUS & SUBMIT --}}
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6 bg-blue-50/50 p-5 rounded-2xl border border-blue-100 dark:bg-slate-800/50 dark:border-slate-800">
@@ -418,8 +516,80 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
     </div>
 
+    {{-- Quota Modal --}}
+    <div id="quotaModal" class="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 hidden">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-xl w-full max-w-md mx-4">
+            <div class="p-6 border-b border-blue-100 dark:border-slate-700">
+                <h3 class="font-bold text-slate-800 text-lg dark:text-white">Batas Kuota Proyek Bulan Ini</h3>
+                <p class="text-xs text-slate-500 mt-1 dark:text-slate-400">Anda telah mencapai batas kuota gratis ({{ $quotaData['free_quota'] ?? 3 }} proyek/bulan).</p>
+            </div>
+            <div class="p-6 text-center">
+                <div class="w-16 h-16 mx-auto mb-4 bg-blue-50 rounded-full flex items-center justify-center dark:bg-slate-800">
+                    <i class="fa-solid fa-rocket text-2xl text-blue-600 dark:text-blue-400"></i>
+                </div>
+                <p class="text-sm font-semibold text-slate-700 dark:text-white mb-3">
+                    Kuota proyek bulan ini sudah habis. Anda telah menggunakan
+                    <span class="font-bold text-blue-600 dark:text-blue-400" id="quotaUsedInfo">{{ session('quota_used', $quotaData['used_slots'] ?? '-') }}</span>
+                    dari
+                    <span class="font-bold text-slate-900 dark:text-white" id="quotaFreeInfo">{{ session('quota_free', $quotaData['free_quota'] ?? 3) }}</span>
+                    proyek gratis.
+                </p>
+                <p class="text-sm text-slate-600 dark:text-slate-300 mb-6">
+                    Untuk membuat proyek tambahan, diperlukan pembayaran
+                    <span class="font-bold text-blue-600" id="quotaPriceDisplay">Rp {{ number_format($quotaData['quota_price'], 0, ',', '.') }}</span>.
+                </p>
+            </div>
+            <div class="p-4 border-t border-blue-100 dark:border-slate-700 flex justify-end gap-3">
+                <button type="button" onclick="closeQuotaModal()"
+                        class="px-4 py-2 text-sm font-semibold text-slate-600 bg-slate-50 rounded-xl hover:bg-slate-100 transition">
+                    Nanti Saja
+                </button>
+<a href="{{ session('quota_payment_id') ? route('company.quota.payment.show', session('quota_payment_id')) : route('company.quota.payment.start') }}"
+                        id="btnPayQuota"
+                        class="px-6 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 inline-flex items-center gap-2 transition shadow-[0_5px_15px_rgba(37,99,235,0.3)]">
+                        <i class="fa-solid fa-credit-card"></i> <span id="btnPayQuotaText">Bayar Rp{{ number_format($quotaData['quota_price'], 0, ',', '.') }}</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {{-- Delete Stage Confirmation Modal --}}
+    <div id="deleteStageModal" class="fixed inset-0 z-[250] flex items-center justify-center bg-black/60 hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm">
+        <div class="glass-card rounded-3xl w-full max-w-sm mx-4 transform scale-95 transition-transform duration-300 bg-white/95 dark:bg-slate-900/95 border border-blue-100 dark:border-slate-800 overflow-hidden">
+            <div class="p-6">
+                <div class="w-12 h-12 mx-auto mb-4 bg-red-50 dark:bg-red-500/10 border border-red-100 dark:border-red-500/20 rounded-full flex items-center justify-center shadow-sm">
+                    <i class="fa-solid fa-trash-can text-xl text-red-500"></i>
+                </div>
+                <h3 class="font-black text-blue-950 dark:text-white text-lg text-center tracking-tight mb-2">Hapus tahap?</h3>
+                <p class="text-sm font-medium text-slate-600 dark:text-slate-400 text-center leading-relaxed">
+                    Apakah kamu yakin ingin menghapus tahap ini?<br>
+                    <span id="deleteStageName" class="font-black text-blue-600 dark:text-blue-400 mt-1.5 block"></span>
+                </p>
+            </div>
+            <div class="p-4 border-t border-blue-50 dark:border-slate-800 flex justify-end gap-3 bg-blue-50/30 dark:bg-slate-800/30">
+                <button type="button" onclick="closeDeleteStageModal()" 
+                    class="px-5 py-2.5 text-sm font-bold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-xl transition-colors shadow-sm">
+                    Batal
+                </button>
+                <button type="button" id="btnConfirmDeleteStage" 
+                    class="px-5 py-2.5 bg-red-600 text-white rounded-xl text-sm font-bold hover:bg-red-700 transition shadow-[0_5px_15px_rgba(220,38,38,0.3)] inline-flex items-center gap-2 border border-transparent">
+                    <i class="fa-solid fa-trash-can"></i> Hapus
+                </button>
+            </div>
+        </div>
+    </div>
+
     {{-- Script untuk auto-format input angka & Sistem Modern Toast Notification --}}
     <script>
+        // Memastikan batasan deadline tanggal minimal hari ini berdasarkan waktu lokal perangkat user
+        document.addEventListener('DOMContentLoaded', function() {
+            const deadlineInput = document.querySelector('input[name="deadline"]');
+            if (deadlineInput) {
+                const today = new Date().toLocaleDateString('en-CA');
+                deadlineInput.setAttribute('min', today);
+            }
+        });
+
         // Fungsi untuk memunculkan Toast Notification secara modern
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
@@ -481,54 +651,125 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                     }
                 });
             }
-                });
-    </script>
+        });
 
-        {{-- Quota Modal --}}
-    <div id="quotaModal" class="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 hidden">
-        <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-xl w-full max-w-md mx-4">
-            <div class="p-6 border-b border-blue-100 dark:border-slate-700">
-                <h3 class="font-bold text-slate-800 text-lg dark:text-white">Batas Kuota Proyek Bulan Ini</h3>
-                <p class="text-xs text-slate-500 mt-1 dark:text-slate-400">Anda telah mencapai batas kuota gratis (3 proyek/bulan).</p>
-            </div>
-            <div class="p-6 text-center">
-                <div class="w-16 h-16 mx-auto mb-4 bg-blue-50 rounded-full flex items-center justify-center dark:bg-slate-800">
-                    <i class="fa-solid fa-rocket text-2xl text-blue-600 dark:text-blue-400"></i>
-                </div>
-                <p class="text-sm font-semibold text-slate-700 dark:text-white mb-4">
-                    Kuota terpakai: <span class="font-bold text-blue-600 dark:text-blue-400" id="quotaUsedInfo">-</span> / <span class="font-bold text-slate-900 dark:text-white" id="quotaAvailInfo">-</span> slot
-                </p>
-                <p class="text-sm text-slate-600 dark:text-slate-300 mb-6">Bayar <span class="font-bold text-blue-600">Rp 10.000</span> untuk menambah 1 slot proyek.</p>
-            </div>
-            <div class="p-4 border-t border-blue-100 dark:border-slate-700 flex justify-end gap-3">
-                <button type="button" onclick="closeQuotaModal()"
-                        class="px-4 py-2 text-sm font-semibold text-slate-600 bg-slate-50 rounded-xl hover:bg-slate-100 transition">
-                    Batal
-                </button>
-                <button type="button" id="btnPayQuota" onclick="payQuota()"
-                        class="px-6 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 inline-flex items-center gap-2 transition shadow-[0_5px_15px_rgba(37,99,235,0.3)]">
-                    <i class="fa-solid fa-credit-card"></i> Bayar Rp10.000
-                </button>
-            </div>
-        </div>
-    </div>
+        // ── Tahap Pengerjaan (REVISI): kelola daftar tahap di form create ──
+        function stageRowTemplate() {
+            const list = document.getElementById('projectStageList');
+            const div = document.createElement('div');
+            div.className = 'stage-row flex items-start gap-2 bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-xl p-3 shadow-sm';
+            div.innerHTML =
+                '<div class="stage-order-badge flex flex-col gap-1 mt-1 shrink-0">' +
+                '<button type="button" onclick="moveStageRow(this, -1)" title="Naik" class="w-6 h-5 flex items-center justify-center text-[9px] text-blue-500 dark:text-blue-400 bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded hover:bg-blue-100">&#9650;</button>' +
+                '<button type="button" onclick="moveStageRow(this, 1)" title="Turun" class="w-6 h-5 flex items-center justify-center text-[9px] text-blue-500 dark:text-blue-400 bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded hover:bg-blue-100">&#9660;</button>' +
+                '</div>' +
+                '<div class="flex-1 space-y-2">' +
+                '<input type="text" name="stage_name[]" maxlength="255" placeholder="Nama tahap..." class="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-lg text-sm font-bold text-blue-950 dark:text-white placeholder:text-blue-300 dark:placeholder:text-slate-500 focus:outline-none focus:border-blue-400">' +
+                '<textarea name="stage_desc[]" rows="1" maxlength="2000" placeholder="Deskripsi (opsional)" class="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-lg text-xs font-medium text-blue-900 dark:text-white placeholder:text-blue-300 dark:placeholder:text-slate-500 focus:outline-none resize-none"></textarea>' +
+                '</div>' +
+                '<button type="button" onclick="removeStageRow(this)" title="Hapus tahap" class="mt-1 w-7 h-7 flex items-center justify-center shrink-0 text-blue-400 dark:text-slate-500 bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-lg hover:text-red-500"><i class="fa-solid fa-xmark"></i></button>';
+            if (list) list.appendChild(div);
+            return div;
+        }
 
-        <script>
+        function addStageRow() { stageRowTemplate(); }
+
+        function moveStageRow(btn, dir) {
+            const row = btn.closest('.stage-row');
+            if (!row) return;
+            const target = dir < 0 ? row.previousElementSibling : row.nextElementSibling;
+            if (target && target.matches('.stage-row')) {
+                row.parentNode.insertBefore(row, dir < 0 ? target : target.nextSibling);
+            }
+        }
+
+        // Variabel penampung baris yang akan dihapus
+        let stageRowToDelete = null;
+
+        function openDeleteStageModal(row, stageName) {
+            stageRowToDelete = row;
+            document.getElementById('deleteStageName').textContent = `"${stageName}"`;
+            
+            const modal = document.getElementById('deleteStageModal');
+            const modalInner = modal.querySelector('div.glass-card');
+            
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modalInner.classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeDeleteStageModal() {
+            const modal = document.getElementById('deleteStageModal');
+            const modalInner = modal.querySelector('div.glass-card');
+            
+            modal.classList.add('opacity-0');
+            modalInner.classList.add('scale-95');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                stageRowToDelete = null;
+            }, 300);
+        }
+
+        // Menimpa fungsi removeStageRow() bawaan
+        function removeStageRow(btn) {
+            const row = btn.closest('.stage-row');
+            if (!row) return;
+            const nameInput = row.querySelector('input[name="stage_name[]"]');
+            
+            // Logic original: jika input kosong, langsung hapus tanpa konfirmasi
+            if (nameInput && nameInput.value.trim() !== '') {
+                openDeleteStageModal(row, nameInput.value.trim());
+            } else {
+                row.remove();
+            }
+        }
+
         // Quota data dari server (embed via PHP)
         const quotaData = @json($quotaData ?? null);
-        const csrfToken = '{{ csrf_token() }}';
-        const isTemporaryConfirm = {{ config('services.midtrans.temporary_confirmation', false) ? 'true' : 'false' }};
+
+        function formatPrice(price) {
+            return 'Rp ' + parseInt(price, 10).toLocaleString('id-ID');
+        }
 
         function openQuotaModal() {
             document.getElementById('quotaModal').classList.remove('hidden');
             if (quotaData) {
                 document.getElementById('quotaUsedInfo').textContent = quotaData.used_slots;
-                document.getElementById('quotaAvailInfo').textContent = quotaData.available_slots;
+                const free = document.getElementById('quotaFreeInfo'); 
+                if(free && quotaData.free_quota !== undefined) free.textContent = quotaData.free_quota;
+                // Update price displays - use quota_price from embedded server data
+                const price = quotaData.quota_price ?? 10000;
+                const priceDisplay = document.getElementById('quotaPriceDisplay');
+                if (priceDisplay) priceDisplay.textContent = formatPrice(price);
+                const btnText = document.getElementById('btnPayQuotaText');
+                if (btnText) btnText.textContent = 'Bayar ' + formatPrice(price);
             }
         }
         function closeQuotaModal() { document.getElementById('quotaModal').classList.add('hidden'); }
 
         document.addEventListener('DOMContentLoaded', function() {
+            // Action tombol hapus di dalam modal Delete Stage
+            const btnConfirmDelete = document.getElementById('btnConfirmDeleteStage');
+            if (btnConfirmDelete) {
+                btnConfirmDelete.addEventListener('click', function() {
+                    if (stageRowToDelete) {
+                        stageRowToDelete.remove();
+                        closeDeleteStageModal();
+                    }
+                });
+            }
+
+            // Close modal Delete Stage jika overlay hitam diklik
+            const deleteStageModal = document.getElementById('deleteStageModal');
+            if (deleteStageModal) {
+                deleteStageModal.addEventListener('click', function(e) {
+                    if (e.target === this) closeDeleteStageModal();
+                });
+            }
+
             // Intercept form submit — block jika kuota penuh
             const form = document.querySelector('form[action="{{ route('company.projects.store') }}"]');
             if (form && quotaData && !quotaData.can_create) {
@@ -538,119 +779,25 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                 });
             }
 
-            // Open modal otomatis jika redirect dengan session quota_blocked
-            @if(session('quota_blocked'))
+            // Open modal otomatis jika redirect dari store() karena kuota habis
+            @if(session('quota_payment_id'))
             openQuotaModal();
             @endif
         });
-
-                async function payQuota() {
-            const btn = document.getElementById('btnPayQuota');
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
-            try {
-                const response = await fetch('{{ route('company.quota.payment.midtrans') }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken,
-                    },
-                    body: '{}',
-                });
-
-                // ── DIAGNOSTIK RESPONSE MENTAH (sementara) ──
-                const contentType = response.headers.get('content-type');
-                const rawResponse = await response.text();
-
-                console.log('QUOTA PAYMENT STATUS:', response.status);
-                console.log('QUOTA PAYMENT CONTENT-TYPE:', contentType);
-                console.log('QUOTA PAYMENT RESPONSE:', rawResponse);
-
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${rawResponse.substring(0, 500)}`);
-                }
-
-                if (!contentType || !contentType.includes('application/json')) {
-                    throw new Error(
-                        `Server tidak mengembalikan JSON. Content-Type: ${contentType}. Response: ${rawResponse.substring(0, 500)}`
-                    );
-                }
-
-                const data = JSON.parse(rawResponse);
-
-                if (!data.success) {
-                    showToast(data.message || 'Gagal membuat pembayaran.', 'error');
-                    return;
-                }
-
-                // Dev flow: langsung konfirmasi (temporary_confirmation)
-                if (isTemporaryConfirm) {
-                    const confirmRes = await fetch('{{ route('company.quota.payment.confirm') }}', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json',
-                            'X-CSRF-TOKEN': csrfToken,
-                        },
-                        body: JSON.stringify({ payment_id: data.payment_id })
-                    });
-
-                    const confirmType = confirmRes.headers.get('content-type');
-                    const confirmRaw = await confirmRes.text();
-                    console.log('QUOTA CONFIRM STATUS:', confirmRes.status);
-                    console.log('QUOTA CONFIRM RESPONSE:', confirmRaw);
-
-                    if (!confirmOk(confirmRes, confirmType, confirmRaw)) return;
-
-                    closeQuotaModal();
-                    showToast('Berhasil! Slot proyek telah ditambah.', 'success');
-                    setTimeout(() => location.reload(), 1500);
-                    return;
-                }
-
-                // Production flow: Midtrans Snap — snap_token diterima JS
-                if (data.snap_token && window.snap) {
-                    console.log('SNAP TOKEN DITERIMA, memanggil window.snap.pay()');
-                    window.snap.pay(data.snap_token, {
-                        onSuccess: function() {
-                            closeQuotaModal();
-                            showToast('Berhasil! Slot proyek telah ditambah.', 'success');
-                            setTimeout(() => location.reload(), 1500);
-                        },
-                        onPending: function() { showToast('Pembayaran sedang diproses.', 'success'); },
-                        onFailure: function() { showToast('Pembayaran gagal.', 'error'); },
-                    });
-                } else {
-                    showToast('Snap token tidak diterima dari server.', 'error');
-                }
-            } catch (e) {
-                console.error('QUOTA PAYMENT ERROR:', e);
-                showToast('Terjadi kesalahan: ' + e.message, 'error');
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fa-solid fa-credit-card"></i> Bayar Rp10.000';
-            }
-        }
-
-        function confirmOk(res, contentType, raw) {
-            if (!res.ok) {
-                showToast(`HTTP ${res.status}: ${raw.substring(0, 300)}`, 'error');
-                return false;
-            }
-            if (!contentType || !contentType.includes('application/json')) {
-                showToast(`Server tidak mengembalikan JSON (${contentType}).`, 'error');
-                return false;
-            }
-            return true;
-        }
 
         // Close modal on backdrop click & Escape
         document.getElementById('quotaModal').addEventListener('click', function(e) {
             if (e.target === this) closeQuotaModal();
         });
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') closeQuotaModal();
+            if (e.key === 'Escape') {
+                closeQuotaModal();
+                
+                const deleteModal = document.getElementById('deleteStageModal');
+                if (deleteModal && !deleteModal.classList.contains('hidden')) {
+                    closeDeleteStageModal();
+                }
+            }
         });
     </script>
 </body>

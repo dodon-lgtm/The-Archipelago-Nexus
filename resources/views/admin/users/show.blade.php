@@ -5,51 +5,60 @@
 
 @section('content')
     <div class="mb-4">
-        <a href="{{ route('admin.users.index') }}" class="text-sm text-blue-600 hover:text-blue-700 font-semibold inline-flex items-center gap-1">
+        <a href="{{ route('admin.users.index') }}" class="text-sm text-blue-600 hover:text-blue-700 font-semibold inline-flex items-center gap-1.5 transition">
             <i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Pengguna
         </a>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {{-- Profile Card --}}
-        <div class="bg-white rounded-2xl border border-blue-100 shadow-sm p-6">
-            <div class="text-center mb-4">
-                <div class="w-20 h-20 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-3xl font-bold mx-auto mb-3">
-                    {{ strtoupper(substr($user->name, 0, 1)) }}
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-blue-100 dark:border-slate-800 shadow-sm overflow-hidden transition-colors duration-300">
+            <div class="bg-gradient-to-b from-[#f6f9ff] to-white dark:from-slate-800 dark:to-slate-900 p-6 text-center border-b border-blue-50 dark:border-slate-800">
+                <div class="relative w-20 h-20 mx-auto mb-3">
+                    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-blue-100 to-blue-50 dark:from-blue-900/60 dark:to-slate-800 ring-4 ring-white dark:ring-slate-800 shadow-md text-blue-600 dark:text-blue-400 flex items-center justify-center text-3xl font-bold">
+                        {{ strtoupper(substr($user->name, 0, 1)) }}
+                    </div>
+                    <span class="absolute bottom-0 right-0 w-5 h-5 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900 flex items-center justify-center">
+                        <i class="fa-solid fa-check text-[9px] text-white"></i>
+                    </span>
                 </div>
-                <h2 class="text-lg font-bold text-slate-800">{{ $user->name }}</h2>
-                <p class="text-sm text-slate-500">{{ $user->email }}</p>
-                <span class="inline-block mt-2 text-xs px-3 py-1.5 rounded-full font-semibold
-                    @if($user->role == 'admin') bg-red-50 text-red-600
-                    @elseif($user->role == 'company') bg-purple-50 text-purple-600
-                    @else bg-emerald-50 text-emerald-600 @endif">
+                <h2 class="text-lg font-bold text-slate-800 dark:text-white leading-tight">{{ $user->name }}</h2>
+                <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5 break-all">{{ $user->email }}</p>
+                <span class="inline-flex items-center gap-1.5 mt-3 text-xs px-3 py-1.5 rounded-full border font-semibold
+                    @if($user->role == 'admin') bg-red-50 dark:bg-red-900/40 text-red-600 dark:text-red-300 border-red-100 dark:border-red-900
+                    @elseif($user->role == 'company') bg-purple-50 dark:bg-purple-900/40 text-purple-600 dark:text-purple-300 border-purple-100 dark:border-purple-900
+                    @else bg-emerald-50 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-300 border-emerald-100 dark:border-emerald-900 @endif">
+                    <span class="w-1.5 h-1.5 rounded-full
+                        @if($user->role == 'admin') bg-red-500
+                        @elseif($user->role == 'company') bg-purple-500
+                        @else bg-emerald-500 @endif"></span>
                     {{ ucfirst($user->role) }}
                 </span>
             </div>
 
-            <div class="border-t border-blue-50 pt-4 mt-4 space-y-2 text-sm">
-                <div class="flex justify-between">
-                    <span class="text-slate-500">Bergabung</span>
-                    <span class="font-semibold">{{ $user->created_at->format('d M Y') }}</span>
+            <div class="p-5 space-y-2 text-sm">
+                <div class="flex items-center justify-between rounded-xl bg-[#f6f9ff] dark:bg-slate-800/60 px-3.5 py-2.5">
+                    <span class="text-slate-500 dark:text-slate-400 inline-flex items-center gap-2"><i class="fa-regular fa-calendar-plus text-slate-400 text-xs"></i> Bergabung</span>
+                    <span class="font-semibold text-slate-700 dark:text-slate-200">{{ $user->created_at->format('d M Y') }}</span>
                 </div>
-                <div class="flex justify-between">
-                    <span class="text-slate-500">Terakhir Update</span>
-                    <span class="font-semibold">{{ $user->updated_at->format('d M Y') }}</span>
+                <div class="flex items-center justify-between rounded-xl bg-[#f6f9ff] dark:bg-slate-800/60 px-3.5 py-2.5">
+                    <span class="text-slate-500 dark:text-slate-400 inline-flex items-center gap-2"><i class="fa-regular fa-clock text-slate-400 text-xs"></i> Terakhir Update</span>
+                    <span class="font-semibold text-slate-700 dark:text-slate-200">{{ $user->updated_at->format('d M Y') }}</span>
                 </div>
             </div>
 
             @if($user->id !== auth()->id())
-                <div class="border-t border-blue-50 pt-4 mt-4">
-                    <h3 class="text-sm font-bold text-slate-700 mb-2">Ubah Role</h3>
+                <div class="border-t border-blue-50 dark:border-slate-800 p-5">
+                    <h3 class="text-xs font-bold uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-2.5">Ubah Role</h3>
                     <form method="POST" action="{{ route('admin.users.update-role', $user) }}">
                         @csrf
-                        <select name="role" class="w-full rounded-xl border-blue-100 bg-[#f6f9ff] px-4 py-2.5 text-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none mb-2">
-                            <option value="admin" @selected($user->role == 'admin')>Admin</option>
+                        <select name="role" class="w-full rounded-xl border-blue-100 dark:border-slate-700 bg-[#f6f9ff] dark:bg-slate-800 dark:text-white px-4 py-2.5 text-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none mb-2 cursor-pointer transition">
+                            {{-- <option value="admin" @selected($user->role == 'admin')>Admin</option> --}}
                             <option value="company" @selected($user->role == 'company')>Company</option>
                             <option value="freelancer" @selected($user->role == 'freelancer')>Freelancer</option>
                         </select>
-                        <button type="submit" class="w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-xl text-sm font-semibold transition">
-                            Simpan Perubahan
+                        <button type="submit" class="w-full px-4 py-2.5 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white rounded-xl text-sm font-semibold shadow-sm transition">
+                            <i class="fa-solid fa-floppy-disk mr-1.5"></i> Simpan Perubahan
                         </button>
                     </form>
                 </div>
@@ -59,46 +68,82 @@
         {{-- Stats --}}
         <div class="lg:col-span-2 space-y-6">
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div class="bg-white rounded-2xl border border-blue-100 p-5 shadow-sm">
-                    <div class="text-2xl font-extrabold text-slate-800">{{ $user->penawarans_count }}</div>
-                    <p class="text-xs text-slate-500 font-semibold mt-1">Total Penawaran</p>
+                <div class="bg-white dark:bg-slate-900 dark:border-slate-800 rounded-2xl border border-blue-100 p-5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </div>
+                    </div>
+                    <div class="text-2xl font-extrabold text-slate-800 dark:text-white tracking-tight">{{ $user->penawarans_count }}</div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-0.5">Total Penawaran</p>
                 </div>
-                <div class="bg-white rounded-2xl border border-blue-100 p-5 shadow-sm">
-                    <div class="text-2xl font-extrabold text-slate-800">{{ $projectsCount }}</div>
-                    <p class="text-xs text-slate-500 font-semibold mt-1">Total Proyek (Company)</p>
+                <div class="bg-white dark:bg-slate-900 dark:border-slate-800 rounded-2xl border border-blue-100 p-5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="w-10 h-10 rounded-xl bg-violet-50 dark:bg-violet-900/40 text-violet-600 dark:text-violet-400 flex items-center justify-center">
+                            <i class="fa-solid fa-briefcase"></i>
+                        </div>
+                    </div>
+                    <div class="text-2xl font-extrabold text-slate-800 dark:text-white tracking-tight">{{ $projectsCount }}</div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-0.5">Total Proyek (Company)</p>
                 </div>
-                <div class="bg-white rounded-2xl border border-blue-100 p-5 shadow-sm">
-                    <div class="text-2xl font-extrabold text-slate-800">{{ $acceptedOffers }}</div>
-                    <p class="text-xs text-slate-500 font-semibold mt-1">Penawaran Diterima</p>
+                <div class="bg-white dark:bg-slate-900 dark:border-slate-800 rounded-2xl border border-blue-100 p-5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+                    </div>
+                    <div class="text-2xl font-extrabold text-slate-800 dark:text-white tracking-tight">{{ $acceptedOffers }}</div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-0.5">Penawaran Diterima</p>
                 </div>
             </div>
 
             {{-- Saved Projects --}}
-            <div class="bg-white rounded-2xl border border-blue-100 shadow-sm overflow-hidden">
-                <div class="px-5 py-4 border-b border-blue-50">
-                    <h2 class="font-bold text-slate-800">Proyek Tersimpan</h2>
+            <div class="bg-white dark:bg-slate-900 dark:border-slate-800 rounded-2xl border border-blue-100 shadow-sm overflow-hidden transition-colors duration-300">
+                <div class="px-5 py-4 border-b border-blue-50 dark:border-slate-800 flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-slate-800 text-blue-500 dark:text-blue-400 flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-bookmark text-xs"></i>
+                    </div>
+                    <h2 class="font-bold text-slate-800 dark:text-white">Proyek Tersimpan</h2>
                 </div>
-                <div class="divide-y divide-slate-50">
+                <div class="divide-y divide-slate-50 dark:divide-slate-800">
                     @forelse($user->savedProjects()->with('project')->latest()->take(5)->get() as $saved)
-                        <div class="px-5 py-3 text-sm">
-                            <span class="font-semibold text-slate-700">{{ $saved->project->project_name ?? '—' }}</span>
-                            <span class="text-slate-400 text-xs ml-2">{{ $saved->created_at->format('d M Y') }}</span>
+                        <div class="px-5 py-3.5 flex items-center justify-between text-sm hover:bg-[#f6f9ff]/70 dark:hover:bg-slate-800/50 transition-colors">
+                            <span class="font-semibold text-slate-700 dark:text-slate-200 inline-flex items-center gap-2 min-w-0 truncate">
+                                <i class="fa-regular fa-folder text-slate-300 shrink-0"></i> {{ $saved->project->project_name ?? '—' }}
+                            </span>
+                            <span class="text-slate-400 dark:text-slate-500 text-xs ml-3 whitespace-nowrap">{{ $saved->created_at->format('d M Y') }}</span>
                         </div>
                     @empty
-                        <div class="px-5 py-6 text-center text-sm text-slate-400">Tidak ada proyek tersimpan.</div>
+                        <div class="px-5 py-12 text-center">
+                            <div class="flex flex-col items-center gap-2.5">
+                                <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 text-blue-400 dark:text-slate-500 flex items-center justify-center text-lg">
+                                    <i class="fa-regular fa-bookmark"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-bold text-slate-600 dark:text-slate-300">Tidak ada proyek tersimpan</p>
+                                    <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5">Pengguna ini belum menyimpan proyek apa pun.</p>
+                                </div>
+                            </div>
+                        </div>
                     @endforelse
                 </div>
             </div>
 
             @if($user->id !== auth()->id() && $user->role !== 'admin')
-                <div class="bg-white rounded-2xl border border-red-200 shadow-sm p-5">
-                    <h3 class="font-bold text-red-600 text-sm mb-1">Zona Berbahaya</h3>
-                    <p class="text-xs text-slate-500 mb-3">Hapus akun pengguna ini secara permanen.</p>
+                {{-- Zona Berbahaya --}}
+                <div class="rounded-2xl border-2 border-dashed border-red-200 dark:border-red-900/60 bg-red-50/40 dark:bg-red-950/30 p-5">
+                    <div class="flex items-center gap-2 mb-1">
+                        <div class="w-7 h-7 rounded-lg bg-red-100 dark:bg-red-900/60 text-red-500 dark:text-red-400 flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-triangle-exclamation text-xs"></i>
+                        </div>
+                        <h3 class="font-bold text-red-600 dark:text-red-400 text-sm">Zona Berbahaya</h3>
+                    </div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-4 ml-9">Hapus akun pengguna ini secara permanen.</p>
                     <form method="POST" action="{{ route('admin.users.destroy', $user) }}"
                           onsubmit="return adminConfirm('Yakin ingin menghapus pengguna {{ $user->name }}? Semua data terkait akan ikut terhapus.', this)">
                         @csrf @method('DELETE')
-                        <button type="submit" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl text-sm font-semibold transition">
-                            <i class="fa-solid fa-trash-can mr-1"></i> Hapus Pengguna
+                        <button type="submit" class="px-4 py-2.5 bg-red-500 hover:bg-red-600 active:bg-red-700 text-white rounded-xl text-sm font-semibold shadow-sm transition">
+                            <i class="fa-solid fa-trash-can mr-1.5"></i> Hapus Pengguna
                         </button>
                     </form>
                 </div>
@@ -337,7 +382,7 @@
                                         <th class="px-6 py-3">Nama Tujuan</th>
                                         <th class="px-6 py-3">Nomor Rekening / E-Wallet</th>
                                         <th class="px-6 py-3 text-right">Nominal Penarikan</th>
-                                        <th class="px-6 py-3 text-right">Pajak 5%</th>
+                                        <th class="px-6 py-3 text-right">Fee Admin</th>
                                         <th class="px-6 py-3 text-right">Nominal Bersih</th>
                                         <th class="px-6 py-3">Tanggal</th>
                                         <th class="px-6 py-3">Status</th>

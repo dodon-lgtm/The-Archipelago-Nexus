@@ -3,14 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @include('partials.theme-boot')
     <title>Workspace Saya - ApexForge Labs</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script>
-        if (localStorage.getItem('theme') === 'dark') {
-            document.documentElement.classList.add('dark');
-        }
-    </script>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -122,6 +119,35 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                     </div>
                 </div>
 
+                {{-- FILTER BAR (Ditambahkan tanpa mengurangi kode asli) --}}
+                <div class="bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
+                    <form method="GET" action="{{ url()->current() }}" class="flex flex-col sm:flex-row items-center gap-3">
+                        <div class="relative flex-1 w-full">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
+                                <i class="fa-solid fa-search"></i>
+                            </span>
+                            <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama proyek atau perusahaan..." class="w-full pl-11 pr-4 py-2.5 rounded-xl text-sm border border-blue-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-white focus:outline-none">
+                        </div>
+                        <div class="w-full sm:w-64">
+                            <select name="status" onchange="this.form.submit()" class="w-full px-4 py-2.5 rounded-xl text-sm border border-blue-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-white focus:outline-none">
+                                <option value="">Semua Status</option>
+                                <option value="Sedang Dikerjakan" {{ request('status') == 'Sedang Dikerjakan' ? 'selected' : '' }}>Sedang Dikerjakan</option>
+                                <option value="Menunggu Review" {{ request('status') == 'Menunggu Review' ? 'selected' : '' }}>Menunggu Review</option>
+                                <option value="Menunggu Revisi" {{ request('status') == 'Menunggu Revisi' ? 'selected' : '' }}>Menunggu Revisi</option>
+                                <option value="Menunggu Pembayaran" {{ request('status') == 'Menunggu Pembayaran' ? 'selected' : '' }}>Menunggu Pembayaran</option>
+                                <option value="Menunggu Verifikasi Admin" {{ request('status') == 'Menunggu Verifikasi Admin' ? 'selected' : '' }}>Menunggu Verifikasi Admin</option>
+                                <option value="Selesai" {{ request('status') == 'Selesai' ? 'selected' : '' }}>Selesai</option>
+                                <option value="Melewati Batas Waktu" {{ request('status') == 'Melewati Batas Waktu' ? 'selected' : '' }}>Melewati Batas Waktu</option>
+                            </select>
+                        </div>
+                        @if(request('search') || request('status'))
+                            <a href="{{ url()->current() }}" class="w-full sm:w-auto px-4 py-2.5 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-sm font-semibold text-center transition">
+                                Reset
+                            </a>
+                        @endif
+                    </form>
+                </div>
+
                 @if(session('success'))
                     <div class="flex items-center gap-3 px-4 py-3 bg-emerald-50 dark:bg-emerald-900/40 border border-emerald-200 dark:border-emerald-900 text-emerald-700 dark:text-emerald-300 rounded-xl text-sm font-medium">
                         <i class="fa-solid fa-check-circle"></i> {{ session('success') }}
@@ -140,13 +166,14 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                         @foreach($workspaces as $ws)
                             @php
                                 $progress = $ws->currentProgress();
-$stageColors = [
+                                $stageColors = [
                                     'Sedang Dikerjakan' => 'bg-blue-100 text-blue-700 border-blue-200 dark:bg-slate-800 dark:text-blue-300 dark:border-slate-700',
                                     'Menunggu Review' => 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/40 dark:text-amber-300 dark:border-amber-900',
                                     'Menunggu Revisi' => 'bg-blue-50 text-blue-600 border-blue-200 dark:bg-slate-800 dark:text-blue-300 dark:border-slate-700',
                                     'Menunggu Pembayaran' => 'bg-purple-50 text-purple-600 border-purple-200 dark:bg-purple-900/40 dark:text-purple-300 dark:border-purple-900',
                                     'Menunggu Verifikasi Admin' => 'bg-orange-50 text-orange-600 border-orange-200 dark:bg-orange-900/40 dark:text-orange-300 dark:border-orange-900',
                                     'Selesai' => 'bg-emerald-50 text-emerald-600 border-emerald-200 dark:bg-emerald-900/40 dark:text-emerald-300 dark:border-emerald-900',
+                                    'Melewati Batas Waktu' => 'bg-red-50 text-red-600 border-red-200 dark:bg-red-900/40 dark:text-red-300 dark:border-red-900',
                                 ];
                                 $wsStatusColor = $stageColors[$ws->status] ?? 'bg-[#f6f9ff] text-slate-600 border-blue-100 dark:bg-slate-950 dark:text-slate-300 dark:border-slate-800';
                             @endphp
@@ -200,7 +227,7 @@ $stageColors = [
                     </div>
 
                     @if(method_exists($workspaces, 'links'))
-                        <div class="mt-8">{{ $workspaces->links() }}</div>
+                        <div class="mt-8">{{ $workspaces->appends(request()->query())->links() }}</div>
                     @endif
                 @else
                     {{-- Empty State --}}
@@ -225,4 +252,3 @@ $stageColors = [
 
 </body>
 </html>
-

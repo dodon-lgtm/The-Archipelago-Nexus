@@ -3,19 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @include('partials.theme-boot')
     <title>Proyek Terbaru - ApexForge Labs</title>
     
     {{-- Dark Mode Script --}}
-    <script>
-        if (localStorage.getItem('theme') === 'dark') {
-            document.documentElement.classList.add('dark');
-        }
-    </script>
+    
     
     {{-- Tailwind CSS & FontAwesome --}}
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = tailwind.config || {};
+    tailwind.config.darkMode = 'class';
         tailwind.config.darkMode = 'class';
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -90,6 +88,55 @@
             table { min-width: 680px; }
             .overflow-x-auto { -webkit-overflow-scrolling: touch; }
         }
+        /* Filter layout — wrap-safe, no overflow, consistent spacing */
+        .filter-card { overflow: visible; position: relative; z-index: 10; width: 100%; max-width: 100%; box-sizing: border-box; }
+        .filter-form { overflow: visible; width: 100%; max-width: 100%; box-sizing: border-box; }
+        .filter-form > * { min-width: 0; box-sizing: border-box; }
+        /* Searchable dropdowns — positioning & layering fix (category + budget) */
+        #categoryDropdownRoot, #budgetDropdownRoot { position: relative; isolation: isolate; }
+        #filter-category-panel,
+        #filter-budget-panel {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 100%;
+            margin-top: .5rem;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            max-height: min(16rem, 50vh);
+        }
+        #filter-category-panel.hidden,
+        #filter-budget-panel.hidden { display: none !important; }
+        #filter-category-panel .cat-search-wrap,
+        #filter-budget-panel .cat-search-wrap {
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            background: inherit;
+        }
+        #filter-category-list,
+        #filter-budget-list {
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            -webkit-overflow-scrolling: touch;
+        }
+        @media (max-width: 1023px) {
+            #filter-category-panel,
+            #filter-budget-panel {
+                left: 0;
+                right: 0;
+                width: 100%;
+                max-width: calc(100vw - 2rem);
+            }
+        }
+
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {
                 animation-duration: .01ms !important;
@@ -141,61 +188,145 @@
                     $hasFilter = request('search') || request('category') || request('budget') || request('sort');
                 @endphp
                 
-                <div class="bg-white dark:bg-slate-900 rounded-2xl border border-blue-100/80 dark:border-slate-800 shadow-sm p-5 sm:p-6 mb-8">
-                    <form method="GET" action="{{ route('freelancer.proyek') }}" class="flex flex-col lg:flex-row gap-4 lg:items-end">
+                <div class="filter-card bg-white dark:bg-slate-900 rounded-2xl border border-blue-100/80 dark:border-slate-800 shadow-sm p-5 sm:p-6 mb-8 overflow-visible w-full max-w-full box-border">
+                    <form method="GET" action="{{ route('freelancer.proyek') }}" class="filter-form flex flex-wrap gap-4 items-end w-full max-w-full overflow-visible box-border">
                         
                         {{-- Search Input --}}
-                        <div class="flex-1 min-w-0">
-                            <label for="filter-search" class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
+                        <div class="flex-[1_1_260px] min-w-[220px] max-w-full flex flex-col">
+                            <label for="filter-search" class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2 leading-none">
                                 Cari Proyek
                             </label>
-                            <div class="relative">
+                            <div class="relative w-full">
                                 <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                                     <i class="fa-solid fa-magnifying-glass text-xs"></i>
                                 </span>
                                 <input type="text" id="filter-search" name="search" value="{{ request('search') }}"
                                        placeholder="Cari proyek..."
-                                       class="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-blue-100 dark:border-slate-700 focus:ring-2 focus:ring-blue-100 outline-none dark:bg-slate-800 dark:text-white dark:placeholder:text-slate-500">
+                                       class="w-full min-w-0 pl-10 pr-4 py-2.5 text-sm rounded-xl border border-blue-100 dark:border-slate-700 focus:ring-2 focus:ring-blue-100 outline-none dark:bg-slate-800 dark:text-white dark:placeholder:text-slate-500 box-border">
                             </div>
                         </div>
 
-                        {{-- Category Filter --}}
-                        <div class="lg:w-56">
-                            <label for="filter-category" class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
+                        {{-- Category Filter — Searchable Dropdown (custom, tanpa native select panjang) --}}
+                        <div class="flex-[1_1_180px] min-w-[160px] max-w-[240px] w-full flex flex-col relative" id="categoryDropdownRoot">
+                            <label id="filter-category-label-title" class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2 leading-none">
                                 Kategori
                             </label>
-                            <select id="filter-category" name="category"
-                                    class="w-full px-4 py-2.5 text-sm rounded-xl border border-blue-100 dark:border-slate-700 focus:ring-2 focus:ring-blue-100 outline-none cursor-pointer dark:bg-slate-800 dark:text-white">
-                                <option value="">Semua Kategori</option>
-                                @foreach($categories as $cat)
-                                    <option value="{{ $cat->id }}" @selected((string)request('category') === (string)$cat->id)>
-                                        {{ $cat->name }}
-                                    </option>
-                                @endforeach
-                            </select>
+                            <input type="hidden" name="category" id="filter-category-value" value="{{ request('category') }}">
+                            <button type="button" id="filter-category-btn" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="filter-category-label-title"
+                                    class="w-full flex items-center justify-between gap-2 px-4 py-2.5 text-sm rounded-xl border border-blue-100 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-white focus:ring-2 focus:ring-blue-100 outline-none cursor-pointer hover:border-blue-200 dark:hover:border-slate-600 transition min-w-0 box-border">
+                                <span id="filter-category-label" class="truncate text-left min-w-0 @if(!request('category')) text-slate-400 dark:text-slate-500 @endif">
+                                    @php $selectedCat = $categories->firstWhere('id', (int)request('category')); @endphp
+                                    {{ $selectedCat ? $selectedCat->name : 'Semua Kategori' }}
+                                </span>
+                                <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 shrink-0 transition-transform" id="filter-category-chevron"></i>
+                            </button>
+                            <div id="filter-category-panel" class="hidden absolute left-0 top-full z-50 mt-2 w-full min-w-0 max-w-full bg-white dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-xl shadow-xl shadow-blue-500/10 overflow-hidden">
+                                <div class="cat-search-wrap p-2 border-b border-blue-50 dark:border-slate-700 bg-white dark:bg-slate-800 shrink-0">
+                                    <div class="relative min-w-0">
+                                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                            <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                                        </span>
+                                        <input type="text" id="filter-category-search" autocomplete="off" placeholder="Cari kategori..."
+                                               class="w-full min-w-0 box-border pl-9 pr-3 py-2 text-sm rounded-lg border border-blue-100 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-blue-100 outline-none dark:text-white dark:placeholder:text-slate-500">
+                                    </div>
+                                </div>
+                                <div id="filter-category-list" class="max-h-48 overflow-y-auto overscroll-contain py-1 min-h-0">
+                                    <button type="button" data-value="" data-name="Semua Kategori"
+                                            class="category-option w-full text-left px-4 py-2.5 text-sm hover:bg-blue-50 dark:hover:bg-slate-700/60 transition flex items-center justify-between gap-2 {{ !request('category') ? 'bg-blue-50 dark:bg-slate-700/50 text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-700 dark:text-slate-300' }}">
+                                        <span>Semua Kategori</span>
+                                        @if(!request('category'))<i class="fa-solid fa-check text-[10px] text-blue-600 dark:text-blue-400"></i>@endif
+                                    </button>
+                                    @foreach($categories as $cat)
+                                        <button type="button" data-value="{{ $cat->id }}" data-name="{{ $cat->name }}"
+                                                class="category-option w-full text-left px-4 py-2.5 text-sm hover:bg-blue-50 dark:hover:bg-slate-700/60 transition flex items-center justify-between gap-2 {{ (string)request('category') === (string)$cat->id ? 'bg-blue-50 dark:bg-slate-700/50 text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-700 dark:text-slate-300' }}">
+                                            <span class="truncate">{{ $cat->name }}</span>
+                                            @if((string)request('category') === (string)$cat->id)<i class="fa-solid fa-check text-[10px] text-blue-600 dark:text-blue-400 shrink-0"></i>@endif
+                                        </button>
+                                    @endforeach
+                                </div>
+                                <div id="filter-category-empty" class="hidden px-4 py-6 text-center">
+                                    <i class="fa-regular fa-folder-open text-lg text-slate-300 dark:text-slate-600 mb-1"></i>
+                                    <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Kategori tidak ditemukan.</p>
+                                </div>
+                            </div>
                         </div>
 
-                        {{-- Budget Filter --}}
-                        <div class="lg:w-56">
-                            <label for="filter-budget" class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
+                        {{-- Budget Filter — searchable + typable (preset + angka bebas ≥) --}}
+                        <div class="flex-[1_1_170px] min-w-[150px] max-w-[200px] w-full flex flex-col relative" id="budgetDropdownRoot">
+                            <label id="filter-budget-label-title" class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2 leading-none">
                                 Budget
                             </label>
-                            <select id="filter-budget" name="budget"
-                                    class="w-full px-4 py-2.5 text-sm rounded-xl border border-blue-100 dark:border-slate-700 focus:ring-2 focus:ring-blue-100 outline-none cursor-pointer dark:bg-slate-800 dark:text-white">
-                                <option value="">Semua Budget</option>
-                                <option value="under-1m" @selected(request('budget') === 'under-1m')>Di bawah Rp1.000.000</option>
-                                <option value="1m-5m" @selected(request('budget') === '1m-5m')>Rp1.000.000 – Rp5.000.000</option>
-                                <option value="above-5m" @selected(request('budget') === 'above-5m')>Di atas Rp5.000.000</option>
-                            </select>
+                            <input type="hidden" name="budget" id="filter-budget-value" value="{{ request('budget') }}">
+                            <button type="button" id="filter-budget-btn" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="filter-budget-label-title"
+                                    class="w-full flex items-center justify-between gap-2 px-3 py-2.5 text-sm rounded-xl border border-blue-100 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-white focus:ring-2 focus:ring-blue-100 outline-none cursor-pointer hover:border-blue-200 dark:hover:border-slate-600 transition min-w-0 box-border">
+                                @php
+                                    $budgetVal = request('budget');
+                                    $budgetLabel = 'Semua Budget';
+                                    if ($budgetVal === 'under-1m') $budgetLabel = 'Di bawah Rp1.000.000';
+                                    elseif ($budgetVal === '1m-5m') $budgetLabel = 'Rp1.000.000 – Rp5.000.000';
+                                    elseif ($budgetVal === 'above-5m') $budgetLabel = 'Di atas Rp5.000.000';
+                                    elseif ($budgetVal !== null && $budgetVal !== '') {
+                                        $num = (int) preg_replace('/[^\d]/','', $budgetVal);
+                                        if ($num > 0) $budgetLabel = '≥ Rp ' . number_format($num, 0, ',', '.');
+                                        else $budgetLabel = $budgetVal;
+                                    }
+                                @endphp
+                                <span id="filter-budget-label" class="truncate text-left min-w-0 @if(!request('budget')) text-slate-400 dark:text-slate-500 @endif">{{ $budgetLabel }}</span>
+                                <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 shrink-0 transition-transform" id="filter-budget-chevron"></i>
+                            </button>
+                            <div id="filter-budget-panel" class="hidden absolute left-0 top-full z-50 mt-2 w-full min-w-0 max-w-full bg-white dark:bg-slate-800 border border-blue-100 dark:border-slate-700 rounded-xl shadow-xl shadow-blue-500/10 overflow-hidden">
+                                <div class="cat-search-wrap p-2 border-b border-blue-50 dark:border-slate-700 bg-white dark:bg-slate-800 shrink-0">
+                                    <div class="relative min-w-0">
+                                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                            <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                                        </span>
+                                        <input type="text" id="filter-budget-search" autocomplete="off" inputmode="numeric" placeholder="Ketik budget, mis. 2500000"
+                                               class="w-full min-w-0 box-border pl-9 pr-3 py-2 text-sm rounded-lg border border-blue-100 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-blue-100 outline-none dark:text-white dark:placeholder:text-slate-500">
+                                    </div>
+                                    <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-1.5 px-1">Bisa pilih preset atau ketik angka bebas (akan difilter ≥ nilai).</p>
+                                </div>
+                                <div id="filter-budget-list" class="max-h-48 overflow-y-auto overscroll-contain py-1 min-h-0">
+                                    <button type="button" data-value="" data-name="Semua Budget"
+                                            class="budget-option w-full text-left px-4 py-2.5 text-sm hover:bg-blue-50 dark:hover:bg-slate-700/60 transition flex items-center justify-between gap-2 {{ !request('budget') ? 'bg-blue-50 dark:bg-slate-700/50 text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-700 dark:text-slate-300' }}">
+                                        <span>Semua Budget</span>
+                                        @if(!request('budget'))<i class="fa-solid fa-check text-[10px] text-blue-600 dark:text-blue-400"></i>@endif
+                                    </button>
+                                    <button type="button" data-value="under-1m" data-name="Di bawah Rp1.000.000"
+                                            class="budget-option w-full text-left px-4 py-2.5 text-sm hover:bg-blue-50 dark:hover:bg-slate-700/60 transition flex items-center justify-between gap-2 min-w-0 {{ request('budget') === 'under-1m' ? 'bg-blue-50 dark:bg-slate-700/50 text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-700 dark:text-slate-300' }}">
+                                        <span class="truncate min-w-0 flex-1">Di bawah Rp1.000.000</span>
+                                        @if(request('budget') === 'under-1m')<i class="fa-solid fa-check text-[10px] text-blue-600 dark:text-blue-400 shrink-0"></i>@endif
+                                    </button>
+                                    <button type="button" data-value="1m-5m" data-name="Rp1.000.000 – Rp5.000.000"
+                                            class="budget-option w-full text-left px-4 py-2.5 text-sm hover:bg-blue-50 dark:hover:bg-slate-700/60 transition flex items-center justify-between gap-2 min-w-0 {{ request('budget') === '1m-5m' ? 'bg-blue-50 dark:bg-slate-700/50 text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-700 dark:text-slate-300' }}">
+                                        <span class="truncate min-w-0 flex-1">Rp1.000.000 – Rp5.000.000</span>
+                                        @if(request('budget') === '1m-5m')<i class="fa-solid fa-check text-[10px] text-blue-600 dark:text-blue-400 shrink-0"></i>@endif
+                                    </button>
+                                    <button type="button" data-value="above-5m" data-name="Di atas Rp5.000.000"
+                                            class="budget-option w-full text-left px-4 py-2.5 text-sm hover:bg-blue-50 dark:hover:bg-slate-700/60 transition flex items-center justify-between gap-2 min-w-0 {{ request('budget') === 'above-5m' ? 'bg-blue-50 dark:bg-slate-700/50 text-blue-700 dark:text-blue-300 font-semibold' : 'text-slate-700 dark:text-slate-300' }}">
+                                        <span class="truncate min-w-0 flex-1">Di atas Rp5.000.000</span>
+                                        @if(request('budget') === 'above-5m')<i class="fa-solid fa-check text-[10px] text-blue-600 dark:text-blue-400 shrink-0"></i>@endif
+                                    </button>
+                                    <div id="filter-budget-custom" class="hidden border-t border-blue-50 dark:border-slate-700 mt-1 pt-1">
+                                        <button type="button" id="filter-budget-custom-btn" class="w-full text-left px-4 py-2.5 text-sm hover:bg-amber-50 dark:hover:bg-amber-900/20 transition flex items-center gap-2 text-amber-700 dark:text-amber-300 font-medium">
+                                            <i class="fa-solid fa-keyboard text-[11px]"></i>
+                                            <span id="filter-budget-custom-label"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div id="filter-budget-empty" class="hidden px-4 py-6 text-center">
+                                    <i class="fa-regular fa-folder-open text-lg text-slate-300 dark:text-slate-600 mb-1"></i>
+                                    <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Preset tidak ditemukan. Ketik angka untuk custom.</p>
+                                </div>
+                            </div>
                         </div>
 
                         {{-- Sort Filter --}}
-                        <div class="lg:w-56">
-                            <label for="filter-sort" class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
+                        <div class="flex-[1_1_160px] min-w-[150px] max-w-[180px] w-full flex flex-col">
+                            <label for="filter-sort" class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2 leading-none">
                                 Urutkan
                             </label>
                             <select id="filter-sort" name="sort"
-                                    class="w-full px-4 py-2.5 text-sm rounded-xl border border-blue-100 dark:border-slate-700 focus:ring-2 focus:ring-blue-100 outline-none cursor-pointer dark:bg-slate-800 dark:text-white">
+                                    class="w-full min-w-0 px-3 py-2.5 text-sm rounded-xl border border-blue-100 dark:border-slate-700 focus:ring-2 focus:ring-blue-100 outline-none cursor-pointer dark:bg-slate-800 dark:text-white box-border">
                                 <option value="terbaru" @selected(request('sort', 'terbaru') === 'terbaru')>Terbaru</option>
                                 <option value="deadline" @selected(request('sort') === 'deadline')>Deadline Terdekat</option>
                                 <option value="budget-tinggi" @selected(request('sort') === 'budget-tinggi')>Budget Tertinggi</option>
@@ -204,15 +335,15 @@
                         </div>
 
                         {{-- Filter & Reset Buttons --}}
-                        <div class="flex items-center gap-2 shrink-0">
+                        <div class="flex flex-wrap items-end gap-2 shrink-0 flex-none min-w-0 max-w-full">
                             <button type="submit"
-                                    class="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-sm font-semibold rounded-xl shadow-sm shadow-blue-500/20 transition-all duration-200 cursor-pointer">
+                                    class="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-sm font-semibold rounded-xl shadow-sm shadow-blue-500/20 transition-all duration-200 cursor-pointer shrink-0">
                                 <i class="fa-solid fa-filter text-xs"></i> Filter
                             </button>
                             
                             @if($hasFilter)
                                 <a href="{{ route('freelancer.proyek') }}"
-                                   class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-sm font-semibold rounded-xl transition-all duration-200">
+                                   class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-sm font-semibold rounded-xl transition-all duration-200 shrink-0">
                                     <i class="fa-solid fa-rotate-left text-xs"></i> Reset
                                 </a>
                             @endif
@@ -357,8 +488,355 @@
 
             </div>
         </main>
-    </div>
 </div>
+ </div>
 
-</body>
+<script>
+(function(){
+    const root = document.getElementById('categoryDropdownRoot');
+    const btn = document.getElementById('filter-category-btn');
+    const panel = document.getElementById('filter-category-panel');
+    const searchInput = document.getElementById('filter-category-search');
+    const list = document.getElementById('filter-category-list');
+    const emptyEl = document.getElementById('filter-category-empty');
+    const hiddenVal = document.getElementById('filter-category-value');
+    const labelEl = document.getElementById('filter-category-label');
+    const chevron = document.getElementById('filter-category-chevron');
+    if(!root || !btn || !panel || !searchInput || !list || !hiddenVal || !labelEl) return;
+
+    function isOpen(){ return !panel.classList.contains('hidden'); }
+    function adjustPosition(){
+        // reset to default bottom
+        panel.style.top = '100%';
+        panel.style.bottom = 'auto';
+        panel.style.marginTop = '0.5rem';
+        panel.style.marginBottom = '0';
+        // ensure width follows parent (w-full handles) but clamp for viewport on mobile
+        // flip upward if not enough space below
+        const rect = btn.getBoundingClientRect();
+        const panelH = panel.offsetHeight || 300;
+        const spaceBelow = window.innerHeight - rect.bottom - 16;
+        const spaceAbove = rect.top - 16;
+        if(spaceBelow < 180 && spaceAbove > spaceBelow){
+            panel.style.top = 'auto';
+            panel.style.bottom = '100%';
+            panel.style.marginTop = '0';
+            panel.style.marginBottom = '0.5rem';
+        }
+        // prevent horizontal overflow on small screens
+        const rootRect = root.getBoundingClientRect();
+        const viewportPad = 16;
+        // panel is w-full = root width, so it stays inside root; on mobile root is full width minus main padding, safe.
+        // extra safety: if panel would overflow viewport (e.g., due to transform), clamp
+        const panelRect = panel.getBoundingClientRect();
+        if(panelRect.right > window.innerWidth - viewportPad){
+            const overflow = panelRect.right - (window.innerWidth - viewportPad);
+            panel.style.left = (-overflow) + 'px';
+            panel.style.right = 'auto';
+        } else {
+            panel.style.left = '0';
+            panel.style.right = '0';
+        }
+        // max-height respect viewport — compact, not too tall
+        panel.style.maxHeight = 'min(16rem, 50vh)';
+    }
+    function openPanel(){
+        // tutup dropdown budget jika terbuka agar tidak tumpuk
+        const bPanel = document.getElementById('filter-budget-panel');
+        if(bPanel && !bPanel.classList.contains('hidden')){
+            bPanel.classList.add('hidden');
+            const bRoot = document.getElementById('budgetDropdownRoot');
+            const bBtn = document.getElementById('filter-budget-btn');
+            const bChev = document.getElementById('filter-budget-chevron');
+            if(bRoot) bRoot.style.zIndex='';
+            if(bBtn) bBtn.setAttribute('aria-expanded','false');
+            if(bChev) bChev.style.transform='';
+        }
+        panel.classList.remove('hidden');
+        adjustPosition();
+        btn.setAttribute('aria-expanded','true');
+        if(chevron) chevron.style.transform='rotate(180deg)';
+        // keep panel above card grid but inside filter context
+        root.style.zIndex = '30';
+        searchInput.focus();
+        filterList(searchInput.value);
+    }
+    function closePanel(){
+        panel.classList.add('hidden');
+        btn.setAttribute('aria-expanded','false');
+        if(chevron) chevron.style.transform='';
+        root.style.zIndex = '';
+        panel.style.top = '';
+        panel.style.bottom = '';
+        panel.style.marginTop = '';
+        panel.style.marginBottom = '';
+        panel.style.left = '';
+        panel.style.right = '';
+    }
+    function filterList(q){
+        q = (q||'').trim().toLowerCase();
+        const opts = list.querySelectorAll('.category-option');
+        let visible = 0;
+        opts.forEach(el=>{
+            const name = (el.getAttribute('data-name')||'').toLowerCase();
+            const show = !q || name.includes(q);
+            el.style.display = show ? '' : 'none';
+            if(show) visible++;
+        });
+        if(emptyEl){
+            emptyEl.classList.toggle('hidden', visible>0);
+            list.classList.toggle('hidden', visible===0 && q);
+        }
+    }
+    function selectCategory(val, name){
+        hiddenVal.value = val;
+        labelEl.textContent = name || 'Semua Kategori';
+        labelEl.classList.toggle('text-slate-400', !val);
+        labelEl.classList.toggle('dark:text-slate-500', !val);
+        // update selected styling
+        list.querySelectorAll('.category-option').forEach(el=>{
+            const v = el.getAttribute('data-value')||'';
+            const isSel = v === val;
+            el.classList.toggle('bg-blue-50', isSel);
+            el.classList.toggle('dark:bg-slate-700/50', isSel);
+            el.classList.toggle('text-blue-700', isSel);
+            el.classList.toggle('dark:text-blue-300', isSel);
+            el.classList.toggle('font-semibold', isSel);
+            // check icon
+            let chk = el.querySelector('i.fa-check');
+            if(isSel && !chk){
+                const i=document.createElement('i');
+                i.className='fa-solid fa-check text-[10px] text-blue-600 dark:text-blue-400 shrink-0';
+                el.appendChild(i);
+            } else if(!isSel && chk){
+                chk.remove();
+            }
+        });
+        closePanel();
+        btn.focus();
+    }
+
+    btn.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        if(isOpen()) closePanel(); else openPanel();
+    });
+    searchInput.addEventListener('input', ()=> filterList(searchInput.value));
+    // prevent panel click from closing via document
+    panel.addEventListener('click', e=> e.stopPropagation());
+    list.addEventListener('click', e=>{
+        const opt = e.target.closest('.category-option');
+        if(!opt) return;
+        selectCategory(opt.getAttribute('data-value')||'', opt.getAttribute('data-name')||'Semua Kategori');
+    });
+    document.addEventListener('click', (e)=>{
+        if(!root.contains(e.target)) closePanel();
+    });
+    document.addEventListener('keydown', (e)=>{
+        if(e.key==='Escape' && isOpen()){ e.preventDefault(); closePanel(); btn.focus(); }
+    });
+    window.addEventListener('resize', ()=>{ if(isOpen()) adjustPosition(); });
+    // close on scroll of main container to avoid detached dropdown
+    const mainScroll = document.querySelector('main');
+    if(mainScroll) mainScroll.addEventListener('scroll', ()=>{ if(isOpen()) adjustPosition(); }, {passive:true});
+})();
+(function(){
+    const root = document.getElementById('budgetDropdownRoot');
+    const btn = document.getElementById('filter-budget-btn');
+    const panel = document.getElementById('filter-budget-panel');
+    const searchInput = document.getElementById('filter-budget-search');
+    const list = document.getElementById('filter-budget-list');
+    const emptyEl = document.getElementById('filter-budget-empty');
+    const customWrap = document.getElementById('filter-budget-custom');
+    const customBtn = document.getElementById('filter-budget-custom-btn');
+    const customLabel = document.getElementById('filter-budget-custom-label');
+    const hiddenVal = document.getElementById('filter-budget-value');
+    const labelEl = document.getElementById('filter-budget-label');
+    const chevron = document.getElementById('filter-budget-chevron');
+    if(!root || !btn || !panel || !searchInput || !list || !hiddenVal || !labelEl) return;
+
+    function isOpen(){ return !panel.classList.contains('hidden'); }
+    function formatRupiah(n){
+        try { return 'Rp ' + Number(n).toLocaleString('id-ID'); } catch(e){ return 'Rp '+n; }
+    }
+    function parseDigits(s){
+        const d = (s||'').replace(/[^\d]/g,'');
+        return d ? parseInt(d,10) : 0;
+    }
+    function adjustPosition(){
+        panel.style.top = '100%';
+        panel.style.bottom = 'auto';
+        panel.style.marginTop = '0.5rem';
+        panel.style.marginBottom = '0';
+        const rect = btn.getBoundingClientRect();
+        const spaceBelow = window.innerHeight - rect.bottom - 16;
+        const spaceAbove = rect.top - 16;
+        if(spaceBelow < 180 && spaceAbove > spaceBelow){
+            panel.style.top = 'auto';
+            panel.style.bottom = '100%';
+            panel.style.marginTop = '0';
+            panel.style.marginBottom = '0.5rem';
+        }
+        const viewportPad = 16;
+        const panelRect = panel.getBoundingClientRect();
+        if(panelRect.right > window.innerWidth - viewportPad){
+            const overflow = panelRect.right - (window.innerWidth - viewportPad);
+            panel.style.left = (-overflow) + 'px';
+            panel.style.right = 'auto';
+        } else {
+            panel.style.left = '0';
+            panel.style.right = '0';
+        }
+        panel.style.maxHeight = 'min(16rem, 50vh)';
+    }
+    function openPanel(){
+        // tutup dropdown kategori jika terbuka
+        const cPanel = document.getElementById('filter-category-panel');
+        if(cPanel && !cPanel.classList.contains('hidden')){
+            cPanel.classList.add('hidden');
+            const cRoot = document.getElementById('categoryDropdownRoot');
+            const cBtn = document.getElementById('filter-category-btn');
+            const cChev = document.getElementById('filter-category-chevron');
+            if(cRoot) cRoot.style.zIndex='';
+            if(cBtn) cBtn.setAttribute('aria-expanded','false');
+            if(cChev) cChev.style.transform='';
+        }
+        panel.classList.remove('hidden');
+        adjustPosition();
+        btn.setAttribute('aria-expanded','true');
+        if(chevron) chevron.style.transform='rotate(180deg)';
+        root.style.zIndex = '30';
+        searchInput.focus();
+        // prefill search with numeric value if current is numeric
+        const cur = hiddenVal.value||'';
+        if(cur && !['','under-1m','1m-5m','above-5m'].includes(cur)){
+            const n = parseDigits(cur);
+            if(n) searchInput.value = String(n);
+        } else {
+            searchInput.value = '';
+        }
+        filterList(searchInput.value);
+    }
+    function closePanel(){
+        panel.classList.add('hidden');
+        btn.setAttribute('aria-expanded','false');
+        if(chevron) chevron.style.transform='';
+        root.style.zIndex = '';
+        panel.style.top=''; panel.style.bottom=''; panel.style.marginTop=''; panel.style.marginBottom=''; panel.style.left=''; panel.style.right='';
+    }
+    function filterList(q){
+        q = (q||'').trim();
+        const qLower = q.toLowerCase();
+        const opts = list.querySelectorAll('.budget-option');
+        let visible = 0;
+        opts.forEach(el=>{
+            const name = (el.getAttribute('data-name')||'').toLowerCase();
+            const val = (el.getAttribute('data-value')||'').toLowerCase();
+            const show = !q || name.includes(qLower) || val.includes(qLower);
+            el.style.display = show ? '' : 'none';
+            if(show) visible++;
+        });
+        // custom numeric handling
+        const num = parseDigits(q);
+        const isPreset = ['','under-1m','1m-5m','above-5m'].includes(qLower);
+        const showCustom = !isPreset && num>0;
+        if(showCustom && customWrap && customLabel){
+            customWrap.classList.remove('hidden');
+            customLabel.textContent = 'Gunakan: ≥ ' + formatRupiah(num) + '  (ketik bebas)';
+            if(emptyEl) emptyEl.classList.add('hidden');
+        } else if(customWrap){
+            customWrap.classList.add('hidden');
+            if(emptyEl){
+                emptyEl.classList.toggle('hidden', visible>0);
+            }
+        } else if(emptyEl){
+            emptyEl.classList.toggle('hidden', visible>0);
+        }
+        // if no preset visible but custom visible, keep list visible
+        if(showCustom) list.classList.remove('hidden');
+    }
+    function selectBudget(val, name){
+        hiddenVal.value = val;
+        // name may be custom formatted
+        let display = name;
+        if(val && !['','under-1m','1m-5m','above-5m'].includes(val)){
+            const n = parseDigits(val);
+            if(n) display = '≥ ' + formatRupiah(n);
+        }
+        labelEl.textContent = display || 'Semua Budget';
+        labelEl.classList.toggle('text-slate-400', !val);
+        labelEl.classList.toggle('dark:text-slate-500', !val);
+        list.querySelectorAll('.budget-option').forEach(el=>{
+            const v = el.getAttribute('data-value')||'';
+            const isSel = v === val;
+            el.classList.toggle('bg-blue-50', isSel);
+            el.classList.toggle('dark:bg-slate-700/50', isSel);
+            el.classList.toggle('text-blue-700', isSel);
+            el.classList.toggle('dark:text-blue-300', isSel);
+            el.classList.toggle('font-semibold', isSel);
+            let chk = el.querySelector('i.fa-check');
+            if(isSel && !chk){
+                const i=document.createElement('i');
+                i.className='fa-solid fa-check text-[10px] text-blue-600 dark:text-blue-400 shrink-0';
+                el.appendChild(i);
+            } else if(!isSel && chk){ chk.remove(); }
+        });
+        closePanel();
+        btn.focus();
+    }
+
+    btn.addEventListener('click', (e)=>{ e.stopPropagation(); if(isOpen()) closePanel(); else openPanel(); });
+    searchInput.addEventListener('input', ()=> filterList(searchInput.value));
+    searchInput.addEventListener('keydown', (e)=>{
+        if(e.key==='Enter'){
+            e.preventDefault();
+            const q = searchInput.value.trim();
+            const num = parseDigits(q);
+            if(num>0){
+                // use custom
+                selectBudget(String(num), '≥ ' + formatRupiah(num));
+            } else if(!q){
+                selectBudget('','Semua Budget');
+            }
+        }
+    });
+    panel.addEventListener('click', e=> e.stopPropagation());
+    list.addEventListener('click', e=>{
+        const opt = e.target.closest('.budget-option');
+        if(opt){
+            selectBudget(opt.getAttribute('data-value')||'', opt.getAttribute('data-name')||'Semua Budget');
+            return;
+        }
+    });
+    if(customBtn) customBtn.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        const q = searchInput.value.trim();
+        const num = parseDigits(q);
+        if(num>0) selectBudget(String(num), '≥ ' + formatRupiah(num));
+    });
+    // also allow typing + clicking Filter without selecting: sync on form submit
+    const form = root.closest('form');
+    if(form){
+        form.addEventListener('submit', ()=>{
+            if(isOpen()){
+                const q = searchInput.value.trim();
+                const num = parseDigits(q);
+                const isPresetVal = ['','under-1m','1m-5m','above-5m'].includes(hiddenVal.value);
+                // if user typed numeric but hasn't selected, use typed value
+                if(q && num>0 && isPresetVal && hiddenVal.value!==q){
+                    // if search differs from hidden and is numeric, treat as custom
+                    const curVisible = customWrap && !customWrap.classList.contains('hidden');
+                    if(curVisible) hiddenVal.value = String(num);
+                }
+            }
+        });
+    }
+    document.addEventListener('click', (e)=>{ if(!root.contains(e.target)) closePanel(); });
+    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && isOpen()){ e.preventDefault(); closePanel(); btn.focus(); } });
+    window.addEventListener('resize', ()=>{ if(isOpen()) adjustPosition(); });
+    const mainScroll = document.querySelector('main');
+    if(mainScroll) mainScroll.addEventListener('scroll', ()=>{ if(isOpen()) adjustPosition(); }, {passive:true});
+})();
+</script>
+
+ </body>
 </html>

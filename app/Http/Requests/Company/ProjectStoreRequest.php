@@ -25,7 +25,7 @@ class ProjectStoreRequest extends FormRequest
 
             'budget' => ['required', 'numeric'],
 
-            'deadline' => ['required', 'date'],
+            'deadline' => ['required', 'date', 'after_or_equal:today'],
 
             'skills' => ['required', 'string'],
 
@@ -34,6 +34,13 @@ class ProjectStoreRequest extends FormRequest
             'attachment' => ['nullable', 'mimes:pdf,doc,docx,zip,rar', 'max:10240'],
 
             'status' => ['required', Rule::in(Project::STATUSES)],
+
+            // Tahap Pengerjaan (REVISI): boleh kosong, tapi bila diisi harus
+            // berupa array paralel stage_name[] / stage_desc[].
+            'stage_name' => ['nullable', 'array'],
+            'stage_name.*' => ['nullable', 'string', 'max:255'],
+            'stage_desc' => ['nullable', 'array'],
+            'stage_desc.*' => ['nullable', 'string', 'max:2000'],
 
         ];
     }

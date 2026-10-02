@@ -3,26 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @include('partials.theme-boot')
     <title>Edit Profil Freelancer - Modern Dashboard</title>
 
-    <script>
-        @auth
-            const profileThemeUserId = "{{ Auth::id() }}";
-        @else
-            const profileThemeUserId = 'guest';
-        @endauth
-        // Baca dari semua kunci tema aplikasi agar dark mode selalu aktif.
-        const storedTheme =
-            localStorage.getItem('theme_user_' + profileThemeUserId)
-            || localStorage.getItem('theme')
-            || localStorage.getItem('apexforge_theme');
-        if (storedTheme === 'dark') {
-            document.documentElement.classList.add('dark');
-        }
-    </script>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = tailwind.config || {};
+    tailwind.config.darkMode = 'class';
         tailwind.config.darkMode = 'class';
     </script>
 

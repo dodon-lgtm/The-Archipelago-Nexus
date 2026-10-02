@@ -3,15 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @include('partials.theme-boot')
     <title>Pendapatan - ApexForge Labs</title>
-    <script>
-        if (localStorage.getItem('theme') === 'dark') {
-            document.documentElement.classList.add('dark');
-        }
-    </script>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = tailwind.config || {};
+    tailwind.config.darkMode = 'class';
         tailwind.config.darkMode = 'class';
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -156,7 +154,7 @@
                             </div>
                             <div class="min-w-0">
                                 <p class="text-xs text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider">Saldo Tersedia</p>
-                                <h3 class="text-2xl font-black text-emerald-600 dark:text-emerald-300 truncate" title="Rp {{ number_format($availableBalance ?? 0, 0, ',', '.') }}">
+                                <h3 class="text-2xl font-black text-emerald-600 dark:text-emerald-300" title="Rp {{ number_format($availableBalance ?? 0, 0, ',', '.') }}">
                                     {{ formatRupiahShort($availableBalance ?? 0) }}
                                 </h3>
                             </div>
@@ -171,11 +169,11 @@
                             </div>
                             <div class="min-w-0">
                                 <p class="text-xs text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider">Saldo Tertahan (Escrow)</p>
-                                <h3 class="text-2xl font-black text-amber-600 dark:text-amber-300 truncate" title="Rp {{ number_format($totalHeld ?? 0, 0, ',', '.') }}">
+                                <h3 class="text-2xl font-black text-amber-600 dark:text-amber-300" title="Rp {{ number_format($totalHeld ?? 0, 0, ',', '.') }}">
                                     {{ formatRupiahShort($totalHeld ?? 0) }}
                                 </h3>
                                 @if((float) ($totalPending ?? 0) > 0)
-                                    <p class="text-[10px] text-slate-400 dark:text-slate-400 mt-1 truncate" title="Rp {{ number_format($totalPending, 0, ',', '.') }}">
+                                    <p class="text-[10px] text-slate-400 dark:text-slate-400 mt-1" title="Rp {{ number_format($totalPending, 0, ',', '.') }}">
                                         + {{ formatRupiahShort($totalPending) }} menunggu pembayaran
                                     </p>
                                 @endif
@@ -191,7 +189,7 @@
                             </div>
                             <div class="min-w-0">
                                 <p class="text-xs text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider">Total Pendapatan</p>
-                                <h3 class="text-2xl font-black text-blue-600 dark:text-blue-300 truncate" title="Rp {{ number_format($totalEarned ?? 0, 0, ',', '.') }}">
+                                <h3 class="text-2xl font-black text-blue-600 dark:text-blue-300" title="Rp {{ number_format($totalEarned ?? 0, 0, ',', '.') }}">
                                     {{ formatRupiahShort($totalEarned ?? 0) }}
                                 </h3>
                             </div>
@@ -206,7 +204,7 @@
                             </div>
                             <div class="min-w-0">
                                 <p class="text-xs text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider">Direfund ke Company</p>
-                                <h3 class="text-2xl font-black text-red-600 dark:text-red-300 truncate" title="Rp {{ number_format($totalRefunded ?? 0, 0, ',', '.') }}">
+                                <h3 class="text-2xl font-black text-red-600 dark:text-red-300" title="Rp {{ number_format($totalRefunded ?? 0, 0, ',', '.') }}">
                                     {{ formatRupiahShort($totalRefunded ?? 0) }}
                                 </h3>
                             </div>
@@ -402,7 +400,7 @@
                                                 {{ formatRupiahShort($wd->amount) }}
                                             </p>
                                             @if($wd->fee > 0)
-                                                <p class="text-[10px] text-red-400 dark:text-red-400 mt-0.5">Pajak 5%: -{{ formatRupiahShort($wd->fee) }}</p>
+                                                <p class="text-[10px] text-red-400 dark:text-red-400 mt-0.5">Fee Admin: -{{ formatRupiahShort($wd->fee) }}</p>
                                                 <p class="text-[10px] font-bold text-emerald-600 dark:text-emerald-300 mt-0.5" title="Rp {{ number_format($wd->net_amount, 0, ',', '.') }}">
                                                     Diterima: {{ formatRupiahShort($wd->net_amount) }}
                                                 </p>
@@ -660,7 +658,7 @@
                         <span class="font-black text-slate-800 dark:text-white text-sm" id="summaryAmount">Rp 0</span>
                     </div>
                     <div class="flex items-center justify-between text-[11px]">
-                        <span class="text-slate-500 dark:text-slate-400">Pajak admin 5%</span>
+                        <span class="text-slate-500 dark:text-slate-400">Fee withdrawal admin ({{ rtrim(rtrim(number_format($withdrawalFeeRate, 2, '.', ''), '0'), '.') }}%)</span>
                         <span class="font-bold text-amber-600 dark:text-amber-400" id="summaryTax">-Rp 0</span>
                     </div>
                     <div class="flex items-center justify-between text-xs">
@@ -791,6 +789,9 @@
     const withdrawSubmitBtn = document.getElementById('withdrawSubmitBtn');
     const withdrawForm = document.getElementById('withdrawForm');
 
+    // Rate fee withdrawal dari Financial Settings (server-side truth).
+    window.__withdrawalFeeRate = {{ (float) ($withdrawalFeeRate ?? 5) }};
+
     let amountState = 'empty'; // empty | ok | error
 
     function updateAmountState() {
@@ -821,7 +822,7 @@
         amountHint.className = 'text-[10px] mt-2.5 ' +
             (state === 'error' ? 'text-red-500 dark:text-red-400' : 'text-slate-400 dark:text-slate-500');
 
-        const fee = value > 0 ? Math.round(value * 0.05) : 0;
+        const fee = value > 0 ? Math.round(value * (window.__withdrawalFeeRate ?? 5) / 100) : 0;
         const received = value - fee;
 
         summaryAmount.textContent = formatShortRupiahJS(value);

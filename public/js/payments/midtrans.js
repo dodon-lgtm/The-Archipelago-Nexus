@@ -28,9 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!btn) {
             console.error('[Midtrans] Button #payMidtransBtn not found');
             return;
-        }
-
-        const workspaceId = btn.getAttribute('data-workspace-id');
+        }        const workspaceId = btn.getAttribute('data-workspace-id');
         const amount = btn.getAttribute('data-amount');
 
         if (!workspaceId || !amount) {
@@ -75,15 +73,48 @@ document.addEventListener('DOMContentLoaded', function() {
                 window.snap.pay(data.snap_token, {
                     onSuccess: function(result) {
                         // UX only — status `paid` TIDAK diubah di frontend.
-                        // Webhook akan mengupdate status ke 'paid' dan memicu escrow.
-                        alert('Pembayaran berhasil dikirim. Sistem sedang memverifikasi status pembayaran.');
-                        window.location.href = '/company/workspaces/' + workspaceId + '/payment/gateway';
+                        // Backend yang memutuskan: konfirmasi (temporary flow)
+                        // atau webhook Midtrans sebagai sumber utama.
+                        btn.disabled = true;
+                        btn.setAttribute('data-original-text', btn.innerHTML);
+                        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-xs"></i> <span>Mengonfirmasi pembayaran...</span>';
+
+                        fetch('/company/workspaces/' + workspaceId + '/payment/confirm', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                                'Accept': 'application/json'
+                            }
+                        })
+                            .then(async function (response) {
+                                const confirmData = await response.json().catch(function () { return {}; });
+                                if (!response.ok || !confirmData.success) {
+                                    throw new Error(confirmData.message || ('HTTP ' + response.status));
+                                }
+                                showToast('Pembayaran berhasil dikonfirmasi.', 'success');
+                                window.location.href = confirmData.redirect_url
+                                    || ('/company/workspaces/' + workspaceId);
+                            })
+                            .catch(function (error) {
+                                // Konfirmasi gagal → kembali ke gateway; webhook tetap
+                                // bisa mengupdate status belakangan.
+                                btn.disabled = false;
+                                const originalText = btn.getAttribute('data-original-text');
+                                if (originalText) btn.innerHTML = originalText;
+                                showToast(
+                                    error.message ||
+                                    'Pembayaran tercatat, namun konfirmasi otomatis gagal. Status akan diperbarui setelah verifikasi.',
+                                    'warning'
+                                );
+                                console.error('[Midtrans Confirm Error]', error);
+                            });
                     },
                     onPending: function(result) {
-                        alert('Pembayaran tertunda. Silakan selesaikan pembayaran sesuai instruksi.');
+                        showToast('Pembayaran tertunda. Silakan selesaikan pembayaran sesuai instruksi.', 'warning');
                     },
                     onError: function(result) {
-                        alert('Pembayaran gagal atau terjadi kesalahan. Silakan coba lagi.');
+                        showToast('Pembayaran gagal atau terjadi kesalahan. Silakan coba lagi.', 'error');
                     },
                     onClose: function() {
                         console.log('Pelanggan menutup popup Snap tanpa menyelesaikan pembayaran.');
@@ -121,7 +152,14 @@ document.addEventListener('DOMContentLoaded', function() {
             errorEl.textContent = message || 'Terjadi kesalahan saat menghubungi layanan pembayaran Midtrans. Silakan coba lagi.';
             errorEl.classList.remove('hidden');
         } else {
-            alert(message || 'Terjadi kesalahan saat menghubungi layanan pembayaran Midtrans. Silakan coba lagi.');
+            showToast(message || 'Terjadi kesalahan saat menghubungi layanan pembayaran Midtrans. Silakan coba lagi.', 'error');
         }
+    }
+
+    // ── Auto-bind tombol bayar (paritas dengan resources/js versi) ──
+    const payBtn = document.getElementById('payMidtransBtn');
+    if (payBtn && !payBtn.dataset.midtransBound) {
+        payBtn.dataset.midtransBound = '1';
+        payBtn.addEventListener('click', window.payWithMidtrans);
     }
 });

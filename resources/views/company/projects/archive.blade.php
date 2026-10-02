@@ -5,6 +5,7 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @include('partials.theme-boot')
     <title>Arsip Proyek | ApexForge Labs</title>
 
     <link
@@ -18,13 +19,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <script>
-        // Inisialisasi tema sebelum halaman dirender untuk mencegah efek flicker
-        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-
         tailwind.config = {
             darkMode: 'class',
             theme: {
@@ -520,15 +514,7 @@
                         <div
                             class="flex flex-wrap items-center gap-3 shrink-0">
 
-                            {{-- TOMBOL TOGGLE DARK MODE --}}
-                            <button
-                                type="button"
-                                onclick="toggleDarkMode()"
-                                class="inline-flex items-center justify-center w-11 h-11 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-2xl text-white transition ring-1 ring-white/20 shadow-lg"
-                                title="Ganti Mode Tampilan">
-                                <i class="fa-solid fa-moon text-sm dark:hidden"></i>
-                                <i class="fa-solid fa-sun text-sm hidden dark:inline text-amber-300"></i>
-                            </button>
+                            
 
 
                             <a
@@ -1142,7 +1128,6 @@
              FOOTER
         ================================================== --}}
 
-        @include('navbar.footer')
 
 
     </div>

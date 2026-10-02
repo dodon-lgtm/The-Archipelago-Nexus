@@ -3,12 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @include('partials.theme-boot')
 
-    <script>
-        if (localStorage.getItem('theme') === 'dark') {
-            document.documentElement.classList.add('dark');
-        }
-    </script>
+    
 
     <title>Dashboard Perusahaan | Professional Workspace</title>
 
@@ -220,9 +217,9 @@
         @include('navbar.nav')
 
         {{-- KONTEN UTAMA --}}
-        <main class="flex-1 w-full overflow-y-auto p-4 sm:p-6 lg:p-8">
+        <main class="flex-1 w-full overflow-y-auto p-3 sm:p-6 lg:p-8">
 
-            <div class="w-full mx-auto space-y-6">
+            <div class="w-full mx-auto space-y-4 md:space-y-6">
 
                 {{-- NOTIFIKASI SESSION SUCCESS --}}
                 @if(session('success'))
@@ -234,8 +231,8 @@
                     </div>
                 @endif
 
-                {{-- WELCOME / HERO BANNER --}}
-                <div class="reveal reveal-1 relative overflow-hidden rounded-3xl shadow-xl shadow-blue-600/10 border border-blue-500/20 w-full">
+                {{-- WELCOME / HERO BANNER - DESKTOP (md+) 100% ORIGINAL --}}
+                <div class="hidden md:block reveal reveal-1 relative overflow-hidden rounded-3xl shadow-xl shadow-blue-600/10 border border-blue-500/20 w-full">
                     <div class="absolute inset-0 animate-mesh bg-gradient-to-r from-blue-700 via-brand to-blue-600"></div>
                     
                     {{-- Ambient Decorative Blobs --}}
@@ -267,8 +264,26 @@
                     </div>
                 </div>
 
-                {{-- STATISTIK GRID --}}
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 w-full">
+                {{-- WELCOME / HERO BANNER - MOBILE MINIMALIS ( < md ) --}}
+                <div class="block md:hidden relative overflow-hidden rounded-2xl shadow-md border border-blue-500/20 w-full">
+                    <div class="absolute inset-0 bg-gradient-to-r from-blue-700 via-brand to-blue-600"></div>
+                    <div class="relative p-4 flex flex-col gap-3">
+                        <h1 class="text-xl font-extrabold text-white tracking-tight leading-tight">
+                            Halo, Rekan! 👋
+                        </h1>
+                        <p class="text-blue-100 text-xs leading-relaxed">
+                            Pantau proyek & kelola penawaran.
+                        </p>
+                        <a href="{{ route('company.projects.create') }}"
+                           class="inline-flex items-center justify-center gap-2 bg-white text-brand px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm active:scale-[0.98] transition-all w-full">
+                            <i class="fa-solid fa-plus text-[10px]"></i>
+                            <span>Buat Proyek Baru</span>
+                        </a>
+                    </div>
+                </div>
+
+                {{-- STATISTIK GRID - DESKTOP (md+) 100% ORIGINAL --}}
+                <div class="hidden md:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 w-full">
 
                     {{-- TOTAL PROYEK --}}
                     <div class="reveal reveal-2 stat-card bg-white dark:bg-slate-900 border border-blue-100/80 dark:border-slate-800 rounded-2xl p-5 sm:p-6 shadow-sm relative overflow-hidden transition-colors duration-300">
@@ -329,14 +344,14 @@
                     @endphp
 
                     <div class="reveal reveal-5 stat-card bg-white dark:bg-slate-900 border border-blue-100/80 dark:border-slate-800 rounded-2xl p-5 sm:p-6 shadow-sm relative overflow-hidden transition-colors duration-300">
-                        <div class="flex items-center justify-between">
-                            <div class="space-y-1 min-w-0">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="space-y-1 min-w-0 flex-1">
                                 <p class="text-xs font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider">Total Pengeluaran</p>
-                                <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight mt-1 whitespace-nowrap truncate">
+                                <h3 class="text-lg sm:text-xl lg:text-[1.35rem] font-extrabold text-slate-900 dark:text-white tracking-tight mt-1 leading-tight break-words whitespace-normal" title="{{ $formattedSpending }}">
                                     {{ $formattedSpending }}
                                 </h3>
                             </div>
-                            <div class="stat-icon w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-rose-50 dark:bg-rose-900/40 text-rose-600 dark:text-rose-300 flex items-center justify-center text-xl shadow-inner border border-rose-100/50 dark:border-rose-900 shrink-0 ml-2">
+                            <div class="stat-icon w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-rose-50 dark:bg-rose-900/40 text-rose-600 dark:text-rose-300 flex items-center justify-center text-xl shadow-inner border border-rose-100/50 dark:border-rose-900 shrink-0">
                                 <i class="fa-solid fa-wallet"></i>
                             </div>
                         </div>
@@ -347,8 +362,56 @@
 
                 </div>
 
-                {{-- GRID UTAMA: PROYEK & PROPOSAL --}}
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
+                {{-- STATISTIK GRID - MOBILE MINIMALIS (< md) --}}
+                <div class="grid md:hidden grid-cols-1 gap-3 w-full">
+                    <div class="bg-white dark:bg-slate-900 border border-blue-100/80 dark:border-slate-800 rounded-xl p-4 shadow-sm flex items-center justify-between">
+                        <div class="space-y-0.5">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Proyek</p>
+                            <h3 class="text-xl font-extrabold text-slate-900 dark:text-white" data-count="{{ $totalProjects }}">{{ $totalProjects }}</h3>
+                        </div>
+                        <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-slate-800 text-brand flex items-center justify-center text-base border border-blue-100/50">
+                            <i class="fa-regular fa-folder-open"></i>
+                        </div>
+                    </div>
+                    <div class="bg-white dark:bg-slate-900 border border-blue-100/80 dark:border-slate-800 rounded-xl p-4 shadow-sm flex items-center justify-between">
+                        <div class="space-y-0.5">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Proyek Aktif</p>
+                            <h3 class="text-xl font-extrabold text-slate-900 dark:text-white" data-count="{{ $activeProjects }}">{{ $activeProjects }}</h3>
+                        </div>
+                        <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-900/40 text-emerald-600 flex items-center justify-center text-base border border-emerald-100/50">
+                            <i class="fa-solid fa-briefcase"></i>
+                        </div>
+                    </div>
+                    <div class="bg-white dark:bg-slate-900 border border-blue-100/80 dark:border-slate-800 rounded-xl p-4 shadow-sm flex items-center justify-between">
+                        <div class="space-y-0.5">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Freelancer Aktif</p>
+                            <h3 class="text-xl font-extrabold text-slate-900 dark:text-white" data-count="{{ $activeFreelancers }}">{{ $activeFreelancers }}</h3>
+                        </div>
+                        <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-900/40 text-amber-600 flex items-center justify-center text-base border border-amber-100/50">
+                            <i class="fa-solid fa-user-group"></i>
+                        </div>
+                    </div>
+                    @php
+                        $valM = (float) ($totalSpending ?? 0);
+                        if ($valM >= 1_000_000_000) {
+                            $formattedSpendingM = 'Rp ' . (rtrim(rtrim(number_format($valM / 1_000_000_000, 2, '.', ''), '0'), '.') . 'M');
+                        } else {
+                            $formattedSpendingM = 'Rp ' . number_format($valM, 0, ',', '.');
+                        }
+                    @endphp
+                    <div class="bg-white dark:bg-slate-900 border border-blue-100/80 dark:border-slate-800 rounded-xl p-4 shadow-sm flex items-center justify-between">
+                        <div class="space-y-0.5 min-w-0 flex-1 pr-3">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Pengeluaran</p>
+                            <h3 class="text-base font-extrabold text-slate-900 dark:text-white truncate" title="{{ $formattedSpendingM }}">{{ $formattedSpendingM }}</h3>
+                        </div>
+                        <div class="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-900/40 text-rose-600 flex items-center justify-center text-base border border-rose-100/50 shrink-0">
+                            <i class="fa-solid fa-wallet"></i>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- GRID UTAMA: PROYEK & PROPOSAL - DESKTOP (md+) 100% ORIGINAL --}}
+                <div class="hidden md:grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
 
                     {{-- KARTU PROYEK ANDA --}}
                     <div class="reveal reveal-6 bg-white dark:bg-slate-900 border border-blue-100/80 dark:border-slate-800 rounded-3xl p-5 sm:p-6 lg:p-7 shadow-sm flex flex-col justify-between w-full transition-colors duration-300">
@@ -473,6 +536,61 @@
                         </div>
                     </div>
 
+                </div>
+
+                {{-- GRID UTAMA: MOBILE MINIMALIS (< md) --}}
+                <div class="grid md:hidden grid-cols-1 gap-3 w-full">
+                    {{-- KARTU PROYEK ANDA - MOBILE --}}
+                    <div class="bg-white dark:bg-slate-900 border border-blue-100/80 dark:border-slate-800 rounded-xl p-4 shadow-sm">
+                        <div class="flex items-center justify-between mb-3">
+                            <h2 class="font-bold text-slate-900 dark:text-white text-sm">Proyek Anda</h2>
+                            <a href="{{ route('company.projects.index') }}" class="text-[11px] text-brand font-bold flex items-center gap-1">Lihat Semua <i class="fa-solid fa-arrow-right text-[9px]"></i></a>
+                        </div>
+                        @if($recentProjects->count() > 0)
+                            <div class="space-y-2">
+                                @foreach($recentProjects as $project)
+                                <a href="{{ route('company.projects.show', $project) }}" class="flex items-center justify-between p-3 bg-[#f6f9ff]/70 dark:bg-slate-950/70 rounded-xl border border-blue-50 dark:border-slate-800">
+                                    <div class="min-w-0 flex-1 pr-2">
+                                        <h4 class="text-xs font-bold text-slate-800 dark:text-white truncate">{{ $project->project_name }}</h4>
+                                        <p class="text-[11px] text-slate-400 truncate mt-0.5">@if($project->budget) Rp {{ number_format($project->budget, 0, ',', '.') }} @endif @if($project->deadline) • {{ \Carbon\Carbon::parse($project->deadline)->format('d M y') }} @endif</p>
+                                    </div>
+                                    @php $projStatus = $project->status ?? 'open'; $statusLabel = \App\Models\Project::statusLabel($projStatus); @endphp
+                                    <span class="text-[10px] font-bold px-2 py-1 rounded-full shrink-0 {{ $projStatus==='open' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200/60' : ($projStatus==='closed' ? 'bg-rose-50 text-rose-600 border border-rose-200/60' : 'bg-slate-100 text-slate-600 border border-slate-200') }}">{{ $statusLabel }}</span>
+                                </a>
+                                @endforeach
+                            </div>
+                        @else
+                            <div class="py-6 text-center">
+                                <p class="text-xs text-slate-400">Belum ada proyek</p>
+                                <a href="{{ route('company.projects.create') }}" class="inline-flex items-center gap-1 mt-2 px-3 py-1.5 bg-brand text-white rounded-lg text-[11px] font-bold">Buat Proyek</a>
+                            </div>
+                        @endif
+                    </div>
+
+                    {{-- KARTU PROPOSAL MASUK - MOBILE --}}
+                    <div class="bg-white dark:bg-slate-900 border border-blue-100/80 dark:border-slate-800 rounded-xl p-4 shadow-sm">
+                        <div class="flex items-center justify-between mb-3">
+                            <h2 class="font-bold text-slate-900 dark:text-white text-sm">Proposal Masuk</h2>
+                            <a href="{{ route('company.projects.index') }}" class="text-[11px] text-brand font-bold flex items-center gap-1">Kelola <i class="fa-solid fa-arrow-right text-[9px]"></i></a>
+                        </div>
+                        @if($incomingProposals->count() > 0)
+                            <div class="space-y-2 max-h-[320px] overflow-y-auto pr-1">
+                                @foreach($incomingProposals->take(5) as $proposal)
+                                    <div class="flex items-center justify-between p-3 bg-[#f6f9ff]/70 dark:bg-slate-950/70 rounded-xl border border-blue-50 dark:border-slate-800">
+                                        <div class="min-w-0 flex-1 pr-2">
+                                            <h4 class="text-xs font-bold text-slate-800 dark:text-white truncate">{{ $proposal->freelancer->name ?? 'Freelancer' }}</h4>
+                                            <p class="text-[11px] text-slate-400 truncate mt-0.5">{{ $proposal->project->project_name ?? '-' }} • Rp {{ number_format($proposal->harga_penawaran, 0, ',', '.') }}</p>
+                                        </div>
+                                        <span class="text-[10px] font-bold px-2 py-1 rounded-full shrink-0 {{ $proposal->status=='Menunggu' ? 'bg-amber-50 text-amber-700 border border-amber-200/60' : ($proposal->status=='Diterima' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200/60' : 'bg-rose-50 text-rose-600 border border-rose-200/60') }}">{{ $proposal->status }}</span>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @else
+                            <div class="py-6 text-center">
+                                <p class="text-xs text-slate-400">Belum ada proposal</p>
+                            </div>
+                        @endif
+                    </div>
                 </div>
 
             </div>

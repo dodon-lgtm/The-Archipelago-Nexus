@@ -3,17 +3,15 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script>
-        if (localStorage.getItem('theme') === 'dark') {
-            document.documentElement.classList.add('dark');
-        }
-    </script>
+    @include('partials.theme-boot')
+    
     <title>Edit Proyek - ApexForge Labs</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = tailwind.config || {};
+    tailwind.config.darkMode = 'class';
         tailwind.config.darkMode = 'class';
     </script>
 
@@ -331,7 +329,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                 {{-- Deadline --}}
                                 <div>
                                     <label class="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2 dark:text-blue-400">Deadline <span class="text-blue-500">*</span></label>
-                                    <input type="date" name="deadline" value="{{ old('deadline', $project->deadline ? \Carbon\Carbon::parse($project->deadline)->format('Y-m-d') : '') }}"
+                                    <input type="date" name="deadline" value="{{ old('deadline', $project->deadline ? \Carbon\Carbon::parse($project->deadline)->format('Y-m-d') : '') }}" min="{{ date('Y-m-d') }}"
                                         {{ $isLocked('deadline') ? 'disabled' : '' }}
                                         class="w-full px-5 py-3.5 bg-blue-50/50 border @error('deadline') border-blue-500 ring-2 ring-blue-500/20 @else border-blue-100 @enderror rounded-xl text-sm font-bold text-blue-950 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 focus:bg-white transition-all cursor-pointer dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:focus:bg-slate-800 {{ $isLocked('deadline') ? 'opacity-60 cursor-not-allowed' : '' }}">
                                     @error('deadline')
@@ -421,6 +419,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                                             <input type="radio" name="status" value="{{ $value }}"
                                                 {{ $isSelected ? 'checked' : '' }}
                                                 {{ $isLocked('status') ? 'disabled' : '' }}
+                                                onclick="return confirm('Apakah Anda yakin ingin mengubah status menjadi {{ $label }}? Proyek akan dipindahkan ke halaman yang sesuai.')"
                                                 class="w-4 h-4 accent-blue-600">
                                             <span class="text-sm font-bold">{{ $label }}</span>
                                         </label>

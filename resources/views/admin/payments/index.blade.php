@@ -11,12 +11,12 @@
 {{-- ============================================================= --}}
 {{-- HEADER DAFTAR PEMBAYARAN --}}
 {{-- ============================================================= --}}
-<div class="px-6 py-5 border-b border-blue-50 flex items-center justify-between print:border-b-2 print:border-slate-800">
+<div class="px-6 py-5 border-b border-blue-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 print:border-b-2 print:border-slate-800">
 
     {{-- BAGIAN KIRI --}}
     <div class="flex items-center gap-3">
 
-        <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center print:hidden">
+        <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 print:hidden">
             <i class="fa-solid fa-credit-card"></i>
         </div>
 
@@ -36,7 +36,7 @@
     {{-- ========================================================= --}}
     {{-- BAGIAN KANAN HEADER --}}
     {{-- ========================================================= --}}
-    <div class="flex items-center gap-3 print:hidden">
+    <div class="flex flex-wrap items-center gap-3 print:hidden">
 
         {{-- ===================================================== --}}
         {{-- FILTER STATUS --}}
@@ -51,7 +51,7 @@
                 <select
                     name="status"
                     onchange="this.form.submit()"
-                    class="appearance-none bg-white border border-slate-200 text-slate-700 text-xs font-semibold rounded-xl px-4 py-2 pr-9 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 cursor-pointer"
+                    class="appearance-none bg-[#f6f9ff] border border-blue-100 text-slate-700 text-xs font-semibold rounded-xl px-4 py-2 pr-9 outline-none transition focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400 cursor-pointer"
                 >
 
                     <option value="">
@@ -216,6 +216,60 @@
 
                 </a>
 
+
+                {{-- PEMISAH --}}
+                <div class="my-2 border-t border-slate-100"></div>
+
+
+                {{-- CETAK PER AKUN --}}
+                <div class="px-4 py-2">
+
+                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                        Cetak Per Akun
+                    </p>
+
+                    <form
+                        method="GET"
+                        action="{{ route('admin.payments.pdf.all') }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="flex flex-col gap-2"
+                    >
+
+                        <select
+                            name="company_id"
+                            class="w-full appearance-none bg-[#f6f9ff] border border-blue-100 text-slate-700 text-[11px] font-semibold rounded-lg px-2.5 py-1.5 outline-none cursor-pointer"
+                        >
+                            <option value="">— Pilih Perusahaan —</option>
+                            @foreach($companyOptions as $company)
+                                <option value="{{ $company->id }}">
+                                    {{ $company->name ?: $company->email }}
+                                </option>
+                            @endforeach
+                        </select>
+
+                        <select
+                            name="status"
+                            class="w-full appearance-none bg-[#f6f9ff] border border-blue-100 text-slate-700 text-[11px] font-semibold rounded-lg px-2.5 py-1.5 outline-none cursor-pointer"
+                        >
+                            <option value="">Semua Status</option>
+                            <option value="paid">Dibayar / Lunas</option>
+                            <option value="pending">Pending</option>
+                            <option value="rejected">Ditolak</option>
+                        </select>
+
+                        <button
+                            type="submit"
+                            class="w-full inline-flex items-center justify-center gap-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-semibold px-2.5 py-1.5 transition"
+                        >
+                            <i class="fa-solid fa-print text-[10px]"></i>
+                            Cetak
+                        </button>
+
+                    </form>
+
+                </div>
+
             </div>
 
         </details>
@@ -225,9 +279,10 @@
         {{-- TOTAL --}}
         {{-- ===================================================== --}}
         <span
-            class="text-xs px-3 py-2 rounded-full
-                   bg-blue-50 text-slate-600 font-semibold"
+            class="inline-flex items-center gap-1.5 text-xs px-3 py-2 rounded-full
+                   bg-blue-50 border border-blue-100 text-blue-600 font-semibold"
         >
+            <i class="fa-solid fa-layer-group text-[10px]"></i>
             Total: {{ $payments->total() }}
         </span>
 
@@ -237,112 +292,61 @@
 
 
 {{-- ============================================================= --}}
-{{-- ALERT SUCCESS --}}
-{{-- ============================================================= --}}
-@if(session('success'))
-
-    <div
-        class="mx-6 mt-4 flex items-center gap-3
-               px-4 py-3
-               bg-emerald-50
-               border border-emerald-200
-               text-emerald-700
-               rounded-xl
-               text-sm
-               font-medium
-               print:hidden"
-    >
-
-        <i class="fa-solid fa-check-circle"></i>
-
-        {{ session('success') }}
-
-    </div>
-
-@endif
-
-
-{{-- ============================================================= --}}
-{{-- ALERT ERROR --}}
-{{-- ============================================================= --}}
-@if(session('error'))
-
-    <div
-        class="mx-6 mt-4 flex items-center gap-3
-               px-4 py-3
-               bg-red-50
-               border border-red-200
-               text-red-700
-               rounded-xl
-               text-sm
-               font-medium
-               print:hidden"
-    >
-
-        <i class="fa-solid fa-xmark-circle"></i>
-
-        {{ session('error') }}
-
-    </div>
-
-@endif
-
-
-{{-- ============================================================= --}}
 {{-- TABEL PEMBAYARAN --}}
 {{-- ============================================================= --}}
 <div class="p-6">
 
     @if($payments->count() > 0)
 
-        <div class="overflow-x-auto rounded-b-2xl">
+        <div class="overflow-x-auto rounded-b-2xl -mx-2 px-2 sm:mx-0 sm:px-0">
 
-            <table class="w-full text-sm print:text-xs">
+            <table class="w-full text-sm min-w-[820px] print:text-xs print:min-w-0">
 
                 {{-- HEADER TABLE --}}
                 <thead>
 
                     <tr
                         class="text-left
-                               text-xs
-                               font-semibold
+                               text-[11px]
+                               font-bold
                                text-slate-500
                                uppercase
                                tracking-wider
+                               bg-[#f6f9ff]
                                border-b
-                               border-blue-50
-                               print:border-slate-300"
+                               border-blue-100
+                               print:border-slate-300 print:bg-white"
                     >
 
-                        <th class="pb-3 pr-4">
+                        <th class="px-4 py-3 rounded-l-lg">
                             Invoice
                         </th>
 
-                        <th class="pb-3 pr-4">
+                        <th class="px-4 py-3">
                             Perusahaan
                         </th>
 
-                        <th class="pb-3 pr-4">
+                        <th class="px-4 py-3">
                             Freelancer
                         </th>
 
-                        <th class="pb-3 pr-4">
+                        <th class="px-4 py-3">
                             Project
                         </th>
 
-                        <th class="pb-3 pr-4">
+                        <th class="px-4 py-3 text-right">
                             Nominal
                         </th>
 
-                        <th class="pb-3 pr-4">
+                        <th class="px-4 py-3 text-center">
                             Status
                         </th>
 
-                        <th class="pb-3 pr-4">
+                        <th class="px-4 py-3">
                             Tanggal
                         </th>
 
-                        <th class="pb-3 print:hidden">
+                        <th class="px-4 py-3 text-right rounded-r-lg print:hidden">
                             Aksi
                         </th>
 
@@ -358,14 +362,14 @@
 
                         <tr
                             class="border-b
-                                   border-slate-50
-                                   hover:bg-[#f6f9ff]/50
-                                   transition
+                                   border-slate-100
+                                   hover:bg-[#f6f9ff]/60
+                                   transition-colors
                                    print:border-slate-200"
                         >
 
                             {{-- INVOICE --}}
-                            <td class="py-3 pr-4">
+                            <td class="py-3.5 px-4 whitespace-nowrap">
 
                                 <span class="font-bold text-xs text-slate-700">
                                     {{ $payment->invoice_number }}
@@ -375,39 +379,36 @@
 
 
                             {{-- PERUSAHAAN --}}
-                            <td class="py-3 pr-4">
-
-                                <span class="text-xs text-slate-600">
-                                    {{ $payment->company->name ?? '-' }}
-                                </span>
-
+                            <td class="py-3.5 px-4">
+                                <x-admin.user-cell :user="$payment->company" :name="$payment->company->name ?? '-'" />
                             </td>
 
 
                             {{-- FREELANCER --}}
-                            <td class="py-3 pr-4">
-
-                                <span class="text-xs text-slate-600">
-                                    {{ $payment->freelancer->name ?? '-' }}
-                                </span>
-
+                            <td class="py-3.5 px-4">
+                                <x-admin.user-cell :user="$payment->freelancer" :name="$payment->freelancer->name ?? '-'" avatarClass="bg-gradient-to-br from-emerald-100 to-emerald-50 ring-1 ring-emerald-100 text-emerald-600" />
                             </td>
 
 
                             {{-- PROJECT --}}
-                            <td class="py-3 pr-4">
-
-                                <span class="text-xs text-slate-600">
-                                                                        {{ $payment->workspace?->project?->project_name ?? ($payment->isQuotaPayment() ? 'Kuota Proyek' : '-') }}
-                                </span>
-
+                            <td class="py-3.5 px-4 max-w-[180px]">
+                                @if ($payment->workspace?->project)
+                                    <a href="{{ route('admin.projects.show', $payment->workspace->project) }}"
+                                        class="text-xs text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 truncate inline-block max-w-full transition">
+                                        {{ $payment->workspace->project->project_name }}
+                                    </a>
+                                @else
+                                    <span class="text-xs text-slate-600">
+                                        {{ $payment->isQuotaPayment() ? 'Kuota Proyek' : '-' }}
+                                    </span>
+                                @endif
                             </td>
 
 
                             {{-- NOMINAL --}}
-                            <td class="py-3 pr-4">
+                            <td class="py-3.5 px-4 text-right whitespace-nowrap">
 
-                                <span class="text-xs font-semibold text-slate-700">
+                                <span class="text-xs font-bold text-slate-700">
                                     Rp {{ number_format($payment->amount, 0, ',', '.') }}
                                 </span>
 
@@ -415,7 +416,7 @@
 
 
                             {{-- STATUS --}}
-                            <td class="py-3 pr-4">
+                            <td class="py-3.5 px-4 text-center">
 
                                 <span
                                     class="text-[10px]
@@ -424,6 +425,8 @@
                                            py-1
                                            rounded-full
                                            border
+                                           inline-block
+                                           whitespace-nowrap
                                            {{ $payment->status_color }}"
                                 >
                                     {{ $payment->status_label }}
@@ -433,7 +436,7 @@
 
 
                             {{-- TANGGAL --}}
-                            <td class="py-3 pr-4">
+                            <td class="py-3.5 px-4 whitespace-nowrap">
 
                                 <span
                                     class="text-xs
@@ -448,13 +451,14 @@
 
                             {{-- AKSI --}}
                             <td
-                                class="px-4 py-3
+                                class="px-4 py-3.5
                                        whitespace-nowrap
                                        text-sm
-                                       font-medium"
+                                       font-medium
+                                       text-right"
                             >
 
-                                <div class="flex items-center gap-2">
+                                <div class="inline-flex items-center gap-2">
 
                                     {{-- LIHAT --}}
                                     <a
@@ -464,15 +468,16 @@
                                                gap-1.5
                                                px-3
                                                py-1.5
-                                               bg-gray-100
-                                               text-gray-700
+                                               bg-slate-100
+                                               text-slate-700
                                                rounded-lg
-                                               hover:bg-gray-200
+                                               hover:bg-slate-200
+                                               active:bg-slate-300
                                                transition
                                                text-xs
                                                font-semibold"
                                     >
-                                        👁 Lihat
+                                        <i class="fa-solid fa-eye"></i> Lihat
                                     </a>
 
 
@@ -497,7 +502,7 @@
                                                    text-xs
                                                    font-semibold"
                                         >
-                                            🖨 Cetak
+                                            <i class="fa-solid fa-print"></i> Cetak
                                         </a>
 
                                     @endif
@@ -518,10 +523,10 @@
 
 
         {{-- PAGINATION --}}
-        @if(method_exists($payments, 'links'))
+        @if(method_exists($payments, 'links') && $payments->total() > 0)
 
             <div class="mt-6 print:hidden">
-                {{ $payments->links() }}
+                <x-admin.pagination :paginator="$payments" />
             </div>
 
         @endif
@@ -537,6 +542,7 @@
                        mx-auto
                        mb-4
                        bg-blue-50
+                       border border-blue-100
                        rounded-2xl
                        flex
                        items-center
@@ -546,7 +552,7 @@
                 <i
                     class="fa-solid fa-credit-card
                            text-2xl
-                           text-slate-400"
+                           text-blue-300"
                 ></i>
 
             </div>

@@ -66,6 +66,7 @@ class Report extends Model
     public const CATEGORY_SPAM                 = 'spam';
     public const CATEGORY_BUG_SISTEM           = 'bug-sistem';
     public const CATEGORY_LAINNYA              = 'lainnya';
+    public const CATEGORY_KETERLAMBATAN        = 'keterlambatan';
 
     public const CATEGORIES = [
         self::CATEGORY_UMUM,
@@ -78,6 +79,7 @@ class Report extends Model
         self::CATEGORY_SPAM,
         self::CATEGORY_BUG_SISTEM,
         self::CATEGORY_LAINNYA,
+        self::CATEGORY_KETERLAMBATAN,
     ];
 
     // ─── KATEGORI PER TARGET (V3) ────────────────────────────────
@@ -109,6 +111,7 @@ class Report extends Model
         self::CATEGORY_PENIPUAN,
         self::CATEGORY_KONTEN_TIDAK_PANTAS,
         self::CATEGORY_LAINNYA,
+        self::CATEGORY_KETERLAMBATAN,
     ];
 
     public const CATEGORIES_WEBSITE = [
@@ -217,6 +220,7 @@ class Report extends Model
             self::CATEGORY_SPAM                     => 'Spam',
             self::CATEGORY_BUG_SISTEM               => 'Bug Sistem',
             self::CATEGORY_LAINNYA                  => 'Lainnya',
+            self::CATEGORY_KETERLAMBATAN            => 'Keterlambatan',
             default                                 => 'Umum',
         };
     }

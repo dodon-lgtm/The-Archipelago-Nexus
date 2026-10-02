@@ -230,9 +230,12 @@ class ProjectSubmissionController extends Controller
             }
 
             // Buat Progress History penyelesaian (100%)
+            // stage_order WAJIB diisi tahap terakhir agar halaman workspace
+            // menampilkan progres 100% di tahap akhir (bukan kembali ke tahap 1).
             ProgressHistory::create([
                 'workspace_id' => $workspace->id,
                 'stage' => 'Selesai',
+                'stage_order' => $workspace->totalStages(),
                 'progress' => 100,
                 'description' => 'Hasil pekerjaan telah disetujui oleh perusahaan. Proyek dinyatakan selesai.',
                 'updated_by' => Auth::id(),

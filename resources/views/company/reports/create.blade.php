@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @include('partials.theme-boot')
     <title>Buat Laporan - ApexForge Labs</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -30,14 +31,7 @@
             }
         }
     </script>
-    <script>
-        // Synchronize dark mode theme preference
-        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    </script>
+    
     <style>
         :root {
             --af-primary: #2563eb;
@@ -304,6 +298,19 @@
                             </div>
                         @endif
 
+                        {{-- Banner: Alur Laporkan Keterlambatan --}}
+                        @if ($presetCategory === \App\Models\Report::CATEGORY_KETERLAMBATAN)
+                            <div class="flex items-start gap-3 bg-red-500/10 dark:bg-red-500/15 border border-red-500/30 rounded-2xl p-4 text-sm text-red-700 dark:text-red-300">
+                                <div class="w-7 h-7 rounded-lg bg-red-500/20 text-red-600 dark:text-red-400 flex items-center justify-center shrink-0">
+                                    <i class="fa-solid fa-clock text-sm"></i>
+                                </div>
+                                <p class="text-xs sm:text-sm leading-relaxed">
+                                    Anda melaporkan <strong>keterlambatan penyelesaian proyek</strong>. Laporan ini akan ditinjau oleh
+                                    Admin dan freelancer akan mendapat notifikasi bahwa keterlambatan telah dilaporkan.
+                                </p>
+                            </div>
+                        @endif
+
                         {{-- Category --}}
                         @php
                             // Frontend hanya mengikuti target. Backend tetap source of truth.
@@ -320,7 +327,7 @@
                                 <select name="category"
                                     class="w-full appearance-none rounded-xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/80 dark:bg-slate-800/60 dark:text-slate-100 px-4 py-3 text-sm focus:border-brand dark:focus:border-blue-500 focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-brand/10 dark:focus:ring-blue-500/20 outline-none pr-10 cursor-pointer @error('category') border-rose-400 dark:border-rose-500/80 @enderror">
                                     @foreach($targetCategories as $cat)
-                                        <option value="{{ $cat }}" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100" @selected(old('category') == $cat)>
+                                        <option value="{{ $cat }}" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100" @selected(old('category', $presetCategory ?? null) == $cat)>
                                             {{ \App\Models\Report::categoryLabel($cat) }}
                                         </option>
                                     @endforeach
@@ -337,7 +344,7 @@
                             <label class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2 block">
                                 Subjek Laporan <span class="text-rose-500">*</span>
                             </label>
-                            <input type="text" name="subject" value="{{ old('subject') }}"
+                            <input type="text" name="subject" value="{{ old('subject', $presetSubject ?? '') }}"
                                 class="w-full rounded-xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/80 dark:bg-slate-800/60 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 px-4 py-3 text-sm focus:border-brand dark:focus:border-blue-500 focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-brand/10 dark:focus:ring-blue-500/20 outline-none @error('subject') border-rose-400 dark:border-rose-500/80 @enderror"
                                 placeholder="Contoh: Freelancer tidak profesional, Proyek tidak sesuai, dll.">
                             @error('subject') <p class="text-xs text-rose-500 dark:text-rose-400 mt-1.5 font-medium">{{ $message }}</p> @enderror

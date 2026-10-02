@@ -12,10 +12,11 @@ return new class extends Migration
    public function up(): void
 {
     Schema::table('projects', function (Blueprint $table) {
-        $table->string('archive_status')->default('active')->after('status');
+        if (!Schema::hasColumn('projects', 'archive_status')) {
+            $table->string('archive_status')->default('active')->after('status');
+        }
     });
 }
-
 public function down(): void
 {
     

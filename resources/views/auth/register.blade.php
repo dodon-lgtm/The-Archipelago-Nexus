@@ -254,7 +254,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
             <form method="POST" action="{{ route('register') }}" class="space-y-3.5 my-auto py-4 relative z-10">
                 @csrf
 
-                <input type="hidden" name="is_company" id="is_company_input" value="{{ old('is_company', 0) }}">
+                <input type="hidden" name="is_company" id="is_company_input" value="{{ old('is_company', request()->query('is_company', 0)) }}">
 
                 @if(request()->filled('redirect'))
                     <input
@@ -272,10 +272,10 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
 
                 <!-- Role Switcher Freelancer / Perusahaan -->
                 <div class="flex gap-1 p-1 bg-slate-800/80 border border-slate-700/60 rounded-xl">
-                    <button type="button" class="role-btn flex-1 py-2 text-[11px] font-bold rounded-lg text-slate-400 {{ old('is_company') ? '' : 'active' }}" id="btnFreelancer" onclick="setRole(false)">
+                    <button type="button" class="role-btn flex-1 py-2 text-[11px] font-bold rounded-lg text-slate-400 {{ old('is_company', request()->query('is_company', 0)) ? '' : 'active' }}" id="btnFreelancer" onclick="setRole(false)">
                         <i class="fa-solid fa-user-tie me-1.5"></i>Freelancer
                     </button>
-                    <button type="button" class="role-btn flex-1 py-2 text-[11px] font-bold rounded-lg text-slate-400 {{ old('is_company') ? 'active' : '' }}" id="btnCompany" onclick="setRole(true)">
+                    <button type="button" class="role-btn flex-1 py-2 text-[11px] font-bold rounded-lg text-slate-400 {{ old('is_company', request()->query('is_company', 0)) ? 'active' : '' }}" id="btnCompany" onclick="setRole(true)">
                         <i class="fa-solid fa-building me-1.5"></i>Perusahaan / Client
                     </button>
                 </div>
@@ -403,7 +403,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                 </div>
 
                 <!-- Bagian Form Perusahaan -->
-                <div id="companyFields" class="bg-slate-800/40 border border-slate-700/60 rounded-xl p-4 space-y-3" style="display: {{ old('is_company') ? 'block' : 'none' }};">
+                <div id="companyFields" class="bg-slate-800/40 border border-slate-700/60 rounded-xl p-4 space-y-3" style="display: {{ old('is_company', request()->query('is_company', 0)) ? 'block' : 'none' }};">
                     <div class="flex items-center gap-1.5 text-[10px] font-bold tracking-widest text-blue-400 uppercase">
                         <i class="fa-solid fa-building-circle-check"></i>
                         Informasi Detail Perusahaan

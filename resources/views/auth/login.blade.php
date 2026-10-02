@@ -284,6 +284,11 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                             required 
                             class="w-full text-xs pl-10 pr-10 py-2.5 bg-slate-800/80 border {{ $errors->has('password') ? 'border-red-500' : 'border-slate-700/60' }} rounded-xl text-white placeholder-slate-500 focus:bg-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition shadow-inner"
                         >
+                        <button type="button" id="togglePassword"
+                            class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-500 hover:text-blue-400 transition-colors focus:outline-none"
+                            aria-label="Tampilkan atau sembunyikan password">
+                            <i id="togglePasswordIcon" class="fa-regular fa-eye"></i>
+                        </button>
                     </div>
                     @error('password')
                         <p class="text-[10px] text-red-400 mt-0.5">{{ $message }}</p>
@@ -348,15 +353,15 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                 <input type="hidden" name="id_token" id="google_id_token">
             </form>
 
-            <!-- PERSETUJUAN KEBIJAKAN & PRIVASI -->
-            <div class="space-y-1 relative z-10 mt-1">
-                <label for="agreePolicy" class="flex items-start gap-2.5 cursor-pointer select-none group">
+           <!-- PERSETUJUAN KEBIJAKAN & PRIVASI -->
+            <div class="space-y-1 relative z-10 mt-1 text-center">
+                <label for="agreePolicy" class="inline-flex items-center justify-center gap-2 cursor-pointer select-none group">
                     <input
                         id="agreePolicy"
                         type="checkbox"
                         name="agree_policy"
                         value="1"
-                        class="mt-0.5 w-4 h-4 rounded border-slate-600 bg-slate-800 text-blue-600 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer"
+                        class="w-4 h-4 rounded border-slate-600 bg-slate-800 text-blue-600 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer shrink-0"
                     >
                     <span class="text-[11px] text-slate-400 leading-relaxed group-hover:text-slate-300 transition-colors">
                         Saya menyetujui
@@ -369,7 +374,7 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
                         </button>
                     </span>
                 </label>
-                <p id="agreeHint" class="hidden text-[10px] text-amber-400/90 flex items-center gap-1 ml-6">
+                <p id="agreeHint" class="hidden text-[10px] text-amber-400/90 flex items-center justify-center gap-1">
                     <i class="fa-solid fa-circle-info"></i>
                     <span>Centang persetujuan ini terlebih dahulu untuk masuk.</span>
                 </p>
@@ -475,6 +480,19 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     // Mulai dengan tombol login nonaktif (checkbox belum dicentang).
     syncLoginButton();
+
+    // 1b) Toggle tampil/sembunyikan password
+    var passwordInput = document.getElementById('password');
+    var togglePassword = document.getElementById('togglePassword');
+    var togglePasswordIcon = document.getElementById('togglePasswordIcon');
+    if (passwordInput && togglePassword && togglePasswordIcon) {
+        togglePassword.addEventListener('click', function () {
+            var isHidden = passwordInput.type === 'password';
+            passwordInput.type = isHidden ? 'text' : 'password';
+            togglePasswordIcon.classList.toggle('fa-eye', !isHidden);
+            togglePasswordIcon.classList.toggle('fa-eye-slash', isHidden);
+        });
+    }
 
     // 2) Buka modal
     function openModal() {

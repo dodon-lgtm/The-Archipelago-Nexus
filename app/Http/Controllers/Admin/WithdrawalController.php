@@ -19,13 +19,16 @@ class WithdrawalController extends Controller
     }
 
     /**
-     * Daftar seluruh permintaan penarikan (dengan filter status).
+     * Daftar seluruh permintaan penarikan FREELANCER (dengan filter status).
+     * Penarikan type 'admin' tidak masuk antrean verifikasi ini.
      */
     public function index(Request $request): View
     {
         $status = $request->query('status', 'semua');
 
-        $query = Withdrawal::with(['user', 'processedBy'])->latest();
+        $query = Withdrawal::with(['user', 'processedBy'])
+            ->ofType(Withdrawal::TYPE_FREELANCER)
+            ->latest();
 
         if ($status !== 'semua' && in_array($status, Withdrawal::ACTIVE_STATUSES, true)) {
             $query->where('status', $status);
@@ -43,6 +46,8 @@ class WithdrawalController extends Controller
      */
     public function show(Withdrawal $withdrawal): View
     {
+        abort_unless($withdrawal->isFreelancer(), 404);
+
         $withdrawal->load(['user', 'processedBy']);
 
         return view('admin.withdrawals.show', compact('withdrawal'));
@@ -53,6 +58,8 @@ class WithdrawalController extends Controller
      */
     public function process(Withdrawal $withdrawal): RedirectResponse
     {
+        abort_unless($withdrawal->isFreelancer(), 404);
+
         try {
             $this->withdrawalService->process($withdrawal, Auth::id());
 
@@ -71,6 +78,8 @@ class WithdrawalController extends Controller
      */
     public function approve(Withdrawal $withdrawal): RedirectResponse
     {
+        abort_unless($withdrawal->isFreelancer(), 404);
+
         try {
             $this->withdrawalService->approve($withdrawal, Auth::id());
 
@@ -89,6 +98,8 @@ class WithdrawalController extends Controller
      */
     public function reject(WithdrawalRejectRequest $request, Withdrawal $withdrawal): RedirectResponse
     {
+        abort_unless($withdrawal->isFreelancer(), 404);
+
         try {
             $this->withdrawalService->reject(
                 $withdrawal,

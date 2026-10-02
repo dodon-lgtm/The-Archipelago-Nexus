@@ -141,166 +141,77 @@ tbody tr:hover{background:rgba(239,246,255,.48)}
         });
     </script>
 
-    <!-- MODAL SETTINGS (Muncul di tengah layar) -->
-<div class="modal fade" id="modalSettings" tabindex="-1" aria-labelledby="modalSettingsLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
-        <div class="modal-content border-0 shadow-lg" style="border-radius: 1.5rem; overflow: hidden;">
-            
-            <div class="row g-0">
-                <!-- Sisi Kiri: Menu Sidebar -->
-                <div class="col-md-4 bg-light p-4 p-md-5 border-end">
-                    <h3 class="fw-bold text-dark mb-1">Settings</h3>
-                    <p class="text-muted small mb-4">Kelola pengaturan akun dan preferensi Anda</p>
+    {{-- NOTE: Settings Modal versi ApexForge (Tailwind penuh) berada di
+         resources/views/navbar/nav.blade.php (#modalSettings, dibuka via
+         #btnBukaPengaturan). Duplikat Bootstrap lama yang ada di file ini
+         telah dihapus karena tidak berfungsi (Bootstrap JS tidak pernah
+         dimuat di layout Admin) dan menyebabkan konflik ID dengan modal
+         Tailwind yang aktif. --}}
 
-                    <div class="nav flex-column nav-pills custom-setting-nav" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                        <!-- Menu Security (Aktif) -->
-                        <button class="nav-link active d-flex align-items-start py-3 mb-2" data-bs-toggle="pill" data-bs-target="#tab-security" type="button">
-                            <i class="fas fa-shield-alt mt-1 me-3 fs-5 text-primary"></i>
-                            <div class="text-start">
-                                <div class="fw-semibold">Security</div>
-                                <small style="font-size: 0.75rem;">Password, 2FA, dan sesi akun</small>
-                            </div>
-                        </button>
-
-                        <!-- Menu Payment -->
-                        <button class="nav-link d-flex align-items-start py-3 mb-2" type="button">
-                            <i class="fas fa-credit-card mt-1 me-3 fs-5 text-secondary"></i>
-                            <div class="text-start">
-                                <div class="fw-semibold text-dark">Payment & Payout</div>
-                                <small class="text-muted" style="font-size: 0.75rem;">Metode pembayaran dan pencairan dana</small>
-                            </div>
-                        </button>
-
-                        <!-- Menu Notifications -->
-                        <button class="nav-link d-flex align-items-start py-3 mb-2" type="button">
-                            <i class="fas fa-bell mt-1 me-3 fs-5 text-secondary"></i>
-                            <div class="text-start">
-                                <div class="fw-semibold text-dark">Notifications</div>
-                                <small class="text-muted" style="font-size: 0.75rem;">Atur preferensi notifikasi Anda</small>
-                            </div>
-                        </button>
-
-                        <!-- Menu Account -->
-                        <button class="nav-link d-flex align-items-start py-3 mb-2" type="button">
-                            <i class="fas fa-user mt-1 me-3 fs-5 text-secondary"></i>
-                            <div class="text-start">
-                                <div class="fw-semibold text-dark">Account</div>
-                                <small class="text-muted" style="font-size: 0.75rem;">Kelola akun dan data Anda</small>
-                            </div>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Sisi Kanan: Konten Utama -->
-                <div class="col-md-8 p-4 p-md-5 bg-white position-relative">
-                    <!-- Tombol Close Modal (X) -->
-                    <button type="button" class="btn-close position-absolute top-0 end-0 m-4" data-bs-dismiss="modal" aria-label="Close"></button>
-
-                    <div class="tab-content" id="v-pills-tabContent">
-                        
-                        <!-- Konten Security -->
-                        <div class="tab-pane fade show active" id="tab-security" role="tabpanel">
-                            <h4 class="fw-bold text-dark mb-1">Security</h4>
-                            <p class="text-muted small mb-4">Kelola keamanan akun Anda untuk menjaga akun tetap aman.</p>
-
-                            <!-- Item 1: Ubah Password -->
-                            <div class="card border border-light-subtle shadow-sm mb-3" style="border-radius: 1rem;">
-                                <div class="card-body p-4 d-flex align-items-center justify-content-between">
-                                    <div class="d-flex align-items-center">
-                                        <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3">
-                                            <i class="fas fa-lock text-primary"></i>
-                                        </div>
-                                        <div>
-                                            <h6 class="fw-bold mb-1">Ubah Password</h6>
-                                            <p class="text-muted small mb-0">Gunakan password yang kuat untuk melindungi akun Anda.</p>
-                                        </div>
-                                    </div>
-                                    <button class="btn btn-outline-primary btn-sm px-3 rounded-pill fw-semibold">Ubah Password</button>
-                                </div>
-                            </div>
-
-                            <!-- Item 2: Verifikasi Email -->
-                            <div class="card border border-light-subtle shadow-sm mb-3" style="border-radius: 1rem;">
-                                <div class="card-body p-4 d-flex align-items-center justify-content-between">
-                                    <div class="d-flex align-items-center">
-                                        <div class="bg-success bg-opacity-10 p-3 rounded-circle me-3">
-                                            <i class="fas fa-envelope text-success"></i>
-                                        </div>
-                                        <div>
-                                            <h6 class="fw-bold mb-1">Verifikasi Email</h6>
-                                            <p class="text-muted small mb-0">Email Anda telah diverifikasi.</p>
-                                        </div>
-                                    </div>
-                                    <span class="badge bg-success bg-opacity-10 text-success border border-success rounded-pill px-3 py-2">
-                                        <i class="fas fa-check-circle me-1"></i> Terverifikasi
-                                    </span>
-                                </div>
-                            </div>
-
-                            <!-- Item 3: 2FA -->
-                            <div class="card border border-light-subtle shadow-sm mb-3" style="border-radius: 1rem;">
-                                <div class="card-body p-4 d-flex align-items-center justify-content-between">
-                                    <div class="d-flex align-items-center">
-                                        <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3">
-                                            <i class="fas fa-shield-alt text-primary"></i>
-                                        </div>
-                                        <div>
-                                            <h6 class="fw-bold mb-1">Verifikasi 2FA</h6>
-                                            <p class="text-muted small mb-0">Tambahkan lapisan keamanan ekstra dengan autentikasi dua faktor.</p>
-                                        </div>
-                                    </div>
-                                    <button class="btn btn-outline-primary btn-sm px-3 rounded-pill fw-semibold">Aktifkan 2FA</button>
-                                </div>
-                            </div>
-
-                            <!-- Item 4: Logout Semua -->
-                            <div class="card border border-danger-subtle shadow-sm" style="border-radius: 1rem;">
-                                <div class="card-body p-4 d-flex align-items-center justify-content-between">
-                                    <div class="d-flex align-items-center">
-                                        <div class="bg-danger bg-opacity-10 p-3 rounded-circle me-3">
-                                            <i class="fas fa-sign-out-alt text-danger"></i>
-                                        </div>
-                                        <div>
-                                            <h6 class="fw-bold mb-1 text-danger">Logout dari Semua Perangkat</h6>
-                                            <p class="text-muted small mb-0">Keluar dari semua perangkat kecuali yang Anda gunakan sekarang.</p>
-                                        </div>
-                                    </div>
-                                    <button class="btn btn-outline-danger btn-sm px-3 rounded-pill fw-semibold">Logout Semua</button>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
+{{-- ApexForge Labs — Global Custom Confirmation Popup --}}
+<div id="afConfirmOverlay" class="af-confirm-overlay" role="dialog" aria-modal="true" aria-labelledby="afConfirmTitle" aria-describedby="afConfirmMessage">
+    <div class="af-confirm-card">
+        <button type="button" class="af-confirm-close" id="afConfirmClose" aria-label="Tutup">&times;</button>
+        <div class="af-confirm-icon">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <h3 id="afConfirmTitle" class="af-confirm-title">Konfirmasi</h3>
+        <p id="afConfirmMessage" class="af-confirm-message"></p>
+        <div class="af-confirm-actions">
+            <button type="button" id="afConfirmCancel" class="af-btn af-btn-cancel">Batal</button>
+            <button type="button" id="afConfirmOk" class="af-btn af-btn-ok">Ya, Lanjutkan</button>
         </div>
     </div>
 </div>
 
-<!-- Tambahkan sedikit CSS agar hover dan tombol sampingnya mirip desain -->
 <style>
-    .custom-setting-nav .nav-link {
-        color: #495057;
-        border-radius: 12px;
-        transition: all 0.3s ease;
-        background-color: transparent;
-        border: 1px solid transparent;
+    .af-confirm-overlay{
+        position:fixed;inset:0;z-index:99999;
+        display:flex;align-items:center;justify-content:center;padding:1rem;
+        background:rgba(15,23,42,.55);
+        backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+        opacity:0;visibility:hidden;pointer-events:none;
+        transition:opacity .2s ease,visibility .2s ease;
     }
-    .custom-setting-nav .nav-link:hover {
-        background-color: #f8f9fa;
-        border-color: #e9ecef;
+    .af-confirm-overlay.af-open{opacity:1;visibility:visible;pointer-events:auto}
+    .af-confirm-card{
+        position:relative;width:100%;max-width:26rem;
+        background:#ffffff;border:1px solid #dbeafe;border-radius:1.25rem;
+        padding:2rem;box-shadow:0 25px 60px -15px rgba(30,64,175,.45);
+        transform:translateY(12px) scale(.96);
+        transition:transform .2s ease;
     }
-    .custom-setting-nav .nav-link.active {
-        background-color: #e7f1ff; /* Biru pudar */
-        color: #0d6efd;
-        border-color: #0d6efd33;
+    .af-open .af-confirm-card{transform:translateY(0) scale(1)}
+    .af-confirm-close{
+        position:absolute;top:.85rem;right:.95rem;
+        width:2rem;height:2rem;display:flex;align-items:center;justify-content:center;
+        border:none;background:transparent;color:#94a3b8;font-size:1.35rem;line-height:1;
+        border-radius:.6rem;cursor:pointer;
     }
-    .custom-setting-nav .nav-link.active .text-dark,
-    .custom-setting-nav .nav-link.active .text-muted {
-        color: #0d6efd !important;
+    .af-confirm-close:hover{background:#f1f5f9;color:#475569}
+    .af-confirm-icon{
+        width:3.25rem;height:3.25rem;margin-bottom:1rem;
+        display:flex;align-items:center;justify-content:center;
+        background:#fef3c7;color:#d97706;font-size:1.35rem;border-radius:1rem;
     }
-    .custom-setting-nav .nav-link.active i {
-        color: #0d6efd !important;
+    .af-confirm-title{font-weight:800;font-size:1.125rem;color:#0f172a;margin:0 0 .5rem}
+    .af-confirm-message{font-size:.9rem;line-height:1.55;color:#64748b;margin:0 0 1.5rem}
+    .af-confirm-actions{display:flex;justify-content:flex-end;gap:.65rem}
+    .af-btn{
+        padding:.625rem 1.25rem;font-size:.875rem;font-weight:600;
+        border-radius:.75rem;cursor:pointer;border:none;transition:all .2s ease;
+    }
+    .af-btn-cancel{background:#f1f5f9;color:#475569}
+    .af-btn-cancel:hover{background:#e2e8f0}
+    .af-btn-ok{background:#2563eb;color:#ffffff;box-shadow:0 8px 22px -12px rgba(37,99,235,.72)}
+    .af-btn-ok:hover{background:#1d4ed8}
+    @media (prefers-color-scheme:dark){
+        .af-confirm-card{background:#0f172a;border-color:#1e293b;box-shadow:0 25px 60px -15px rgba(0,0,0,.7)}
+        .af-confirm-title{color:#f1f5f9}
+        .af-confirm-message{color:#94a3b8}
+        .af-confirm-close:hover{background:#1e293b;color:#cbd5e1}
+        .af-btn-cancel{background:#1e293b;color:#cbd5e1}
+        .af-btn-cancel:hover{background:#334155}
     }
 .custom-setting-nav .nav-link.active i {
         color: #0d6efd !important;
